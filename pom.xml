@@ -4,9 +4,9 @@
   <groupId>net.nelz.simplesm</groupId>
   <artifactId>simple-spring-memcached</artifactId>
   <packaging>jar</packaging>
-  <version>1.0-SNAPSHOT</version>
+  <version>0.1-SNAPSHOT</version>
   <name>simple-spring-memcached</name>
-  <url>http://maven.apache.org</url>
+  <url>http://code.google.com/p/simple-spring-memcached/</url>
   <dependencies>
     <dependency>
       <groupId>org.testng</groupId>
