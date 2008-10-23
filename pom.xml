@@ -8,6 +8,17 @@
   <name>simple-spring-memcached</name>
   <url>http://code.google.com/p/simple-spring-memcached/</url>
   <dependencies>
+	  <dependency>
+	    <groupId>org.springframework</groupId>
+	    <artifactId>spring</artifactId>
+	    <version>2.5.4</version>
+	  </dependency>
+	  <dependency>
+	    <groupId>org.aspectj</groupId>
+	    <artifactId>aspectjrt</artifactId>
+	    <version>1.6.0</version>
+	  </dependency>
+
     <dependency>
       <groupId>org.testng</groupId>
       <artifactId>testng</artifactId>
@@ -16,4 +27,18 @@
 	    <classifier>jdk15</classifier>
     </dependency>
   </dependencies>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>2.0.2</version>
+				<configuration>
+					<source>1.5</source>
+					<target>1.5</target>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
 </project>
