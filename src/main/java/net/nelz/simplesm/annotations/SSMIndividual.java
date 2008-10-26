@@ -11,6 +11,7 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)
 public @interface SSMIndividual {
-	String namespace() default "[unassigned]";
-	int zeroBasedKeyParamIndex() default 0;
+	public static final String DEFAULT_STRING = "[unassigned]";
+ 	String namespace() default DEFAULT_STRING;
+	int keyIndex() default 0;
 }
