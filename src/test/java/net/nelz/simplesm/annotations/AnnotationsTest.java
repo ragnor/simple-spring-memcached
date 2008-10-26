@@ -20,14 +20,14 @@ public class AnnotationsTest {
 		final Annotation[] annotations = method.getDeclaredAnnotations();
 		assertEquals(SSMIndividual.class, annotations[0].annotationType());
 		final SSMIndividual ind = (SSMIndividual) annotations[0];
-		assertEquals("poop", ind.namespace());
+		assertEquals("polk", ind.namespace());
 		assertEquals(5, ind.keyIndex());
 	}
 
 	private static class RandomClass {
 		private String name = "RandomClass";
 
-		@SSMIndividual(namespace="poop", keyIndex = 5)
+		@SSMIndividual(namespace="polk", keyIndex = 5)
 		public String getName() {
 			return name;
 		}
