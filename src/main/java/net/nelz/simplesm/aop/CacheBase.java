@@ -5,7 +5,6 @@ import net.spy.memcached.*;
 import org.aspectj.lang.*;
 import org.aspectj.lang.reflect.*;
 
-import java.lang.annotation.*;
 import java.lang.reflect.*;
 
 /**
@@ -21,13 +20,12 @@ public class CacheBase {
 		this.cache = cache;
 	}
 
-	protected <T extends Annotation> T getMethodAnnotation(final Class<T> c, final JoinPoint jp) {
+	protected Method getMethodToCache(final JoinPoint jp) {
 		final Signature sig = jp.getSignature();
 		if (!(sig instanceof MethodSignature)) {
 			throw new InvalidAnnotationException("This annotation is only valid on a method.");
 		}
-		final Method method = ((MethodSignature)sig).getMethod();
-		return method.getAnnotation(c);
+		return((MethodSignature)sig).getMethod();
 	}
 
 }

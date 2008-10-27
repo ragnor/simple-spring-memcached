@@ -35,10 +35,11 @@ public class IndividualCache extends CacheBase {
 		// This is injected caching.  If anything goes wrong in the caching, LOG the crap outta it,
 		// but do not let it surface up past the AOP injection itself.
 		try {
-			final SSMIndividual annotation = getMethodAnnotation(SSMIndividual.class, pjp);
+			final Method methodToCache = getMethodToCache(pjp);
+			final SSMIndividual annotation = methodToCache.getAnnotation(SSMIndividual.class);
 			validateAnnotation(annotation, pjp);
 
-			final String cacheKey = getCacheKey(annotation.keyIndex(), pjp);
+			final String cacheKey = getCacheKey(annotation.keyIndex(), pjp, methodToCache);
 		} catch (Throwable ex) {
 			LOG.warn("Caching on " + pjp.toShortString() + " aborted due to an error.", ex);
 			return pjp.proceed();
@@ -47,30 +48,46 @@ public class IndividualCache extends CacheBase {
 		return null;
 	}
 
-	protected String getCacheKey(final int keyIndex, final JoinPoint jp) throws Exception {
-		String objectKey = "";
+	protected String getCacheKey(final int keyIndex,
+	                             final JoinPoint jp,
+	                             final Method methodToCache) throws Exception {
+		final Object keyObject = getKeyObject(keyIndex, jp, methodToCache);
+		final Method keyMethod = getKeyMethod(keyObject);
+		return generateCacheKey(keyMethod, keyObject);
+	}
 
-		final Object keyObject = jp.getArgs()[keyIndex];
-		if (keyObject == null) {
-			throw new InvalidParameterException("The argument at index " + keyIndex + " is null.");
+	protected String generateCacheKey(final Method keyMethod, final Object keyObject) throws Exception {
+		final String cacheKey = (String) keyMethod.invoke(keyObject, null);
+		if (cacheKey == null || cacheKey.length() < 1) {
+			throw new RuntimeException("Got an empty key value from " + keyMethod.getName());
 		}
+		return cacheKey;
+	}
 
+	protected Method getKeyMethod(final Object keyObject) throws NoSuchMethodException {
 		final Method[] methods = keyObject.getClass().getDeclaredMethods();
 		Method targetMethod = null;
 		for (final Method method : methods) {
-			if (method.getAnnotation(SSMCacheKeyMethod.class) != null) {
-				// TODO: Add description of what class we're talking about? (keyObject's class)
+			if (method != null && method.getAnnotation(SSMCacheKeyMethod.class) != null) {
 				if (method.getParameterTypes().length > 0) {
-					throw new InvalidAnnotationException("A method must have 0 arguments to be annotated with "
-							+ SSMCacheKeyMethod.class.getName());
+					throw new InvalidAnnotationException(String.format(
+							"Method [%s] must have 0 arguments to be annotated with [%s]",
+							method.toString(),
+							SSMCacheKeyMethod.class.getName()));
 				}
 				if (!String.class.equals(method.getReturnType())) {
-					throw new InvalidAnnotationException("A method must return a String to be annotated with "
-							+ SSMCacheKeyMethod.class.getName());
+					throw new InvalidAnnotationException(String.format(
+							"Method [%s] must return a String to be annotated with [%s]",
+							method.toString(),
+							SSMCacheKeyMethod.class.getName()));
 				}
 				if (targetMethod != null) {
-					throw new InvalidAnnotationException("A class must have only one annotation of  "
-							+ SSMCacheKeyMethod.class.getName());
+					throw new InvalidAnnotationException(String.format(
+							"Class [%s] should have only one method annotated with [%s]. See [%s] and [%s]",
+							keyObject.getClass().getName(),
+							SSMCacheKeyMethod.class.getName(),
+							targetMethod.getName(),
+							method.getName()));
 				}
 				targetMethod = method;
 			}
@@ -80,12 +97,27 @@ public class IndividualCache extends CacheBase {
 			targetMethod = keyObject.getClass().getMethod("toString", null);
 		}
 
-		objectKey = (String) targetMethod.invoke(keyObject, null);
-		if (objectKey == null || objectKey.length() > 1) {
-			throw new RuntimeException("Got an empty key value from " + targetMethod.getName());
-		}
+		return targetMethod;
+	}
 
-		return null;
+	protected Object getKeyObject(final int keyIndex,
+	                             final JoinPoint jp,
+	                             final Method methodToCache) throws Exception {
+		final Object[] args = jp.getArgs();
+		if (args.length <= keyIndex) {
+			throw new InvalidParameterException(String.format(
+					"A key index of %s is too big for the number of arguments in [%s]",
+					keyIndex,
+					methodToCache.toString()));
+		}
+		final Object keyObject = args[keyIndex];
+		if (keyObject == null) {
+			throw new InvalidParameterException(String.format(
+					"The argument passed into [%s] at index %s is null.",
+					methodToCache.toString(),
+					keyIndex));
+		}
+		return keyObject;
 	}
 
 	protected void validateAnnotation(final SSMIndividual annotation, final JoinPoint jp) {
