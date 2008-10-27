@@ -37,9 +37,11 @@ public class IndividualCache extends CacheBase {
 		try {
 			final Method methodToCache = getMethodToCache(pjp);
 			final SSMIndividual annotation = methodToCache.getAnnotation(SSMIndividual.class);
-			validateAnnotation(annotation, pjp);
+			validateAnnotation(annotation, methodToCache);
 
-			final String cacheKey = getCacheKey(annotation.keyIndex(), pjp, methodToCache);
+			final String objectId = getObjectId(annotation.keyIndex(), pjp, methodToCache);
+
+			// TODO: This is where I left off.
 		} catch (Throwable ex) {
 			LOG.warn("Caching on " + pjp.toShortString() + " aborted due to an error.", ex);
 			return pjp.proceed();
@@ -48,7 +50,7 @@ public class IndividualCache extends CacheBase {
 		return null;
 	}
 
-	protected String getCacheKey(final int keyIndex,
+	protected String getObjectId(final int keyIndex,
 	                             final JoinPoint jp,
 	                             final Method methodToCache) throws Exception {
 		final Object keyObject = getKeyObject(keyIndex, jp, methodToCache);
@@ -120,21 +122,21 @@ public class IndividualCache extends CacheBase {
 		return keyObject;
 	}
 
-	protected void validateAnnotation(final SSMIndividual annotation, final JoinPoint jp) {
+	protected void validateAnnotation(final SSMIndividual annotation, final Method method) {
 		if (annotation.keyIndex() < 0) {
 			throw new InvalidParameterException(String.format(
-					"KeyIndex for annotation %s must be 0 or greater on %s",
+					"KeyIndex for annotation [%s] must be 0 or greater on [%s]",
 					annotation.getClass().getName(),
-					jp.toLongString()
+					method.toString()
 			));
 		}
 		if (SSMIndividual.DEFAULT_STRING.equals(annotation.namespace())
 				|| annotation.namespace() == null
 				|| annotation.namespace().length() < 1) {
 			throw new InvalidParameterException(String.format(
-					"Namespace for annotation %s must be defined on %s",
+					"Namespace for annotation [%s] must be defined on [%s]",
 					annotation.getClass().getName(),
-					jp.toLongString()
+					method.toString()
 			));
 		}
 	}

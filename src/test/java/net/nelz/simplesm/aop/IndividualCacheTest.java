@@ -6,6 +6,7 @@ import static org.testng.AssertJUnit.*;
 import org.testng.annotations.*;
 
 import java.lang.reflect.*;
+import java.security.*;
 
 /**
  * Copyright 2008 Widgetbox, Inc.
@@ -81,6 +82,44 @@ public class IndividualCacheTest {
 		assertEquals(result, cut.generateCacheKey(method, new KeyObject06(result)));
 	}
 
+	@Test
+	public void testAnnotationValidation() throws Exception {
+		final AnnotationValidator testClass = new AnnotationValidator();
+		Method method = null;
+		SSMIndividual annotation = null;
+
+		method = testClass.getClass().getMethod("cacheMe1",null);
+		annotation = method.getAnnotation(SSMIndividual.class);
+		try {
+			cut.validateAnnotation(annotation, method);
+			fail("Expected Exception.");
+		} catch (InvalidParameterException ex) {
+			System.out.println(ex.getMessage());
+			assertTrue(ex.getMessage().indexOf("KeyIndex") != -1);
+		}
+
+		method = testClass.getClass().getMethod("cacheMe2",null);
+		annotation = method.getAnnotation(SSMIndividual.class);
+		try {
+			cut.validateAnnotation(annotation, method);
+			fail("Expected Exception.");
+		} catch (InvalidParameterException ex) {
+			System.out.println(ex.getMessage());
+			assertTrue(ex.getMessage().indexOf("Namespace") != -1);
+		}
+
+
+		method = testClass.getClass().getMethod("cacheMe3",null);
+		annotation = method.getAnnotation(SSMIndividual.class);
+		try {
+			cut.validateAnnotation(annotation, method);
+			fail("Expected Exception.");
+		} catch (InvalidParameterException ex) {
+			System.out.println(ex.getMessage());
+			assertTrue(ex.getMessage().indexOf("Namespace") != -1);
+		}
+	}
+
 	private static class KeyObject01 {
 		@SSMCacheKeyMethod
 		public void doIt(final String nonsense) { }
@@ -112,6 +151,14 @@ public class IndividualCacheTest {
 		private String result;
 		private KeyObject06(String result) { this.result = result;}
 		public String toString() { return result; }
+	}
+	private static class AnnotationValidator {
+		@SSMIndividual(keyIndex = -1, namespace = "bubba")
+		public String cacheMe1() { return null; }
+		@SSMIndividual(keyIndex = 0, namespace = "")
+		public String cacheMe2() { return null; }
+		@SSMIndividual(keyIndex = 0)
+		public String cacheMe3() { return null; }
 	}
 
 }
