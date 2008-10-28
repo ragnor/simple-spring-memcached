@@ -3,9 +3,11 @@ package net.nelz.simplesm.aop;
 import net.nelz.simplesm.exceptions.*;
 import net.spy.memcached.*;
 import org.aspectj.lang.*;
+import org.aspectj.lang.Signature;
 import org.aspectj.lang.reflect.*;
 
 import java.lang.reflect.*;
+import java.security.*;
 
 /**
  * Copyright 2008 Widgetbox, Inc.
@@ -14,6 +16,9 @@ import java.lang.reflect.*;
  * SECRET OF THE COPYRIGHT HOLDER, AND DISTRIBUTED ONLY UNDER RESTRICTION.
  */
 public class CacheBase {
+
+	static final String SEPARATOR = ":";
+
 	protected MemcachedClientIF cache;
 
 	public void setCache(MemcachedClientIF cache) {
@@ -26,6 +31,13 @@ public class CacheBase {
 			throw new InvalidAnnotationException("This annotation is only valid on a method.");
 		}
 		return((MethodSignature)sig).getMethod();
+	}
+
+	protected String buildCacheKey(final String objectId, final String namespace) {
+		if (objectId == null || objectId.length() < 1 || namespace == null || namespace.length() < 1) {
+			throw new InvalidParameterException("All params must be 1 character or greater.");
+		}
+		return namespace + SEPARATOR + objectId;
 	}
 
 }

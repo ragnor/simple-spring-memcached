@@ -14,4 +14,5 @@ public @interface SSMIndividual {
 	public static final String DEFAULT_STRING = "[unassigned]";
  	String namespace() default DEFAULT_STRING;
 	int keyIndex() default 0;
+	int expiration() default 0;
 }

@@ -65,21 +65,21 @@ public class IndividualCacheTest {
 		final Method method = KeyObject06.class.getMethod("toString", null);
 
 		try {
-			cut.generateCacheKey(method, new KeyObject06(null));
+			cut.generateObjectId(method, new KeyObject06(null));
 			fail("Expected Exception.");
 		} catch (RuntimeException ex) {
 			assertTrue(ex.getMessage().indexOf("empty key value") != -1);
 		}
 
 		try {
-			cut.generateCacheKey(method, new KeyObject06(""));
+			cut.generateObjectId(method, new KeyObject06(""));
 			fail("Expected Exception.");
 		} catch (RuntimeException ex) {
 			assertTrue(ex.getMessage().indexOf("empty key value") != -1);
 		}
 
 		final String result = "momma";
-		assertEquals(result, cut.generateCacheKey(method, new KeyObject06(result)));
+		assertEquals(result, cut.generateObjectId(method, new KeyObject06(result)));
 	}
 
 	@Test
@@ -108,7 +108,6 @@ public class IndividualCacheTest {
 			assertTrue(ex.getMessage().indexOf("Namespace") != -1);
 		}
 
-
 		method = testClass.getClass().getMethod("cacheMe3",null);
 		annotation = method.getAnnotation(SSMIndividual.class);
 		try {
@@ -117,6 +116,17 @@ public class IndividualCacheTest {
 		} catch (InvalidParameterException ex) {
 			System.out.println(ex.getMessage());
 			assertTrue(ex.getMessage().indexOf("Namespace") != -1);
+		}
+
+
+		method = testClass.getClass().getMethod("cacheMe4",null);
+		annotation = method.getAnnotation(SSMIndividual.class);
+		try {
+			cut.validateAnnotation(annotation, method);
+			fail("Expected Exception.");
+		} catch (InvalidParameterException ex) {
+			System.out.println(ex.getMessage());
+			assertTrue(ex.getMessage().indexOf("Expiration") != -1);
 		}
 	}
 
@@ -159,6 +169,8 @@ public class IndividualCacheTest {
 		public String cacheMe2() { return null; }
 		@SSMIndividual(keyIndex = 0)
 		public String cacheMe3() { return null; }
+		@SSMIndividual(keyIndex = 0, namespace = "bubba", expiration = -1)
+		public String cacheMe4() { return null; }
 	}
 
 }

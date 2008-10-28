@@ -21,33 +21,50 @@ import java.security.*;
 public class IndividualCache extends CacheBase {
 	private static final Log LOG = LogFactory.getLog(IndividualCache.class);
 
-
 	@Pointcut("@annotation(net.nelz.simplesm.annotations.SSMIndividual)")
 	public void getIndividual() {}
 
 	@Around("getIndividual()")
 	public Object cacheIndividual(final ProceedingJoinPoint pjp) throws Throwable {
-// TODO: Cache disabling
-//		if (cache_is_disabled) {
-//			LOG.warn("Caching is disabled.");
-//			return pjp.proceed();
-//		}
+		/*
+		TODO: Cache disabling
+		if (cache_is_disabled) {
+			LOG.warn("Caching is disabled.");
+			return pjp.proceed();
+		}
+		*/
+
 		// This is injected caching.  If anything goes wrong in the caching, LOG the crap outta it,
 		// but do not let it surface up past the AOP injection itself.
+		final String cacheKey;
+		final SSMIndividual annotation;
 		try {
 			final Method methodToCache = getMethodToCache(pjp);
-			final SSMIndividual annotation = methodToCache.getAnnotation(SSMIndividual.class);
+			annotation = methodToCache.getAnnotation(SSMIndividual.class);
 			validateAnnotation(annotation, methodToCache);
-
 			final String objectId = getObjectId(annotation.keyIndex(), pjp, methodToCache);
-
-			// TODO: This is where I left off.
+			cacheKey = buildCacheKey(objectId, annotation.namespace());
+			final Object result = cache.get(cacheKey);
+			if (result != null) {
+				LOG.debug("Cache hit.");
+				return (result instanceof PertinentNegativeNull) ? null : result;
+			}
 		} catch (Throwable ex) {
 			LOG.warn("Caching on " + pjp.toShortString() + " aborted due to an error.", ex);
 			return pjp.proceed();
 		}
 
-		return null;
+		final Object result = pjp.proceed();
+
+		// This is injected caching.  If anything goes wrong in the caching, LOG the crap outta it,
+		// but do not let it surface up past the AOP injection itself.
+		try {
+			final Object submission = (result == null) ? new PertinentNegativeNull() : result;
+			cache.set(cacheKey, annotation.expiration(), submission);
+		} catch (Throwable ex) {
+			LOG.warn("Caching on " + pjp.toShortString() + " aborted due to an error.", ex);
+		}
+		return result;
 	}
 
 	protected String getObjectId(final int keyIndex,
@@ -55,15 +72,15 @@ public class IndividualCache extends CacheBase {
 	                             final Method methodToCache) throws Exception {
 		final Object keyObject = getKeyObject(keyIndex, jp, methodToCache);
 		final Method keyMethod = getKeyMethod(keyObject);
-		return generateCacheKey(keyMethod, keyObject);
+		return generateObjectId(keyMethod, keyObject);
 	}
 
-	protected String generateCacheKey(final Method keyMethod, final Object keyObject) throws Exception {
-		final String cacheKey = (String) keyMethod.invoke(keyObject, null);
-		if (cacheKey == null || cacheKey.length() < 1) {
+	protected String generateObjectId(final Method keyMethod, final Object keyObject) throws Exception {
+		final String objectId = (String) keyMethod.invoke(keyObject, null);
+		if (objectId == null || objectId.length() < 1) {
 			throw new RuntimeException("Got an empty key value from " + keyMethod.getName());
 		}
-		return cacheKey;
+		return objectId;
 	}
 
 	protected Method getKeyMethod(final Object keyObject) throws NoSuchMethodException {
@@ -135,6 +152,13 @@ public class IndividualCache extends CacheBase {
 				|| annotation.namespace().length() < 1) {
 			throw new InvalidParameterException(String.format(
 					"Namespace for annotation [%s] must be defined on [%s]",
+					annotation.getClass().getName(),
+					method.toString()
+			));
+		}
+		if (annotation.expiration() < 0) {
+			throw new InvalidParameterException(String.format(
+					"Expiration for annotation [%s] must be 0 or greater on [%s]",
 					annotation.getClass().getName(),
 					method.toString()
 			));
