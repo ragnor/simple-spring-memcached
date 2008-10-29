@@ -2,11 +2,15 @@
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <groupId>net.nelz.simplesm</groupId>
-  <artifactId>simple-spring-memcached</artifactId>
-  <packaging>jar</packaging>
+  <artifactId>simple-spring-memcached-parent</artifactId>
+  <packaging>pom</packaging>
   <version>0.1-SNAPSHOT</version>
-  <name>simple-spring-memcached</name>
-  <url>http://code.google.com/p/simple-spring-memcached/</url>
+  <name>simple-spring-memcached-parent</name>
+  <url>http://code.google.com/p/simple-spring-memcached/</url>i
+  <modules>
+    <module>simple-spring-memcached</module>
+    <module>integration-test</module>
+  </modules>
   <dependencies>
 	  <dependency>
 	    <groupId>org.springframework</groupId>
