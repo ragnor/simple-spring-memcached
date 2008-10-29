@@ -10,4 +10,11 @@
   <packaging>jar</packaging>
   <name>integration-test</name>
   <url>http://code.google.com/p/simple-spring-memcached/</url>
+	<dependencies>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>simple-spring-memcached</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+	</dependencies>
 </project>
