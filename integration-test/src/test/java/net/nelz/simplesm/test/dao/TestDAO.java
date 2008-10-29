@@ -7,4 +7,7 @@ package net.nelz.simplesm.test.dao;
  * SECRET OF THE COPYRIGHT HOLDER, AND DISTRIBUTED ONLY UNDER RESTRICTION.
  */
 public interface TestDAO {
+
+	public String getDateString(final String key);
+	
 }

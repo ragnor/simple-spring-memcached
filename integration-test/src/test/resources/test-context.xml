@@ -14,5 +14,10 @@
 
   <aop:aspectj-autoproxy />
 
+	<bean id="testDao" class="net.nelz.simplesm.test.dao.TestDAOImpl" />
+
+	<bean id="testSvc" class="net.nelz.simplesm.test.svc.TestSvcImpl">
+		<property name="dao" ref="testDao" />
+	</bean>
 
 </beans>

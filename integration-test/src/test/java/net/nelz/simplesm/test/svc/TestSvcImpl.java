@@ -1,5 +1,6 @@
 package net.nelz.simplesm.test.svc;
 
+import net.nelz.simplesm.test.dao.*;
 import org.springframework.stereotype.*;
 
 /**
@@ -11,4 +12,13 @@ import org.springframework.stereotype.*;
 @Service("testSvc")
 public class TestSvcImpl implements TestSvc {
 
+	private TestDAO dao;
+
+	public void setDao(TestDAO dao) {
+		this.dao = dao;
+	}
+
+	public String getDateString(final String key) {
+		return this.dao.getDateString(key);
+	}
 }

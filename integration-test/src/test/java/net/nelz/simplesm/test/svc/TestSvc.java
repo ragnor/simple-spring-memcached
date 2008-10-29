@@ -7,4 +7,6 @@ package net.nelz.simplesm.test.svc;
  * SECRET OF THE COPYRIGHT HOLDER, AND DISTRIBUTED ONLY UNDER RESTRICTION.
  */
 public interface TestSvc {
+
+	public String getDateString(final String key);
 }

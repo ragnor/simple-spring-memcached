@@ -2,6 +2,8 @@ package net.nelz.simplesm.test.dao;
 
 import org.springframework.stereotype.*;
 
+import java.util.*;
+
 /**
  * Copyright 2008 Widgetbox, Inc.
  * All rights reserved.
@@ -10,4 +12,10 @@ import org.springframework.stereotype.*;
  */
 @Repository("testDao")
 public class TestDAOImpl implements TestDAO {
+	
+	public String getDateString(final String key) {
+		final Date now = new Date();
+		return now.toString();
+	}
+
 }
