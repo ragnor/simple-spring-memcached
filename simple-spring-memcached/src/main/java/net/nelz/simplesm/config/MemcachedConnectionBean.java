@@ -29,17 +29,15 @@ public class MemcachedConnectionBean {
 		return nodeList;
 	}
 
-	public MemcachedConnectionBean setNodeList(final String nodeList) {
+	public void setNodeList(final String nodeList) {
 		this.nodeList = nodeList;
-		return this;
 	}
 
 	public boolean isConsistentHashing() {
 		return consistentHashing;
 	}
 
-	public MemcachedConnectionBean setConsistentHashing(final boolean consistentHashing) {
+	public void setConsistentHashing(final boolean consistentHashing) {
 		this.consistentHashing = consistentHashing;
-		return this;
 	}
 }

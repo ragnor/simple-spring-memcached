@@ -25,7 +25,11 @@ public class RunTest {
 	public void testIndividual() {
 		final TestSvc test = (TestSvc) context.getBean("testSvc");
 
-		System.out.println(test.getDateString("bubba"));
+		final String s1 = test.getDateString("bubba");
+		for (int ix = 0; ix < 100; ix++) {}
+		for (int ix = 0; ix < 10; ix++) {
+			assertEquals(String.format("Cache didn't seem to bring back [%s] as expectd.", s1), s1, test.getDateString("bubba"));
+		}
 		fail("FINISH WRITING TEST!!!");
 	}
 }

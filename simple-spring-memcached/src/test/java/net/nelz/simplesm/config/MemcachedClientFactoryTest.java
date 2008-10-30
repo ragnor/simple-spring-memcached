@@ -42,9 +42,9 @@ public class MemcachedClientFactoryTest {
 
 	@Test
 	public void testCreateClient() throws IOException {
-		final MemcachedConnectionBean bean = new MemcachedConnectionBean()
-				.setConsistentHashing(false)
-				.setNodeList("127.0.0.1:11211");
+		final MemcachedConnectionBean bean = new MemcachedConnectionBean();
+		bean.setConsistentHashing(false);
+		bean.setNodeList("127.0.0.1:11211");
 		final MemcachedClientFactory factory = new MemcachedClientFactory();
 		factory.setBean(bean);
 

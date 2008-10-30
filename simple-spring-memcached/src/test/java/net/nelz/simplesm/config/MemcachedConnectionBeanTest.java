@@ -33,9 +33,9 @@ public class MemcachedConnectionBeanTest {
 		final boolean consistent = RandomUtils.nextBoolean();
 		final String addresses = RandomStringUtils.randomAlphanumeric(12);
 
-		final MemcachedConnectionBean bean = new MemcachedConnectionBean()
-				.setConsistentHashing(consistent)
-				.setNodeList(addresses);
+		final MemcachedConnectionBean bean = new MemcachedConnectionBean();
+		bean.setConsistentHashing(consistent);
+		bean.setNodeList(addresses);
 
 		assertEquals(consistent, bean.isConsistentHashing());
 		assertEquals(addresses, bean.getNodeList());

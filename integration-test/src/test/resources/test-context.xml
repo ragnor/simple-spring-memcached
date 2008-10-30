@@ -12,7 +12,13 @@
            http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.5.xsd">
 <!-- mode: ${mode} -->
 
-  <aop:aspectj-autoproxy />
+	<import resource="simplesm-context.xml" />
+	<bean id="memcachedConnectionBean" class="net.nelz.simplesm.config.MemcachedConnectionBean">
+		<property name="consistentHashing" value="true" />
+		<property name="nodeList" value="127.0.0.1:11211" />
+	</bean>
+
+  <!--<aop:aspectj-autoproxy />-->
 
 	<bean id="testDao" class="net.nelz.simplesm.test.dao.TestDAOImpl" />
 
