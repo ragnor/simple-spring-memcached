@@ -1,5 +1,6 @@
 package net.nelz.simplesm.test.dao;
 
+import net.nelz.simplesm.annotations.*;
 import org.springframework.stereotype.*;
 
 import java.util.*;
@@ -12,9 +13,13 @@ import java.util.*;
  */
 @Repository("testDao")
 public class TestDAOImpl implements TestDAO {
-	
+
+	@SSMIndividual(namespace = "Alpha", keyIndex = 0, expiration = 30)
 	public String getDateString(final String key) {
 		final Date now = new Date();
+		try {
+			Thread.sleep(1000);
+		} catch (InterruptedException ex) {}
 		return now.toString();
 	}
 

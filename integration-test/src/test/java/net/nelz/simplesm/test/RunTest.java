@@ -26,7 +26,6 @@ public class RunTest {
 		final TestSvc test = (TestSvc) context.getBean("testSvc");
 
 		final String s1 = test.getDateString("bubba");
-		for (int ix = 0; ix < 100; ix++) {}
 		for (int ix = 0; ix < 10; ix++) {
 			assertEquals(String.format("Cache didn't seem to bring back [%s] as expectd.", s1), s1, test.getDateString("bubba"));
 		}
