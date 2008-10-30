@@ -1,6 +1,10 @@
-package net.nelz.simplesm.annotations;
+package net.nelz.simplesm.config;
 
-import java.lang.annotation.*;
+import net.spy.memcached.*;
+
+import java.io.*;
+import java.net.*;
+import java.util.*;
 
 /**
 Copyright (c) 2008  Nelson Carpentier
@@ -23,11 +27,22 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
  */
-@Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.METHOD)
-public @interface SSMIndividual {
-	public static final String DEFAULT_STRING = "[unassigned]";
- 	String namespace() default DEFAULT_STRING;
-	int keyIndex() default 0;
-	int expiration() default 0;
+public class MemcachedClientFactory {
+	private MemcachedConnectionBean bean;
+
+	public void setBean(MemcachedConnectionBean bean) {
+		this.bean = bean;
+	}
+
+	public MemcachedClientIF createMemcachedClient() throws IOException
+	{
+		if (this.bean == null) {
+			throw new RuntimeException("The MemcachedConnectionBean must be defined!");
+		}
+		final List<InetSocketAddress> addrs = AddrUtil.getAddresses(this.bean.getNodeList());
+		final ConnectionFactory connectionFactory = this.bean.isConsistentHashing() ?
+				new KetamaConnectionFactory() : new DefaultConnectionFactory();
+		final MemcachedClientIF client = new MemcachedClient(connectionFactory, addrs);
+		return client;
+	}
 }

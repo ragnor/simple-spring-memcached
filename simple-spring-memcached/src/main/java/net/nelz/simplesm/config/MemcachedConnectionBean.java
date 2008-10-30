@@ -1,6 +1,4 @@
-package net.nelz.simplesm.annotations;
-
-import java.lang.annotation.*;
+package net.nelz.simplesm.config;
 
 /**
 Copyright (c) 2008  Nelson Carpentier
@@ -23,11 +21,25 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
  */
-@Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.METHOD)
-public @interface SSMIndividual {
-	public static final String DEFAULT_STRING = "[unassigned]";
- 	String namespace() default DEFAULT_STRING;
-	int keyIndex() default 0;
-	int expiration() default 0;
+public class MemcachedConnectionBean {
+	private String nodeList;
+	private boolean consistentHashing;
+
+	public String getNodeList() {
+		return nodeList;
+	}
+
+	public MemcachedConnectionBean setNodeList(final String nodeList) {
+		this.nodeList = nodeList;
+		return this;
+	}
+
+	public boolean isConsistentHashing() {
+		return consistentHashing;
+	}
+
+	public MemcachedConnectionBean setConsistentHashing(final boolean consistentHashing) {
+		this.consistentHashing = consistentHashing;
+		return this;
+	}
 }

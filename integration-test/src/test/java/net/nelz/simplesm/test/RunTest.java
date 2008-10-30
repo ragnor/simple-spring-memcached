@@ -18,7 +18,7 @@ public class RunTest {
 
 	@BeforeClass
 	public void beforeClass() {
-		context = new ClassPathXmlApplicationContext("test-context.xml");
+		context = new ClassPathXmlApplicationContext("/test-context.xml");
 	}
 
 	@Test

@@ -1,6 +1,10 @@
-package net.nelz.simplesm.annotations;
+package net.nelz.simplesm.config;
 
-import java.lang.annotation.*;
+import net.spy.memcached.*;
+import static org.testng.AssertJUnit.*;
+import org.testng.annotations.*;
+
+import java.io.*;
 
 /**
 Copyright (c) 2008  Nelson Carpentier
@@ -23,11 +27,32 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
  */
-@Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.METHOD)
-public @interface SSMIndividual {
-	public static final String DEFAULT_STRING = "[unassigned]";
- 	String namespace() default DEFAULT_STRING;
-	int keyIndex() default 0;
-	int expiration() default 0;
+public class MemcachedClientFactoryTest {
+
+	@Test
+	public void testCreateClientException() throws IOException {
+		final MemcachedClientFactory factory = new MemcachedClientFactory();
+		try {
+			factory.createMemcachedClient();
+			fail("Expected Exception.");
+		} catch (RuntimeException ex) {
+			assertTrue(true);
+		}
+	}
+
+	@Test
+	public void testCreateClient() throws IOException {
+		final MemcachedConnectionBean bean = new MemcachedConnectionBean()
+				.setConsistentHashing(false)
+				.setNodeList("127.0.0.1:11211");
+		final MemcachedClientFactory factory = new MemcachedClientFactory();
+		factory.setBean(bean);
+
+		MemcachedClientIF cache = factory.createMemcachedClient();
+		assertNotNull(cache);
+
+		bean.setConsistentHashing(true);
+		cache = factory.createMemcachedClient();
+		assertNotNull(cache);
+	}
 }

@@ -14,5 +14,9 @@
 
   <aop:aspectj-autoproxy />
 
-	
+	<bean id="memcachedClientFactory" class="net.nelz.simplesm.config.MemcachedClientFactory" >
+		<property name="bean" ref="memcachedConnectionBean" />
+	</bean>
+
+	<bean id="memcachedClient" factory-bean="memcachedClientFactory" factory-method="createMemcachedClient" />
 </beans>
