@@ -18,7 +18,7 @@
 		<property name="nodeList" value="127.0.0.1:11211" />
 	</bean>
 
-  <!--<aop:aspectj-autoproxy />-->
+  <aop:aspectj-autoproxy />
 
 	<bean id="testDao" class="net.nelz.simplesm.test.dao.TestDAOImpl" />
 

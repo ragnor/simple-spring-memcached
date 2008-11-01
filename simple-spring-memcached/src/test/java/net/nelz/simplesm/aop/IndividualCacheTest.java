@@ -30,11 +30,11 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
  */
 public class IndividualCacheTest {
-	private IndividualCache cut;
+	private ReadThroughSingleCache cut;
 
 	@BeforeClass
 	public void beforeClass() {
-		cut = new IndividualCache();
+		cut = new ReadThroughSingleCache();
 	}
 
 	@Test
@@ -101,10 +101,10 @@ public class IndividualCacheTest {
 	public void testAnnotationValidation() throws Exception {
 		final AnnotationValidator testClass = new AnnotationValidator();
 		Method method = null;
-		SSMIndividual annotation = null;
+		net.nelz.simplesm.annotations.ReadThroughSingleCache annotation = null;
 
 		method = testClass.getClass().getMethod("cacheMe1",null);
-		annotation = method.getAnnotation(SSMIndividual.class);
+		annotation = method.getAnnotation(net.nelz.simplesm.annotations.ReadThroughSingleCache.class);
 		try {
 			cut.validateAnnotation(annotation, method);
 			fail("Expected Exception.");
@@ -114,7 +114,7 @@ public class IndividualCacheTest {
 		}
 
 		method = testClass.getClass().getMethod("cacheMe2",null);
-		annotation = method.getAnnotation(SSMIndividual.class);
+		annotation = method.getAnnotation(net.nelz.simplesm.annotations.ReadThroughSingleCache.class);
 		try {
 			cut.validateAnnotation(annotation, method);
 			fail("Expected Exception.");
@@ -124,7 +124,7 @@ public class IndividualCacheTest {
 		}
 
 		method = testClass.getClass().getMethod("cacheMe3",null);
-		annotation = method.getAnnotation(SSMIndividual.class);
+		annotation = method.getAnnotation(net.nelz.simplesm.annotations.ReadThroughSingleCache.class);
 		try {
 			cut.validateAnnotation(annotation, method);
 			fail("Expected Exception.");
@@ -135,7 +135,7 @@ public class IndividualCacheTest {
 
 
 		method = testClass.getClass().getMethod("cacheMe4",null);
-		annotation = method.getAnnotation(SSMIndividual.class);
+		annotation = method.getAnnotation(net.nelz.simplesm.annotations.ReadThroughSingleCache.class);
 		try {
 			cut.validateAnnotation(annotation, method);
 			fail("Expected Exception.");
@@ -146,30 +146,30 @@ public class IndividualCacheTest {
 	}
 
 	private static class KeyObject01 {
-		@SSMCacheKeyMethod
+		@CacheKeyMethod
 		public void doIt(final String nonsense) { }
 	}
 
 	private static class KeyObject02 {
-		@SSMCacheKeyMethod
+		@CacheKeyMethod
 		public void doIt() { }
 	}
 
 	private static class KeyObject03 {
-		@SSMCacheKeyMethod
+		@CacheKeyMethod
 		public Long doIt() { return null; }
 	}
 
 	private static class KeyObject04 {
-		@SSMCacheKeyMethod
+		@CacheKeyMethod
 		public String doIt() { return null; }
-		@SSMCacheKeyMethod
+		@CacheKeyMethod
 		public String doItAgain() { return null; }
 	}
 
 	private static class KeyObject05 {
 		public static final String result = "shrimp";
-		@SSMCacheKeyMethod
+		@CacheKeyMethod
 		public String doIt() { return result; }
 	}
 	private static class KeyObject06 {
@@ -178,13 +178,13 @@ public class IndividualCacheTest {
 		public String toString() { return result; }
 	}
 	private static class AnnotationValidator {
-		@SSMIndividual(keyIndex = -1, namespace = "bubba")
+		@net.nelz.simplesm.annotations.ReadThroughSingleCache(keyIndex = -1, namespace = "bubba")
 		public String cacheMe1() { return null; }
-		@SSMIndividual(keyIndex = 0, namespace = "")
+		@net.nelz.simplesm.annotations.ReadThroughSingleCache(keyIndex = 0, namespace = "")
 		public String cacheMe2() { return null; }
-		@SSMIndividual(keyIndex = 0)
+		@net.nelz.simplesm.annotations.ReadThroughSingleCache(keyIndex = 0)
 		public String cacheMe3() { return null; }
-		@SSMIndividual(keyIndex = 0, namespace = "bubba", expiration = -1)
+		@net.nelz.simplesm.annotations.ReadThroughSingleCache(keyIndex = 0, namespace = "bubba", expiration = -1)
 		public String cacheMe4() { return null; }
 	}
 

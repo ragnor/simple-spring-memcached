@@ -19,4 +19,8 @@
 	</bean>
 
 	<bean id="memcachedClient" factory-bean="memcachedClientFactory" factory-method="createMemcachedClient" />
+
+	<bean id="individualCache" class="net.nelz.simplesm.aop.ReadThroughSingleCache">
+		<property name="cache" ref="memcachedClient" />
+	</bean>
 </beans>

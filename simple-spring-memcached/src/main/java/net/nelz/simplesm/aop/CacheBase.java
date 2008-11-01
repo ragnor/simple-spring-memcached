@@ -40,12 +40,16 @@ public class CacheBase {
 		this.cache = cache;
 	}
 
-	protected Method getMethodToCache(final JoinPoint jp) {
+	protected Method getMethodToCache(final JoinPoint jp) throws NoSuchMethodException {
 		final Signature sig = jp.getSignature();
 		if (!(sig instanceof MethodSignature)) {
 			throw new InvalidAnnotationException("This annotation is only valid on a method.");
 		}
-		return((MethodSignature)sig).getMethod();
+		final MethodSignature msig = (MethodSignature) sig;
+		final Object target = jp.getTarget();
+		final Method method = target.getClass().getMethod(msig.getName(), msig.getParameterTypes());
+
+		return method;
 	}
 
 	protected String buildCacheKey(final String objectId, final String namespace) {

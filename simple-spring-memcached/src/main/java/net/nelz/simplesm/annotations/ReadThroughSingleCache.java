@@ -25,7 +25,7 @@ THE SOFTWARE.
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)
-public @interface SSMIndividual {
+public @interface ReadThroughSingleCache {
 	public static final String DEFAULT_STRING = "[unassigned]";
  	String namespace() default DEFAULT_STRING;
 	int keyIndex() default 0;

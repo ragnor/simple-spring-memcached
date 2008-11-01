@@ -14,13 +14,13 @@ import java.util.*;
 @Repository("testDao")
 public class TestDAOImpl implements TestDAO {
 
-	@SSMIndividual(namespace = "Alpha", keyIndex = 0, expiration = 30)
+	@ReadThroughSingleCache(namespace = "Alpha", keyIndex = 0, expiration = 30)
 	public String getDateString(final String key) {
 		final Date now = new Date();
 		try {
-			Thread.sleep(1000);
+			Thread.sleep(1500);
 		} catch (InterruptedException ex) {}
-		return now.toString();
+		return now.toString() + ":" + now.getTime();
 	}
 
 }

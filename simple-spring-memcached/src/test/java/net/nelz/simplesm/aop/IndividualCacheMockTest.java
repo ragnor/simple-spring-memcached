@@ -34,14 +34,14 @@ THE SOFTWARE.
  */
 public class IndividualCacheMockTest {
 
-	private IndividualCache cut;
+	private ReadThroughSingleCache cut;
 	private ProceedingJoinPoint pjp;
 	private MemcachedClientIF cache;
 	private MethodSignature sig;
 
 	@BeforeClass
 	public void beforeClass() {
-		cut = new IndividualCache();
+		cut = new ReadThroughSingleCache();
 
 		pjp = createMock(ProceedingJoinPoint.class);
 		cache = createMock(MemcachedClientIF.class);
@@ -123,9 +123,11 @@ public class IndividualCacheMockTest {
 
 	@Test
 	public void testTopLevelCacheIndividualCacheHit() throws Throwable {
-		final Method methodToCache = AOPTargetClass2.class.getDeclaredMethod("cacheThis", AOPKeyClass.class);
+		final String methodName = "cacheThis";
 		expect(pjp.getSignature()).andReturn(sig);
-		expect(sig.getMethod()).andReturn(methodToCache);
+		expect(sig.getName()).andReturn(methodName);
+		expect(sig.getParameterTypes()).andReturn(new Class[] {AOPKeyClass.class});
+		expect(pjp.getTarget()).andReturn(new AOPTargetClass2());
 		expect(pjp.getArgs()).andReturn(new Object[] {new AOPKeyClass()});
 		expect(pjp.toShortString()).andReturn("SHORTSTRING").anyTimes();
 		final String cachedResult = "A VALUE FROM THE CACHE";
@@ -141,9 +143,11 @@ public class IndividualCacheMockTest {
 
 	@Test
 	public void testTopLevelCacheIndividualCacheHitNull() throws Throwable {
-		final Method methodToCache = AOPTargetClass2.class.getDeclaredMethod("cacheThis", AOPKeyClass.class);
+		final String methodName = "cacheThis";
 		expect(pjp.getSignature()).andReturn(sig);
-		expect(sig.getMethod()).andReturn(methodToCache);
+		expect(sig.getName()).andReturn(methodName);
+		expect(sig.getParameterTypes()).andReturn(new Class[] {AOPKeyClass.class});
+		expect(pjp.getTarget()).andReturn(new AOPTargetClass2());
 		expect(pjp.getArgs()).andReturn(new Object[] {new AOPKeyClass()});
 		expect(pjp.toShortString()).andReturn("SHORTSTRING").anyTimes();
 		expect(cache.get("BUBBA:" + AOPKeyClass.result)).andReturn(new PertinentNegativeNull());
@@ -173,9 +177,11 @@ public class IndividualCacheMockTest {
 
 	@Test
 	public void testTopLevelCacheIndividualCacheMissWithData() throws Throwable {
-		final Method methodToCache = AOPTargetClass2.class.getDeclaredMethod("cacheThis", AOPKeyClass.class);
+		final String methodName = "cacheThis";
 		expect(pjp.getSignature()).andReturn(sig);
-		expect(sig.getMethod()).andReturn(methodToCache);
+		expect(sig.getName()).andReturn(methodName);
+		expect(sig.getParameterTypes()).andReturn(new Class[] {AOPKeyClass.class});
+		expect(pjp.getTarget()).andReturn(new AOPTargetClass2());
 		expect(pjp.getArgs()).andReturn(new Object[] {new AOPKeyClass()});
 		expect(pjp.toShortString()).andReturn("SHORTSTRING").anyTimes();
 		final String cacheKey = "BUBBA:" + AOPKeyClass.result;
@@ -194,9 +200,11 @@ public class IndividualCacheMockTest {
 
 	@Test
 	public void testTopLevelCacheIndividualCacheMissWithNull() throws Throwable {
-		final Method methodToCache = AOPTargetClass2.class.getDeclaredMethod("cacheThis", AOPKeyClass.class);
+		final String methodName = "cacheThis";
 		expect(pjp.getSignature()).andReturn(sig);
-		expect(sig.getMethod()).andReturn(methodToCache);
+		expect(sig.getName()).andReturn(methodName);
+		expect(sig.getParameterTypes()).andReturn(new Class[] {AOPKeyClass.class});
+		expect(pjp.getTarget()).andReturn(new AOPTargetClass2());
 		expect(pjp.getArgs()).andReturn(new Object[] {new AOPKeyClass()});
 		expect(pjp.toShortString()).andReturn("SHORTSTRING").anyTimes();
 		final String cacheKey = "BUBBA:" + AOPKeyClass.result;
@@ -217,7 +225,7 @@ public class IndividualCacheMockTest {
 	}
 
 	private static class AOPTargetClass2 {
-		@SSMIndividual(namespace = "BUBBA", keyIndex = 0, expiration = 3600)
+		@net.nelz.simplesm.annotations.ReadThroughSingleCache(namespace = "BUBBA", keyIndex = 0, expiration = 3600)
 		public String cacheThis(final AOPKeyClass p1) {
 			throw new RuntimeException("Forced.");
 		}
@@ -225,7 +233,7 @@ public class IndividualCacheMockTest {
 
 	private static class AOPKeyClass {
 		public static final String result = "CACHE KEY";
-		@SSMCacheKeyMethod
+		@CacheKeyMethod
 		public String getKey() {
 			return result;
 		}
