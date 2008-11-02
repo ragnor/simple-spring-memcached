@@ -5,7 +5,6 @@ import net.nelz.simplesm.exceptions.*;
 import org.apache.commons.logging.*;
 import org.aspectj.lang.*;
 import org.aspectj.lang.annotation.*;
-import org.springframework.stereotype.*;
 
 import java.lang.reflect.*;
 import java.security.*;
@@ -32,30 +31,21 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
  */
 @Aspect
-@Component("individualCache")
-public class IndividualCache extends CacheBase {
-	private static final Log LOG = LogFactory.getLog(IndividualCache.class);
+public class ReadThroughSingleCacheAdvice extends CacheBase {
+	private static final Log LOG = LogFactory.getLog(ReadThroughSingleCacheAdvice.class);
 
-	@Pointcut("@annotation(net.nelz.simplesm.annotations.SSMIndividual)")
+	@Pointcut("@annotation(net.nelz.simplesm.annotations.ReadThroughSingleCache)")
 	public void getIndividual() {}
 
 	@Around("getIndividual()")
 	public Object cacheIndividual(final ProceedingJoinPoint pjp) throws Throwable {
-		/*
-		TODO: Cache disabling
-		if (cache_is_disabled) {
-			LOG.warn("Caching is disabled.");
-			return pjp.proceed();
-		}
-		*/
-
 		// This is injected caching.  If anything goes wrong in the caching, LOG the crap outta it,
 		// but do not let it surface up past the AOP injection itself.
 		final String cacheKey;
-		final SSMIndividual annotation;
+		final ReadThroughSingleCache annotation;
 		try {
 			final Method methodToCache = getMethodToCache(pjp);
-			annotation = methodToCache.getAnnotation(SSMIndividual.class);
+			annotation = methodToCache.getAnnotation(ReadThroughSingleCache.class);
 			validateAnnotation(annotation, methodToCache);
 			final String objectId = getObjectId(annotation.keyIndex(), pjp, methodToCache);
 			cacheKey = buildCacheKey(objectId, annotation.namespace());
@@ -102,24 +92,24 @@ public class IndividualCache extends CacheBase {
 		final Method[] methods = keyObject.getClass().getDeclaredMethods();
 		Method targetMethod = null;
 		for (final Method method : methods) {
-			if (method != null && method.getAnnotation(SSMCacheKeyMethod.class) != null) {
+			if (method != null && method.getAnnotation(CacheKeyMethod.class) != null) {
 				if (method.getParameterTypes().length > 0) {
 					throw new InvalidAnnotationException(String.format(
 							"Method [%s] must have 0 arguments to be annotated with [%s]",
 							method.toString(),
-							SSMCacheKeyMethod.class.getName()));
+							CacheKeyMethod.class.getName()));
 				}
 				if (!String.class.equals(method.getReturnType())) {
 					throw new InvalidAnnotationException(String.format(
 							"Method [%s] must return a String to be annotated with [%s]",
 							method.toString(),
-							SSMCacheKeyMethod.class.getName()));
+							CacheKeyMethod.class.getName()));
 				}
 				if (targetMethod != null) {
 					throw new InvalidAnnotationException(String.format(
 							"Class [%s] should have only one method annotated with [%s]. See [%s] and [%s]",
 							keyObject.getClass().getName(),
-							SSMCacheKeyMethod.class.getName(),
+							CacheKeyMethod.class.getName(),
 							targetMethod.getName(),
 							method.getName()));
 				}
@@ -154,27 +144,34 @@ public class IndividualCache extends CacheBase {
 		return keyObject;
 	}
 
-	protected void validateAnnotation(final SSMIndividual annotation, final Method method) {
+	protected void validateAnnotation(final ReadThroughSingleCache annotation,
+	                                  final Method method) {
+		if (annotation == null) {
+			throw new InvalidParameterException(String.format(
+					"No annotation of type [%s] found.",
+					ReadThroughSingleCache.class.getName()
+			));
+		}
 		if (annotation.keyIndex() < 0) {
 			throw new InvalidParameterException(String.format(
 					"KeyIndex for annotation [%s] must be 0 or greater on [%s]",
-					annotation.getClass().getName(),
+					ReadThroughSingleCache.class.getName(),
 					method.toString()
 			));
 		}
-		if (SSMIndividual.DEFAULT_STRING.equals(annotation.namespace())
+		if (AnnotationConstants.DEFAULT_STRING.equals(annotation.namespace())
 				|| annotation.namespace() == null
 				|| annotation.namespace().length() < 1) {
 			throw new InvalidParameterException(String.format(
 					"Namespace for annotation [%s] must be defined on [%s]",
-					annotation.getClass().getName(),
+					ReadThroughSingleCache.class.getName(),
 					method.toString()
 			));
 		}
 		if (annotation.expiration() < 0) {
 			throw new InvalidParameterException(String.format(
 					"Expiration for annotation [%s] must be 0 or greater on [%s]",
-					annotation.getClass().getName(),
+					ReadThroughSingleCache.class.getName(),
 					method.toString()
 			));
 		}

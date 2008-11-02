@@ -47,9 +47,7 @@ public class CacheBase {
 		}
 		final MethodSignature msig = (MethodSignature) sig;
 		final Object target = jp.getTarget();
-		final Method method = target.getClass().getMethod(msig.getName(), msig.getParameterTypes());
-
-		return method;
+		return target.getClass().getMethod(msig.getName(), msig.getParameterTypes());
 	}
 
 	protected String buildCacheKey(final String objectId, final String namespace) {
