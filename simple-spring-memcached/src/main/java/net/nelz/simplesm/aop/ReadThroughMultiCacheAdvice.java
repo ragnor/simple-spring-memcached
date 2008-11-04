@@ -2,6 +2,7 @@ package net.nelz.simplesm.aop;
 
 import net.nelz.simplesm.annotations.*;
 import net.nelz.simplesm.exceptions.*;
+import net.nelz.simplesm.reflect.*;
 import org.apache.commons.logging.*;
 import org.aspectj.lang.*;
 import org.aspectj.lang.annotation.*;
@@ -75,20 +76,30 @@ public class ReadThroughMultiCacheAdvice extends CacheBase {
 
 	protected List<String> generateCacheKeys(final int keyIndex,
 	                                         final JoinPoint jp,
-	                                         final Method methodToCache) throws Exception {
+	                                         final Method method) throws Exception {
+		verifyReturnTypeIsList(method);
+		final List<Object> idObjects = verifyKeyIndexIsList(keyIndex, jp, method);
+		final List<String> cacheKeys = convertIdObjectsToKeys(idObjects);
+
+		nooch
 
 		return null;
 	}
 
-	protected void verifyReturnType(final Method method) {
-		final Class returnType = method.getReturnType();
-		if (List.class.equals(returnType)) { return; }
-		final Type[] types = returnType.getGenericInterfaces();
-		if (types != null) {
-			for (final Type type : types) {
-				if (List.class.equals(type)) { return; }
+	protected List<String> convertIdObjectsToKeys(final List<Object> idObjects) {
+		final List<String> results = new ArrayList<String>(idObjects.size());
+		final Map<Class, TargetMethodSignature> map = new HashMap<Class, TargetMethodSignature>();
+		for (final Object obj : idObjects) {
+			if (obj == null) {
+				throw new InvalidParameterException("YOU HAVE A NULL KEY OBJECT",);
 			}
 		}
+
+		return results;
+	}
+
+	protected void verifyReturnTypeIsList(final Method method) {
+		if (verifyTypeIsList(method.getReturnType())) { return; }
 		throw new InvalidAnnotationException(String.format(
 				"The annotation [%s] is only valid on a method that returns a [%s]. " +
 				"[%s] does not fulfill this requirement.",
@@ -96,5 +107,38 @@ public class ReadThroughMultiCacheAdvice extends CacheBase {
 				List.class.getName(),
 				method.toString()
 		));
+	}
+
+	protected List<Object> verifyKeyIndexIsList(final int keyIndex,
+	                                         final JoinPoint jp,
+	                                         final Method method) throws Exception {
+		final Object keyObjects = getKeyObject(keyIndex, jp, method);
+		if (verifyTypeIsList(keyObjects.getClass())) { return (List<Object>) keyObjects;}
+		throw new InvalidAnnotationException(String.format(
+				"The parameter object found at keyIndex [%s] is not a [%s]. " +
+				"[%s] does not fulfill the requirements.",
+				ReadThroughMultiCache.class.getName(),
+				List.class.getName(),
+				method.toString()
+		));
+	}
+
+	protected boolean verifyTypeIsList(final Class clazz) {
+		if (List.class.equals(clazz)) { return true; }
+		final Type[] types = clazz.getGenericInterfaces();
+		if (types != null) {
+			for (final Type type : types) {
+				if (type != null) {
+					if (type instanceof ParameterizedType) {
+						final ParameterizedType ptype = (ParameterizedType) type;
+						if (List.class.equals(ptype.getRawType())) { return true; }
+					} else {
+						if (List.class.equals(type)) { return true; }
+					}
+				}
+			}
+		}
+
+		return false;
 	}
 }

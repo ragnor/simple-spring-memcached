@@ -76,20 +76,23 @@ public class ReadThroughMultiCacheTest {
 		Method method = null;
 
 		method = ReturnTypeCheck.class.getMethod("checkA", null);
-		cut.verifyReturnType(method);
+		cut.verifyReturnTypeIsList(method);
 
 		method = ReturnTypeCheck.class.getMethod("checkB", null);
-		cut.verifyReturnType(method);
+		cut.verifyReturnTypeIsList(method);
 
 		method = ReturnTypeCheck.class.getMethod("checkC", null);
-		cut.verifyReturnType(method);
+		cut.verifyReturnTypeIsList(method);
+
+		method = ReturnTypeCheck.class.getMethod("checkD", null);
+		cut.verifyReturnTypeIsList(method);
 
 		try {
-			method = ReturnTypeCheck.class.getMethod("checkA", null);
-			cut.verifyReturnType(method);
+			method = ReturnTypeCheck.class.getMethod("checkE", null);
+			cut.verifyReturnTypeIsList(method);
 			fail("Expected Exception.");
 		} catch (InvalidAnnotationException ex) {
-			assertTrue(ex.getMessage().indexOf("requirement") != -1);			
+			assertTrue(ex.getMessage().indexOf("requirement") != -1);
 		}
 	}
 
@@ -108,10 +111,12 @@ public class ReadThroughMultiCacheTest {
 		@ReadThroughMultiCache(keyIndex = 0, namespace = "bubba", expiration = 10)
 		public List checkA() {return null;}
 		@ReadThroughMultiCache(keyIndex = 0, namespace = "bubba", expiration = 10)
-		public ArrayList checkB() {return null;}
+		public List<String> checkB() {return null;}
 		@ReadThroughMultiCache(keyIndex = 0, namespace = "bubba", expiration = 10)
-		public List<String> checkC() {return null;}
+		public ArrayList checkC() {return null;}
 		@ReadThroughMultiCache(keyIndex = 0, namespace = "bubba", expiration = 10)
-		public String checkD() {return null;}
+		public ArrayList<String> checkD() {return null;}
+		@ReadThroughMultiCache(keyIndex = 0, namespace = "bubba", expiration = 10)
+		public String checkE() {return null;}
 	}
 }
