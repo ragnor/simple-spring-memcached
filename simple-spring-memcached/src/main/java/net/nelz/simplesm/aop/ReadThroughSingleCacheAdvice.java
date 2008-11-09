@@ -1,7 +1,6 @@
 package net.nelz.simplesm.aop;
 
 import net.nelz.simplesm.annotations.*;
-import net.nelz.simplesm.exceptions.*;
 import org.apache.commons.logging.*;
 import org.aspectj.lang.*;
 import org.aspectj.lang.annotation.*;
@@ -86,42 +85,6 @@ public class ReadThroughSingleCacheAdvice extends CacheBase {
 			throw new RuntimeException("Got an empty key value from " + keyMethod.getName());
 		}
 		return objectId;
-	}
-
-	protected Method getKeyMethod(final Object keyObject) throws NoSuchMethodException {
-		final Method[] methods = keyObject.getClass().getDeclaredMethods();
-		Method targetMethod = null;
-		for (final Method method : methods) {
-			if (method != null && method.getAnnotation(CacheKeyMethod.class) != null) {
-				if (method.getParameterTypes().length > 0) {
-					throw new InvalidAnnotationException(String.format(
-							"Method [%s] must have 0 arguments to be annotated with [%s]",
-							method.toString(),
-							CacheKeyMethod.class.getName()));
-				}
-				if (!String.class.equals(method.getReturnType())) {
-					throw new InvalidAnnotationException(String.format(
-							"Method [%s] must return a String to be annotated with [%s]",
-							method.toString(),
-							CacheKeyMethod.class.getName()));
-				}
-				if (targetMethod != null) {
-					throw new InvalidAnnotationException(String.format(
-							"Class [%s] should have only one method annotated with [%s]. See [%s] and [%s]",
-							keyObject.getClass().getName(),
-							CacheKeyMethod.class.getName(),
-							targetMethod.getName(),
-							method.getName()));
-				}
-				targetMethod = method;
-			}
-		}
-
-		if (targetMethod == null) {
-			targetMethod = keyObject.getClass().getMethod("toString", null);
-		}
-
-		return targetMethod;
 	}
 
 	protected void validateAnnotation(final ReadThroughSingleCache annotation,

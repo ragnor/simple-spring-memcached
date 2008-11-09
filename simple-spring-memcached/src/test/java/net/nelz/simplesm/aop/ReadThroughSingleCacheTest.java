@@ -1,7 +1,6 @@
 package net.nelz.simplesm.aop;
 
 import net.nelz.simplesm.annotations.*;
-import net.nelz.simplesm.exceptions.*;
 import static org.testng.AssertJUnit.*;
 import org.testng.annotations.*;
 
@@ -38,63 +37,25 @@ public class ReadThroughSingleCacheTest {
 	}
 
 	@Test
-	public void testKeyMethodArgs() throws Exception {
-		try {
-			cut.getKeyMethod(new KeyObject01());
-			fail("Expected exception.");
-		} catch (InvalidAnnotationException ex) {
-			assertTrue(ex.getMessage().indexOf("0 arguments") != -1);
-			System.out.println(ex.getMessage());
-		}
-
-		try {
-			cut.getKeyMethod(new KeyObject02());
-			fail("Expected exception.");
-		} catch (InvalidAnnotationException ex) {
-			assertTrue(ex.getMessage().indexOf("String") != -1);
-			System.out.println(ex.getMessage());
-		}
-
-		try {
-			cut.getKeyMethod(new KeyObject03());
-			fail("Expected exception.");
-		} catch (InvalidAnnotationException ex) {
-			assertTrue(ex.getMessage().indexOf("String") != -1);
-			System.out.println(ex.getMessage());
-		}
-
-		try {
-			cut.getKeyMethod(new KeyObject04());
-			fail("Expected exception.");
-		} catch (InvalidAnnotationException ex) {
-			assertTrue(ex.getMessage().indexOf("only one method") != -1);
-			System.out.println(ex.getMessage());
-		}
-
-		assertEquals("doIt", cut.getKeyMethod(new KeyObject05()).getName());
-		assertEquals("toString", cut.getKeyMethod(new KeyObject06(null)).getName());
-	}
-
-	@Test
 	public void testGenerateCacheKey() throws Exception {
-		final Method method = KeyObject06.class.getMethod("toString", null);
+		final Method method = KeyObject.class.getMethod("toString", null);
 
 		try {
-			cut.generateObjectId(method, new KeyObject06(null));
+			cut.generateObjectId(method, new KeyObject(null));
 			fail("Expected Exception.");
 		} catch (RuntimeException ex) {
 			assertTrue(ex.getMessage().indexOf("empty key value") != -1);
 		}
 
 		try {
-			cut.generateObjectId(method, new KeyObject06(""));
+			cut.generateObjectId(method, new KeyObject(""));
 			fail("Expected Exception.");
 		} catch (RuntimeException ex) {
 			assertTrue(ex.getMessage().indexOf("empty key value") != -1);
 		}
 
 		final String result = "momma";
-		assertEquals(result, cut.generateObjectId(method, new KeyObject06(result)));
+		assertEquals(result, cut.generateObjectId(method, new KeyObject(result)));
 	}
 
 	@Test
@@ -145,38 +106,12 @@ public class ReadThroughSingleCacheTest {
 		}
 	}
 
-	private static class KeyObject01 {
-		@CacheKeyMethod
-		public void doIt(final String nonsense) { }
-	}
-
-	private static class KeyObject02 {
-		@CacheKeyMethod
-		public void doIt() { }
-	}
-
-	private static class KeyObject03 {
-		@CacheKeyMethod
-		public Long doIt() { return null; }
-	}
-
-	private static class KeyObject04 {
-		@CacheKeyMethod
-		public String doIt() { return null; }
-		@CacheKeyMethod
-		public String doItAgain() { return null; }
-	}
-
-	private static class KeyObject05 {
-		public static final String result = "shrimp";
-		@CacheKeyMethod
-		public String doIt() { return result; }
-	}
-	private static class KeyObject06 {
+	private static class KeyObject {
 		private String result;
-		private KeyObject06(String result) { this.result = result;}
+		private KeyObject(String result) { this.result = result;}
 		public String toString() { return result; }
 	}
+
 	private static class AnnotationValidator {
 		@ReadThroughSingleCache(keyIndex = -1, namespace = "bubba")
 		public String cacheMe1() { return null; }

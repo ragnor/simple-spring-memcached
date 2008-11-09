@@ -2,7 +2,6 @@ package net.nelz.simplesm.aop;
 
 import net.nelz.simplesm.annotations.*;
 import net.nelz.simplesm.exceptions.*;
-import net.nelz.simplesm.reflect.*;
 import org.apache.commons.logging.*;
 import org.aspectj.lang.*;
 import org.aspectj.lang.annotation.*;
@@ -86,13 +85,22 @@ public class ReadThroughMultiCacheAdvice extends CacheBase {
 		return null;
 	}
 
-	protected List<String> convertIdObjectsToKeys(final List<Object> idObjects) {
+	protected List<String> convertIdObjectsToKeys(final List<Object> idObjects) throws NoSuchMethodException {
 		final List<String> results = new ArrayList<String>(idObjects.size());
-		final Map<Class, TargetMethodSignature> map = new HashMap<Class, TargetMethodSignature>();
+		final Map<Class, Method> map = new HashMap<Class, Method>();
 		for (final Object obj : idObjects) {
 			if (obj == null) {
-				throw new InvalidParameterException("YOU HAVE A NULL KEY OBJECT",);
+				throw new InvalidParameterException("One of the passed in key objects is null");
 			}
+
+			Method method = map.get(obj.getClass());
+			if (method == null) {
+				method = getKeyMethod(obj);
+				// This should never be null, because we will always default to using the toString() method.
+				map.put(obj.getClass(), method);
+			}
+			
+			nooch
 		}
 
 		return results;
