@@ -79,14 +79,6 @@ public class ReadThroughSingleCacheAdvice extends CacheBase {
 		return generateObjectId(keyMethod, keyObject);
 	}
 
-	protected String generateObjectId(final Method keyMethod, final Object keyObject) throws Exception {
-		final String objectId = (String) keyMethod.invoke(keyObject, null);
-		if (objectId == null || objectId.length() < 1) {
-			throw new RuntimeException("Got an empty key value from " + keyMethod.getName());
-		}
-		return objectId;
-	}
-
 	protected void validateAnnotation(final ReadThroughSingleCache annotation,
 	                                  final Method method) {
 		if (annotation == null) {

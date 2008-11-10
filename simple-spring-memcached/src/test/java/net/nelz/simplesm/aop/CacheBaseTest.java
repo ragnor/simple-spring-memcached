@@ -1,9 +1,13 @@
 package net.nelz.simplesm.aop;
 
-import org.testng.annotations.*;
-import static org.testng.AssertJUnit.*;
-import net.nelz.simplesm.exceptions.*;
 import net.nelz.simplesm.annotations.*;
+import net.nelz.simplesm.exceptions.*;
+import org.apache.commons.lang.*;
+import static org.testng.AssertJUnit.*;
+import org.testng.annotations.*;
+
+import java.security.*;
+import java.lang.reflect.*;
 
 /**
  * Copyright 2008 Widgetbox, Inc.
@@ -17,6 +21,8 @@ public class CacheBaseTest {
 	@BeforeClass
 	public void beforeClass() {
 		cut = new CacheBase();
+
+		cut.setMethodStore(new CacheKeyMethodStoreImpl());
 	}
 
 	@Test
@@ -55,6 +61,77 @@ public class CacheBaseTest {
 
 		assertEquals("doIt", cut.getKeyMethod(new KeyObject05()).getName());
 		assertEquals("toString", cut.getKeyMethod(new KeyObject06(null)).getName());
+	}
+
+	@Test
+	public void testBuildCacheKey() {
+		try {
+			cut.buildCacheKey(null, null);
+			fail("Expected exception.");
+		} catch (InvalidParameterException ex) {
+			assertTrue(ex.getMessage().indexOf("at least 1 character") != -1);
+			System.out.println(ex.getMessage());
+		}
+
+		try {
+			cut.buildCacheKey("", null);
+			fail("Expected exception.");
+		} catch (InvalidParameterException ex) {
+			assertTrue(ex.getMessage().indexOf("at least 1 character") != -1);
+			System.out.println(ex.getMessage());
+		}
+
+		try {
+			cut.buildCacheKey("a", null);
+			fail("Expected exception.");
+		} catch (InvalidParameterException ex) {
+			assertTrue(ex.getMessage().indexOf("at least 1 character") != -1);
+			System.out.println(ex.getMessage());
+		}
+
+		try {
+			cut.buildCacheKey("a", "");
+			fail("Expected exception.");
+		} catch (InvalidParameterException ex) {
+			assertTrue(ex.getMessage().indexOf("at least 1 character") != -1);
+			System.out.println(ex.getMessage());
+		}
+
+		final String objectId = RandomStringUtils.randomAlphanumeric(20);
+		final String namespace = RandomStringUtils.randomAlphanumeric(12);
+
+		final String result = cut.buildCacheKey(objectId, namespace);
+
+		assertTrue(result.indexOf(objectId) != -1);
+		assertTrue(result.indexOf(namespace) != -1);
+	}
+
+	@Test
+	public void testGenerateCacheKey() throws Exception {
+		final Method method = KeyObject.class.getMethod("toString", null);
+
+		try {
+			cut.generateObjectId(method, new KeyObject(null));
+			fail("Expected Exception.");
+		} catch (RuntimeException ex) {
+			assertTrue(ex.getMessage().indexOf("empty key value") != -1);
+		}
+
+		try {
+			cut.generateObjectId(method, new KeyObject(""));
+			fail("Expected Exception.");
+		} catch (RuntimeException ex) {
+			assertTrue(ex.getMessage().indexOf("empty key value") != -1);
+		}
+
+		final String result = "momma";
+		assertEquals(result, cut.generateObjectId(method, new KeyObject(result)));
+	}
+
+	private static class KeyObject {
+		private String result;
+		private KeyObject(String result) { this.result = result;}
+		public String toString() { return result; }
 	}
 
 	private static class KeyObject01 {

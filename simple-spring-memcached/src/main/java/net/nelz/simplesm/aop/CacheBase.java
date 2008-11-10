@@ -36,9 +36,14 @@ public class CacheBase {
 	static final String SEPARATOR = ":";
 
 	protected MemcachedClientIF cache;
+	CacheKeyMethodStore methodStore;
 
 	public void setCache(MemcachedClientIF cache) {
 		this.cache = cache;
+	}
+
+	public void setMethodStore(CacheKeyMethodStore methodStore) {
+		this.methodStore = methodStore;
 	}
 
 	protected Method getMethodToCache(final JoinPoint jp) throws NoSuchMethodException {
@@ -51,9 +56,20 @@ public class CacheBase {
 		return target.getClass().getMethod(msig.getName(), msig.getParameterTypes());
 	}
 
+	protected String generateObjectId(final Method keyMethod, final Object keyObject) throws Exception {
+		final String objectId = (String) keyMethod.invoke(keyObject, null);
+		if (objectId == null || objectId.length() < 1) {
+			throw new RuntimeException("Got an empty key value from " + keyMethod.getName());
+		}
+		return objectId;
+	}
+
 	protected String buildCacheKey(final String objectId, final String namespace) {
-		if (objectId == null || objectId.length() < 1 || namespace == null || namespace.length() < 1) {
-			throw new InvalidParameterException("All params must be 1 character or greater.");
+		if (objectId == null || objectId.length() < 1) {
+			throw new InvalidParameterException("Ids for objects in the cache must be at least 1 character long.");
+		}
+		if (namespace == null || namespace.length() < 1) {
+			throw new InvalidParameterException("Namespace values must be at least 1 character long.");
 		}
 		return namespace + SEPARATOR + objectId;
 	}
@@ -79,6 +95,8 @@ public class CacheBase {
 	}
 
 	protected Method getKeyMethod(final Object keyObject) throws NoSuchMethodException {
+		final Method storedMethod = methodStore.find(keyObject.getClass());
+		if (storedMethod != null) { return storedMethod; }
 		final Method[] methods = keyObject.getClass().getDeclaredMethods();
 		Method targetMethod = null;
 		for (final Method method : methods) {
@@ -110,6 +128,8 @@ public class CacheBase {
 		if (targetMethod == null) {
 			targetMethod = keyObject.getClass().getMethod("toString", null);
 		}
+
+		methodStore.add(keyObject.getClass(), targetMethod);
 
 		return targetMethod;
 	}

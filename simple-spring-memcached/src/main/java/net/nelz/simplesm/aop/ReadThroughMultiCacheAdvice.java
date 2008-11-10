@@ -30,8 +30,25 @@ public class ReadThroughMultiCacheAdvice extends CacheBase {
 			final Method methodToCache = getMethodToCache(pjp);
 			final ReadThroughMultiCache annotation = methodToCache.getAnnotation(ReadThroughMultiCache.class);
 			validateAnnotation(annotation, methodToCache);
-			final List<String> cacheKeys = generateCacheKeys(annotation.keyIndex(), pjp, methodToCache);
+			verifyReturnTypeIsList(methodToCache);
+			final List<Object> idObjects = verifyKeyIndexIsList(annotation.keyIndex(), pjp, methodToCache);
+			final Map<Object, String> obj2Key = convertIdObjectsToKeyMap(idObjects, annotation.namespace());
+			final List<String> keys = new ArrayList<String>(obj2Key.values());
+			final Map<String, Object> key2Result = cache.getBulk(keys);
+			if (key2Result == null) {
+				throw new RuntimeException("There was an error retrieving cache values.");
+			}
+			final List<String> missKeys = new ArrayList<String>();
+			for (final Map.Entry<String, Object> entry : key2Result.entrySet()) {
+				if (entry.getValue() == null) {
+					missKeys.add(entry.getKey());
+				}
+			}
 
+			nooch
+			/*
+			HAVING TROUBLE FIGURING OUT ALL THE NEEDED MAPS...  obj2key, key2obj, key2result, obj2result, etc.
+			 */
 
 		} catch (Throwable ex) {
 			LOG.warn("Caching on " + pjp.toShortString() + " aborted due to an error.", ex);
@@ -73,34 +90,20 @@ public class ReadThroughMultiCacheAdvice extends CacheBase {
 		}
 	}
 
-	protected List<String> generateCacheKeys(final int keyIndex,
-	                                         final JoinPoint jp,
-	                                         final Method method) throws Exception {
-		verifyReturnTypeIsList(method);
-		final List<Object> idObjects = verifyKeyIndexIsList(keyIndex, jp, method);
-		final List<String> cacheKeys = convertIdObjectsToKeys(idObjects);
-
-		nooch
-
-		return null;
-	}
-
-	protected List<String> convertIdObjectsToKeys(final List<Object> idObjects) throws NoSuchMethodException {
-		final List<String> results = new ArrayList<String>(idObjects.size());
-		final Map<Class, Method> map = new HashMap<Class, Method>();
+	protected Map<Object, String> convertIdObjectsToKeyMap(final List<Object> idObjects,
+	                                              final String namespace)
+			throws Exception {
+		final Map<Object, String> results = new HashMap<Object, String>(idObjects.size());
 		for (final Object obj : idObjects) {
 			if (obj == null) {
 				throw new InvalidParameterException("One of the passed in key objects is null");
 			}
 
-			Method method = map.get(obj.getClass());
-			if (method == null) {
-				method = getKeyMethod(obj);
-				// This should never be null, because we will always default to using the toString() method.
-				map.put(obj.getClass(), method);
+			if (results.get(obj) == null) {
+				final Method method = getKeyMethod(obj);
+				final String cacheKey = buildCacheKey(generateObjectId(method, obj), namespace);
+				results.put(obj, cacheKey);
 			}
-			
-			nooch
 		}
 
 		return results;

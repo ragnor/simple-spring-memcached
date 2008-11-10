@@ -37,28 +37,6 @@ public class ReadThroughSingleCacheTest {
 	}
 
 	@Test
-	public void testGenerateCacheKey() throws Exception {
-		final Method method = KeyObject.class.getMethod("toString", null);
-
-		try {
-			cut.generateObjectId(method, new KeyObject(null));
-			fail("Expected Exception.");
-		} catch (RuntimeException ex) {
-			assertTrue(ex.getMessage().indexOf("empty key value") != -1);
-		}
-
-		try {
-			cut.generateObjectId(method, new KeyObject(""));
-			fail("Expected Exception.");
-		} catch (RuntimeException ex) {
-			assertTrue(ex.getMessage().indexOf("empty key value") != -1);
-		}
-
-		final String result = "momma";
-		assertEquals(result, cut.generateObjectId(method, new KeyObject(result)));
-	}
-
-	@Test
 	public void testAnnotationValidation() throws Exception {
 		final AnnotationValidator testClass = new AnnotationValidator();
 		Method method = null;
@@ -104,12 +82,6 @@ public class ReadThroughSingleCacheTest {
 			System.out.println(ex.getMessage());
 			assertTrue(ex.getMessage().indexOf("Expiration") != -1);
 		}
-	}
-
-	private static class KeyObject {
-		private String result;
-		private KeyObject(String result) { this.result = result;}
-		public String toString() { return result; }
 	}
 
 	private static class AnnotationValidator {
