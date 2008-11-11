@@ -1,5 +1,7 @@
 package net.nelz.simplesm.aop;
 
+import java.io.*;
+
 /**
 Copyright (c) 2008  Nelson Carpentier
 
@@ -21,7 +23,7 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
  */
-public class PertinentNegativeNull {
+public class PertinentNegativeNull implements Externalizable {
 	public int hashCode() {
 		return 1;
 	}
@@ -30,4 +32,8 @@ public class PertinentNegativeNull {
 		if (obj == null) { return false;}
 		return (obj instanceof PertinentNegativeNull);
 	}
+
+	public void writeExternal(ObjectOutput out) throws IOException { }
+
+	public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException { }
 }

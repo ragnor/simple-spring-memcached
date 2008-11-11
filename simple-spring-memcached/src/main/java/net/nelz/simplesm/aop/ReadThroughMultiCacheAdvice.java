@@ -22,6 +22,7 @@ public class ReadThroughMultiCacheAdvice extends CacheBase {
 	@Pointcut("@annotation(net.nelz.simplesm.annotations.ReadThroughMultiCache)")
 	public void getIndividual() {}
 
+	// TODO: This code is uuuuUUUuuugly! It needs a nice round of refactoring.
 	@Around("getIndividual()")
 	public Object cacheIndividual(final ProceedingJoinPoint pjp) throws Throwable {
 		// This is injected caching.  If anything goes wrong in the caching, LOG the crap outta it,
@@ -32,8 +33,8 @@ public class ReadThroughMultiCacheAdvice extends CacheBase {
 			validateAnnotation(annotation, methodToCache);
 			verifyReturnTypeIsList(methodToCache);
 			final List<Object> idObjects = verifyKeyIndexIsList(annotation.keyIndex(), pjp, methodToCache);
-			final Map<Object, String> obj2Key = convertIdObjectsToKeyMap(idObjects, annotation.namespace());
-			final List<String> keys = new ArrayList<String>(obj2Key.values());
+			final MapHolder holder = convertIdObjectsToKeyMap(idObjects, annotation.namespace());
+			final List<String> keys = new ArrayList<String>(holder.getKey2Obj().keySet());
 			final Map<String, Object> key2Result = cache.getBulk(keys);
 			if (key2Result == null) {
 				throw new RuntimeException("There was an error retrieving cache values.");
@@ -45,16 +46,64 @@ public class ReadThroughMultiCacheAdvice extends CacheBase {
 				}
 			}
 
-			nooch
-			/*
-			HAVING TROUBLE FIGURING OUT ALL THE NEEDED MAPS...  obj2key, key2obj, key2result, obj2result, etc.
-			 */
+			// We've gotten all positive cache results back, so build up a results list and return it.
+			if (missKeys.size() < 1) {
+				final List<Object> results = new ArrayList<Object>();
+				for (int ix = 0; ix < idObjects.size(); ix++) {
+					final Object obj = idObjects.get(ix);
+					final String cacheKey = holder.obj2Key.get(obj);
+					if (cacheKey == null) {
+						throw new RuntimeException("Problem assembling result set.");
+					}
+					final Object result = key2Result.get(obj);
+					results.set(ix, result instanceof PertinentNegativeNull ? null : result);
+				}
+				return results;
+			}
 
+			final List<Object> idObjectSubset = new ArrayList<Object>(missKeys.size());
+			for (final String missKey : missKeys) {
+				final Object obj = holder.getKey2Obj().get(missKey);
+				idObjectSubset.add(obj);
+			}
+
+			final Object [] args = pjp.getArgs();
+			args[annotation.keyIndex()] = idObjectSubset;
+
+			// TODO: Refactor this to be outside the try/catch block to allow any data problems to bubble to user
+			final List results = (List) pjp.proceed(args);
+
+			if (results.size() != missKeys.size()) {
+				throw new RuntimeException("Problem retrieving data from pass-through");
+			}
+
+			final Map<String, Object> miss2Result = new HashMap<String, Object>();
+			for (int ix = 0; ix < results.size(); ix++) {
+				final String cacheKey = missKeys.get(ix);
+				final Object cacheResult = results.get(ix);
+				cache.set(cacheKey,
+						annotation.expiration(),
+						cacheResult == null ? new PertinentNegativeNull() : cacheResult);
+				miss2Result.put(cacheKey, cacheResult);
+			}
+
+			// Now that we've gotten all the values	assemble them for return to the caller.
+			final List<Object> resultObjects = new ArrayList<Object>();
+			for (int ix = 0; ix <= idObjects.size(); ix++) {
+				final Object idObject = idObjects.get(ix);
+				final String cacheKey = holder.getObj2Key().get(idObject);
+				Object resultObject = key2Result.get(cacheKey);
+				if (resultObject == null) {
+					resultObject = miss2Result.get(cacheKey);
+				}
+				resultObjects.set(ix, resultObject instanceof PertinentNegativeNull ? null : resultObject);
+			}
+
+			return resultObjects;
 		} catch (Throwable ex) {
 			LOG.warn("Caching on " + pjp.toShortString() + " aborted due to an error.", ex);
 			return pjp.proceed();
 		}
-		return null;
 	}
 
 	protected void validateAnnotation(final ReadThroughMultiCache annotation,
@@ -90,23 +139,26 @@ public class ReadThroughMultiCacheAdvice extends CacheBase {
 		}
 	}
 
-	protected Map<Object, String> convertIdObjectsToKeyMap(final List<Object> idObjects,
+	protected MapHolder convertIdObjectsToKeyMap(final List<Object> idObjects,
 	                                              final String namespace)
 			throws Exception {
-		final Map<Object, String> results = new HashMap<Object, String>(idObjects.size());
+		final MapHolder holder = new MapHolder();
 		for (final Object obj : idObjects) {
 			if (obj == null) {
 				throw new InvalidParameterException("One of the passed in key objects is null");
 			}
 
-			if (results.get(obj) == null) {
-				final Method method = getKeyMethod(obj);
-				final String cacheKey = buildCacheKey(generateObjectId(method, obj), namespace);
-				results.put(obj, cacheKey);
+			final Method method = getKeyMethod(obj);
+			final String cacheKey = buildCacheKey(generateObjectId(method, obj), namespace);
+			if (holder.getObj2Key().get(obj) == null) {
+				holder.getObj2Key().put(obj, cacheKey);
+			}
+			if (holder.getKey2Obj().get(cacheKey) == null) {
+				holder.getKey2Obj().put(cacheKey, obj);
 			}
 		}
 
-		return results;
+		return holder;
 	}
 
 	protected void verifyReturnTypeIsList(final Method method) {
@@ -151,5 +203,18 @@ public class ReadThroughMultiCacheAdvice extends CacheBase {
 		}
 
 		return false;
+	}
+
+	private static class MapHolder {
+		final Map<String, Object> key2Obj = new HashMap<String, Object>();
+		final Map<Object, String> obj2Key = new HashMap<Object, String>();
+
+		public Map<String, Object> getKey2Obj() {
+			return key2Obj;
+		}
+
+		public Map<Object, String> getObj2Key() {
+			return obj2Key;
+		}
 	}
 }
