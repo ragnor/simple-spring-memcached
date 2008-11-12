@@ -286,7 +286,8 @@ public class ReadThroughMultiCacheAdvice extends CacheBase {
 			final List<Object> results = new ArrayList<Object>();
 			for (int ix = 0; ix < keyObjects.size(); ix++) {
 				final Object keyObject = keyObjects.get(ix);
-				final Object keyResult = key2Result.get(keyObject);
+				final String cacheKey = obj2Key.get(keyObject);
+				final Object keyResult = key2Result.get(cacheKey);
 				if (keyResult == null) {
 					throw new RuntimeException(String.format(
 							"Unable to fulfill data for the key item [%s] with key value of [%s].",
