@@ -31,13 +31,14 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
  */
+@Aspect
 public class ReadThroughMultiCacheAdvice extends CacheBase {
 	private static final Log LOG = LogFactory.getLog(ReadThroughMultiCacheAdvice.class);
 
 	@Pointcut("@annotation(net.nelz.simplesm.annotations.ReadThroughMultiCache)")
-	public void getIndividual() {}
+	public void getMulti() {}
 
-	@Around("getIndividual()")
+	@Around("getMulti()")
 	public Object cacheIndividual(final ProceedingJoinPoint pjp) throws Throwable {
 		// This is injected caching.  If anything goes wrong in the caching, LOG the crap outta it,
 		// but do not let it surface up past the AOP injection itself.

@@ -1,7 +1,10 @@
-package net.nelz.simplesm.test.svc;
+package net.nelz.simplesm.test;
 
-import net.nelz.simplesm.test.dao.*;
-import org.springframework.stereotype.*;
+import net.nelz.simplesm.test.svc.*;
+import org.springframework.context.*;
+import org.springframework.context.support.*;
+import static org.testng.AssertJUnit.*;
+import org.testng.annotations.*;
 
 import java.util.*;
 
@@ -26,20 +29,23 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
  */
-@Service("testSvc")
-public class TestSvcImpl implements TestSvc {
+public class ReadThroughSingleCacheTest {
 
-	private TestDAO dao;
+	private ApplicationContext context;
 
-	public void setDao(TestDAO dao) {
-		this.dao = dao;
+	@BeforeClass
+	public void beforeClass() {
+		context = new ClassPathXmlApplicationContext("/test-context.xml");
 	}
 
-	public String getDateString(final String key) {
-		return this.dao.getDateString(key);
-	}
-
-	public List<String> getTimestampValues(final List<Long> keys) {
-		return this.dao.getTimestampValues(keys);
+	@Test
+	public void test() {
+		final TestSvc test = (TestSvc) context.getBean("testSvc");
+		final String currentKey = "TestKey-" + new Date().getTime();
+		System.out.println("Key -> " + currentKey);
+		final String s1 = test.getDateString(currentKey);
+		for (int ix = 0; ix < 10; ix++) {
+			assertEquals(String.format("Cache didn't seem to bring back [%s] as expectd.", s1), s1, test.getDateString(currentKey));
+		}
 	}
 }
