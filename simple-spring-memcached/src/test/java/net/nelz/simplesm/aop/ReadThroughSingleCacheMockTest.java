@@ -48,6 +48,7 @@ public class ReadThroughSingleCacheMockTest {
 		sig = createMock(MethodSignature.class);
 
 		cut.setCache(cache);
+		cut.setMethodStore(new CacheKeyMethodStoreImpl());
 	}
 
 	@BeforeMethod

@@ -20,11 +20,15 @@
 
 	<bean id="memcachedClient" factory-bean="memcachedClientFactory" factory-method="createMemcachedClient" />
 
+	<bean id="methodStore" class="net.nelz.simplesm.aop.CacheKeyMethodStoreImpl" />
+
 	<bean id="readThroughSingleCache" class="net.nelz.simplesm.aop.ReadThroughSingleCacheAdvice">
 		<property name="cache" ref="memcachedClient" />
+		<property name="methodStore" ref="methodStore" />
 	</bean>
 	<bean id="readThroughMultiCache" class="net.nelz.simplesm.aop.ReadThroughMultiCacheAdvice">
 		<property name="cache" ref="memcachedClient" />
+		<property name="methodStore" ref="methodStore" />
 	</bean>
 
 </beans>
