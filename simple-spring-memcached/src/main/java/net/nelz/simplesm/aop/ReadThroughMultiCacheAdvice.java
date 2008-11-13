@@ -275,9 +275,9 @@ public class ReadThroughMultiCacheAdvice extends CacheBase {
 			this.key2Result.putAll(key2Result);
 
 			final Set<Object> missObjectSet = new HashSet<Object>();
-			for (final Map.Entry<String, Object> entry : this.key2Result.entrySet()) {
-				if (entry.getValue() == null) {
-					missObjectSet.add(key2Obj.get(entry.getKey()));
+			for (final String key : this.key2Obj.keySet()) {
+				if (key2Result.get(key) == null) {
+					missObjectSet.add(key2Obj.get(key));
 				}
 			}
 			this.missObjects.addAll(missObjectSet);
@@ -295,7 +295,7 @@ public class ReadThroughMultiCacheAdvice extends CacheBase {
 							keyObject.toString(),
 							obj2Key.get(keyObject)));
 				}
-				results.set(ix, keyResult instanceof PertinentNegativeNull ? null : keyResult);
+				results.add(keyResult instanceof PertinentNegativeNull ? null : keyResult);
 			}
 
 			return results;

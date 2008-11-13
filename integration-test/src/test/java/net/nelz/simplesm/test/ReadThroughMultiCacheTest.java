@@ -1,9 +1,10 @@
 package net.nelz.simplesm.test;
 
-import static org.testng.AssertJUnit.*;
 import net.nelz.simplesm.test.svc.*;
+import net.spy.memcached.*;
 import org.springframework.context.*;
 import org.springframework.context.support.*;
+import static org.testng.AssertJUnit.*;
 import org.testng.annotations.*;
 
 import java.util.*;
@@ -39,11 +40,13 @@ public class ReadThroughMultiCacheTest {
 
 	@Test
 	public void test() {
+		final Long rawNow = new Date().getTime();
+		final Long now = (rawNow / 1000) * 10000;
 		final List<Long> subset = new ArrayList<Long>();
 		final List<Long> superset = new ArrayList<Long>();
 		final List<Long> jumbleset = new ArrayList<Long>();
 
-		for (Long ix = 1L; ix < 35; ix++) {
+		for (Long ix = 1 + now; ix < 35 + now; ix++) {
 			if (ix % 3 == 0) {
 				subset.add(ix);
 			}
@@ -115,4 +118,25 @@ public class ReadThroughMultiCacheTest {
 
 	}
 
+	@Test
+	public void testMemcached() {
+		final MemcachedClientIF cache = (MemcachedClientIF) context.getBean("memcachedClient");
+
+		final List<String> keys = new ArrayList<String>();
+		final Map<String, String> answerMap = new HashMap<String, String>();
+		final Long now = new Date().getTime();
+		final String alphabet = "abcdefghijklmnopqrstuvwxyz";
+		for (int ix = 0; ix < 5; ix++) {
+			final String key = alphabet.charAt(ix) + now.toString();
+			final String value = alphabet.toUpperCase().charAt(ix) + "00000";
+			cache.set(key, 30, value);
+			keys.add(key);
+			answerMap.put(key, value);
+		}
+
+		final Map<String, Object> memcachedSez = cache.getBulk(keys);
+
+		assertTrue(memcachedSez.equals(answerMap));
+
+	}
 }

@@ -38,7 +38,7 @@ public class TestDAOImpl implements TestDAO {
 		return now.toString() + ":" + now.getTime();
 	}
 
-	@ReadThroughMultiCache(namespace = "Bravo", keyIndex = 0, expiration = 30)
+	@ReadThroughMultiCache(namespace = "Bravo", keyIndex = 0, expiration = 300)
 	public List<String> getTimestampValues(final List<Long> keys) {
 		final List<String> results = new ArrayList<String>();
 		try {
