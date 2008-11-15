@@ -2,6 +2,8 @@ package net.nelz.simplesm.aop;
 
 import net.nelz.simplesm.annotations.*;
 import net.nelz.simplesm.exceptions.*;
+import org.apache.commons.lang.*;
+import org.apache.commons.lang.math.*;
 import static org.testng.AssertJUnit.*;
 import org.testng.annotations.*;
 
@@ -32,10 +34,17 @@ THE SOFTWARE.
  */
 public class ReadThroughMultiCacheTest {
 	private ReadThroughMultiCacheAdvice cut;
+	private ReadThroughMultiCacheAdvice.MultiCacheCoordinator coord;
+
 
 	@BeforeClass
 	public void beforeClass() {
 		cut = new ReadThroughMultiCacheAdvice();
+	}
+
+	@BeforeMethod
+	public void beforeMethod() {
+		coord = new ReadThroughMultiCacheAdvice.MultiCacheCoordinator();
 	}
 
 	@Test
@@ -109,6 +118,94 @@ public class ReadThroughMultiCacheTest {
 		} catch (InvalidAnnotationException ex) {
 			assertTrue(ex.getMessage().indexOf("requirement") != -1);
 		}
+	}
+
+	@Test
+	public void testConvertIdObject() throws Exception {
+		final String namespace = RandomStringUtils.randomAlphanumeric(6);
+		final Map<String, Object> expectedString2Object = new HashMap<String, Object>();
+		final Map<Object, String> expectedObject2String = new HashMap<Object, String>();
+		final List<Object> idObjects = new ArrayList<Object>();
+		final int length = 10;
+		for (int ix = 0; ix < length; ix++) {
+			final String object = RandomStringUtils.randomAlphanumeric(2 + ix);
+			final String key = cut.buildCacheKey(object, namespace);
+			idObjects.add(object);
+			expectedObject2String.put(object, key);
+			expectedString2Object.put(key, object);
+		}
+
+		cut.setMethodStore(new CacheKeyMethodStoreImpl());
+		final List<Object> exceptionObjects = new ArrayList<Object>(idObjects);
+		exceptionObjects.add(null);
+		try {
+			cut.convertIdObjectsToKeyMap(exceptionObjects, namespace);
+			fail("Expected Exception");
+		} catch (InvalidParameterException ex) { }
+
+		for (int ix = 0; ix < length; ix++) {
+			if (ix % 2 == 0) {
+				idObjects.add(idObjects.get(ix));
+			}
+		}
+		assertTrue(idObjects.size() > length);
+
+		final ReadThroughMultiCacheAdvice.MapHolder holder = cut.convertIdObjectsToKeyMap(idObjects, namespace);
+
+		assertEquals(length, holder.getKey2Obj().size());
+		assertEquals(length, holder.getObj2Key().size());
+
+		assertEquals(expectedObject2String, holder.getObj2Key());
+		assertEquals(expectedString2Object, holder.getKey2Obj());
+
+		coord.setHolder(holder);
+
+		assertEquals(expectedObject2String, coord.getObj2Key());
+		assertEquals(expectedString2Object, coord.getKey2Obj());
+
+	}
+
+	@Test
+	public void testInitialKey2Result() {
+		final String namespace = RandomStringUtils.randomAlphanumeric(6);
+		final Map<String, Object> expectedString2Object = new HashMap<String, Object>();
+		final Map<String, Object> key2Result = new HashMap<String, Object>();
+		final Set<Object> missObjects = new HashSet<Object>();
+		final int length = 15;
+		for (int ix = 0; ix < length; ix++) {
+			final String object = RandomStringUtils.randomAlphanumeric(2 + ix);
+			final String key = cut.buildCacheKey(object, namespace);
+			expectedString2Object.put(key, object);
+
+			// There are 3 possible outcomes when fetching by key from memcached:
+			// 0) You hit, and the key & result are in the map
+			// 1) You hit, but the result is null, which counts as a miss.
+			// 2) You miss, and the key doesn't even get into the result map.
+			final int option = RandomUtils.nextInt(3);
+			if (option == 0) {
+				key2Result.put(key, key + RandomStringUtils.randomNumeric(5));
+			}
+			if (option == 1) {
+				key2Result.put(key, null);
+				missObjects.add(object);
+			}
+			if (option == 2) {
+				missObjects.add(object);
+			}
+		}
+
+		try {
+			coord.setInitialKey2Result(null);
+			fail("Expected Exception.");
+		} catch (RuntimeException ex) {}
+
+		coord.getKey2Obj().putAll(expectedString2Object);
+
+		coord.setInitialKey2Result(key2Result);
+
+		assertTrue(coord.getMissObjects().containsAll(missObjects));
+		assertTrue(missObjects.containsAll(coord.getMissObjects()));
+
 	}
 
 	private static class AnnotationValidator {

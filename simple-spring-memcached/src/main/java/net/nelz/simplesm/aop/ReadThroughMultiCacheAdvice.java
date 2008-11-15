@@ -276,7 +276,7 @@ public class ReadThroughMultiCacheAdvice extends CacheBase {
 
 			final Set<Object> missObjectSet = new HashSet<Object>();
 			for (final String key : this.key2Obj.keySet()) {
-				if (key2Result.get(key) == null) {
+				if (this.key2Result.get(key) == null) {
 					missObjectSet.add(key2Obj.get(key));
 				}
 			}
