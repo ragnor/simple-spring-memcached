@@ -53,6 +53,14 @@ public class ReadThroughMultiCacheTest {
 		Method method = null;
 		ReadThroughMultiCache annotation = null;
 
+		try {
+			cut.validateAnnotation(annotation, method);
+			fail("Expected Exception.");
+		} catch (InvalidParameterException ex) {
+			System.out.println(ex.getMessage());
+			assertTrue(ex.getMessage().indexOf("No annotation") != -1);
+		}
+
 		method = testClass.getClass().getMethod("cacheMe1",null);
 		annotation = method.getAnnotation(ReadThroughMultiCache.class);
 		try {
@@ -206,6 +214,58 @@ public class ReadThroughMultiCacheTest {
 		assertTrue(coord.getMissObjects().containsAll(missObjects));
 		assertTrue(missObjects.containsAll(coord.getMissObjects()));
 
+	}
+
+	@Test
+	public void testGenerateResultsException() {
+		final List<Object> keyObjects = new ArrayList<Object>();
+		final Map<Object, String> obj2key = new HashMap<Object, String>();
+		final String keyObject = RandomStringUtils.randomAlphanumeric(8);
+		final String key = keyObject + "-" + RandomStringUtils.randomAlphanumeric(4);
+		keyObjects.add(keyObject);
+		obj2key.put(keyObject, key);
+		coord.setKeyObjects(keyObjects);
+		coord.getObj2Key().putAll(obj2key);
+
+		try {
+			coord.generateResultList();
+			fail("Expected Exception");
+		} catch (RuntimeException ex) {}
+
+	}
+
+	@Test
+	public void testGenerateResults() {
+		final List<Object> keyObjects = new ArrayList<Object>();
+		final Map<Object, String> obj2key = new HashMap<Object, String>();
+		final Map<String, Object> key2result = new HashMap<String, Object>();
+		final List<Object> expectedResults = new ArrayList<Object>();
+		final int length = 10;
+		for (int ix = 0; ix < length; ix++) {
+			final String keyObject = RandomStringUtils.randomAlphanumeric(8);
+			final String key = keyObject + "-" + RandomStringUtils.randomAlphanumeric(4);
+
+			keyObjects.add(keyObject);
+			obj2key.put(keyObject, key);
+
+			if (RandomUtils.nextBoolean()) {
+				final String result = RandomStringUtils.randomAlphanumeric(15);
+				key2result.put(key, result);
+				expectedResults.add(result);
+			} else {
+				key2result.put(key, new PertinentNegativeNull());
+				expectedResults.add(null);
+			}
+		}
+
+		coord.setKeyObjects(keyObjects);
+		coord.getObj2Key().putAll(obj2key);
+		coord.getKey2Result().putAll(key2result);
+
+		final List<Object> results = coord.generateResultList();
+
+		assertEquals(length, results.size());
+		assertEquals(expectedResults, results);
 	}
 
 	private static class AnnotationValidator {

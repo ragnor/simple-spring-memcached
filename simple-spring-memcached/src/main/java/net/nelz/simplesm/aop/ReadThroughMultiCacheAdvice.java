@@ -39,7 +39,7 @@ public class ReadThroughMultiCacheAdvice extends CacheBase {
 	public void getMulti() {}
 
 	@Around("getMulti()")
-	public Object cacheIndividual(final ProceedingJoinPoint pjp) throws Throwable {
+	public Object cacheMulti(final ProceedingJoinPoint pjp) throws Throwable {
 		// This is injected caching.  If anything goes wrong in the caching, LOG the crap outta it,
 		// but do not let it surface up past the AOP injection itself.
 		final MultiCacheCoordinator coord = new MultiCacheCoordinator();
