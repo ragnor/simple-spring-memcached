@@ -108,35 +108,11 @@ public class ReadThroughMultiCacheAdvice extends CacheBase {
 
 	protected void validateAnnotation(final ReadThroughMultiCache annotation,
 	                                  final Method method) {
-		if (annotation == null) {
-			throw new InvalidParameterException(String.format(
-					"No annotation of type [%s] found.",
-					ReadThroughMultiCache.class.getName()
-			));
-		}
-		if (annotation.keyIndex() < 0) {
-			throw new InvalidParameterException(String.format(
-					"KeyIndex for annotation [%s] must be 0 or greater on [%s]",
-					ReadThroughMultiCache.class.getName(),
-					method.toString()
-			));
-		}
-		if (AnnotationConstants.DEFAULT_STRING.equals(annotation.namespace())
-				|| annotation.namespace() == null
-				|| annotation.namespace().length() < 1) {
-			throw new InvalidParameterException(String.format(
-					"Namespace for annotation [%s] must be defined on [%s]",
-					ReadThroughMultiCache.class.getName(),
-					method.toString()
-			));
-		}
-		if (annotation.expiration() < 0) {
-			throw new InvalidParameterException(String.format(
-					"Expiration for annotation [%s] must be 0 or greater on [%s]",
-					ReadThroughMultiCache.class.getName(),
-					method.toString()
-			));
-		}
+		final Class annotationClass = ReadThroughMultiCache.class;
+		validateAnnotationExists(annotation, annotationClass);
+		validateAnnotationIndex(annotation.keyIndex(), false, annotationClass, method);
+		validateAnnotationNamespace(annotation.namespace(), annotationClass, method);
+		validateAnnotationExpiration(annotation.expiration(), annotationClass, method);
 	}
 
 	protected MapHolder convertIdObjectsToKeyMap(final List<Object> idObjects,

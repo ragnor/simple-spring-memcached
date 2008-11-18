@@ -94,6 +94,17 @@ public class CacheBase {
 		return keyObject;
 	}
 
+	protected Object validateReturnValueAsKeyObject(final Object returnValue,
+                                             final JoinPoint jp,
+                                             final Method methodToCache) throws Exception {
+		if (returnValue == null) {
+			throw new InvalidParameterException(String.format(
+					"The result of the method [%s] is null, which will not give an appropriate cache key.",
+					methodToCache.toString()));
+		}
+		return returnValue;
+	}
+
 	protected Method getKeyMethod(final Object keyObject) throws NoSuchMethodException {
 		final Method storedMethod = methodStore.find(keyObject.getClass());
 		if (storedMethod != null) { return storedMethod; }
@@ -134,5 +145,52 @@ public class CacheBase {
 		return targetMethod;
 	}
 
+	protected void validateAnnotationExists(final Object annotation, final Class annotationClass) {
+		if (annotation == null) {
+			throw new InvalidParameterException(String.format(
+					"No annotation of type [%s] found.",
+					annotationClass.getName()
+			));
+		}
+	}
 
+	protected void validateAnnotationIndex(final int value,
+	                                       final boolean acceptNegOne,
+	                                       final Class annotationClass,
+	                                       final Method method) {
+		if (value < -1 || (!acceptNegOne && value < 0)) {
+			throw new InvalidParameterException(String.format(
+					"KeyIndex for annotation [%s] must be %s or greater on [%s]",
+					annotationClass.getName(),
+					acceptNegOne ? "-1" : "0",
+					method.toString()
+			));
+		}
+	}
+
+	public void validateAnnotationNamespace(final String value,
+	                                        final Class annotationClass,
+	                                        final Method method) {
+		if (AnnotationConstants.DEFAULT_STRING.equals(value)
+				|| value == null
+				|| value.length() < 1) {
+			throw new InvalidParameterException(String.format(
+					"Namespace for annotation [%s] must be defined on [%s]",
+					annotationClass.getName(),
+					method.toString()
+			));
+		}
+	}
+
+	public void validateAnnotationExpiration(final int value,
+	                                         final Class annotationClass,
+	                                         final Method method) {
+		if (value < 0) {
+			throw new InvalidParameterException(String.format(
+					"Expiration for annotation [%s] must be 0 or greater on [%s]",
+					annotationClass.getName(),
+					method.toString()
+			));
+		}
+	}
 }

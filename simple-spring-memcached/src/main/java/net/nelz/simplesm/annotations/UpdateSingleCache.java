@@ -25,7 +25,7 @@ THE SOFTWARE.
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)
-public @interface ReadThroughSingleCache {
+public @interface UpdateSingleCache {
 
 	/**
 	 * A namespace that is added to the key as it is stored in the distributed cache.
@@ -38,7 +38,8 @@ public @interface ReadThroughSingleCache {
 	/**
 	 * Of the arguments passed into the cached method, this identifies which
 	 * argument provides the id by which the object will be cached. This is a
-	 * 0-based array index.
+	 * 0-based array index. This annotation also takes a special value of -1 to signify
+	 * that the object being returned is the object responsible for providing the cache key.
 	 * @return the index into the arguments array for the item that will provide the id
 	 */
 	int keyIndex() default 0;

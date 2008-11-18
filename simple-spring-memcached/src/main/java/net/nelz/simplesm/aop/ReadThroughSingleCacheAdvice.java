@@ -6,7 +6,6 @@ import org.aspectj.lang.*;
 import org.aspectj.lang.annotation.*;
 
 import java.lang.reflect.*;
-import java.security.*;
 
 /**
 Copyright (c) 2008  Nelson Carpentier
@@ -34,10 +33,10 @@ public class ReadThroughSingleCacheAdvice extends CacheBase {
 	private static final Log LOG = LogFactory.getLog(ReadThroughSingleCacheAdvice.class);
 
 	@Pointcut("@annotation(net.nelz.simplesm.annotations.ReadThroughSingleCache)")
-	public void getIndividual() {}
+	public void getSingle() {}
 
-	@Around("getIndividual()")
-	public Object cacheIndividual(final ProceedingJoinPoint pjp) throws Throwable {
+	@Around("getSingle()")
+	public Object cacheGetSingle(final ProceedingJoinPoint pjp) throws Throwable {
 		// This is injected caching.  If anything goes wrong in the caching, LOG the crap outta it,
 		// but do not let it surface up past the AOP injection itself.
 		final String cacheKey;
@@ -81,34 +80,10 @@ public class ReadThroughSingleCacheAdvice extends CacheBase {
 
 	protected void validateAnnotation(final ReadThroughSingleCache annotation,
 	                                  final Method method) {
-		if (annotation == null) {
-			throw new InvalidParameterException(String.format(
-					"No annotation of type [%s] found.",
-					ReadThroughSingleCache.class.getName()
-			));
-		}
-		if (annotation.keyIndex() < 0) {
-			throw new InvalidParameterException(String.format(
-					"KeyIndex for annotation [%s] must be 0 or greater on [%s]",
-					ReadThroughSingleCache.class.getName(),
-					method.toString()
-			));
-		}
-		if (AnnotationConstants.DEFAULT_STRING.equals(annotation.namespace())
-				|| annotation.namespace() == null
-				|| annotation.namespace().length() < 1) {
-			throw new InvalidParameterException(String.format(
-					"Namespace for annotation [%s] must be defined on [%s]",
-					ReadThroughSingleCache.class.getName(),
-					method.toString()
-			));
-		}
-		if (annotation.expiration() < 0) {
-			throw new InvalidParameterException(String.format(
-					"Expiration for annotation [%s] must be 0 or greater on [%s]",
-					ReadThroughSingleCache.class.getName(),
-					method.toString()
-			));
-		}
+		final Class annotationClass = ReadThroughSingleCache.class;
+		validateAnnotationExists(annotation, ReadThroughSingleCache.class);
+		validateAnnotationIndex(annotation.keyIndex(), false, annotationClass, method);
+		validateAnnotationNamespace(annotation.namespace(), annotationClass, method);
+		validateAnnotationExpiration(annotation.expiration(), annotationClass, method);
 	}
 }

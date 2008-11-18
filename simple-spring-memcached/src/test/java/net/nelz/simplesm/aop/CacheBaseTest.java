@@ -143,6 +143,96 @@ public class CacheBaseTest {
 		assertEquals(result, cut.generateObjectId(method, new KeyObject(result)));
 	}
 
+	@Test
+	public void testValidateAnnotationExists() {
+		// This is actually a very base !=null test, because there's no common class for annotations.
+		cut.validateAnnotationExists("bubba", CacheKeyMethod.class);
+
+		try {
+			cut.validateAnnotationExists(null, CacheKeyMethod.class);
+			fail("Expected Exception.");
+		} catch (RuntimeException ex) {
+			assertTrue(ex.getMessage().indexOf("CacheKeyMethod") != -1);
+		}
+	}
+
+	@Test
+	public void testValidateAnnotationIndex() throws Exception {
+		cut.validateAnnotationIndex(0, false, null, null);
+		cut.validateAnnotationIndex(-1, true, null, null);
+
+		final Method method = KeyObject.class.getMethod("toString", null);
+
+		try {
+			cut.validateAnnotationIndex(-1, false, CacheKeyMethod.class, method);
+			fail("Expected Exception.");
+		} catch (RuntimeException ex) {
+			assertTrue(ex.getMessage().indexOf("KeyIndex") != -1);
+			assertTrue(ex.getMessage().indexOf("0") != -1);
+			assertTrue(ex.getMessage().indexOf("CacheKeyMethod") != -1);
+			assertTrue(ex.getMessage().indexOf("toString") != -1);
+		}
+
+		try {
+			cut.validateAnnotationIndex(-2, true, CacheKeyMethod.class, method);
+			fail("Expected Exception.");
+		} catch (RuntimeException ex) {
+			assertTrue(ex.getMessage().indexOf("KeyIndex") != -1);
+			assertTrue(ex.getMessage().indexOf("-1") != -1);
+			assertTrue(ex.getMessage().indexOf("CacheKeyMethod") != -1);
+			assertTrue(ex.getMessage().indexOf("toString") != -1);
+		}
+	}
+
+	@Test
+	public void testValidateAnnotationNamespace() throws Exception {
+		cut.validateAnnotationNamespace("Bubba", null, null);
+
+		final Method method = KeyObject.class.getMethod("toString", null);
+		try {
+			cut.validateAnnotationNamespace(null, CacheKeyMethod.class, method);
+			fail("Expected Exception.");
+		} catch (RuntimeException ex) {
+			assertTrue(ex.getMessage().indexOf("Namespace") != -1);
+			assertTrue(ex.getMessage().indexOf("CacheKeyMethod") != -1);
+			assertTrue(ex.getMessage().indexOf("toString") != -1);
+		}
+
+		try {
+			cut.validateAnnotationNamespace(AnnotationConstants.DEFAULT_STRING, CacheKeyMethod.class, method);
+			fail("Expected Exception.");
+		} catch (RuntimeException ex) {
+			assertTrue(ex.getMessage().indexOf("Namespace") != -1);
+			assertTrue(ex.getMessage().indexOf("CacheKeyMethod") != -1);
+			assertTrue(ex.getMessage().indexOf("toString") != -1);
+		}
+
+		try {
+			cut.validateAnnotationNamespace("", CacheKeyMethod.class, method);
+			fail("Expected Exception.");
+		} catch (RuntimeException ex) {
+			assertTrue(ex.getMessage().indexOf("Namespace") != -1);
+			assertTrue(ex.getMessage().indexOf("CacheKeyMethod") != -1);
+			assertTrue(ex.getMessage().indexOf("toString") != -1);
+		}
+	}
+
+	@Test
+	public void testValidateAnnotationExpiration() throws Exception {
+		cut.validateAnnotationExpiration(0, null, null);
+		cut.validateAnnotationExpiration(10, null, null);
+
+		final Method method = KeyObject.class.getMethod("toString", null);
+		try {
+			cut.validateAnnotationExpiration(-1, CacheKeyMethod.class, method);
+			fail("Expected Exception.");
+		} catch (RuntimeException ex) {
+			assertTrue(ex.getMessage().indexOf("Expiration") != -1);
+			assertTrue(ex.getMessage().indexOf("CacheKeyMethod") != -1);
+			assertTrue(ex.getMessage().indexOf("toString") != -1);
+		}
+	}
+
 	private static class KeyObject {
 		private String result;
 		private KeyObject(String result) { this.result = result;}

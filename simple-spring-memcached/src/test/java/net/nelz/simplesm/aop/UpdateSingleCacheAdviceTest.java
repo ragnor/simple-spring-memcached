@@ -1,7 +1,9 @@
 package net.nelz.simplesm.aop;
 
-import static org.testng.AssertJUnit.*;
+import net.nelz.simplesm.annotations.*;
 import org.testng.annotations.*;
+
+import java.lang.reflect.*;
 
 /**
 Copyright (c) 2008  Nelson Carpentier
@@ -24,13 +26,25 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
  */
-public class PertinentNegativeNullTest {
+public class UpdateSingleCacheAdviceTest {
+	private UpdateSingleCacheAdvice cut;
+
+	@BeforeClass
+	public void beforeClass() {
+		cut = new UpdateSingleCacheAdvice();
+	}
 
 	@Test
-	public void testNull() {
-		final PertinentNegativeNull pnn = new PertinentNegativeNull();
-		assertFalse(pnn.equals(null));
-		assertTrue(pnn.equals(new PertinentNegativeNull()));
-		assertEquals(pnn.hashCode(), new PertinentNegativeNull().hashCode());
+	public void testAnnotationValidator() throws Exception {
+		final AnnotationValidator testClass = new AnnotationValidator();
+		Method method = testClass.getClass().getMethod("cacheMe1",null);
+		UpdateSingleCache annotation = method.getAnnotation(UpdateSingleCache.class);
+		cut.validateAnnotation(annotation, method);
 	}
+
+	private static class AnnotationValidator {
+		@UpdateSingleCache(keyIndex = -1, namespace = "bubba")
+		public String cacheMe1() { return null; }
+	}
+
 }

@@ -53,6 +53,9 @@ public @interface ReadThroughMultiCache {
 	 * number sent by a client is larger than that, the server will consider it to be real Unix
 	 * time value rather than an offset from current time.
 	 *
+	 * (Also note: a value of 0 means the given value should never expire. The value is still
+	 * susceptible to purging by memcached for space and LRU (least recently used) considerations.)
+	 *
 	 * @return
 	 */
 	int expiration() default 0;
