@@ -42,4 +42,9 @@ public class TestSvcImpl implements TestSvc {
 	public List<String> getTimestampValues(final List<Long> keys) {
 		return this.dao.getTimestampValues(keys);
 	}
+
+	public String updateTimestampValue(final Long key) {
+		return this.dao.updateTimestampValue(key);
+	}
+
 }

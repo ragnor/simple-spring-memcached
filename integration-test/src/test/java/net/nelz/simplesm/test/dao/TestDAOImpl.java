@@ -50,4 +50,14 @@ public class TestDAOImpl implements TestDAO {
 		}
 		return results;
 	}
+
+	@UpdateSingleCache(namespace = "Bravo", keyIndex = 0, expiration = 300)
+	public String updateTimestampValue(final Long key) {
+		try {
+			Thread.sleep(100);
+		} catch (InterruptedException ex) {}
+		final Long now = new Date().getTime();
+		final String result = now.toString() + "-U-" + key.toString();
+		return result;
+	}
 }

@@ -28,5 +28,7 @@ public interface TestDAO {
 	public String getDateString(final String key);
 
 	public List<String> getTimestampValues(final List<Long> keys);
-	
+
+	public String updateTimestampValue(final Long key);
+
 }
