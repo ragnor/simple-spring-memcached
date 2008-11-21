@@ -137,17 +137,6 @@ public class ReadThroughMultiCacheAdvice extends CacheBase {
 		return holder;
 	}
 
-	protected void verifyReturnTypeIsList(final Method method) {
-		if (verifyTypeIsList(method.getReturnType())) { return; }
-		throw new InvalidAnnotationException(String.format(
-				"The annotation [%s] is only valid on a method that returns a [%s]. " +
-				"[%s] does not fulfill this requirement.",
-				ReadThroughMultiCache.class.getName(),
-				List.class.getName(),
-				method.toString()
-		));
-	}
-
 	protected List<Object> getKeyObjectList(final int keyIndex,
 	                                            final JoinPoint jp,
 	                                            final Method method) throws Exception {
@@ -160,25 +149,6 @@ public class ReadThroughMultiCacheAdvice extends CacheBase {
 				List.class.getName(),
 				method.toString()
 		));
-	}
-
-	protected boolean verifyTypeIsList(final Class clazz) {
-		if (List.class.equals(clazz)) { return true; }
-		final Type[] types = clazz.getGenericInterfaces();
-		if (types != null) {
-			for (final Type type : types) {
-				if (type != null) {
-					if (type instanceof ParameterizedType) {
-						final ParameterizedType ptype = (ParameterizedType) type;
-						if (List.class.equals(ptype.getRawType())) { return true; }
-					} else {
-						if (List.class.equals(type)) { return true; }
-					}
-				}
-			}
-		}
-
-		return false;
 	}
 
 	static class MapHolder {

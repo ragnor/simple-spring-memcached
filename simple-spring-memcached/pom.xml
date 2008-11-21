@@ -11,7 +11,6 @@
   <name>simple-spring-memcached</name>
   <url>http://code.google.com/p/simple-spring-memcached/</url>
 
-
   <reporting>
     <plugins>
       <plugin>

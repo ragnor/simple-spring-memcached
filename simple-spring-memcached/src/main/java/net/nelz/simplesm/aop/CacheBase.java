@@ -9,6 +9,7 @@ import org.aspectj.lang.reflect.*;
 
 import java.lang.reflect.*;
 import java.security.*;
+import java.util.*;
 
 /**
 Copyright (c) 2008  Nelson Carpentier
@@ -95,7 +96,6 @@ public class CacheBase {
 	}
 
 	protected Object validateReturnValueAsKeyObject(final Object returnValue,
-                                             final JoinPoint jp,
                                              final Method methodToCache) throws Exception {
 		if (returnValue == null) {
 			throw new InvalidParameterException(String.format(
@@ -193,4 +193,37 @@ public class CacheBase {
 			));
 		}
 	}
+
+	// TODO: Replace by List.class.isInstance(Object obj)
+	protected void verifyReturnTypeIsList(final Method method) {
+		if (verifyTypeIsList(method.getReturnType())) { return; }
+		throw new InvalidAnnotationException(String.format(
+				"The annotation [%s] is only valid on a method that returns a [%s]. " +
+				"[%s] does not fulfill this requirement.",
+				ReadThroughMultiCache.class.getName(),
+				List.class.getName(),
+				method.toString()
+		));
+	}
+
+	// TODO: Replace by List.class.isInstance(Object obj)	
+	protected boolean verifyTypeIsList(final Class clazz) {
+		if (List.class.equals(clazz)) { return true; }
+		final Type[] types = clazz.getGenericInterfaces();
+		if (types != null) {
+			for (final Type type : types) {
+				if (type != null) {
+					if (type instanceof ParameterizedType) {
+						final ParameterizedType ptype = (ParameterizedType) type;
+						if (List.class.equals(ptype.getRawType())) { return true; }
+					} else {
+						if (List.class.equals(type)) { return true; }
+					}
+				}
+			}
+		}
+
+		return false;
+	}
+
 }

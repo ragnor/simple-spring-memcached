@@ -8,6 +8,7 @@ import org.testng.annotations.*;
 
 import java.security.*;
 import java.lang.reflect.*;
+import java.util.*;
 
 /**
 Copyright (c) 2008  Nelson Carpentier
@@ -232,6 +233,44 @@ public class CacheBaseTest {
 			assertTrue(ex.getMessage().indexOf("toString") != -1);
 		}
 	}
+
+	@Test
+	public void testReturnTypeChecking() throws Exception {
+		Method method = null;
+
+		method = ReturnTypeCheck.class.getMethod("checkA", null);
+		cut.verifyReturnTypeIsList(method);
+
+		method = ReturnTypeCheck.class.getMethod("checkB", null);
+		cut.verifyReturnTypeIsList(method);
+
+		method = ReturnTypeCheck.class.getMethod("checkC", null);
+		cut.verifyReturnTypeIsList(method);
+
+		method = ReturnTypeCheck.class.getMethod("checkD", null);
+		cut.verifyReturnTypeIsList(method);
+
+		try {
+			method = ReturnTypeCheck.class.getMethod("checkE", null);
+			cut.verifyReturnTypeIsList(method);
+			fail("Expected Exception.");
+		} catch (InvalidAnnotationException ex) {
+			assertTrue(ex.getMessage().indexOf("requirement") != -1);
+		}
+	}
+
+	private static class ReturnTypeCheck {
+		@ReadThroughMultiCache(keyIndex = 0, namespace = "bubba", expiration = 10)
+		public List checkA() {return null;}
+		@ReadThroughMultiCache(keyIndex = 0, namespace = "bubba", expiration = 10)
+		public List<String> checkB() {return null;}
+		@ReadThroughMultiCache(keyIndex = 0, namespace = "bubba", expiration = 10)
+		public ArrayList checkC() {return null;}
+		@ReadThroughMultiCache(keyIndex = 0, namespace = "bubba", expiration = 10)
+		public ArrayList<String> checkD() {return null;}
+		@ReadThroughMultiCache(keyIndex = 0, namespace = "bubba", expiration = 10)
+		public String checkE() {return null;}
+	}	
 
 	private static class KeyObject {
 		private String result;
