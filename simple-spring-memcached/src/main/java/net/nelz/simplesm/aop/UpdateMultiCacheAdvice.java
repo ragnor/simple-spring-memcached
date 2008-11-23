@@ -44,7 +44,21 @@ public class UpdateMultiCacheAdvice extends CacheBase {
 			verifyReturnTypeIsList(methodToCache, UpdateMultiCache.class);
 			final UpdateMultiCache annotation = methodToCache.getAnnotation(UpdateMultiCache.class);
 			validateAnnotation(annotation, methodToCache);
-
+			final List<Object> returnList = (List<Object>) retVal;
+			final List<String> objectIds = getObjectIds(annotation.keyIndex(), returnList, jp, methodToCache);
+			if (returnList.size() != objectIds.size()) {
+				throw new InvalidAnnotationException(String.format(
+						"The key generating object, and the resulting objects do not match in size for [%s].",
+						methodToCache.toString()
+				));
+			}
+			for (int ix = 0; ix < returnList.size(); ix++) {
+				final Object result = returnList.get(ix);
+				final String objectId = objectIds.get(ix);
+				final Object cacheObject = result != null ? result : new PertinentNegativeNull();
+				final String cacheKey = buildCacheKey(objectId,  annotation.namespace());
+				cache.set(cacheKey, annotation.expiration(), cacheObject);
+			}
 		} catch (Exception ex) {
 			LOG.warn("Updating caching via " + jp.toShortString() + " aborted due to an error.", ex);
 		}
@@ -68,8 +82,15 @@ public class UpdateMultiCacheAdvice extends CacheBase {
 			));
 		}
 
-		final Method keyMethod = getKeyMethod(keyObject);
-		return generateObjectId(keyMethod, keyObject);
+		final List<Object> keyList = (List<Object>) keyObject;
+		final List<String> results = new ArrayList<String>();
+		for (final Object object : keyList) {
+			final Method keyMethod = getKeyMethod(object);
+			final String objectId = generateObjectId(keyMethod, object);
+			results.add(objectId);
+		}
+
+		return results;
 	}
 
 	protected void validateAnnotation(final UpdateMultiCache annotation,
