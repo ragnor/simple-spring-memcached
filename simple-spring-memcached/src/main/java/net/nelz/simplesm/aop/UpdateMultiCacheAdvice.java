@@ -1,6 +1,7 @@
 package net.nelz.simplesm.aop;
 
 import net.nelz.simplesm.annotations.*;
+import net.nelz.simplesm.exceptions.*;
 import org.apache.commons.logging.*;
 import org.aspectj.lang.*;
 import org.aspectj.lang.annotation.*;
@@ -40,6 +41,7 @@ public class UpdateMultiCacheAdvice extends CacheBase {
 	public Object cacheUpdateSingle(final JoinPoint jp, final Object retVal) throws Throwable {
 		try {
 			final Method methodToCache = getMethodToCache(jp);
+			verifyReturnTypeIsList(methodToCache, UpdateMultiCache.class);
 			final UpdateMultiCache annotation = methodToCache.getAnnotation(UpdateMultiCache.class);
 			validateAnnotation(annotation, methodToCache);
 
@@ -56,6 +58,16 @@ public class UpdateMultiCacheAdvice extends CacheBase {
 		final Object keyObject = keyIndex == -1
 									? validateReturnValueAsKeyObject(returnValue, methodToCache)
 									: getKeyObject(keyIndex, jp, methodToCache);
+		if (!verifyTypeIsList(keyObject.getClass())) {
+			throw new InvalidAnnotationException(String.format(
+					"The parameter object found at keyIndex [%s] is not a [%s]. " +
+					"[%s] does not fulfill the requirements.",
+					UpdateMultiCache.class.getName(),
+					List.class.getName(),
+					methodToCache.toString()
+			));
+		}
+
 		final Method keyMethod = getKeyMethod(keyObject);
 		return generateObjectId(keyMethod, keyObject);
 	}
@@ -70,4 +82,10 @@ public class UpdateMultiCacheAdvice extends CacheBase {
 		validateAnnotationExpiration(annotation.expiration(), annotationClass, method);
 	}
 
+	protected void verifySignature(final Method methodToCache) {
+		if (!verifyTypeIsList(methodToCache.getReturnType())) {
+
+		}
+
+	}
 }

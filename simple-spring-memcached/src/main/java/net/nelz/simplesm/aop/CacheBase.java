@@ -195,7 +195,7 @@ public class CacheBase {
 	}
 
 	// TODO: Replace by List.class.isInstance(Object obj)
-	protected void verifyReturnTypeIsList(final Method method) {
+	protected void verifyReturnTypeIsList(final Method method, final Class annotationClass) {
 		if (verifyTypeIsList(method.getReturnType())) { return; }
 		throw new InvalidAnnotationException(String.format(
 				"The annotation [%s] is only valid on a method that returns a [%s]. " +
@@ -206,7 +206,7 @@ public class CacheBase {
 		));
 	}
 
-	// TODO: Replace by List.class.isInstance(Object obj)	
+	// TODO: Replace by List.class.isInstance(Object obj)
 	protected boolean verifyTypeIsList(final Class clazz) {
 		if (List.class.equals(clazz)) { return true; }
 		final Type[] types = clazz.getGenericInterfaces();

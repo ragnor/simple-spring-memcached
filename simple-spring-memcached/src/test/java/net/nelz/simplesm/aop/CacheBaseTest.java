@@ -239,20 +239,20 @@ public class CacheBaseTest {
 		Method method = null;
 
 		method = ReturnTypeCheck.class.getMethod("checkA", null);
-		cut.verifyReturnTypeIsList(method);
+		cut.verifyReturnTypeIsList(method, CacheKeyMethod.class);
 
 		method = ReturnTypeCheck.class.getMethod("checkB", null);
-		cut.verifyReturnTypeIsList(method);
+		cut.verifyReturnTypeIsList(method, CacheKeyMethod.class);
 
 		method = ReturnTypeCheck.class.getMethod("checkC", null);
-		cut.verifyReturnTypeIsList(method);
+		cut.verifyReturnTypeIsList(method, CacheKeyMethod.class);
 
 		method = ReturnTypeCheck.class.getMethod("checkD", null);
-		cut.verifyReturnTypeIsList(method);
+		cut.verifyReturnTypeIsList(method, CacheKeyMethod.class);
 
 		try {
 			method = ReturnTypeCheck.class.getMethod("checkE", null);
-			cut.verifyReturnTypeIsList(method);
+			cut.verifyReturnTypeIsList(method, CacheKeyMethod.class);
 			fail("Expected Exception.");
 		} catch (InvalidAnnotationException ex) {
 			assertTrue(ex.getMessage().indexOf("requirement") != -1);
@@ -270,7 +270,7 @@ public class CacheBaseTest {
 		public ArrayList<String> checkD() {return null;}
 		@ReadThroughMultiCache(keyIndex = 0, namespace = "bubba", expiration = 10)
 		public String checkE() {return null;}
-	}	
+	}
 
 	private static class KeyObject {
 		private String result;

@@ -47,7 +47,7 @@ public class ReadThroughMultiCacheAdvice extends CacheBase {
 		try {
 			// Get the target method being invoked, and make sure it returns the correct info.
 			coord.setMethod(getMethodToCache(pjp));
-			verifyReturnTypeIsList(coord.getMethod());
+			verifyReturnTypeIsList(coord.getMethod(), ReadThroughMultiCache.class);
 
 			// Get the annotation associated with this method, and make sure the values are valid.
 			coord.setAnnotation(coord.getMethod().getAnnotation(ReadThroughMultiCache.class));
