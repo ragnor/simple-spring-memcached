@@ -142,7 +142,13 @@ public class ReadThroughMultiCacheAdvice extends CacheBase {
 	                                            final Method method) throws Exception {
 		final Object keyObjects = getKeyObject(keyIndex, jp, method);
 		if (verifyTypeIsList(keyObjects.getClass())) { return (List<Object>) keyObjects;}
-
+		throw new InvalidAnnotationException(String.format(
+				"The parameter object found at keyIndex [%s] is not a [%s]. " +
+				"[%s] does not fulfill the requirements.",
+				ReadThroughMultiCache.class.getName(),
+				List.class.getName(),
+				method.toString()
+		));
 	}
 
 	static class MapHolder {

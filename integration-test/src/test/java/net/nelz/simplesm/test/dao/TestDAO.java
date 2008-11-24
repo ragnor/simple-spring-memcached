@@ -31,4 +31,6 @@ public interface TestDAO {
 
 	public String updateTimestampValue(final Long key);
 
+	public List<String> updateTimestamValues(final List<Long> keys);
+
 }

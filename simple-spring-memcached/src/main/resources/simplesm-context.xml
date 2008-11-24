@@ -12,7 +12,7 @@
            http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.5.xsd">
 <!-- mode: ${mode} -->
 
-  <aop:aspectj-autoproxy />
+  <!--<aop:aspectj-autoproxy />-->
 
 	<bean id="memcachedClientFactory" class="net.nelz.simplesm.config.MemcachedClientFactory" >
 		<property name="bean" ref="memcachedConnectionBean" />
@@ -31,6 +31,10 @@
 		<property name="methodStore" ref="methodStore" />
 	</bean>
 	<bean id="updateSingleCache" class="net.nelz.simplesm.aop.UpdateSingleCacheAdvice">
+		<property name="cache" ref="memcachedClient" />
+		<property name="methodStore" ref="methodStore" />
+	</bean>
+	<bean id="updateMultiCache" class="net.nelz.simplesm.aop.UpdateMultiCacheAdvice">
 		<property name="cache" ref="memcachedClient" />
 		<property name="methodStore" ref="methodStore" />
 	</bean>

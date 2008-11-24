@@ -60,4 +60,17 @@ public class TestDAOImpl implements TestDAO {
 		final String result = now.toString() + "-U-" + key.toString();
 		return result;
 	}
+
+	@UpdateMultiCache(namespace = "Bravo", keyIndex = 0, expiration = 300)
+	public List<String> updateTimestamValues(final List<Long> keys) {
+		try {
+			Thread.sleep(100);
+		} catch (InterruptedException ex) {}
+		final Long now = new Date().getTime();
+		final List<String> results = new ArrayList<String>();
+		for (final Long key : keys) {
+			results.add(now.toString() + "-M-" + key.toString());
+		}
+		return results;
+	}
 }
