@@ -45,49 +45,60 @@ public class UpdateMultiCacheAdvice extends CacheBase {
 			final UpdateMultiCache annotation = methodToCache.getAnnotation(UpdateMultiCache.class);
 			validateAnnotation(annotation, methodToCache);
 			final List<Object> returnList = (List<Object>) retVal;
-			final List<String> objectIds = getObjectIds(annotation.keyIndex(), returnList, jp, methodToCache);
-			if (returnList.size() != objectIds.size()) {
-				throw new InvalidAnnotationException(String.format(
-						"The key generating object, and the resulting objects do not match in size for [%s].",
-						methodToCache.toString()
-				));
-			}
-			for (int ix = 0; ix < returnList.size(); ix++) {
-				final Object result = returnList.get(ix);
-				final String objectId = objectIds.get(ix);
-				final Object cacheObject = result != null ? result : new PertinentNegativeNull();
-				final String cacheKey = buildCacheKey(objectId,  annotation.namespace());
-				cache.set(cacheKey, annotation.expiration(), cacheObject);
-			}
+			final List<Object> keyObjects = getKeyObjects(annotation.keyIndex(), returnList, jp, methodToCache);
+			final List<String> cacheKeys = getCacheKeys(keyObjects, annotation.namespace());
+			updateCache(cacheKeys, returnList, methodToCache, annotation);
 		} catch (Exception ex) {
 			LOG.warn("Updating caching via " + jp.toShortString() + " aborted due to an error.", ex);
 		}
 		return retVal;
 	}
 
-	protected List<String> getObjectIds(final int keyIndex,
+	protected void updateCache(final List<String> cacheKeys,
+	                           final List<Object> returnList,
+	                           final Method methodToCache,
+	                           final UpdateMultiCache annotation) {
+		if (returnList.size() != cacheKeys.size()) {
+			throw new InvalidAnnotationException(String.format(
+					"The key generation objects, and the resulting objects do not match in size for [%s].",
+					methodToCache.toString()
+			));
+		}
+
+		for (int ix = 0; ix < returnList.size(); ix++) {
+			final Object result = returnList.get(ix);
+			final String cacheKey = cacheKeys.get(ix);
+			final Object cacheObject = result != null ? result : new PertinentNegativeNull();
+			cache.set(cacheKey, annotation.expiration(), cacheObject);
+		}
+	}
+
+	protected List<Object> getKeyObjects(final int keyIndex,
 	                             final Object returnValue,
 	                             final JoinPoint jp,
 	                             final Method methodToCache) throws Exception {
 		final Object keyObject = keyIndex == -1
 									? validateReturnValueAsKeyObject(returnValue, methodToCache)
 									: getKeyObject(keyIndex, jp, methodToCache);
-		if (!verifyTypeIsList(keyObject.getClass())) {
-			throw new InvalidAnnotationException(String.format(
-					"The parameter object found at keyIndex [%s] is not a [%s]. " +
-					"[%s] does not fulfill the requirements.",
-					UpdateMultiCache.class.getName(),
-					List.class.getName(),
-					methodToCache.toString()
-			));
+		if (verifyTypeIsList(keyObject.getClass())) {
+			return (List<Object>) keyObject;
 		}
+		throw new InvalidAnnotationException(String.format(
+				"The parameter object found at keyIndex [%s] is not a [%s]. " +
+				"[%s] does not fulfill the requirements.",
+				UpdateMultiCache.class.getName(),
+				List.class.getName(),
+				methodToCache.toString()
+		));
+	}
 
-		final List<Object> keyList = (List<Object>) keyObject;
+	protected List<String> getCacheKeys(final List<Object> keyObjects,
+	                                    final String namespace) throws Exception {
 		final List<String> results = new ArrayList<String>();
-		for (final Object object : keyList) {
+		for (final Object object : keyObjects) {
 			final Method keyMethod = getKeyMethod(object);
 			final String objectId = generateObjectId(keyMethod, object);
-			results.add(objectId);
+			results.add(buildCacheKey(objectId, namespace));
 		}
 
 		return results;
@@ -101,12 +112,5 @@ public class UpdateMultiCacheAdvice extends CacheBase {
 		validateAnnotationIndex(annotation.keyIndex(), true, annotationClass, method);
 		validateAnnotationNamespace(annotation.namespace(), annotationClass, method);
 		validateAnnotationExpiration(annotation.expiration(), annotationClass, method);
-	}
-
-	protected void verifySignature(final Method methodToCache) {
-		if (!verifyTypeIsList(methodToCache.getReturnType())) {
-
-		}
-
 	}
 }

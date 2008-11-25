@@ -72,6 +72,7 @@ public class UpdateMultiCacheTest {
 			final Long key = subset.get(ix);
 			final String value = subsetUpdateResult.get(ix);
 			assertFalse(originalResults.get(key).equals(value));
+			assertTrue(value.indexOf("-M-") != -1);
 			expectedResults.put(key, value);
 		}
 
