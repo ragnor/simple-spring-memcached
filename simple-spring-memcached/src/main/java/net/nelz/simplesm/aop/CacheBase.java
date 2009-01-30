@@ -65,17 +65,14 @@ public class CacheBase {
 		return objectId;
 	}
 
-	protected String buildCacheKey(final String objectId, final String namespace) {
-		if (objectId == null || objectId.length() < 1) {
-			throw new InvalidParameterException("Ids for objects in the cache must be at least 1 character long.");
-		}
-		if (namespace == null || namespace.length() < 1) {
-			throw new InvalidParameterException("Namespace values must be at least 1 character long.");
-		}
-		return namespace + SEPARATOR + objectId;
-	}
+    protected String buildCacheKey(final String objectId, final AnnotationData data) {
+        if (objectId == null || objectId.length() < 1) {
+            throw new InvalidParameterException("Ids for objects in the cache must be at least 1 character long.");
+        }
+        return data.getNamespace() + SEPARATOR + objectId;
+    }
 
-	protected Object getKeyObject(final int keyIndex,
+    protected Object getKeyObject(final int keyIndex,
 	                             final JoinPoint jp,
 	                             final Method methodToCache) throws Exception {
 		final Object[] args = jp.getArgs();

@@ -82,7 +82,7 @@ public class CacheBaseTest {
 	@Test
 	public void testBuildCacheKey() {
 		try {
-			cut.buildCacheKey(null, null);
+			cut.buildCacheKey(null, (AnnotationData) null);
 			fail("Expected exception.");
 		} catch (InvalidParameterException ex) {
 			assertTrue(ex.getMessage().indexOf("at least 1 character") != -1);
@@ -90,23 +90,7 @@ public class CacheBaseTest {
 		}
 
 		try {
-			cut.buildCacheKey("", null);
-			fail("Expected exception.");
-		} catch (InvalidParameterException ex) {
-			assertTrue(ex.getMessage().indexOf("at least 1 character") != -1);
-			System.out.println(ex.getMessage());
-		}
-
-		try {
-			cut.buildCacheKey("a", null);
-			fail("Expected exception.");
-		} catch (InvalidParameterException ex) {
-			assertTrue(ex.getMessage().indexOf("at least 1 character") != -1);
-			System.out.println(ex.getMessage());
-		}
-
-		try {
-			cut.buildCacheKey("a", "");
+			cut.buildCacheKey("", (AnnotationData) null);
 			fail("Expected exception.");
 		} catch (InvalidParameterException ex) {
 			assertTrue(ex.getMessage().indexOf("at least 1 character") != -1);
@@ -114,9 +98,11 @@ public class CacheBaseTest {
 		}
 
 		final String objectId = RandomStringUtils.randomAlphanumeric(20);
-		final String namespace = RandomStringUtils.randomAlphanumeric(12);
+        final AnnotationData annotationData = new AnnotationData();
+        final String namespace = RandomStringUtils.randomAlphanumeric(12);
+        annotationData.setNamespace(namespace);
 
-		final String result = cut.buildCacheKey(objectId, namespace);
+		final String result = cut.buildCacheKey(objectId, annotationData);
 
 		assertTrue(result.indexOf(objectId) != -1);
 		assertTrue(result.indexOf(namespace) != -1);

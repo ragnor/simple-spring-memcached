@@ -47,71 +47,16 @@ public class ReadThroughMultiCacheTest {
 	}
 
 	@Test
-	public void testAnnotationValidation() throws Exception {
-		final AnnotationValidator testClass = new AnnotationValidator();
-		Method method = null;
-		ReadThroughMultiCache annotation = null;
-
-		try {
-			cut.validateAnnotation(annotation, method);
-			fail("Expected Exception.");
-		} catch (InvalidParameterException ex) {
-			System.out.println(ex.getMessage());
-			assertTrue(ex.getMessage().indexOf("No annotation") != -1);
-		}
-
-		method = testClass.getClass().getMethod("cacheMe1",null);
-		annotation = method.getAnnotation(ReadThroughMultiCache.class);
-		try {
-			cut.validateAnnotation(annotation, method);
-			fail("Expected Exception.");
-		} catch (InvalidParameterException ex) {
-			System.out.println(ex.getMessage());
-			assertTrue(ex.getMessage().indexOf("KeyIndex") != -1);
-		}
-
-		method = testClass.getClass().getMethod("cacheMe2",null);
-		annotation = method.getAnnotation(ReadThroughMultiCache.class);
-		try {
-			cut.validateAnnotation(annotation, method);
-			fail("Expected Exception.");
-		} catch (InvalidParameterException ex) {
-			System.out.println(ex.getMessage());
-			assertTrue(ex.getMessage().indexOf("Namespace") != -1);
-		}
-
-		method = testClass.getClass().getMethod("cacheMe3",null);
-		annotation = method.getAnnotation(ReadThroughMultiCache.class);
-		try {
-			cut.validateAnnotation(annotation, method);
-			fail("Expected Exception.");
-		} catch (InvalidParameterException ex) {
-			System.out.println(ex.getMessage());
-			assertTrue(ex.getMessage().indexOf("Namespace") != -1);
-		}
-
-
-		method = testClass.getClass().getMethod("cacheMe4",null);
-		annotation = method.getAnnotation(ReadThroughMultiCache.class);
-		try {
-			cut.validateAnnotation(annotation, method);
-			fail("Expected Exception.");
-		} catch (InvalidParameterException ex) {
-			System.out.println(ex.getMessage());
-			assertTrue(ex.getMessage().indexOf("Expiration") != -1);
-		}
-	}
-
-	@Test
 	public void testConvertIdObject() throws Exception {
-		final String namespace = RandomStringUtils.randomAlphanumeric(6);
+        final AnnotationData data = new AnnotationData();
+        data.setNamespace(RandomStringUtils.randomAlphanumeric(6));
 		final Map<String, Object> expectedString2Object = new HashMap<String, Object>();
 		final Map<Object, String> expectedObject2String = new HashMap<Object, String>();
 		final List<Object> idObjects = new ArrayList<Object>();
 		final int length = 10;
 		for (int ix = 0; ix < length; ix++) {
 			final String object = RandomStringUtils.randomAlphanumeric(2 + ix);
-			final String key = cut.buildCacheKey(object, namespace);
+			final String key = cut.buildCacheKey(object, data);
 			idObjects.add(object);
 			expectedObject2String.put(object, key);
 			expectedString2Object.put(key, object);
@@ -121,7 +66,7 @@ public class ReadThroughMultiCacheTest {
 		final List<Object> exceptionObjects = new ArrayList<Object>(idObjects);
 		exceptionObjects.add(null);
 		try {
-			cut.convertIdObjectsToKeyMap(exceptionObjects, namespace);
+			cut.convertIdObjectsToKeyMap(exceptionObjects, data);
 			fail("Expected Exception");
 		} catch (InvalidParameterException ex) { }
 
@@ -132,7 +77,7 @@ public class ReadThroughMultiCacheTest {
 		}
 		assertTrue(idObjects.size() > length);
 
-		final ReadThroughMultiCacheAdvice.MapHolder holder = cut.convertIdObjectsToKeyMap(idObjects, namespace);
+		final ReadThroughMultiCacheAdvice.MapHolder holder = cut.convertIdObjectsToKeyMap(idObjects, data);
 
 		assertEquals(length, holder.getKey2Obj().size());
 		assertEquals(length, holder.getObj2Key().size());
@@ -149,14 +94,16 @@ public class ReadThroughMultiCacheTest {
 
 	@Test
 	public void testInitialKey2Result() {
-		final String namespace = RandomStringUtils.randomAlphanumeric(6);
+        final AnnotationData annotation = new AnnotationData();
+        annotation.setNamespace(RandomStringUtils.randomAlphanumeric(6));
 		final Map<String, Object> expectedString2Object = new HashMap<String, Object>();
 		final Map<String, Object> key2Result = new HashMap<String, Object>();
 		final Set<Object> missObjects = new HashSet<Object>();
 		final int length = 15;
 		for (int ix = 0; ix < length; ix++) {
-			final String object = RandomStringUtils.randomAlphanumeric(2 + ix);
-			final String key = cut.buildCacheKey(object, namespace);
+
+            final String object = RandomStringUtils.randomAlphanumeric(2 + ix);
+			final String key = cut.buildCacheKey(object, annotation);
 			expectedString2Object.put(key, object);
 
 			// There are 3 possible outcomes when fetching by key from memcached:

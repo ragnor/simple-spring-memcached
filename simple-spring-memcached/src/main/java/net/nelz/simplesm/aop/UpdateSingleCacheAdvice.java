@@ -41,10 +41,14 @@ public class UpdateSingleCacheAdvice extends CacheBase {
 			final Method methodToCache = getMethodToCache(jp);
 			final UpdateSingleCache annotation = methodToCache.getAnnotation(UpdateSingleCache.class);
 			validateAnnotation(annotation, methodToCache);
-			final String objectId = getObjectId(annotation.keyIndex(), retVal, jp, methodToCache);
-			final String cacheKey = buildCacheKey(objectId, annotation.namespace());
+            final AnnotationData annotationData =
+                    AnnotationDataBuilder.buildAnnotationData(annotation,
+                            UpdateSingleCache.class,
+                            methodToCache.getName());
+            final String objectId = getObjectId(annotationData.getKeyIndex(), retVal, jp, methodToCache);
+			final String cacheKey = buildCacheKey(objectId, annotationData);
 			final Object submission = (retVal == null) ? new PertinentNegativeNull() : retVal;
-			cache.set(cacheKey, annotation.expiration(), submission);
+			cache.set(cacheKey, annotationData.getExpiration(), submission);
 		} catch (Exception ex) {
 			LOG.warn("Updating caching via " + jp.toShortString() + " aborted due to an error.", ex);
 		}

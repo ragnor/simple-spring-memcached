@@ -50,14 +50,16 @@ public class ReadThroughMultiCacheAdvice extends CacheBase {
 			verifyReturnTypeIsList(coord.getMethod(), ReadThroughMultiCache.class);
 
 			// Get the annotation associated with this method, and make sure the values are valid.
-			coord.setAnnotation(coord.getMethod().getAnnotation(ReadThroughMultiCache.class));
-			validateAnnotation(coord.getAnnotation(), coord.getMethod());
+            final ReadThroughMultiCache annotation = coord.getMethod().getAnnotation(ReadThroughMultiCache.class);
+
+            coord.setAnnotationData(AnnotationDataBuilder.buildAnnotationData(
+                    annotation, ReadThroughMultiCache.class, coord.getMethod().getName()));
 
 			// Get the list of objects that will provide the keys to all the cache values.
 			coord.setKeyObjects(getKeyObjectList(coord.getAnnotation().keyIndex(), pjp, coord.getMethod()));
 
 			// Create key->object and object->key mappings.
-			coord.setHolder(convertIdObjectsToKeyMap(coord.getKeyObjects(), coord.getAnnotation().namespace()));
+			coord.setHolder(convertIdObjectsToKeyMap(coord.getKeyObjects(), coord.getAnnotationData()));
 
 			// Get the full list of cache keys and ask the cache for the corresponding values.
 			coord.setInitialKey2Result(cache.getBulk(coord.getKey2Obj().keySet()));
@@ -106,17 +108,17 @@ public class ReadThroughMultiCacheAdvice extends CacheBase {
 		}
 	}
 
-	protected void validateAnnotation(final ReadThroughMultiCache annotation,
-	                                  final Method method) {
-		final Class annotationClass = ReadThroughMultiCache.class;
-		validateAnnotationExists(annotation, annotationClass);
-		validateAnnotationIndex(annotation.keyIndex(), false, annotationClass, method);
-		validateAnnotationNamespace(annotation.namespace(), annotationClass, method);
-		validateAnnotationExpiration(annotation.expiration(), annotationClass, method);
-	}
-
+//	protected void validateAnnotation(final ReadThroughMultiCache annotation,
+//	                                  final Method method) {
+//		final Class annotationClass = ReadThroughMultiCache.class;
+//		validateAnnotationExists(annotation, annotationClass);
+//		validateAnnotationIndex(annotation.keyIndex(), false, annotationClass, method);
+//		validateAnnotationNamespace(annotation.namespace(), annotationClass, method);
+//		validateAnnotationExpiration(annotation.expiration(), annotationClass, method);
+//	}
+//
 	protected MapHolder convertIdObjectsToKeyMap(final List<Object> idObjects,
-	                                              final String namespace)
+	                                              final AnnotationData data)
 			throws Exception {
 		final MapHolder holder = new MapHolder();
 		for (final Object obj : idObjects) {
@@ -125,7 +127,7 @@ public class ReadThroughMultiCacheAdvice extends CacheBase {
 			}
 
 			final Method method = getKeyMethod(obj);
-			final String cacheKey = buildCacheKey(generateObjectId(method, obj), namespace);
+			final String cacheKey = buildCacheKey(generateObjectId(method, obj), data);
 			if (holder.getObj2Key().get(obj) == null) {
 				holder.getObj2Key().put(obj, cacheKey);
 			}
@@ -167,7 +169,8 @@ public class ReadThroughMultiCacheAdvice extends CacheBase {
 	static class MultiCacheCoordinator {
 		private Method method;
 		private ReadThroughMultiCache annotation;
-		private List<Object> keyObjects = new ArrayList<Object>();
+        private AnnotationData annotationData;
+        private List<Object> keyObjects = new ArrayList<Object>();
 		private Map<String, Object> key2Obj = new HashMap<String, Object>();
 		private Map<Object, String> obj2Key = new HashMap<Object, String>();
 		private Map<String, Object> key2Result = new HashMap<String, Object>();
@@ -189,7 +192,15 @@ public class ReadThroughMultiCacheAdvice extends CacheBase {
 			this.annotation = annotation;
 		}
 
-		public List<Object> getKeyObjects() {
+        public AnnotationData getAnnotationData() {
+            return annotationData;
+        }
+
+        public void setAnnotationData(AnnotationData annotationData) {
+            this.annotationData = annotationData;
+        }
+
+        public List<Object> getKeyObjects() {
 			return keyObjects;
 		}
 

@@ -44,10 +44,13 @@ public class UpdateMultiCacheAdvice extends CacheBase {
 			verifyReturnTypeIsList(methodToCache, UpdateMultiCache.class);
 			final UpdateMultiCache annotation = methodToCache.getAnnotation(UpdateMultiCache.class);
 			validateAnnotation(annotation, methodToCache);
-			final List<Object> returnList = (List<Object>) retVal;
-			final List<Object> keyObjects = getKeyObjects(annotation.keyIndex(), returnList, jp, methodToCache);
-			final List<String> cacheKeys = getCacheKeys(keyObjects, annotation.namespace());
-			updateCache(cacheKeys, returnList, methodToCache, annotation);
+            final AnnotationData annotationData =
+                    AnnotationDataBuilder.buildAnnotationData(annotation,
+                            UpdateMultiCache.class, methodToCache.getName());
+            final List<Object> returnList = (List<Object>) retVal;
+			final List<Object> keyObjects = getKeyObjects(annotationData.getKeyIndex(), returnList, jp, methodToCache);
+			final List<String> cacheKeys = getCacheKeys(keyObjects, annotationData);
+			updateCache(cacheKeys, returnList, methodToCache, annotationData);
 		} catch (Exception ex) {
 			LOG.warn("Updating caching via " + jp.toShortString() + " aborted due to an error.", ex);
 		}
@@ -57,7 +60,7 @@ public class UpdateMultiCacheAdvice extends CacheBase {
 	protected void updateCache(final List<String> cacheKeys,
 	                           final List<Object> returnList,
 	                           final Method methodToCache,
-	                           final UpdateMultiCache annotation) {
+	                           final AnnotationData annotationData) {
 		if (returnList.size() != cacheKeys.size()) {
 			throw new InvalidAnnotationException(String.format(
 					"The key generation objects, and the resulting objects do not match in size for [%s].",
@@ -69,7 +72,7 @@ public class UpdateMultiCacheAdvice extends CacheBase {
 			final Object result = returnList.get(ix);
 			final String cacheKey = cacheKeys.get(ix);
 			final Object cacheObject = result != null ? result : new PertinentNegativeNull();
-			cache.set(cacheKey, annotation.expiration(), cacheObject);
+			cache.set(cacheKey, annotationData.getExpiration(), cacheObject);
 		}
 	}
 
@@ -93,12 +96,12 @@ public class UpdateMultiCacheAdvice extends CacheBase {
 	}
 
 	protected List<String> getCacheKeys(final List<Object> keyObjects,
-	                                    final String namespace) throws Exception {
+	                                    final AnnotationData annotationData) throws Exception {
 		final List<String> results = new ArrayList<String>();
 		for (final Object object : keyObjects) {
 			final Method keyMethod = getKeyMethod(object);
 			final String objectId = generateObjectId(keyMethod, object);
-			results.add(buildCacheKey(objectId, namespace));
+			results.add(buildCacheKey(objectId, annotationData));
 		}
 
 		return results;

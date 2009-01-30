@@ -45,8 +45,12 @@ public class ReadThroughSingleCacheAdvice extends CacheBase {
 			final Method methodToCache = getMethodToCache(pjp);
 			annotation = methodToCache.getAnnotation(ReadThroughSingleCache.class);
 			validateAnnotation(annotation, methodToCache);
-			final String objectId = getObjectId(annotation.keyIndex(), pjp, methodToCache);
-			cacheKey = buildCacheKey(objectId, annotation.namespace());
+            final AnnotationData annotationData =
+                    AnnotationDataBuilder.buildAnnotationData(annotation,
+                            ReadThroughSingleCache.class,
+                            methodToCache.getName());
+            final String objectId = getObjectId(annotation.keyIndex(), pjp, methodToCache);
+			cacheKey = buildCacheKey(objectId, annotationData);
 			final Object result = cache.get(cacheKey);
 			if (result != null) {
 				LOG.debug("Cache hit.");
