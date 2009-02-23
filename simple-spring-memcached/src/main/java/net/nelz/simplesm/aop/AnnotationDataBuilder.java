@@ -5,6 +5,7 @@ import net.nelz.simplesm.annotations.AnnotationConstants;
 import java.security.InvalidParameterException;
 import java.lang.reflect.Method;
 import java.lang.reflect.InvocationTargetException;
+import java.lang.annotation.Annotation;
 
 /**
 Copyright (c) 2008  Nelson Carpentier
@@ -29,7 +30,7 @@ THE SOFTWARE.
  */
 class AnnotationDataBuilder {
 
-    static AnnotationData buildAnnotationData(final Object annotation,
+    static AnnotationData buildAnnotationData(final Annotation annotation,
                                               final Class expectedAnnotationClass,
                                               final String targetMethodName) {
         final AnnotationData data = new AnnotationData();
@@ -41,11 +42,7 @@ class AnnotationDataBuilder {
             ));
         }
 
-        // TODO: Something is 'off' about this .getClass() call... Always returning Proxies... Different approach?
-        final Class clazz = annotation.getClass();
-        if (true) {
-            throw new RuntimeException("GOTTA FIX THIS!!!");
-        }
+        final Class clazz = annotation.annotationType();
         if (!expectedAnnotationClass.equals(clazz)) {
             throw new InvalidParameterException(String.format(
                     "No annotation of type [%s] found, class was of type [%s].",
