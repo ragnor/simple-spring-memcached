@@ -1,6 +1,7 @@
 package net.nelz.simplesm.aop;
 
 import net.nelz.simplesm.annotations.AnnotationConstants;
+import net.nelz.simplesm.annotations.InvalidateSingleCache;
 
 import java.security.InvalidParameterException;
 import java.lang.reflect.Method;
@@ -64,16 +65,18 @@ class AnnotationDataBuilder {
             }
             data.setKeyIndex(keyIndex);
 
-            final Method expirationMethod = clazz.getDeclaredMethod("expiration", null);
-            final int expiration = (Integer) expirationMethod.invoke(annotation, null);
-            if (expiration < 0) {
-                throw new InvalidParameterException(String.format(
-                        "Expiration for annotation [%s] must be 0 or greater on [%s]",
-                        expectedAnnotationClass.getName(),
-                        targetMethodName
-                ));
+            if (expectedAnnotationClass != InvalidateSingleCache.class) {
+                final Method expirationMethod = clazz.getDeclaredMethod("expiration", null);
+                final int expiration = (Integer) expirationMethod.invoke(annotation, null);
+                if (expiration < 0) {
+                    throw new InvalidParameterException(String.format(
+                            "Expiration for annotation [%s] must be 0 or greater on [%s]",
+                            expectedAnnotationClass.getName(),
+                            targetMethodName
+                    ));
+                }
+                data.setExpiration(expiration);
             }
-            data.setExpiration(expiration);
 
             final Method namespaceMethod = clazz.getDeclaredMethod("namespace", null);
             final String namespace = (String) namespaceMethod.invoke(annotation, null);
