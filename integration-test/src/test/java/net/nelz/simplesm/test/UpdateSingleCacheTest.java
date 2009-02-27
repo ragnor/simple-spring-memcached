@@ -46,7 +46,8 @@ public class UpdateSingleCacheTest {
 
 		for (Long ix = 1 + now; ix < 35 + now; ix++) {
 			if (ix % 3 == 0) {
-				subset.add(ix);
+                // Add every 3rd generated key to the 'subset'
+                subset.add(ix);
 			}
 			superset.add(ix);
 		}
@@ -56,7 +57,9 @@ public class UpdateSingleCacheTest {
 
 		final TestSvc test = (TestSvc) context.getBean("testSvc");
 
-		final List<String> r1List = test.getTimestampValues(superset);
+        // This should hit the DAO, filling every value with the same first part,
+        // followed by an "X", followed by the key.
+        final List<String> r1List = test.getTimestampValues(superset);
 		for (int ix = 0; ix < r1List.size(); ix++) {
 			final Long key = superset.get(ix);
 			final String value = r1List.get(ix);
@@ -67,13 +70,18 @@ public class UpdateSingleCacheTest {
 			}
 		}
 
-		for (final Long key : subset) {
-			final String value = test.updateTimestampValue(key);
+        // Go thru each key in the 'subset', and replace the cache
+        // value with a single value, followed by a "U", followed by the key.
+        for (final Long key : subset) {
+            final String value = test.updateTimestampValue(key);
 			assertFalse(originalResults.get(key).equals(value));
 			expectedResults.put(key, value);
 		}
 
-		final List<String> r2List = test.getTimestampValues(superset);
+        // Now get the list out of the cache, and make sure all the values
+        // are as we expect. I.e. every 3rd value (in the 'subset') has a value with a "U"
+        // rather than the original "X"
+        final List<String> r2List = test.getTimestampValues(superset);
 		for (int ix = 0; ix < r2List.size(); ix++) {
 			final Long key = superset.get(ix);
 			final String value = r2List.get(ix);

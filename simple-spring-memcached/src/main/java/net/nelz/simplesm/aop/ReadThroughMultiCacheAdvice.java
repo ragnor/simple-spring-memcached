@@ -56,7 +56,7 @@ public class ReadThroughMultiCacheAdvice extends CacheBase {
                     annotation, ReadThroughMultiCache.class, coord.getMethod().getName()));
 
 			// Get the list of objects that will provide the keys to all the cache values.
-			coord.setKeyObjects(getKeyObjectList(coord.getAnnotation().keyIndex(), pjp, coord.getMethod()));
+			coord.setKeyObjects(getKeyObjectList(coord.getAnnotationData().getKeyIndex(), pjp, coord.getMethod()));
 
 			// Create key->object and object->key mappings.
 			coord.setHolder(convertIdObjectsToKeyMap(coord.getKeyObjects(), coord.getAnnotationData()));
@@ -95,7 +95,7 @@ public class ReadThroughMultiCacheAdvice extends CacheBase {
 				final Object resultObject = results.get(ix) == null ? new PertinentNegativeNull() : results.get(ix);
 				final String cacheKey = coord.obj2Key.get(keyObject);
 				cache.set(cacheKey,
-						coord.getAnnotation().expiration(),
+						coord.getAnnotationData().getExpiration(),
 						resultObject);
 				coord.getKey2Result().put(cacheKey, resultObject);
 			}
@@ -168,7 +168,7 @@ public class ReadThroughMultiCacheAdvice extends CacheBase {
 
 	static class MultiCacheCoordinator {
 		private Method method;
-		private ReadThroughMultiCache annotation;
+//		private ReadThroughMultiCache annotation;
         private AnnotationData annotationData;
         private List<Object> keyObjects = new ArrayList<Object>();
 		private Map<String, Object> key2Obj = new HashMap<String, Object>();
@@ -184,13 +184,13 @@ public class ReadThroughMultiCacheAdvice extends CacheBase {
 			this.method = method;
 		}
 
-		public ReadThroughMultiCache getAnnotation() {
-			return annotation;
-		}
-
-		public void setAnnotation(ReadThroughMultiCache annotation) {
-			this.annotation = annotation;
-		}
+//		public ReadThroughMultiCache getAnnotation() {
+//			return annotation;
+//		}
+//
+//		public void setAnnotation(ReadThroughMultiCache annotation) {
+//			this.annotation = annotation;
+//		}
 
         public AnnotationData getAnnotationData() {
             return annotationData;
@@ -263,7 +263,7 @@ public class ReadThroughMultiCacheAdvice extends CacheBase {
 		}
 
 		public Object[] modifyArgumentList(final Object[] args) {
-			args[annotation.keyIndex()] = this.missObjects;
+			args[annotationData.getKeyIndex()] = this.missObjects;
 			return args;
 		}
 	}
