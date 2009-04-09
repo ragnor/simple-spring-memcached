@@ -6,7 +6,6 @@ import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.commons.lang.StringUtils;
 import net.nelz.simplesm.annotations.InvalidateSingleCache;
 
 import java.lang.reflect.Method;
@@ -75,7 +74,7 @@ public class InvalidateSingleCacheAdvice extends CacheBase {
                 final String objectId = generateObjectId(keyMethod, result);
                 cacheKey = buildCacheKey(objectId, annotationData);
             }
-            if (StringUtils.isBlank(cacheKey)) {
+            if (cacheKey == null || cacheKey.trim().length() == 0) {
                 throw new InvalidParameterException("Unable to find a cache key");
             }
             cache.delete(cacheKey);
