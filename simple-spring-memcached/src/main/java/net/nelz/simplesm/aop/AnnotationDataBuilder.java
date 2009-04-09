@@ -2,6 +2,7 @@ package net.nelz.simplesm.aop;
 
 import net.nelz.simplesm.annotations.AnnotationConstants;
 import net.nelz.simplesm.annotations.InvalidateSingleCache;
+import net.nelz.simplesm.annotations.InvalidateMultiCache;
 
 import java.security.InvalidParameterException;
 import java.lang.reflect.Method;
@@ -65,7 +66,8 @@ class AnnotationDataBuilder {
             }
             data.setKeyIndex(keyIndex);
 
-            if (expectedAnnotationClass != InvalidateSingleCache.class) {
+            if (expectedAnnotationClass != InvalidateSingleCache.class
+                    && expectedAnnotationClass != InvalidateMultiCache.class) {
                 final Method expirationMethod = clazz.getDeclaredMethod("expiration", null);
                 final int expiration = (Integer) expirationMethod.invoke(annotation, null);
                 if (expiration < 0) {

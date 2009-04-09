@@ -76,7 +76,7 @@ public class TestDAOImpl implements TestDAO {
 		return results;
 	}
 
-    @ReadThroughSingleCache(namespace = "Charlie", keyIndex = 0, expiration = 10000)
+    @ReadThroughSingleCache(namespace = "Charlie", keyIndex = 0, expiration = 1000)
     public String getRandomString(final Long key) {
         try {
             Thread.sleep(500);
@@ -93,4 +93,28 @@ public class TestDAOImpl implements TestDAO {
     public Long updateRandomStringAgain(final Long key) {
         return key;
     }
+
+    @ReadThroughMultiCache(namespace = "Delta", keyIndex = 0, expiration = 1000)
+    public List<String> getRandomStrings(final List<Long> keys) {
+        try {
+            Thread.sleep(500);
+        } catch (InterruptedException ex) {}
+        final String series = RandomStringUtils.randomAlphabetic(6);
+        final List<String> results = new ArrayList<String>(keys.size());
+        for (final Long key : keys) {
+            results.add(series + "-" + key.toString() + "-" + RandomStringUtils.randomAlphanumeric(25 + RandomUtils.nextInt(30)));
+        }
+        return results;
+    }
+
+    @InvalidateMultiCache(namespace = "Delta", keyIndex = 0)
+    public void updateRandomStrings(final List<Long> keys) {
+        // Nothing to do.
+    }
+
+    @InvalidateMultiCache(namespace = "Delta", keyIndex = 0)
+    public List<Long> updateRandomStringsAgain(final List<Long> keys) {
+        return keys;
+    }
+
 }

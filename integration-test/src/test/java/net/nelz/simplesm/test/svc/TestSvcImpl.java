@@ -62,4 +62,16 @@ public class TestSvcImpl implements TestSvc {
     public Long updateRandomStringAgain(final Long key) {
         return this.dao.updateRandomStringAgain(key);
     }
+
+    public List<String> getRandomStrings(List<Long> keys) {
+        return this.dao.getRandomStrings(keys);
+    }
+
+    public void updateRandomStrings(List<Long> keys) {
+        this.dao.updateRandomStrings(keys);
+    }
+
+    public List<Long> updateRandomStringsAgain(List<Long> keys) {
+        return this.dao.updateRandomStringsAgain(keys);
+    }
 }

@@ -38,4 +38,11 @@ public interface TestDAO {
     public void updateRandomString(final Long key);
 
     public Long updateRandomStringAgain(final Long key);
+
+    public List<String> getRandomStrings(final List<Long> keys);
+
+    public void updateRandomStrings(final List<Long> keys);
+
+    public List<Long> updateRandomStringsAgain(final List<Long> keys);
+    
 }

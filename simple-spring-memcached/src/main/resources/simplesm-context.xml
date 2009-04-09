@@ -42,5 +42,9 @@
         <property name="cache" ref="memcachedClient" />
         <property name="methodStore" ref="methodStore" />
     </bean>
+    <bean id="invalidateMultiCache" class="net.nelz.simplesm.aop.InvalidateMultiCacheAdvice">
+        <property name="cache" ref="memcachedClient" />
+        <property name="methodStore" ref="methodStore" />
+    </bean>
 
 </beans>
