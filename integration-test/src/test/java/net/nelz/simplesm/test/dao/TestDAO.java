@@ -33,4 +33,9 @@ public interface TestDAO {
 
 	public List<String> updateTimestamValues(final List<Long> keys);
 
+    public String getRandomString(final Long key);
+
+    public void updateRandomString(final Long key);
+
+    public Long updateRandomStringAgain(final Long key);
 }

@@ -2,6 +2,8 @@ package net.nelz.simplesm.test.dao;
 
 import net.nelz.simplesm.annotations.*;
 import org.springframework.stereotype.*;
+import org.apache.commons.lang.RandomStringUtils;
+import org.apache.commons.lang.math.RandomUtils;
 
 import java.util.*;
 
@@ -73,4 +75,22 @@ public class TestDAOImpl implements TestDAO {
 		}
 		return results;
 	}
+
+    @ReadThroughSingleCache(namespace = "Charlie", keyIndex = 0, expiration = 10000)
+    public String getRandomString(final Long key) {
+        try {
+            Thread.sleep(500);
+        } catch (InterruptedException ex) {}
+        return RandomStringUtils.randomAlphanumeric(25 + RandomUtils.nextInt(30));
+    }
+
+    @InvalidateSingleCache(namespace = "Charlie", keyIndex = 0)
+    public void updateRandomString(final Long key) {
+        // Nothing really to do here.
+    }
+
+    @InvalidateSingleCache(namespace = "Charlie", keyIndex = -1)
+    public Long updateRandomStringAgain(final Long key) {
+        return key;
+    }
 }

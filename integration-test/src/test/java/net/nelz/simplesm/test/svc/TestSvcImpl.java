@@ -51,4 +51,15 @@ public class TestSvcImpl implements TestSvc {
 		return this.dao.updateTimestamValues(keys);
 	}
 
+    public String getRandomString(final Long key) {
+        return this.dao.getRandomString(key);
+    }
+
+    public void updateRandomString(final Long key) {
+        this.dao.updateRandomString(key);
+    }
+
+    public Long updateRandomStringAgain(final Long key) {
+        return this.dao.updateRandomStringAgain(key);
+    }
 }

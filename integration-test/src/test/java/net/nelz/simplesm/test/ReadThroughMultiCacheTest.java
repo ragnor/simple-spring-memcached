@@ -40,7 +40,7 @@ public class ReadThroughMultiCacheTest {
 
 	@Test
 	public void test() {
-		final Long rawNow = new Date().getTime();
+		final Long rawNow = System.currentTimeMillis();
 		final Long now = (rawNow / 1000) * 10000;
 		final List<Long> subset = new ArrayList<Long>();
 		final List<Long> superset = new ArrayList<Long>();
