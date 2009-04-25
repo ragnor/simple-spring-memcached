@@ -32,6 +32,7 @@ class AnnotationData {
     private int keyIndex = 0;
     private int expiration = 0;
     private String className = "";
+    private String assignedKey = "";
 
     public String getNamespace() {
         return namespace;
@@ -63,5 +64,13 @@ class AnnotationData {
 
     public void setClassName(String className) {
         this.className = className;
+    }
+
+    public String getAssignedKey() {
+        return assignedKey;
+    }
+
+    public void setAssignedKey(String assignedKey) {
+        this.assignedKey = assignedKey;
     }
 }
