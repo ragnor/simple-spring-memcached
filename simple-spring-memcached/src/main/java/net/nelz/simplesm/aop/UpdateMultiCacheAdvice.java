@@ -95,18 +95,6 @@ public class UpdateMultiCacheAdvice extends CacheBase {
 		));
 	}
 
-	protected List<String> getCacheKeys(final List<Object> keyObjects,
-	                                    final AnnotationData annotationData) throws Exception {
-		final List<String> results = new ArrayList<String>();
-		for (final Object object : keyObjects) {
-			final Method keyMethod = getKeyMethod(object);
-			final String objectId = generateObjectId(keyMethod, object);
-			results.add(buildCacheKey(objectId, annotationData));
-		}
-
-		return results;
-	}
-
 	protected void validateAnnotation(final UpdateMultiCache annotation,
 	                                  final Method method) {
 

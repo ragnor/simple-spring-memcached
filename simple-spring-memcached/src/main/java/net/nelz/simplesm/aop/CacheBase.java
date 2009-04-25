@@ -223,4 +223,16 @@ public class CacheBase {
 		return false;
 	}
 
+    protected List<String> getCacheKeys(final List<Object> keyObjects,
+                                        final AnnotationData annotationData) throws Exception {
+        final List<String> results = new ArrayList<String>();
+        for (final Object object : keyObjects) {
+            final Method keyMethod = getKeyMethod(object);
+            final String objectId = generateObjectId(keyMethod, object);
+            results.add(buildCacheKey(objectId, annotationData));
+        }
+
+        return results;
+    }
+    
 }
