@@ -229,4 +229,36 @@ public class MockMemcachedClient implements MemcachedClientIF {
 	public boolean waitForQueues(long l, TimeUnit timeUnit) {
 		return false;
 	}
+
+    public NodeLocator getNodeLocator() {
+        return null;
+    }
+
+    public Map<SocketAddress, Map<String, String>> getStats(String s) {
+        return null;
+    }
+
+    public long incr(String s, int i, long l, int i1) throws OperationTimeoutException {
+        return 0;
+    }
+
+    public long decr(String s, int i, long l, int i1) throws OperationTimeoutException {
+        return 0;
+    }
+
+    public Future<Long> asyncIncr(String s, int i) {
+        return null;
+    }
+
+    public Future<Long> asyncDecr(String s, int i) {
+        return null;
+    }
+
+    public boolean addObserver(ConnectionObserver connectionObserver) {
+        return false;
+    }
+
+    public boolean removeObserver(ConnectionObserver connectionObserver) {
+        return false;
+    }
 }

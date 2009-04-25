@@ -1,5 +1,6 @@
 package net.nelz.simplesm.aop;
 
+import static org.testng.AssertJUnit.*;
 import net.nelz.simplesm.annotations.*;
 import org.testng.annotations.*;
 
@@ -32,7 +33,8 @@ public class UpdateSingleCacheAdviceTest {
 	@BeforeClass
 	public void beforeClass() {
 		cut = new UpdateSingleCacheAdvice();
-	}
+        cut.setMethodStore(new CacheKeyMethodStoreImpl());
+    }
 
 	@Test
 	public void testAnnotationValidator() throws Exception {
@@ -42,9 +44,32 @@ public class UpdateSingleCacheAdviceTest {
 		cut.validateAnnotation(annotation, method);
 	}
 
-	private static class AnnotationValidator {
+    @Test
+    public void testGetObjectId() throws Exception {
+        final String key = "Key-" + System.currentTimeMillis();
+        final KeyObject obj = new KeyObject();
+        obj.setKey(key);
+        
+        final String result = cut.getObjectId(-1, obj, null, null);
+
+        assertEquals(key, result);
+    }
+
+    private static class AnnotationValidator {
 		@UpdateSingleCache(keyIndex = -1, namespace = "bubba")
 		public String cacheMe1() { return null; }
 	}
 
+    private static class KeyObject {
+        private String key;
+
+        @CacheKeyMethod
+        public String getKey() {
+            return key;
+        }
+
+        public void setKey(String key) {
+            this.key = key;
+        }
+    }
 }
