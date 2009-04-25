@@ -2,9 +2,11 @@ package net.nelz.simplesm.aop;
 
 import net.nelz.simplesm.annotations.*;
 import net.nelz.simplesm.exceptions.*;
+import net.spy.memcached.MemcachedClientIF;
 import org.apache.commons.lang.*;
 import static org.testng.AssertJUnit.*;
 import org.testng.annotations.*;
+import org.easymock.EasyMock;
 
 import java.lang.reflect.*;
 import java.util.*;
@@ -38,7 +40,8 @@ public class UpdateMultiCacheAdviceTest {
 	public void beforeClass() {
 		cut = new UpdateMultiCacheAdvice();
 		cut.setMethodStore(new CacheKeyMethodStoreImpl());
-	}
+        cut.updateMulti();
+    }
 
 	@Test
 	public void testAnnotation() throws Exception {
@@ -84,7 +87,45 @@ public class UpdateMultiCacheAdviceTest {
 		cut.getKeyObjects(-1, results, null, method2);
 	}
 
-	static class AnnotationTest {
+    @Test
+    public void testUpdateCache() throws Exception {
+        final Method method = AnnotationTest.class.getMethod("cacheMe01", null);
+        final UpdateMultiCache annotation = method.getAnnotation(UpdateMultiCache.class);
+        final AnnotationData data = AnnotationDataBuilder.buildAnnotationData(annotation, UpdateMultiCache.class, "cacheMe01");
+
+        final List<String> keys = new ArrayList<String>();
+        final List<Object> objs = new ArrayList<Object>();
+        keys.add("Key1-" + System.currentTimeMillis());
+        keys.add("Key2-" + System.currentTimeMillis());
+
+        try {
+            cut.updateCache(keys, objs, method, data);
+            fail("Expected Exception.");
+        } catch (InvalidAnnotationException ex) {
+            assertTrue(ex.getMessage().contains("do not match in size"));
+        }
+
+        final MemcachedClientIF cache = EasyMock.createMock(MemcachedClientIF.class);
+        cut.setCache(cache);
+
+        for (final String key : keys) {
+            final String value = "ValueFor-" + key;
+            objs.add(value);
+            EasyMock.expect(cache.set(key, data.getExpiration(), value)).andReturn(null);
+        }
+        keys.add("BigFatNull");
+        objs.add(null);
+        EasyMock.expect(cache.set(keys.get(2), data.getExpiration(), new PertinentNegativeNull())).andReturn(null);
+
+        EasyMock.replay(cache);
+
+        cut.updateCache(keys, objs, method, data);
+
+        EasyMock.verify(cache);
+
+    }
+
+    static class AnnotationTest {
 		@UpdateMultiCache(namespace = "Bubba", expiration = 300, keyIndex = 0)
 		public void cacheMe01() {}
 

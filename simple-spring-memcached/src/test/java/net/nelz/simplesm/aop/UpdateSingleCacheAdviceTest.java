@@ -34,6 +34,7 @@ public class UpdateSingleCacheAdviceTest {
 	public void beforeClass() {
 		cut = new UpdateSingleCacheAdvice();
         cut.setMethodStore(new CacheKeyMethodStoreImpl());
+        cut.updateSingle();
     }
 
 	@Test

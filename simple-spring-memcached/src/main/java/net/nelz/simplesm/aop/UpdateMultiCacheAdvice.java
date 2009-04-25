@@ -35,9 +35,9 @@ public class UpdateMultiCacheAdvice extends CacheBase {
 	private static final Log LOG = LogFactory.getLog(UpdateMultiCacheAdvice.class);
 
 	@Pointcut("@annotation(net.nelz.simplesm.annotations.UpdateMultiCache)")
-	public void updateSingle() {}
+	public void updateMulti() {}
 
-	@AfterReturning(pointcut="updateSingle()", returning="retVal")
+	@AfterReturning(pointcut="updateMulti()", returning="retVal")
 	public Object cacheUpdateSingle(final JoinPoint jp, final Object retVal) throws Throwable {
 		try {
 			final Method methodToCache = getMethodToCache(jp);
