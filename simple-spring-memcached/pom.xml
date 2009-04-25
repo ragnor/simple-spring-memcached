@@ -4,7 +4,7 @@
   <parent>
     <groupId>net.nelz.simplesm</groupId>
     <artifactId>simple-spring-memcached-parent</artifactId>
-    <version>0.6-SNAPSHOT</version>
+    <version>0.6</version>
   </parent>
   <artifactId>simple-spring-memcached</artifactId>
   <packaging>jar</packaging>
