@@ -3,6 +3,7 @@ package net.nelz.simplesm.aop;
 import net.nelz.simplesm.annotations.AnnotationConstants;
 import net.nelz.simplesm.annotations.InvalidateSingleCache;
 import net.nelz.simplesm.annotations.InvalidateMultiCache;
+import net.nelz.simplesm.annotations.ReadThroughAssignCache;
 
 import java.security.InvalidParameterException;
 import java.lang.reflect.Method;
@@ -55,16 +56,18 @@ class AnnotationDataBuilder {
         data.setClassName(clazz.getName());
 
         try {
-            final Method keyIndexMethod = clazz.getDeclaredMethod("keyIndex", null);
-            final int keyIndex = (Integer) keyIndexMethod.invoke(annotation, null);
-            if (keyIndex < -1) {
-                throw new InvalidParameterException(String.format(
-                        "KeyIndex for annotation [%s] must be -1 or greater on [%s]",
-                        expectedAnnotationClass.getName(),
-                        targetMethodName
-                ));
+            if (expectedAnnotationClass != ReadThroughAssignCache.class) {
+                final Method keyIndexMethod = clazz.getDeclaredMethod("keyIndex", null);
+                final int keyIndex = (Integer) keyIndexMethod.invoke(annotation, null);
+                if (keyIndex < -1) {
+                    throw new InvalidParameterException(String.format(
+                            "KeyIndex for annotation [%s] must be -1 or greater on [%s]",
+                            expectedAnnotationClass.getName(),
+                            targetMethodName
+                    ));
+                }
+                data.setKeyIndex(keyIndex);
             }
-            data.setKeyIndex(keyIndex);
 
             if (expectedAnnotationClass != InvalidateSingleCache.class
                     && expectedAnnotationClass != InvalidateMultiCache.class) {
@@ -93,6 +96,21 @@ class AnnotationDataBuilder {
             }
             data.setNamespace(namespace);
 
+            if (expectedAnnotationClass == ReadThroughAssignCache.class) {
+                final Method assignKeyMethod = clazz.getDeclaredMethod("assignedKey", null);
+                final String assignKey = (String) assignKeyMethod.invoke(annotation, null);
+                if (AnnotationConstants.DEFAULT_STRING.equals(assignKey)
+                        || assignKey == null
+                        || assignKey.length() < 1) {
+                    throw new InvalidParameterException(String.format(
+                            "AssignedKey for annotation [%s] must be defined on [%s]",
+                            expectedAnnotationClass.getName(),
+                            targetMethodName
+                    ));
+                }
+                data.setAssignedKey(assignKey);
+            }
+            
         } catch (NoSuchMethodException ex) {
             throw new RuntimeException("Problem assembling Annotation information.", ex);
         } catch (IllegalAccessException ex) {

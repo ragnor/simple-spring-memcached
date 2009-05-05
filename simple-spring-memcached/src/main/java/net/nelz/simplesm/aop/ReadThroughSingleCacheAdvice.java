@@ -44,7 +44,7 @@ public class ReadThroughSingleCacheAdvice extends CacheBase {
 		try {
 			final Method methodToCache = getMethodToCache(pjp);
 			annotation = methodToCache.getAnnotation(ReadThroughSingleCache.class);
-			validateAnnotation(annotation, methodToCache);
+			validateAnnotation(annotation, methodToCache); // TODO: Functionality fulfilled by AnnotationDataBuilder?!?
             final AnnotationData annotationData =
                     AnnotationDataBuilder.buildAnnotationData(annotation,
                             ReadThroughSingleCache.class,
