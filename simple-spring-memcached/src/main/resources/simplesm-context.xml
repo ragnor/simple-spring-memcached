@@ -30,6 +30,10 @@
 		<property name="cache" ref="memcachedClient" />
 		<property name="methodStore" ref="methodStore" />
 	</bean>
+  <bean id="readThroughAssignCache" class="net.nelz.simplesm.aop.ReadThroughAssignCacheAdvice">
+    <property name="cache" ref="memcachedClient" />
+    <property name="methodStore" ref="methodStore" />
+  </bean>
 	<bean id="updateSingleCache" class="net.nelz.simplesm.aop.UpdateSingleCacheAdvice">
 		<property name="cache" ref="memcachedClient" />
 		<property name="methodStore" ref="methodStore" />

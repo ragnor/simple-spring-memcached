@@ -1,6 +1,14 @@
-package net.nelz.simplesm.test.dao;
+package net.nelz.simplesm.test;
 
-import java.util.*;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
+import org.testng.annotations.BeforeClass;
+import org.testng.annotations.Test;
+import static org.testng.AssertJUnit.assertEquals;
+import net.nelz.simplesm.test.svc.TestSvc;
+
+import java.util.Date;
+import java.util.List;
 
 /**
 Copyright (c) 2008  Nelson Carpentier
@@ -23,28 +31,24 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
  */
-public interface TestDAO {
+public class ReadThroughAssignCacheTest {
+    private ApplicationContext context;
 
-	public String getDateString(final String key);
+    @BeforeClass
+    public void beforeClass() {
+        context = new ClassPathXmlApplicationContext("/test-context.xml");
+    }
 
-	public List<String> getTimestampValues(final List<Long> keys);
+    @Test
+    public void test() {
+        final TestSvc test = (TestSvc) context.getBean("testSvc");
 
-	public String updateTimestampValue(final Long key);
+        final List<String> result1 = test.getAssignStrings();
+        final List<String> result2 = test.getAssignStrings();
 
-	public List<String> updateTimestamValues(final List<Long> keys);
-
-    public String getRandomString(final Long key);
-
-    public void updateRandomString(final Long key);
-
-    public Long updateRandomStringAgain(final Long key);
-
-    public List<String> getRandomStrings(final List<Long> keys);
-
-    public void updateRandomStrings(final List<Long> keys);
-
-    public List<Long> updateRandomStringsAgain(final List<Long> keys);
-
-    public List<String> getAssignStrings();
-
+        assertEquals(result1.size(), result2.size());
+        for (int ix = 0; ix < result1.size(); ix++) {
+            assertEquals(result1.get(ix), result2.get(ix));
+        }        
+    }
 }

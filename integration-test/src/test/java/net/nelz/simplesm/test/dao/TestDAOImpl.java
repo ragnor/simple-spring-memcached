@@ -117,4 +117,17 @@ public class TestDAOImpl implements TestDAO {
         return keys;
     }
 
+    @ReadThroughAssignCache(assignedKey = "SomePhatKey", namespace = "Echo", expiration = 3000)
+    public List<String> getAssignStrings() {
+        try {
+            Thread.sleep(500);
+        } catch (InterruptedException ex) {}
+        final List<String> results = new ArrayList<String>();
+        final long extra = System.currentTimeMillis() % 20;
+        final String base = System.currentTimeMillis() + "";
+        for (int ix = 0; ix < 20 + extra; ix++) {
+            results.add(ix + "-" + base);
+        }
+        return results;
+    }
 }

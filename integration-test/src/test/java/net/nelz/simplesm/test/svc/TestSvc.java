@@ -44,6 +44,8 @@ public interface TestSvc {
     public void updateRandomStrings(final List<Long> keys);
 
     public List<Long> updateRandomStringsAgain(final List<Long> keys);
-    
+
+    public List<String> getAssignStrings();
+
 }
 

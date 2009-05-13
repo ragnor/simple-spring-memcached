@@ -43,10 +43,17 @@ public class ReadThroughAssignCacheTest {
     @Test
     public void testAnnotationValidation() throws Exception {
         final AnnotationValidator testClass = new AnnotationValidator();
-        Method method = null;
-        Annotation annotation = null;
+        Method method = testClass.getClass().getMethod("cacheMe1",null);
+        Annotation annotation = method.getAnnotation(ReadThroughAssignCache.class);
+        try {
+            AnnotationDataBuilder.buildAnnotationData(annotation, ReadThroughAssignCache.class, method.getName());
+            fail("Expected Exception.");
+        } catch (InvalidParameterException ex) {
+            System.out.println(ex.getMessage());
+            assertTrue(ex.getMessage().indexOf("AssignedKey") != -1);
+        }
 
-        method = testClass.getClass().getMethod("cacheMe1",null);
+        method = testClass.getClass().getMethod("cacheMe2",null);
         annotation = method.getAnnotation(ReadThroughAssignCache.class);
         try {
             AnnotationDataBuilder.buildAnnotationData(annotation, ReadThroughAssignCache.class, method.getName());
@@ -58,16 +65,9 @@ public class ReadThroughAssignCacheTest {
 
         method = testClass.getClass().getMethod("cacheMe3",null);
         annotation = method.getAnnotation(ReadThroughAssignCache.class);
-        try {
-            AnnotationDataBuilder.buildAnnotationData(annotation, ReadThroughAssignCache.class, method.getName());
-            fail("Expected Exception.");
-        } catch (InvalidParameterException ex) {
-            System.out.println(ex.getMessage());
-            assertTrue(ex.getMessage().indexOf("AssignedKey") != -1);
-        }
+        AnnotationDataBuilder.buildAnnotationData(annotation, ReadThroughAssignCache.class, method.getName());
 
     }
-
 
     private static class AnnotationValidator {
         @ReadThroughAssignCache(namespace = "bubba", expiration = 100)
