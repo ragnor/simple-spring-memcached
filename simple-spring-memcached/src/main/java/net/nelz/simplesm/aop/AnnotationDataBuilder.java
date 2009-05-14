@@ -1,9 +1,6 @@
 package net.nelz.simplesm.aop;
 
-import net.nelz.simplesm.annotations.AnnotationConstants;
-import net.nelz.simplesm.annotations.InvalidateSingleCache;
-import net.nelz.simplesm.annotations.InvalidateMultiCache;
-import net.nelz.simplesm.annotations.ReadThroughAssignCache;
+import net.nelz.simplesm.annotations.*;
 
 import java.security.InvalidParameterException;
 import java.lang.reflect.Method;
@@ -56,7 +53,8 @@ class AnnotationDataBuilder {
         data.setClassName(clazz.getName());
 
         try {
-            if (expectedAnnotationClass != ReadThroughAssignCache.class) {
+            if (expectedAnnotationClass != ReadThroughAssignCache.class
+                    && expectedAnnotationClass != InvalidateAssignCache.class) {
                 final Method keyIndexMethod = clazz.getDeclaredMethod("keyIndex", null);
                 final int keyIndex = (Integer) keyIndexMethod.invoke(annotation, null);
                 if (keyIndex < -1) {
@@ -70,7 +68,8 @@ class AnnotationDataBuilder {
             }
 
             if (expectedAnnotationClass != InvalidateSingleCache.class
-                    && expectedAnnotationClass != InvalidateMultiCache.class) {
+                    && expectedAnnotationClass != InvalidateMultiCache.class
+                    && expectedAnnotationClass != InvalidateAssignCache.class) {
                 final Method expirationMethod = clazz.getDeclaredMethod("expiration", null);
                 final int expiration = (Integer) expirationMethod.invoke(annotation, null);
                 if (expiration < 0) {
@@ -96,7 +95,8 @@ class AnnotationDataBuilder {
             }
             data.setNamespace(namespace);
 
-            if (expectedAnnotationClass == ReadThroughAssignCache.class) {
+            if (expectedAnnotationClass == ReadThroughAssignCache.class
+                    || expectedAnnotationClass == InvalidateAssignCache.class) {
                 final Method assignKeyMethod = clazz.getDeclaredMethod("assignedKey", null);
                 final String assignKey = (String) assignKeyMethod.invoke(annotation, null);
                 if (AnnotationConstants.DEFAULT_STRING.equals(assignKey)

@@ -1,10 +1,5 @@
 package net.nelz.simplesm.annotations;
 
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
-import java.lang.annotation.ElementType;
-
 /**
 Copyright (c) 2008  Nelson Carpentier
 
@@ -26,9 +21,7 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
  */
-@Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.METHOD)
-public @interface ReadThroughAssignCache {
+public @interface InvalidateAssignCache {
     /**
      * A namespace that is added to the key as it is stored in the distributed cache.
      * This allows differing object that may have the same ID to coexist.
@@ -38,28 +31,10 @@ public @interface ReadThroughAssignCache {
     String namespace() default AnnotationConstants.DEFAULT_STRING;
 
     /**
-     * A single key that is assigned to the value that is returned from this method. This key
+     * A single key that is invalidate after this method finishes. This key
      * will be combined with the <code>namespace()</code> value to be used in the distributed cache.
      * This value must be assigned.
      * @return the assigned key for the given data
      */
     String assignedKey() default AnnotationConstants.DEFAULT_STRING;
-
-    /**
-     *  The exp value is passed along to memcached exactly as given, and will be
-     * processed per the memcached protocol specification:
-     *
-     * The actual value sent may either be Unix time (number of seconds since January 1, 1970,
-     * as a 32-bit value), or a number of seconds starting from current time. In the latter case,
-     * this number of seconds may not exceed 60*60*24*30 (number of seconds in 30 days); if the
-     * number sent by a client is larger than that, the server will consider it to be real Unix
-     * time value rather than an offset from current time.
-     *
-     * (Also note: a value of 0 means the given value should never expire. The value is still
-     * susceptible to purging by memcached for space and LRU (least recently used) considerations.)
-     *
-     * @return
-     */
-    int expiration() default 0;
-
 }
