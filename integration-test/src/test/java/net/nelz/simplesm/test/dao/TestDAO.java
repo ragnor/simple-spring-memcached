@@ -49,5 +49,6 @@ public interface TestDAO {
 
     public void invalidateAssignStrings();
 
+    public void updateAssignStrings(int bubpkus, final List<String> newData);
 
 }

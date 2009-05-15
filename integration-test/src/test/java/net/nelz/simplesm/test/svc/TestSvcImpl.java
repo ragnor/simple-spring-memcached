@@ -83,4 +83,8 @@ public class TestSvcImpl implements TestSvc {
         this.dao.invalidateAssignStrings();
     }
 
+    public void updateAssignStrings(final List<String> newData) {
+        this.dao.updateAssignStrings(25, newData);
+    }
+
 }

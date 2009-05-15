@@ -42,6 +42,10 @@
 		<property name="cache" ref="memcachedClient" />
 		<property name="methodStore" ref="methodStore" />
 	</bean>
+  <bean id="updateAssignCache" class="net.nelz.simplesm.aop.UpdateAssignCacheAdvice">
+    <property name="cache" ref="memcachedClient" />
+    <property name="methodStore" ref="methodStore" />
+  </bean>
   <bean id="invalidateSingleCache" class="net.nelz.simplesm.aop.InvalidateSingleCacheAdvice">
       <property name="cache" ref="memcachedClient" />
       <property name="methodStore" ref="methodStore" />

@@ -37,6 +37,7 @@ public class UpdateSingleCacheAdvice extends CacheBase {
 
 	@AfterReturning(pointcut="updateSingle()", returning="retVal")
 	public Object cacheUpdateSingle(final JoinPoint jp, final Object retVal) throws Throwable {
+        // TODO: Is this the right way to do it, with an AfterReturning aspect? Maybe an Around?
 		try {
 			final Method methodToCache = getMethodToCache(jp);
 			final UpdateSingleCache annotation = methodToCache.getAnnotation(UpdateSingleCache.class);
@@ -47,7 +48,8 @@ public class UpdateSingleCacheAdvice extends CacheBase {
                             methodToCache.getName());
             final String objectId = getObjectId(annotationData.getKeyIndex(), retVal, jp, methodToCache);
 			final String cacheKey = buildCacheKey(objectId, annotationData);
-			final Object submission = (retVal == null) ? new PertinentNegativeNull() : retVal;
+            // At this point, what if the data wasn't held in the return value, but in a param?!?
+            final Object submission = (retVal == null) ? new PertinentNegativeNull() : retVal;
 			cache.set(cacheKey, annotationData.getExpiration(), submission);
 		} catch (Exception ex) {
 			LOG.warn("Updating caching via " + jp.toShortString() + " aborted due to an error.", ex);

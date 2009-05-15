@@ -96,7 +96,8 @@ class AnnotationDataBuilder {
             data.setNamespace(namespace);
 
             if (expectedAnnotationClass == ReadThroughAssignCache.class
-                    || expectedAnnotationClass == InvalidateAssignCache.class) {
+                    || expectedAnnotationClass == InvalidateAssignCache.class
+                    || expectedAnnotationClass == UpdateAssignCache.class) {
                 final Method assignKeyMethod = clazz.getDeclaredMethod("assignedKey", null);
                 final String assignKey = (String) assignKeyMethod.invoke(annotation, null);
                 if (AnnotationConstants.DEFAULT_STRING.equals(assignKey)
