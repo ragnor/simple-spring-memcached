@@ -47,5 +47,6 @@ public interface TestSvc {
 
     public List<String> getAssignStrings();
 
+    public void invalidateAssignStrings();    
 }
 

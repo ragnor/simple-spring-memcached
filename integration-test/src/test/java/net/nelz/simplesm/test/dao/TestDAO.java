@@ -47,4 +47,7 @@ public interface TestDAO {
 
     public List<String> getAssignStrings();
 
+    public void invalidateAssignStrings();
+
+
 }

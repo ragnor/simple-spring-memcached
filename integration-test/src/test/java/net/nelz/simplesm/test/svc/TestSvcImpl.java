@@ -78,4 +78,9 @@ public class TestSvcImpl implements TestSvc {
     public List<String> getAssignStrings() {
         return this.dao.getAssignStrings();
     }
+
+    public void invalidateAssignStrings() {
+        this.dao.invalidateAssignStrings();
+    }
+
 }

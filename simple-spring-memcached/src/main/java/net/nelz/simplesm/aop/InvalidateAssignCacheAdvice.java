@@ -52,7 +52,7 @@ public class InvalidateAssignCacheAdvice extends CacheBase {
             final InvalidateAssignCache annotation = methodToCache.getAnnotation(InvalidateAssignCache.class);
             final AnnotationData annotationData =
                     AnnotationDataBuilder.buildAnnotationData(annotation,
-                            InvalidateSingleCache.class,
+                            InvalidateAssignCache.class,
                             methodToCache.getName());
             
             final String cacheKey = buildCacheKey(annotationData.getAssignedKey(), annotationData);

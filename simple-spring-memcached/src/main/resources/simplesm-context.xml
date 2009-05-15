@@ -42,13 +42,17 @@
 		<property name="cache" ref="memcachedClient" />
 		<property name="methodStore" ref="methodStore" />
 	</bean>
-    <bean id="invalidateSingleCache" class="net.nelz.simplesm.aop.InvalidateSingleCacheAdvice">
-        <property name="cache" ref="memcachedClient" />
-        <property name="methodStore" ref="methodStore" />
-    </bean>
-    <bean id="invalidateMultiCache" class="net.nelz.simplesm.aop.InvalidateMultiCacheAdvice">
-        <property name="cache" ref="memcachedClient" />
-        <property name="methodStore" ref="methodStore" />
-    </bean>
+  <bean id="invalidateSingleCache" class="net.nelz.simplesm.aop.InvalidateSingleCacheAdvice">
+      <property name="cache" ref="memcachedClient" />
+      <property name="methodStore" ref="methodStore" />
+  </bean>
+  <bean id="invalidateMultiCache" class="net.nelz.simplesm.aop.InvalidateMultiCacheAdvice">
+      <property name="cache" ref="memcachedClient" />
+      <property name="methodStore" ref="methodStore" />
+  </bean>
+  <bean id="invalidateAssignCache" class="net.nelz.simplesm.aop.InvalidateAssignCacheAdvice">
+      <property name="cache" ref="memcachedClient" />
+      <property name="methodStore" ref="methodStore" />
+  </bean>
 
 </beans>

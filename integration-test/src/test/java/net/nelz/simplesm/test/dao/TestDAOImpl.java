@@ -130,4 +130,7 @@ public class TestDAOImpl implements TestDAO {
         }
         return results;
     }
+
+    @InvalidateAssignCache(assignedKey = "SomePhatKey", namespace = "Echo")
+    public void invalidateAssignStrings() { }
 }
