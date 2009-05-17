@@ -44,13 +44,6 @@ public class UpdateMultiCacheAdviceTest {
     }
 
 	@Test
-	public void testAnnotation() throws Exception {
-		final Method method = AnnotationTest.class.getMethod("cacheMe01", null);
-		final UpdateMultiCache annotation = method.getAnnotation(UpdateMultiCache.class);
-		cut.validateAnnotation(annotation, method);
-	}
-
-	@Test
 	public void testGetCacheKeys() throws Exception {
 		final int size = 10;
 		final List<Object> sources= new ArrayList<Object>();

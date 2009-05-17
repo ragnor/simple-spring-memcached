@@ -39,18 +39,19 @@ public class UpdateMultiCacheAdvice extends CacheBase {
 
 	@AfterReturning(pointcut="updateMulti()", returning="retVal")
 	public Object cacheUpdateSingle(final JoinPoint jp, final Object retVal) throws Throwable {
+        // For Update*Cache, an AfterReturning aspect is fine. We will only apply our caching
+        // after the underlying method completes successfully, and we will have the same
+        // access to the method params.
 		try {
 			final Method methodToCache = getMethodToCache(jp);
 			verifyReturnTypeIsList(methodToCache, UpdateMultiCache.class);
 			final UpdateMultiCache annotation = methodToCache.getAnnotation(UpdateMultiCache.class);
-			validateAnnotation(annotation, methodToCache);
             final AnnotationData annotationData =
                     AnnotationDataBuilder.buildAnnotationData(annotation,
                             UpdateMultiCache.class, methodToCache.getName());
-            final List<Object> returnList = (List<Object>) retVal;
-			final List<Object> keyObjects = getKeyObjects(annotationData.getKeyIndex(), returnList, jp, methodToCache);
+			final List<Object> keyObjects = getKeyObjects(annotationData.getKeyIndex(), retVal, jp, methodToCache);
 			final List<String> cacheKeys = getCacheKeys(keyObjects, annotationData);
-			updateCache(cacheKeys, returnList, methodToCache, annotationData);
+			updateCache(cacheKeys, keyObjects, methodToCache, annotationData);
 		} catch (Exception ex) {
 			LOG.warn("Updating caching via " + jp.toShortString() + " aborted due to an error.", ex);
 		}
@@ -93,15 +94,5 @@ public class UpdateMultiCacheAdvice extends CacheBase {
 				List.class.getName(),
 				methodToCache.toString()
 		));
-	}
-
-	protected void validateAnnotation(final UpdateMultiCache annotation,
-	                                  final Method method) {
-
-		final Class annotationClass = UpdateMultiCache.class;
-		validateAnnotationExists(annotation, annotationClass);
-		validateAnnotationIndex(annotation.keyIndex(), true, annotationClass, method);
-		validateAnnotationNamespace(annotation.namespace(), annotationClass, method);
-		validateAnnotationExpiration(annotation.expiration(), annotationClass, method);
 	}
 }

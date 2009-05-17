@@ -37,14 +37,6 @@ public class UpdateSingleCacheAdviceTest {
         cut.updateSingle();
     }
 
-	@Test
-	public void testAnnotationValidator() throws Exception {
-		final AnnotationValidator testClass = new AnnotationValidator();
-		Method method = testClass.getClass().getMethod("cacheMe1",null);
-		UpdateSingleCache annotation = method.getAnnotation(UpdateSingleCache.class);
-		cut.validateAnnotation(annotation, method);
-	}
-
     @Test
     public void testGetObjectId() throws Exception {
         final String key = "Key-" + System.currentTimeMillis();

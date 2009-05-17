@@ -37,19 +37,20 @@ public class UpdateSingleCacheAdvice extends CacheBase {
 
 	@AfterReturning(pointcut="updateSingle()", returning="retVal")
 	public Object cacheUpdateSingle(final JoinPoint jp, final Object retVal) throws Throwable {
-        // TODO: Is this the right way to do it, with an AfterReturning aspect? Maybe an Around?
-		try {
+        // For Update*Cache, an AfterReturning aspect is fine. We will only apply our caching
+        // after the underlying method completes successfully, and we will have the same
+        // access to the method params.
+        try {
 			final Method methodToCache = getMethodToCache(jp);
 			final UpdateSingleCache annotation = methodToCache.getAnnotation(UpdateSingleCache.class);
-			validateAnnotation(annotation, methodToCache);
             final AnnotationData annotationData =
                     AnnotationDataBuilder.buildAnnotationData(annotation,
                             UpdateSingleCache.class,
                             methodToCache.getName());
             final String objectId = getObjectId(annotationData.getKeyIndex(), retVal, jp, methodToCache);
-			final String cacheKey = buildCacheKey(objectId, annotationData);
-            // At this point, what if the data wasn't held in the return value, but in a param?!?
-            final Object submission = (retVal == null) ? new PertinentNegativeNull() : retVal;
+            final String cacheKey = buildCacheKey(objectId, annotationData);
+            final Object cacheValue = getCacheValue(annotationData.getKeyIndex(), retVal, jp, methodToCache);
+            final Object submission = (cacheValue == null) ? new PertinentNegativeNull() : cacheValue;
 			cache.set(cacheKey, annotationData.getExpiration(), submission);
 		} catch (Exception ex) {
 			LOG.warn("Updating caching via " + jp.toShortString() + " aborted due to an error.", ex);
@@ -57,25 +58,22 @@ public class UpdateSingleCacheAdvice extends CacheBase {
 		return retVal;
 	}
 
-	protected String getObjectId(final int keyIndex,
+    protected Object getCacheValue(final int keyIndex,
+                                 final Object returnValue,
+                                 final JoinPoint jp,
+                                 final Method methodToCache) throws Exception {
+        return keyIndex == -1
+            ? validateReturnValueAsKeyObject(returnValue, methodToCache)
+            : getKeyObject(keyIndex, jp, methodToCache);
+    }
+
+    protected String getObjectId(final int keyIndex,
 	                             final Object returnValue,
 	                             final JoinPoint jp,
 	                             final Method methodToCache) throws Exception {
-		final Object keyObject = keyIndex == -1
-									? validateReturnValueAsKeyObject(returnValue, methodToCache)
-									: getKeyObject(keyIndex, jp, methodToCache);
+		final Object keyObject = getCacheValue(keyIndex, returnValue, jp, methodToCache);
 		final Method keyMethod = getKeyMethod(keyObject);
 		return generateObjectId(keyMethod, keyObject);
-	}
-
-	protected void validateAnnotation(final UpdateSingleCache annotation,
-	                                  final Method method) {
-
-		final Class annotationClass = UpdateSingleCache.class;
-		validateAnnotationExists(annotation, annotationClass);
-		validateAnnotationIndex(annotation.keyIndex(), true, annotationClass, method);
-		validateAnnotationNamespace(annotation.namespace(), annotationClass, method);
-		validateAnnotationExpiration(annotation.expiration(), annotationClass, method);
 	}
 
 }
