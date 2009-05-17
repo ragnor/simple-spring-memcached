@@ -57,7 +57,7 @@ public class UpdateAssignCacheTest {
 
         assertNotSame(result1.size(), result2.size());
         assertEquals(altData.size(), result2.size());
-        for (int ix = 0; ix < result1.size(); ix++) {
+        for (int ix = 0; ix < result2.size(); ix++) {
             assertEquals(altData.get(ix), result2.get(ix));
         }
 
