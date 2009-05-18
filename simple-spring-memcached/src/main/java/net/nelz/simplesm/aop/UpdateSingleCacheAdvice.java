@@ -48,9 +48,9 @@ public class UpdateSingleCacheAdvice extends CacheBase {
                             UpdateSingleCache.class,
                             methodToCache.getName());
             final String objectId = getObjectId(annotationData.getKeyIndex(), retVal, jp, methodToCache);
-            final String cacheKey = buildCacheKey(objectId, annotationData);
-            final Object cacheValue = getCacheValue(annotationData.getKeyIndex(), retVal, jp, methodToCache);
-            final Object submission = (cacheValue == null) ? new PertinentNegativeNull() : cacheValue;
+			final String cacheKey = buildCacheKey(objectId, annotationData);
+            //final Object cacheValue = getCacheValue(annotationData.getKeyIndex(), retVal, jp, methodToCache);
+            final Object submission = (retVal == null) ? new PertinentNegativeNull() : retVal;
 			cache.set(cacheKey, annotationData.getExpiration(), submission);
 		} catch (Exception ex) {
 			LOG.warn("Updating caching via " + jp.toShortString() + " aborted due to an error.", ex);
@@ -58,22 +58,25 @@ public class UpdateSingleCacheAdvice extends CacheBase {
 		return retVal;
 	}
 
-    protected Object getCacheValue(final int keyIndex,
-                                 final Object returnValue,
-                                 final JoinPoint jp,
-                                 final Method methodToCache) throws Exception {
-        return keyIndex == -1
-            ? validateReturnValueAsKeyObject(returnValue, methodToCache)
-            : getKeyObject(keyIndex, jp, methodToCache);
-    }
-
-    protected String getObjectId(final int keyIndex,
-	                             final Object returnValue,
+	protected String getObjectId(final int keyIndex,
+     	                         final Object returnValue,
 	                             final JoinPoint jp,
 	                             final Method methodToCache) throws Exception {
-		final Object keyObject = getCacheValue(keyIndex, returnValue, jp, methodToCache);
+		final Object keyObject = keyIndex == -1
+									? validateReturnValueAsKeyObject(returnValue, methodToCache)
+									: getKeyObject(keyIndex, jp, methodToCache);
 		final Method keyMethod = getKeyMethod(keyObject);
 		return generateObjectId(keyMethod, keyObject);
+	}
+
+	protected void validateAnnotation(final UpdateSingleCache annotation,
+	                                  final Method method) {
+
+		final Class annotationClass = UpdateSingleCache.class;
+		validateAnnotationExists(annotation, annotationClass);
+		validateAnnotationIndex(annotation.keyIndex(), true, annotationClass, method);
+		validateAnnotationNamespace(annotation.namespace(), annotationClass, method);
+		validateAnnotationExpiration(annotation.expiration(), annotationClass, method);
 	}
 
 }

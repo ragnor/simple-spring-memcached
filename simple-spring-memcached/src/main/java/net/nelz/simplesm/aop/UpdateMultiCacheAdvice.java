@@ -49,9 +49,10 @@ public class UpdateMultiCacheAdvice extends CacheBase {
             final AnnotationData annotationData =
                     AnnotationDataBuilder.buildAnnotationData(annotation,
                             UpdateMultiCache.class, methodToCache.getName());
-			final List<Object> keyObjects = getKeyObjects(annotationData.getKeyIndex(), retVal, jp, methodToCache);
+            final List<Object> returnList = (List<Object>) retVal;
+			final List<Object> keyObjects = getKeyObjects(annotationData.getKeyIndex(), returnList, jp, methodToCache);
 			final List<String> cacheKeys = getCacheKeys(keyObjects, annotationData);
-			updateCache(cacheKeys, keyObjects, methodToCache, annotationData);
+			updateCache(cacheKeys, returnList, methodToCache, annotationData);
 		} catch (Exception ex) {
 			LOG.warn("Updating caching via " + jp.toShortString() + " aborted due to an error.", ex);
 		}
