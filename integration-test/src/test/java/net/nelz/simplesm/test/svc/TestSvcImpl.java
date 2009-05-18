@@ -39,6 +39,10 @@ public class TestSvcImpl implements TestSvc {
 		return this.dao.getDateString(key);
 	}
 
+    public void overrideDateString(final int trash, final String key, final String overrideData) {
+        dao.overrideDateString(trash, key, overrideData);
+    }
+
 	public List<String> getTimestampValues(final List<Long> keys) {
 		return this.dao.getTimestampValues(keys);
 	}
@@ -50,6 +54,11 @@ public class TestSvcImpl implements TestSvc {
 	public List<String> updateTimestamValues(final List<Long> keys) {
 		return this.dao.updateTimestamValues(keys);
 	}
+
+    public void overrideTimestampValues(final int trash, final List<Long> keys,
+                                        final String nuthin, final List<String> overrideData) {
+        dao.overrideTimestampValues(trash, keys, nuthin, overrideData);
+    }
 
     public String getRandomString(final Long key) {
         return this.dao.getRandomString(key);

@@ -40,7 +40,10 @@ public class TestDAOImpl implements TestDAO {
 		return now.toString() + ":" + now.getTime();
 	}
 
-	@ReadThroughMultiCache(namespace = "Bravo", keyIndex = 0, expiration = 300)
+    @UpdateSingleCache(namespace = "Alpha", keyIndex = 1, dataIndex = 2, expiration = 30)
+    public void overrideDateString(final int trash, final String key, final String overrideData) {}
+
+    @ReadThroughMultiCache(namespace = "Bravo", keyIndex = 0, expiration = 300)
 	public List<String> getTimestampValues(final List<Long> keys) {
 		final List<String> results = new ArrayList<String>();
 		try {
@@ -75,6 +78,12 @@ public class TestDAOImpl implements TestDAO {
 		}
 		return results;
 	}
+
+    @UpdateMultiCache(namespace = "Bravo", keyIndex = 1, dataIndex = 3, expiration = 300)
+    public void overrideTimestampValues(final int trash,
+                                        final List<Long> keys,
+                                        final String nuthin,
+                                        final List<String> overrideData) {}
 
     @ReadThroughSingleCache(namespace = "Charlie", keyIndex = 0, expiration = 1000)
     public String getRandomString(final Long key) {

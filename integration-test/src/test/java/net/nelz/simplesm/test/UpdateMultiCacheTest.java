@@ -85,4 +85,48 @@ public class UpdateMultiCacheTest {
 		}
 	}
 
+    @Test
+    public void testDataIndex() {
+        final Map<Long, String> expectedResults = new HashMap<Long, String>();
+        final Long rawNow = System.currentTimeMillis();
+        final Long now = (rawNow / 1000) * 10000;
+        final List<Long> subset = new ArrayList<Long>();
+        final List<String> overrideValues = new ArrayList<String>();
+        final List<Long> superset = new ArrayList<Long>();
+
+        for (Long ix = 1 + now; ix < 35 + now; ix++) {
+            if (ix % 3 == 0) {
+                subset.add(ix);
+                final String overrideValue = "big-fat-override-value-" + ix;
+                expectedResults.put(ix, overrideValue);
+                overrideValues.add(overrideValue);
+            }
+            superset.add(ix);
+        }
+
+        final Map<Long, String> originalResults = new HashMap<Long, String>();
+
+        final TestSvc test = (TestSvc) context.getBean("testSvc");
+
+        final List<String> r1List = test.getTimestampValues(superset);
+        for (int ix = 0; ix < r1List.size(); ix++) {
+            final Long key = superset.get(ix);
+            final String value = r1List.get(ix);
+
+            originalResults.put(key, value);
+            if (!subset.contains(key)) {
+                expectedResults.put(key, value);
+            }
+        }
+
+        test.overrideTimestampValues(42, subset, "Nada", overrideValues);
+
+        final List<String> r2List = test.getTimestampValues(superset);
+        for (int ix = 0; ix < r2List.size(); ix++) {
+            final Long key = superset.get(ix);
+            final String value = r2List.get(ix);
+            System.out.println(value);
+            assertEquals(expectedResults.get(key), value);
+        }
+    }
 }

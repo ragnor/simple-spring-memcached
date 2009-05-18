@@ -44,7 +44,6 @@ public class UpdateMultiCacheAdvice extends CacheBase {
         // access to the method params.
 		try {
 			final Method methodToCache = getMethodToCache(jp);
-			verifyReturnTypeIsList(methodToCache, UpdateMultiCache.class);
 			final UpdateMultiCache annotation = methodToCache.getAnnotation(UpdateMultiCache.class);
             final AnnotationData annotationData =
                     AnnotationDataBuilder.buildAnnotationData(annotation,

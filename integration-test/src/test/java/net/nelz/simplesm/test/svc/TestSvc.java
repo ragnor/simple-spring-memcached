@@ -27,12 +27,17 @@ public interface TestSvc {
 
 	public String getDateString(final String key);
 
-	public List<String> getTimestampValues(final List<Long> keys);
+    public void overrideDateString(final int trash, final String key, final String overrideData);
+    
+    public List<String> getTimestampValues(final List<Long> keys);
 
 	public String updateTimestampValue(final Long key);
 
 	public List<String> updateTimestamValues(final List<Long> keys);
 
+    public void overrideTimestampValues(final int trash, final List<Long> keys,
+                                        final String nuthin, final List<String> overrideData);
+    
     public String getRandomString(final Long key);
     
     public void updateRandomString(final Long key);
