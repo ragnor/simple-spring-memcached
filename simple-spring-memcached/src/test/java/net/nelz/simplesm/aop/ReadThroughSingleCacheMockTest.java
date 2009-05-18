@@ -81,14 +81,14 @@ public class ReadThroughSingleCacheMockTest {
 		replayAll();
 
 		try {
-			cut.getKeyObject(3, pjp, method);
+			cut.getIndexObject(3, pjp, method);
 			fail("Expected Exception");
 		} catch (InvalidParameterException ex) {
 			assertTrue(ex.getMessage().indexOf("too big") != -1);
 			System.out.println(ex.getMessage());
 		}
 		try {
-			cut.getKeyObject(4, pjp, method);
+			cut.getIndexObject(4, pjp, method);
 			fail("Expected Exception");
 		} catch (InvalidParameterException ex) {
 			assertTrue(ex.getMessage().indexOf("too big") != -1);
@@ -96,14 +96,14 @@ public class ReadThroughSingleCacheMockTest {
 		}
 
 		try {
-			cut.getKeyObject(0, pjp, method);
+			cut.getIndexObject(0, pjp, method);
 			fail("Expected Exception");
 		} catch (InvalidParameterException ex) {
 			assertTrue(ex.getMessage().indexOf("null") != -1);
 			System.out.println(ex.getMessage());
 		}
 
-		assertEquals(answer, cut.getKeyObject(1, pjp, method));
+		assertEquals(answer, cut.getIndexObject(1, pjp, method));
 
 		verifyAll();
 	}

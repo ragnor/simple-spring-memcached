@@ -112,7 +112,7 @@ public class ReadThroughMultiCacheAdvice extends CacheBase {
 //	                                  final Method method) {
 //		final Class annotationClass = ReadThroughMultiCache.class;
 //		validateAnnotationExists(annotation, annotationClass);
-//		validateAnnotationIndex(annotation.keyIndex(), false, annotationClass, method);
+//		validateAnnotationIndex(annotation.dataIndex(), false, annotationClass, method);
 //		validateAnnotationNamespace(annotation.namespace(), annotationClass, method);
 //		validateAnnotationExpiration(annotation.expiration(), annotationClass, method);
 //	}
@@ -142,10 +142,10 @@ public class ReadThroughMultiCacheAdvice extends CacheBase {
 	protected List<Object> getKeyObjectList(final int keyIndex,
 	                                            final JoinPoint jp,
 	                                            final Method method) throws Exception {
-		final Object keyObjects = getKeyObject(keyIndex, jp, method);
+		final Object keyObjects = getIndexObject(keyIndex, jp, method);
 		if (verifyTypeIsList(keyObjects.getClass())) { return (List<Object>) keyObjects;}
 		throw new InvalidAnnotationException(String.format(
-				"The parameter object found at keyIndex [%s] is not a [%s]. " +
+				"The parameter object found at dataIndex [%s] is not a [%s]. " +
 				"[%s] does not fulfill the requirements.",
 				ReadThroughMultiCache.class.getName(),
 				List.class.getName(),

@@ -64,7 +64,7 @@ public class UpdateSingleCacheAdvice extends CacheBase {
 	                             final Method methodToCache) throws Exception {
 		final Object keyObject = keyIndex == -1
 									? validateReturnValueAsKeyObject(returnValue, methodToCache)
-									: getKeyObject(keyIndex, jp, methodToCache);
+									: getIndexObject(keyIndex, jp, methodToCache);
 		final Method keyMethod = getKeyMethod(keyObject);
 		return generateObjectId(keyMethod, keyObject);
 	}

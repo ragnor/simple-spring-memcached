@@ -134,6 +134,6 @@ public class TestDAOImpl implements TestDAO {
     @InvalidateAssignCache(assignedKey = "SomePhatKey", namespace = "Echo")
     public void invalidateAssignStrings() { }
 
-    @UpdateAssignCache(assignedKey = "SomePhatKey", namespace = "Echo", expiration = 3000, keyIndex = 1)
+    @UpdateAssignCache(assignedKey = "SomePhatKey", namespace = "Echo", expiration = 3000, dataIndex = 1)
     public void updateAssignStrings(int bubpkus, final List<String> newData) { }
 }

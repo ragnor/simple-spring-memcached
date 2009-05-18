@@ -30,6 +30,7 @@ THE SOFTWARE.
 class AnnotationData {
     private String namespace = "";
     private int keyIndex = 0;
+    private int dataIndex = 0;
     private int expiration = 0;
     private String className = "";
     private String assignedKey = "";
@@ -48,6 +49,14 @@ class AnnotationData {
 
     public void setKeyIndex(int keyIndex) {
         this.keyIndex = keyIndex;
+    }
+
+    public int getDataIndex() {
+        return dataIndex;
+    }
+
+    public void setDataIndex(int dataIndex) {
+        this.dataIndex = dataIndex;
     }
 
     public int getExpiration() {

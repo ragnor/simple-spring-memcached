@@ -54,7 +54,8 @@ class AnnotationDataBuilder {
 
         try {
             if (expectedAnnotationClass != ReadThroughAssignCache.class
-                    && expectedAnnotationClass != InvalidateAssignCache.class) {
+                    && expectedAnnotationClass != InvalidateAssignCache.class
+                    && expectedAnnotationClass != UpdateAssignCache.class) {
                 final Method keyIndexMethod = clazz.getDeclaredMethod("keyIndex", null);
                 final int keyIndex = (Integer) keyIndexMethod.invoke(annotation, null);
                 if (keyIndex < -1) {
@@ -65,6 +66,21 @@ class AnnotationDataBuilder {
                     ));
                 }
                 data.setKeyIndex(keyIndex);
+            }
+
+            if (expectedAnnotationClass == UpdateSingleCache.class
+                    || expectedAnnotationClass == UpdateMultiCache.class
+                    || expectedAnnotationClass == UpdateAssignCache.class) {
+                final Method dataIndexMethod = clazz.getDeclaredMethod("dataIndex", null);
+                final int dataIndex = (Integer) dataIndexMethod.invoke(annotation, null);
+                if (dataIndex < -1) {
+                    throw new InvalidParameterException(String.format(
+                            "DataIndex for annotation [%s] must be -1 or greater on [%s]",
+                            expectedAnnotationClass.getName(),
+                            targetMethodName
+                    ));
+                }
+                data.setDataIndex(dataIndex);                
             }
 
             if (expectedAnnotationClass != InvalidateSingleCache.class

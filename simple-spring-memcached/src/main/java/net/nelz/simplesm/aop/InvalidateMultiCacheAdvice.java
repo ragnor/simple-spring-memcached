@@ -9,7 +9,6 @@ import org.apache.commons.logging.LogFactory;
 
 import java.lang.reflect.Method;
 import java.util.List;
-import java.util.ArrayList;
 
 import net.nelz.simplesm.annotations.InvalidateMultiCache;
 import net.nelz.simplesm.exceptions.InvalidAnnotationException;
@@ -58,7 +57,7 @@ public class InvalidateMultiCacheAdvice extends CacheBase {
                             InvalidateMultiCache.class,
                             methodToCache.getName());
             if (annotationData.getKeyIndex() > -1) {
-                final Object keyObject = getKeyObject(annotationData.getKeyIndex(), pjp, methodToCache);
+                final Object keyObject = getIndexObject(annotationData.getKeyIndex(), pjp, methodToCache);
                 final List<Object> keyObjects = convertToKeyObjects(keyObject, annotationData.getKeyIndex(), methodDescription);
                 cacheKeys = getCacheKeys(keyObjects, annotationData);
             }
@@ -98,7 +97,7 @@ public class InvalidateMultiCacheAdvice extends CacheBase {
             return (List<Object>) keyObject;
         }
         throw new InvalidAnnotationException(String.format(
-                "The parameter object found at keyIndex [%s] is not a [%s]. " +
+                "The parameter object found at dataIndex [%s] is not a [%s]. " +
                 "[%s] does not fulfill the requirements.",
                 keyIndex,
                 List.class.getName(),

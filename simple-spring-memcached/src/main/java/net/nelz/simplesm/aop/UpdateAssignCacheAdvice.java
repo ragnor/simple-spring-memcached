@@ -3,15 +3,12 @@ package net.nelz.simplesm.aop;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
 import org.aspectj.lang.annotation.AfterReturning;
-import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.JoinPoint;
-import org.aspectj.lang.ProceedingJoinPoint;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import java.lang.reflect.Method;
 
-import net.nelz.simplesm.annotations.UpdateSingleCache;
 import net.nelz.simplesm.annotations.UpdateAssignCache;
 
 /**
@@ -42,36 +39,25 @@ public class UpdateAssignCacheAdvice extends CacheBase {
     @Pointcut("@annotation(net.nelz.simplesm.annotations.UpdateAssignCache)")
     public void updateAssign() {}
 
-    @Around("updateAssign()")
-    public Object cacheUpdateAssign(final ProceedingJoinPoint pjp) throws Throwable {
+    @AfterReturning(pointcut="updateAssign()", returning="retVal")
+    public Object cacheUpdateAssign(final JoinPoint jp, final Object retVal) throws Throwable {
         // This is injected caching.  If anything goes wrong in the caching, LOG the crap outta it,
         // but do not let it surface up past the AOP injection itself.
-        AnnotationData annotationData = null;
-        Object dataObject = null;
         try {
-			final Method methodToCache = getMethodToCache(pjp);
-			final UpdateAssignCache annotation = methodToCache.getAnnotation(UpdateAssignCache.class);
-            annotationData = AnnotationDataBuilder.buildAnnotationData(annotation,
+            final Method methodToCache = getMethodToCache(jp);
+            final UpdateAssignCache annotation = methodToCache.getAnnotation(UpdateAssignCache.class);
+            final AnnotationData annotationData = AnnotationDataBuilder.buildAnnotationData(annotation,
                             UpdateAssignCache.class,
                             methodToCache.getName());
-            if (annotationData.getKeyIndex() > -1) {
-                dataObject = getKeyObject(annotationData.getKeyIndex(), pjp, methodToCache);
-            }
-        } catch (Exception ex) {
-			LOG.warn("Updating caching via " + pjp.toShortString() + " aborted due to an error.", ex);
-		}
-
-        final Object retVal = pjp.proceed();
-
-        // This is injected caching.  If anything goes wrong in the caching, LOG the crap outta it,
-        // but do not let it surface up past the AOP injection itself.
-        try {
+            final Object dataObject = annotationData.getDataIndex() == -1
+                    ? retVal
+                    : getIndexObject(annotationData.getKeyIndex(), jp, methodToCache);
             final String cacheKey = buildCacheKey(annotationData.getAssignedKey(), annotationData);
-            final Object candidateData = annotationData.getKeyIndex() == -1 ? retVal : dataObject;
+            final Object candidateData = annotationData.getDataIndex() == -1 ? retVal : dataObject;
             final Object submission = (candidateData == null) ? new PertinentNegativeNull() : candidateData;
 			cache.set(cacheKey, annotationData.getExpiration(), submission);
 		} catch (Exception ex) {
-			LOG.warn("Updating caching via " + pjp.toShortString() + " aborted due to an error.", ex);
+			LOG.warn("Updating caching via " + jp.toShortString() + " aborted due to an error.", ex);
 		}
 
         return retVal;

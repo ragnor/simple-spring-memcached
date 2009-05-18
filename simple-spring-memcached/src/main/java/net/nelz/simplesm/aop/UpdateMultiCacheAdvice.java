@@ -84,12 +84,12 @@ public class UpdateMultiCacheAdvice extends CacheBase {
 	                             final Method methodToCache) throws Exception {
 		final Object keyObject = keyIndex == -1
 									? validateReturnValueAsKeyObject(returnValue, methodToCache)
-									: getKeyObject(keyIndex, jp, methodToCache);
+									: getIndexObject(keyIndex, jp, methodToCache);
 		if (verifyTypeIsList(keyObject.getClass())) {
 			return (List<Object>) keyObject;
 		}
 		throw new InvalidAnnotationException(String.format(
-				"The parameter object found at keyIndex [%s] is not a [%s]. " +
+				"The parameter object found at dataIndex [%s] is not a [%s]. " +
 				"[%s] does not fulfill the requirements.",
 				UpdateMultiCache.class.getName(),
 				List.class.getName(),

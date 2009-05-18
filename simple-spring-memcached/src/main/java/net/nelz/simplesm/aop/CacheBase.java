@@ -72,24 +72,24 @@ public class CacheBase {
         return data.getNamespace() + SEPARATOR + objectId;
     }
 
-    protected Object getKeyObject(final int keyIndex,
+    protected Object getIndexObject(final int index,
 	                             final JoinPoint jp,
 	                             final Method methodToCache) throws Exception {
 		final Object[] args = jp.getArgs();
-		if (args.length <= keyIndex) {
+		if (args.length <= index) {
 			throw new InvalidParameterException(String.format(
 					"A key index of %s is too big for the number of arguments in [%s]",
-					keyIndex,
+					index,
 					methodToCache.toString()));
 		}
-		final Object keyObject = args[keyIndex];
-		if (keyObject == null) {
+		final Object indexObject = args[index];
+		if (indexObject == null) {
 			throw new InvalidParameterException(String.format(
 					"The argument passed into [%s] at index %s is null.",
 					methodToCache.toString(),
-					keyIndex));
+					index));
 		}
-		return keyObject;
+		return indexObject;
 	}
 
 	protected Object validateReturnValueAsKeyObject(final Object returnValue,

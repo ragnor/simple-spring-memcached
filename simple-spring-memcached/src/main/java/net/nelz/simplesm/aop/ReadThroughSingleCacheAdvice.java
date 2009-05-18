@@ -76,7 +76,7 @@ public class ReadThroughSingleCacheAdvice extends CacheBase {
 	protected String getObjectId(final int keyIndex,
 	                             final JoinPoint jp,
 	                             final Method methodToCache) throws Exception {
-		final Object keyObject = getKeyObject(keyIndex, jp, methodToCache);
+		final Object keyObject = getIndexObject(keyIndex, jp, methodToCache);
 		final Method keyMethod = getKeyMethod(keyObject);
 		return generateObjectId(keyMethod, keyObject);
 	}
