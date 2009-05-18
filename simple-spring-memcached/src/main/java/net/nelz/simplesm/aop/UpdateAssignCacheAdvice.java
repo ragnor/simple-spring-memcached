@@ -51,7 +51,7 @@ public class UpdateAssignCacheAdvice extends CacheBase {
                             methodToCache.getName());
             final Object dataObject = annotationData.getDataIndex() == -1
                     ? retVal
-                    : getIndexObject(annotationData.getKeyIndex(), jp, methodToCache);
+                    : getIndexObject(annotationData.getDataIndex(), jp, methodToCache);
             final String cacheKey = buildCacheKey(annotationData.getAssignedKey(), annotationData);
             final Object candidateData = annotationData.getDataIndex() == -1 ? retVal : dataObject;
             final Object submission = (candidateData == null) ? new PertinentNegativeNull() : candidateData;

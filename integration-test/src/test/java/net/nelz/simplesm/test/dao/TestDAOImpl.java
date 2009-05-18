@@ -53,7 +53,7 @@ public class TestDAOImpl implements TestDAO {
 		return results;
 	}
 
-	@UpdateSingleCache(namespace = "Bravo", keyIndex = 0, expiration = 300)
+	@UpdateSingleCache(namespace = "Bravo", keyIndex = 0, expiration = 300, dataIndex = -1)
 	public String updateTimestampValue(final Long key) {
 		try {
 			Thread.sleep(100);
@@ -63,7 +63,7 @@ public class TestDAOImpl implements TestDAO {
 		return result;
 	}
 
-	@UpdateMultiCache(namespace = "Bravo", keyIndex = 0, expiration = 300)
+	@UpdateMultiCache(namespace = "Bravo", keyIndex = 0, expiration = 300, dataIndex = -1)
 	public List<String> updateTimestamValues(final List<Long> keys) {
 		try {
 			Thread.sleep(100);

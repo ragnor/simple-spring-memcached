@@ -29,8 +29,8 @@ THE SOFTWARE.
  */
 class AnnotationData {
     private String namespace = "";
-    private int keyIndex = 0;
-    private int dataIndex = 0;
+    private int keyIndex = Integer.MIN_VALUE;
+    private int dataIndex = Integer.MIN_VALUE;
     private int expiration = 0;
     private String className = "";
     private String assignedKey = "";

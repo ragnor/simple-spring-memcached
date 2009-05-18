@@ -75,10 +75,15 @@ public class CacheBase {
     protected Object getIndexObject(final int index,
 	                             final JoinPoint jp,
 	                             final Method methodToCache) throws Exception {
-		final Object[] args = jp.getArgs();
+        if (index < 0) {
+            throw new InvalidParameterException(String.format(
+					"An index of %s is invalid",
+					index));
+        }
+        final Object[] args = jp.getArgs();
 		if (args.length <= index) {
 			throw new InvalidParameterException(String.format(
-					"A key index of %s is too big for the number of arguments in [%s]",
+					"An index of %s is too big for the number of arguments in [%s]",
 					index,
 					methodToCache.toString()));
 		}
