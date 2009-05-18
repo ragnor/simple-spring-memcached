@@ -49,12 +49,11 @@ public class UpdateAssignCacheAdvice extends CacheBase {
             final AnnotationData annotationData = AnnotationDataBuilder.buildAnnotationData(annotation,
                             UpdateAssignCache.class,
                             methodToCache.getName());
+            final String cacheKey = buildCacheKey(annotationData.getAssignedKey(), annotationData);
             final Object dataObject = annotationData.getDataIndex() == -1
                     ? retVal
                     : getIndexObject(annotationData.getDataIndex(), jp, methodToCache);
-            final String cacheKey = buildCacheKey(annotationData.getAssignedKey(), annotationData);
-            final Object candidateData = annotationData.getDataIndex() == -1 ? retVal : dataObject;
-            final Object submission = (candidateData == null) ? new PertinentNegativeNull() : candidateData;
+            final Object submission = (dataObject == null) ? new PertinentNegativeNull() : dataObject;
 			cache.set(cacheKey, annotationData.getExpiration(), submission);
 		} catch (Exception ex) {
 			LOG.warn("Updating caching via " + jp.toShortString() + " aborted due to an error.", ex);
