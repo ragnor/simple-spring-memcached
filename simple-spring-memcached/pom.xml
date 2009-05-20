@@ -11,6 +11,19 @@
   <name>simple-spring-memcached</name>
   <url>http://code.google.com/p/simple-spring-memcached/</url>
 
+  <build>
+    <plugins>
+      <plugin>
+        <artifactId>maven-assembly-plugin</artifactId>
+        <configuration>
+          <descriptorRefs>
+            <descriptorRef>jar-with-dependencies</descriptorRef>
+          </descriptorRefs>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+  
   <reporting>
     <plugins>
       <plugin>
