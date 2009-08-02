@@ -4,13 +4,16 @@
   <parent>
     <groupId>net.nelz.simplesm</groupId>
     <artifactId>simple-spring-memcached-parent</artifactId>
-    <version>0.11-SNAPSHOT</version>
+    <version>2.0-SNAPSHOT</version>
   </parent>
   <artifactId>simple-spring-memcached</artifactId>
   <packaging>jar</packaging>
   <name>simple-spring-memcached</name>
   <url>http://code.google.com/p/simple-spring-memcached/</url>
 
+  <!--For the release process, to create the artifact with the bundled spymemcached.jar,-->
+  <!--run this command: "mvn assembly:assembly"-->
+  <!--To create the javadoc.jar: "mvn javadoc:jar"-->
   <build>
     <plugins>
       <plugin>
