@@ -29,16 +29,16 @@ public interface KeyProvider {
      * will be stored in Memcached.
      * (Hint: This value, plus the Namespace value, should be no longer
      * than 250 characters.)
-     * @param value
+     * @param keyObject
      * @return
      */
-    String generateKey(Object value);
+    String generateKey(Object keyObject);
 
     /**
      * This is the multi-plexed version of <code>generateKey(...)</code>
-     * @param values
+     * @param keyObjects
      * @return
      */
-    List<String> generateKeys(List<Object> values);
+    List<String> generateKeys(List<Object> keyObjects);
     
 }

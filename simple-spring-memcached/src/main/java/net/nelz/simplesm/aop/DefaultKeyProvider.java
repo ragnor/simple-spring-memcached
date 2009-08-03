@@ -1,8 +1,13 @@
 package net.nelz.simplesm.aop;
 
 import net.nelz.simplesm.api.KeyProvider;
+import net.nelz.simplesm.api.CacheKeyMethod;
+import net.nelz.simplesm.exceptions.InvalidAnnotationException;
 
 import java.util.List;
+import java.util.ArrayList;
+import java.lang.reflect.Method;
+import java.security.InvalidParameterException;
 
 /**
 Copyright (c) 2008, 2009  Nelson Carpentier
@@ -33,11 +38,69 @@ public class DefaultKeyProvider implements KeyProvider {
         this.methodStore = methodStore;
     }
 
-    public String generateKey(final Object value) {
-        return null;
+    public String generateKey(final Object keyObject) {
+        try {
+            final Method keyMethod = getKeyMethod(keyObject);
+            /*
+            Step 1: Underpants (Get the method that will provide our key.)
+            Step 2: ? (Make it give us the key.)
+            Step 3: PROFIT! (Return the key to the caller.)
+             */
+            return null;
+        } catch (NoSuchMethodException ex) {
+            throw new RuntimeException(ex);
+        }
     }
 
-    public List<String> generateKeys(final List<Object> values) {
-        return null;
+    public List<String> generateKeys(final List<Object> keyObjects) {
+        if (keyObjects == null || keyObjects.size() < 1) {
+            throw new InvalidParameterException("The key objects must be defined.");
+        }
+        final List<String> results = new ArrayList<String>(keyObjects.size());
+        for (final Object keyObject : keyObjects) {
+            results.add(generateKey(keyObject));
+        }
+        return results;
     }
+
+    Method getKeyMethod(final Object keyObject) throws NoSuchMethodException {
+        final Method storedMethod = methodStore.find(keyObject.getClass());
+        if (storedMethod != null) { return storedMethod; }
+        final Method[] methods = keyObject.getClass().getDeclaredMethods();
+        Method targetMethod = null;
+        for (final Method method : methods) {
+            if (method != null && method.getAnnotation(CacheKeyMethod.class) != null) {
+                if (method.getParameterTypes().length > 0) {
+                    throw new InvalidAnnotationException(String.format(
+                            "Method [%s] must have 0 arguments to be annotated with [%s]",
+                            method.toString(),
+                            CacheKeyMethod.class.getName()));
+                }
+                if (!String.class.equals(method.getReturnType())) {
+                    throw new InvalidAnnotationException(String.format(
+                            "Method [%s] must return a String to be annotated with [%s]",
+                            method.toString(),
+                            CacheKeyMethod.class.getName()));
+                }
+                if (targetMethod != null) {
+                    throw new InvalidAnnotationException(String.format(
+                            "Class [%s] should have only one method annotated with [%s]. See [%s] and [%s]",
+                            keyObject.getClass().getName(),
+                            CacheKeyMethod.class.getName(),
+                            targetMethod.getName(),
+                            method.getName()));
+                }
+                targetMethod = method;
+            }
+        }
+
+        if (targetMethod == null) {
+            targetMethod = keyObject.getClass().getMethod("toString", null);
+        }
+
+        methodStore.add(keyObject.getClass(), targetMethod);
+
+        return targetMethod;
+    }
+
 }
