@@ -1,4 +1,4 @@
-package net.nelz.simplesm.annotations;
+package net.nelz.simplesm.api;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -28,7 +28,7 @@ THE SOFTWARE.
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)
-public @interface UpdateAssignCache {
+public @interface ReadThroughAssignCache {
     /**
      * A namespace that is added to the key as it is stored in the distributed cache.
      * This allows differing object that may have the same ID to coexist.
@@ -38,21 +38,12 @@ public @interface UpdateAssignCache {
     String namespace() default AnnotationConstants.DEFAULT_STRING;
 
     /**
-     * A single key that is updated with data in this method. This key
+     * A single key that is assigned to the value that is returned from this method. This key
      * will be combined with the <code>namespace()</code> value to be used in the distributed cache.
      * This value must be assigned.
      * @return the assigned key for the given data
      */
     String assignedKey() default AnnotationConstants.DEFAULT_STRING;
-
-    /**
-     * Since keys and the actual data to be cached may be different, we also need to know which
-     * parameter (or output) holds the data that we should update the cache with. This is a
-	 * 0-based array index. This annotation also takes a special value of -1 to signify
-	 * that the object being returned is the data that should be cached.
-     * @return the index into the argument array that holds the actual data to be cached
-     */
-    int dataIndex() default Integer.MIN_VALUE;
 
     /**
      *  The exp value is passed along to memcached exactly as given, and will be

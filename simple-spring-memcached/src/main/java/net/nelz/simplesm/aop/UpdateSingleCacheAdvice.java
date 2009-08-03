@@ -1,6 +1,6 @@
 package net.nelz.simplesm.aop;
 
-import net.nelz.simplesm.annotations.*;
+import net.nelz.simplesm.api.*;
 import org.apache.commons.logging.*;
 import org.aspectj.lang.*;
 import org.aspectj.lang.annotation.*;
@@ -32,7 +32,7 @@ THE SOFTWARE.
 public class UpdateSingleCacheAdvice extends CacheBase {
 	private static final Log LOG = LogFactory.getLog(UpdateSingleCacheAdvice.class);
 
-	@Pointcut("@annotation(net.nelz.simplesm.annotations.UpdateSingleCache)")
+	@Pointcut("@annotation(net.nelz.simplesm.api.UpdateSingleCache)")
 	public void updateSingle() {}
 
 	@AfterReturning(pointcut="updateSingle()", returning="retVal")

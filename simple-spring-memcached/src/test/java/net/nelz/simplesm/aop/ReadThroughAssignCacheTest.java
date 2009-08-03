@@ -1,7 +1,6 @@
 package net.nelz.simplesm.aop;
 
-import net.nelz.simplesm.annotations.ReadThroughSingleCache;
-import net.nelz.simplesm.annotations.ReadThroughAssignCache;
+import net.nelz.simplesm.api.ReadThroughAssignCache;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 import static org.testng.AssertJUnit.fail;

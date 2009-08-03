@@ -1,12 +1,11 @@
 package net.nelz.simplesm.aop;
 
-import net.nelz.simplesm.annotations.*;
+import net.nelz.simplesm.api.*;
 import org.apache.commons.lang.*;
 import org.apache.commons.lang.math.*;
 import static org.testng.AssertJUnit.*;
 import org.testng.annotations.*;
 
-import java.lang.reflect.*;
 import java.security.*;
 import java.util.*;
 

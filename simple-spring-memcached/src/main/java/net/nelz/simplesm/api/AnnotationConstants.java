@@ -1,4 +1,4 @@
-package net.nelz.simplesm.annotations;
+package net.nelz.simplesm.api;
 
 /**
 Copyright (c) 2008, 2009  Nelson Carpentier
@@ -21,20 +21,8 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
  */
-public @interface InvalidateAssignCache {
-    /**
-     * A namespace that is added to the key as it is stored in the distributed cache.
-     * This allows differing object that may have the same ID to coexist.
-     * This value must be assigned.
-     * @return the namespace for the objects cached in the given method.
-     */
-    String namespace() default AnnotationConstants.DEFAULT_STRING;
+public interface AnnotationConstants {
+	public static final String DEFAULT_STRING = "[unassigned]";
 
-    /**
-     * A single key that is invalidate after this method finishes. This key
-     * will be combined with the <code>namespace()</code> value to be used in the distributed cache.
-     * This value must be assigned.
-     * @return the assigned key for the given data
-     */
-    String assignedKey() default AnnotationConstants.DEFAULT_STRING;
+    public static final String DEFAULT_KEY_PROVIDER_BEAN_NAME = "net.nelz.simplesm";
 }

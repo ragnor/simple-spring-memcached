@@ -10,7 +10,7 @@ import org.apache.commons.logging.LogFactory;
 import java.lang.reflect.Method;
 import java.util.List;
 
-import net.nelz.simplesm.annotations.InvalidateMultiCache;
+import net.nelz.simplesm.api.InvalidateMultiCache;
 import net.nelz.simplesm.exceptions.InvalidAnnotationException;
 
 /**
@@ -38,7 +38,7 @@ THE SOFTWARE.
 public class InvalidateMultiCacheAdvice extends CacheBase {
     private static final Log LOG = LogFactory.getLog(InvalidateMultiCacheAdvice.class);
 
-    @Pointcut("@annotation(net.nelz.simplesm.annotations.InvalidateMultiCache)")
+    @Pointcut("@annotation(net.nelz.simplesm.api.InvalidateMultiCache)")
     public void invalidateMulti() {}
 
     @Around("invalidateMulti()")

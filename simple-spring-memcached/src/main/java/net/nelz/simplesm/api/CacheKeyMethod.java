@@ -1,9 +1,6 @@
-package net.nelz.simplesm.annotations;
+package net.nelz.simplesm.api;
 
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
-import java.lang.annotation.ElementType;
+import java.lang.annotation.*;
 
 /**
 Copyright (c) 2008, 2009  Nelson Carpentier
@@ -28,22 +25,5 @@ THE SOFTWARE.
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)
-public @interface InvalidateSingleCache {
-    /**
-     * A namespace that is added to the key as it is stored in the distributed cache.
-     * This allows differing object that may have the same ID to coexist.
-     * This value must be assigned.
-     * @return the namespace for the objects cached in the given method.
-     */
-    String namespace() default AnnotationConstants.DEFAULT_STRING;
-
-    /**
-     * Of the arguments passed into the cached method, this identifies which
-     * argument provides the id by which the object will be cached. This is a
-     * 0-based array index. This annotation also takes a special value of -1 to signify
-     * that the object being returned is the object responsible for providing the cache key.
-     * @return the index into the arguments array for the item that will provide the id
-     */
-    int keyIndex() default 0;
-
+public @interface CacheKeyMethod {
 }

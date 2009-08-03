@@ -6,7 +6,7 @@ import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import net.nelz.simplesm.annotations.InvalidateSingleCache;
+import net.nelz.simplesm.api.InvalidateSingleCache;
 
 import java.lang.reflect.Method;
 import java.security.InvalidParameterException;
@@ -36,7 +36,7 @@ THE SOFTWARE.
 public class InvalidateSingleCacheAdvice extends CacheBase {
     private static final Log LOG = LogFactory.getLog(InvalidateSingleCacheAdvice.class);
 
-    @Pointcut("@annotation(net.nelz.simplesm.annotations.InvalidateSingleCache)")
+    @Pointcut("@annotation(net.nelz.simplesm.api.InvalidateSingleCache)")
     public void invalidateSingle() {}
 
     @Around("invalidateSingle()")

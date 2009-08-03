@@ -1,6 +1,6 @@
 package net.nelz.simplesm.aop;
 
-import net.nelz.simplesm.annotations.*;
+import net.nelz.simplesm.api.*;
 import net.spy.memcached.*;
 import org.aspectj.lang.*;
 import org.aspectj.lang.reflect.*;
@@ -226,7 +226,7 @@ public class ReadThroughSingleCacheMockTest {
 	}
 
 	private static class AOPTargetClass2 {
-		@net.nelz.simplesm.annotations.ReadThroughSingleCache(namespace = "BUBBA", keyIndex = 0, expiration = 3600)
+		@net.nelz.simplesm.api.ReadThroughSingleCache(namespace = "BUBBA", keyIndex = 0, expiration = 3600)
 		public String cacheThis(final AOPKeyClass p1) {
 			throw new RuntimeException("Forced.");
 		}

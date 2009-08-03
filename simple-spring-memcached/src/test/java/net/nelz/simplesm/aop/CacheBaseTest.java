@@ -1,6 +1,6 @@
 package net.nelz.simplesm.aop;
 
-import net.nelz.simplesm.annotations.*;
+import net.nelz.simplesm.api.*;
 import net.nelz.simplesm.exceptions.*;
 import org.apache.commons.lang.*;
 import static org.testng.AssertJUnit.*;

@@ -1,4 +1,4 @@
-package net.nelz.simplesm.annotations;
+package net.nelz.simplesm.api;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;

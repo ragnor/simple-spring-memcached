@@ -1,6 +1,6 @@
 package net.nelz.simplesm.aop;
 
-import net.nelz.simplesm.annotations.*;
+import net.nelz.simplesm.api.*;
 
 import java.security.InvalidParameterException;
 import java.lang.reflect.Method;

@@ -1,6 +1,6 @@
 package net.nelz.simplesm.aop;
 
-import net.nelz.simplesm.annotations.*;
+import net.nelz.simplesm.api.*;
 import net.nelz.simplesm.exceptions.*;
 import org.apache.commons.logging.*;
 import org.aspectj.lang.*;
@@ -34,7 +34,7 @@ THE SOFTWARE.
 public class UpdateMultiCacheAdvice extends CacheBase {
 	private static final Log LOG = LogFactory.getLog(UpdateMultiCacheAdvice.class);
 
-	@Pointcut("@annotation(net.nelz.simplesm.annotations.UpdateMultiCache)")
+	@Pointcut("@annotation(net.nelz.simplesm.api.UpdateMultiCache)")
 	public void updateMulti() {}
 
 	@AfterReturning(pointcut="updateMulti()", returning="retVal")

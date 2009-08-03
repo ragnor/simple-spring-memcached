@@ -1,6 +1,6 @@
 package net.nelz.simplesm.test.dao;
 
-import net.nelz.simplesm.annotations.*;
+import net.nelz.simplesm.api.*;
 import org.springframework.stereotype.*;
 import org.apache.commons.lang.RandomStringUtils;
 import org.apache.commons.lang.math.RandomUtils;

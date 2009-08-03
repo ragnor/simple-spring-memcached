@@ -1,6 +1,10 @@
-package net.nelz.simplesm.annotations;
+package net.nelz.simplesm.api;
+
+import static org.testng.AssertJUnit.*;
+import org.testng.annotations.*;
 
 import java.lang.annotation.*;
+import java.lang.reflect.*;
 
 /**
 Copyright (c) 2008, 2009  Nelson Carpentier
@@ -23,7 +27,28 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
  */
-@Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.METHOD)
-public @interface CacheKeyMethod {
+public class AnnotationsTest {
+
+	@Test
+	public void testIndividual() throws Exception {
+		final Method method = RandomClass.class.getMethod("getName", null);
+		final Annotation[] annotations = method.getDeclaredAnnotations();
+		assertEquals(ReadThroughSingleCache.class, annotations[0].annotationType());
+		final ReadThroughSingleCache ind = (ReadThroughSingleCache) annotations[0];
+		assertEquals("polk", ind.namespace());
+		assertEquals(5, ind.keyIndex());
+	}
+
+	private static class RandomClass {
+		private String name = "RandomClass";
+
+		@ReadThroughSingleCache(namespace="polk", keyIndex = 5)
+		public String getName() {
+			return name;
+		}
+
+		public void setName(String name) {
+			this.name = name;
+		}
+	}
 }

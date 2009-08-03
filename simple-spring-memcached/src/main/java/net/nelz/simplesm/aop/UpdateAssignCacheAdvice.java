@@ -9,7 +9,7 @@ import org.apache.commons.logging.LogFactory;
 
 import java.lang.reflect.Method;
 
-import net.nelz.simplesm.annotations.UpdateAssignCache;
+import net.nelz.simplesm.api.UpdateAssignCache;
 
 /**
 Copyright (c) 2008, 2009  Nelson Carpentier
@@ -36,7 +36,7 @@ THE SOFTWARE.
 public class UpdateAssignCacheAdvice extends CacheBase {
     private static final Log LOG = LogFactory.getLog(UpdateAssignCacheAdvice.class);
 
-    @Pointcut("@annotation(net.nelz.simplesm.annotations.UpdateAssignCache)")
+    @Pointcut("@annotation(net.nelz.simplesm.api.UpdateAssignCache)")
     public void updateAssign() {}
 
     @AfterReturning(pointcut="updateAssign()", returning="retVal")

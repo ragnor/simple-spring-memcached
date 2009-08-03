@@ -1,7 +1,7 @@
 package net.nelz.simplesm.aop;
 
 import net.nelz.simplesm.exceptions.*;
-import net.nelz.simplesm.annotations.*;
+import net.nelz.simplesm.api.*;
 import net.spy.memcached.*;
 import org.aspectj.lang.*;
 import org.aspectj.lang.Signature;

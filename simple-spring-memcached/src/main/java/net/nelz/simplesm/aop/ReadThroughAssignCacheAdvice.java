@@ -6,9 +6,7 @@ import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import net.nelz.simplesm.annotations.ReadThroughSingleCache;
-import net.nelz.simplesm.annotations.ReadThroughAssignCache;
-import net.nelz.simplesm.annotations.InvalidateSingleCache;
+import net.nelz.simplesm.api.ReadThroughAssignCache;
 
 import java.lang.reflect.Method;
 
@@ -37,7 +35,7 @@ THE SOFTWARE.
 public class ReadThroughAssignCacheAdvice extends CacheBase {
     private static final Log LOG = LogFactory.getLog(ReadThroughAssignCacheAdvice.class);
 
-    @Pointcut("@annotation(net.nelz.simplesm.annotations.ReadThroughAssignCache)")
+    @Pointcut("@annotation(net.nelz.simplesm.api.ReadThroughAssignCache)")
     public void getSingleAssign() {}
 
     @Around("getSingleAssign()")

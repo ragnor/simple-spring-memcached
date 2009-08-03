@@ -1,11 +1,5 @@
 package net.nelz.simplesm.aop;
 
-import net.nelz.simplesm.annotations.AnnotationConstants;
-
-import java.security.InvalidParameterException;
-import java.lang.reflect.Method;
-import java.lang.reflect.InvocationTargetException;
-
 /**
 Copyright (c) 2008, 2009  Nelson Carpentier
 

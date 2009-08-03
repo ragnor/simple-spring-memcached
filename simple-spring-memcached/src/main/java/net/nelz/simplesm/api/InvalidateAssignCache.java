@@ -1,10 +1,4 @@
-package net.nelz.simplesm.annotations;
-
-import static org.testng.AssertJUnit.*;
-import org.testng.annotations.*;
-
-import java.lang.annotation.*;
-import java.lang.reflect.*;
+package net.nelz.simplesm.api;
 
 /**
 Copyright (c) 2008, 2009  Nelson Carpentier
@@ -27,28 +21,20 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
  */
-public class AnnotationsTest {
+public @interface InvalidateAssignCache {
+    /**
+     * A namespace that is added to the key as it is stored in the distributed cache.
+     * This allows differing object that may have the same ID to coexist.
+     * This value must be assigned.
+     * @return the namespace for the objects cached in the given method.
+     */
+    String namespace() default AnnotationConstants.DEFAULT_STRING;
 
-	@Test
-	public void testIndividual() throws Exception {
-		final Method method = RandomClass.class.getMethod("getName", null);
-		final Annotation[] annotations = method.getDeclaredAnnotations();
-		assertEquals(ReadThroughSingleCache.class, annotations[0].annotationType());
-		final ReadThroughSingleCache ind = (ReadThroughSingleCache) annotations[0];
-		assertEquals("polk", ind.namespace());
-		assertEquals(5, ind.keyIndex());
-	}
-
-	private static class RandomClass {
-		private String name = "RandomClass";
-
-		@ReadThroughSingleCache(namespace="polk", keyIndex = 5)
-		public String getName() {
-			return name;
-		}
-
-		public void setName(String name) {
-			this.name = name;
-		}
-	}
+    /**
+     * A single key that is invalidate after this method finishes. This key
+     * will be combined with the <code>namespace()</code> value to be used in the distributed cache.
+     * This value must be assigned.
+     * @return the assigned key for the given data
+     */
+    String assignedKey() default AnnotationConstants.DEFAULT_STRING;
 }

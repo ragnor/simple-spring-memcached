@@ -1,6 +1,6 @@
 package net.nelz.simplesm.aop;
 
-import net.nelz.simplesm.annotations.*;
+import net.nelz.simplesm.api.*;
 import net.nelz.simplesm.exceptions.*;
 import org.apache.commons.logging.*;
 import org.aspectj.lang.*;
@@ -35,7 +35,7 @@ THE SOFTWARE.
 public class ReadThroughMultiCacheAdvice extends CacheBase {
 	private static final Log LOG = LogFactory.getLog(ReadThroughMultiCacheAdvice.class);
 
-	@Pointcut("@annotation(net.nelz.simplesm.annotations.ReadThroughMultiCache)")
+	@Pointcut("@annotation(net.nelz.simplesm.api.ReadThroughMultiCache)")
 	public void getMulti() {}
 
 	@Around("getMulti()")
