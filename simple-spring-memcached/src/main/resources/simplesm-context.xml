@@ -22,41 +22,54 @@
 
 	<bean id="methodStore" class="net.nelz.simplesm.aop.CacheKeyMethodStoreImpl" />
 
-	<bean id="readThroughSingleCache" class="net.nelz.simplesm.aop.ReadThroughSingleCacheAdvice">
+  <bean id="net.nelz.simplesm.DefaultKeyProvider" class="net.nelz.simplesm.aop.DefaultKeyProvider">
+    <property name="methodStore" ref="methodStore" />
+  </bean>
+
+  <bean id="readThroughSingleCache" class="net.nelz.simplesm.aop.ReadThroughSingleCacheAdvice">
 		<property name="cache" ref="memcachedClient" />
 		<property name="methodStore" ref="methodStore" />
-	</bean>
+    <property name="defaultKeyProvider" ref="net.nelz.simplesm.DefaultKeyProvider" />
+  </bean>
 	<bean id="readThroughMultiCache" class="net.nelz.simplesm.aop.ReadThroughMultiCacheAdvice">
 		<property name="cache" ref="memcachedClient" />
 		<property name="methodStore" ref="methodStore" />
+    <property name="defaultKeyProvider" ref="net.nelz.simplesm.DefaultKeyProvider" />
 	</bean>
   <bean id="readThroughAssignCache" class="net.nelz.simplesm.aop.ReadThroughAssignCacheAdvice">
     <property name="cache" ref="memcachedClient" />
     <property name="methodStore" ref="methodStore" />
+    <property name="defaultKeyProvider" ref="net.nelz.simplesm.DefaultKeyProvider" />
   </bean>
 	<bean id="updateSingleCache" class="net.nelz.simplesm.aop.UpdateSingleCacheAdvice">
 		<property name="cache" ref="memcachedClient" />
 		<property name="methodStore" ref="methodStore" />
+    <property name="defaultKeyProvider" ref="net.nelz.simplesm.DefaultKeyProvider" />
 	</bean>
 	<bean id="updateMultiCache" class="net.nelz.simplesm.aop.UpdateMultiCacheAdvice">
 		<property name="cache" ref="memcachedClient" />
 		<property name="methodStore" ref="methodStore" />
+    <property name="defaultKeyProvider" ref="net.nelz.simplesm.DefaultKeyProvider" />
 	</bean>
   <bean id="updateAssignCache" class="net.nelz.simplesm.aop.UpdateAssignCacheAdvice">
     <property name="cache" ref="memcachedClient" />
     <property name="methodStore" ref="methodStore" />
+    <property name="defaultKeyProvider" ref="net.nelz.simplesm.DefaultKeyProvider" />
   </bean>
   <bean id="invalidateSingleCache" class="net.nelz.simplesm.aop.InvalidateSingleCacheAdvice">
-      <property name="cache" ref="memcachedClient" />
-      <property name="methodStore" ref="methodStore" />
+    <property name="cache" ref="memcachedClient" />
+    <property name="methodStore" ref="methodStore" />
+    <property name="defaultKeyProvider" ref="net.nelz.simplesm.DefaultKeyProvider" />
   </bean>
   <bean id="invalidateMultiCache" class="net.nelz.simplesm.aop.InvalidateMultiCacheAdvice">
-      <property name="cache" ref="memcachedClient" />
-      <property name="methodStore" ref="methodStore" />
+    <property name="cache" ref="memcachedClient" />
+    <property name="methodStore" ref="methodStore" />
+    <property name="defaultKeyProvider" ref="net.nelz.simplesm.DefaultKeyProvider" />
   </bean>
   <bean id="invalidateAssignCache" class="net.nelz.simplesm.aop.InvalidateAssignCacheAdvice">
-      <property name="cache" ref="memcachedClient" />
-      <property name="methodStore" ref="methodStore" />
+    <property name="cache" ref="memcachedClient" />
+    <property name="methodStore" ref="methodStore" />
+    <property name="defaultKeyProvider" ref="net.nelz.simplesm.DefaultKeyProvider" />
   </bean>
 
 </beans>

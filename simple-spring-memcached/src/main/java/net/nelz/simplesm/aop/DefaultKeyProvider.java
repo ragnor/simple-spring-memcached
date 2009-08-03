@@ -1,4 +1,8 @@
-package net.nelz.simplesm.api;
+package net.nelz.simplesm.aop;
+
+import net.nelz.simplesm.api.KeyProvider;
+
+import java.util.List;
 
 /**
 Copyright (c) 2008, 2009  Nelson Carpentier
@@ -21,8 +25,19 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
  */
-public interface AnnotationConstants {
-	public static final String DEFAULT_STRING = "[unassigned]";
+public class DefaultKeyProvider implements KeyProvider {
 
-    public static final String DEFAULT_KEY_PROVIDER_BEAN_NAME = "net.nelz.simplesm.DefaultKeyProvider";
+    private CacheKeyMethodStore methodStore;
+
+    public void setMethodStore(CacheKeyMethodStore methodStore) {
+        this.methodStore = methodStore;
+    }
+
+    public String generateKey(final Object value) {
+        return null;
+    }
+
+    public List<String> generateKeys(final List<Object> values) {
+        return null;
+    }
 }

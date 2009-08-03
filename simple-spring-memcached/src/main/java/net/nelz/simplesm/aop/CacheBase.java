@@ -6,6 +6,9 @@ import net.spy.memcached.*;
 import org.aspectj.lang.*;
 import org.aspectj.lang.Signature;
 import org.aspectj.lang.reflect.*;
+import org.springframework.context.ApplicationContextAware;
+import org.springframework.context.ApplicationContext;
+import org.springframework.beans.BeansException;
 
 import java.lang.reflect.*;
 import java.security.*;
@@ -32,14 +35,20 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
  */
-public class CacheBase {
+public class CacheBase implements ApplicationContextAware {
 
 	static final String SEPARATOR = ":";
 
 	protected MemcachedClientIF cache;
 	CacheKeyMethodStore methodStore;
+    protected KeyProvider defaultKeyProvider;
+    protected ApplicationContext applicationContext;
 
-	public void setCache(MemcachedClientIF cache) {
+    public void setApplicationContext(ApplicationContext applicationContext) {
+        this.applicationContext = applicationContext;
+    }
+
+    public void setCache(MemcachedClientIF cache) {
 		this.cache = cache;
 	}
 
@@ -47,7 +56,11 @@ public class CacheBase {
 		this.methodStore = methodStore;
 	}
 
-	protected Method getMethodToCache(final JoinPoint jp) throws NoSuchMethodException {
+    public void setDefaultKeyProvider(KeyProvider defaultKeyProvider) {
+        this.defaultKeyProvider = defaultKeyProvider;
+    }
+
+    protected Method getMethodToCache(final JoinPoint jp) throws NoSuchMethodException {
 		final Signature sig = jp.getSignature();
 		if (!(sig instanceof MethodSignature)) {
 			throw new InvalidAnnotationException("This annotation is only valid on a method.");
