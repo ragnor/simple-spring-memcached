@@ -22,7 +22,7 @@
 
 	<bean id="methodStore" class="net.nelz.simplesm.aop.CacheKeyMethodStoreImpl" />
 
-  <bean id="net.nelz.simplesm.DefaultKeyProvider" class="net.nelz.simplesm.aop.DefaultKeyProvider">
+  <bean id="net.nelz.simplesm.DefaultKeyProvider" class="net.nelz.simplesm.impl.DefaultKeyProvider">
     <property name="methodStore" ref="methodStore" />
   </bean>
 

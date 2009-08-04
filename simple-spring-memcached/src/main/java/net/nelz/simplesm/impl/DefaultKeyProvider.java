@@ -1,8 +1,9 @@
-package net.nelz.simplesm.aop;
+package net.nelz.simplesm.impl;
 
 import net.nelz.simplesm.api.KeyProvider;
 import net.nelz.simplesm.api.CacheKeyMethod;
 import net.nelz.simplesm.exceptions.InvalidAnnotationException;
+import net.nelz.simplesm.aop.CacheKeyMethodStore;
 
 import java.util.List;
 import java.util.ArrayList;
@@ -39,15 +40,13 @@ public class DefaultKeyProvider implements KeyProvider {
     }
 
     public String generateKey(final Object keyObject) {
+        if (keyObject == null) {
+            throw new InvalidParameterException("keyObject must be defined");
+        }
         try {
             final Method keyMethod = getKeyMethod(keyObject);
-            /*
-            Step 1: Underpants (Get the method that will provide our key.)
-            Step 2: ? (Make it give us the key.)
-            Step 3: PROFIT! (Return the key to the caller.)
-             */
-            return null;
-        } catch (NoSuchMethodException ex) {
+            return generateObjectId(keyMethod, keyObject);
+        } catch (Exception ex) {
             throw new RuntimeException(ex);
         }
     }
@@ -102,5 +101,14 @@ public class DefaultKeyProvider implements KeyProvider {
 
         return targetMethod;
     }
+
+    String generateObjectId(final Method keyMethod, final Object keyObject) throws Exception {
+        final String objectId = (String) keyMethod.invoke(keyObject, null);
+        if (objectId == null || objectId.length() < 1) {
+            throw new RuntimeException("Got an empty key value from " + keyMethod.getName());
+        }
+        return objectId;
+    }
+
 
 }
