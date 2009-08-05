@@ -70,7 +70,183 @@ class AnnotationDataBuilder {
                                               final Class expectedAnnotationClass,
                                               final String targetMethodName) {
         final AnnotationData data = new AnnotationData();
+        final Class clazz = populateClassName(data, annotation, expectedAnnotationClass);
 
+        try {
+            populateKeyIndex(data, annotation, expectedAnnotationClass, targetMethodName, clazz);
+
+            populateDataIndex(data, annotation, expectedAnnotationClass, targetMethodName, clazz);
+
+            populateExpiration(data, annotation, expectedAnnotationClass, targetMethodName, clazz);
+
+            populateNamespace(data, annotation, expectedAnnotationClass, targetMethodName, clazz);
+
+            populateAssignedKey(data, annotation, expectedAnnotationClass, targetMethodName, clazz);
+
+        } catch (NoSuchMethodException ex) {
+            throw new RuntimeException("Problem assembling Annotation information.", ex);
+        } catch (IllegalAccessException ex) {
+            throw new RuntimeException("Problem assembling Annotation information.", ex);
+        } catch (InvocationTargetException ex) {
+            throw new RuntimeException("Problem assembling Annotation information.", ex);
+        }
+
+        return data;
+    }
+
+    static AnnotationData buildAnnotationData(final Annotation annotation,
+                                              final Class expectedAnnotationClass,
+                                              final Method targetMethod) {
+        final AnnotationData data = new AnnotationData();
+        final Class clazz = populateClassName(data, annotation, expectedAnnotationClass);
+
+        try {
+            populateKeyIndex(data, annotation, expectedAnnotationClass, targetMethod.getName(), clazz);
+
+            populateDataIndex(data, annotation, expectedAnnotationClass, targetMethod.getName(), clazz);
+
+            populateExpiration(data, annotation, expectedAnnotationClass, targetMethod.getName(), clazz);
+
+            populateNamespace(data, annotation, expectedAnnotationClass, targetMethod.getName(), clazz);
+
+            populateAssignedKey(data, annotation, expectedAnnotationClass, targetMethod.getName(), clazz);
+
+        } catch (NoSuchMethodException ex) {
+            throw new RuntimeException("Problem assembling Annotation information.", ex);
+        } catch (IllegalAccessException ex) {
+            throw new RuntimeException("Problem assembling Annotation information.", ex);
+        } catch (InvocationTargetException ex) {
+            throw new RuntimeException("Problem assembling Annotation information.", ex);
+        }
+
+        return data;
+    }
+
+    private static void populateAssignedKey(final AnnotationData data,
+                                            final Annotation annotation,
+                                            final Class expectedAnnotationClass,
+                                            final String targetMethodName,
+                                            final Class clazz)
+            throws NoSuchMethodException, IllegalAccessException, InvocationTargetException {
+        if (ASSIGNS.contains(expectedAnnotationClass)) {
+            final Method assignKeyMethod = clazz.getDeclaredMethod("assignedKey", null);
+            final String assignKey = (String) assignKeyMethod.invoke(annotation, null);
+            if (AnnotationConstants.DEFAULT_STRING.equals(assignKey)
+                    || assignKey == null
+                    || assignKey.length() < 1) {
+                throw new InvalidParameterException(String.format(
+                        "AssignedKey for annotation [%s] must be defined on [%s]",
+                        expectedAnnotationClass.getName(),
+                        targetMethodName
+                ));
+            }
+            data.setAssignedKey(assignKey);
+        }
+    }
+
+    private static void populateNamespace(final AnnotationData data,
+                                          final Annotation annotation,
+                                          final Class expectedAnnotationClass,
+                                          final String targetMethodName,
+                                          final Class clazz)
+            throws NoSuchMethodException, IllegalAccessException, InvocationTargetException {
+        final Method namespaceMethod = clazz.getDeclaredMethod("namespace", null);
+        final String namespace = (String) namespaceMethod.invoke(annotation, null);
+        if (AnnotationConstants.DEFAULT_STRING.equals(namespace)
+                || namespace == null
+                || namespace.length() < 1) {
+            throw new InvalidParameterException(String.format(
+                    "Namespace for annotation [%s] must be defined on [%s]",
+                    expectedAnnotationClass.getName(),
+                    targetMethodName
+            ));
+        }
+        data.setNamespace(namespace);
+    }
+
+    private static void populateExpiration(final AnnotationData data,
+                                           final Annotation annotation,
+                                           final Class expectedAnnotationClass,
+                                           final String targetMethodName,
+                                           final Class clazz)
+            throws NoSuchMethodException, IllegalAccessException, InvocationTargetException {
+        if (!INVALIDATES.contains(expectedAnnotationClass)) {
+            final Method expirationMethod = clazz.getDeclaredMethod("expiration", null);
+            final int expiration = (Integer) expirationMethod.invoke(annotation, null);
+            if (expiration < 0) {
+                throw new InvalidParameterException(String.format(
+                        "Expiration for annotation [%s] must be 0 or greater on [%s]",
+                        expectedAnnotationClass.getName(),
+                        targetMethodName
+                ));
+            }
+            data.setExpiration(expiration);
+        }
+    }
+
+    private static void populateDataIndex(final AnnotationData data,
+                                          final Annotation annotation,
+                                          final Class expectedAnnotationClass,
+                                          final String targetMethodName,
+                                          final Class clazz)
+            throws NoSuchMethodException, IllegalAccessException, InvocationTargetException {
+        if (UPDATES.contains(expectedAnnotationClass)) {
+            final Method dataIndexMethod = clazz.getDeclaredMethod("dataIndex", null);
+            final int dataIndex = (Integer) dataIndexMethod.invoke(annotation, null);
+            if (dataIndex < -1) {
+                throw new InvalidParameterException(String.format(
+                        "DataIndex for annotation [%s] must be -1 or greater on [%s]",
+                        expectedAnnotationClass.getName(),
+                        targetMethodName
+                ));
+            }
+            data.setDataIndex(dataIndex);
+        }
+    }
+
+    private static void populateKeyIndex(final AnnotationData data,
+                                         final Annotation annotation,
+                                         final Class expectedAnnotationClass,
+                                         final String targetMethodName,
+                                         final Class clazz)
+            throws NoSuchMethodException, IllegalAccessException, InvocationTargetException {
+        if (!ASSIGNS.contains(expectedAnnotationClass)) {
+            final Method keyIndexMethod = clazz.getDeclaredMethod("keyIndex", null);
+            final int keyIndex = (Integer) keyIndexMethod.invoke(annotation, null);
+            if (keyIndex < -1) {
+                throw new InvalidParameterException(String.format(
+                        "KeyIndex for annotation [%s] must be -1 or greater on [%s]",
+                        expectedAnnotationClass.getName(),
+                        targetMethodName
+                ));
+            }
+            data.setKeyIndex(keyIndex);
+        }
+    }
+
+    private static void populateKeyIndex(final AnnotationData data,
+                                         final Annotation annotation,
+                                         final Class expectedAnnotationClass,
+                                         final Method targetMethod,
+                                         final Class clazz)
+            throws NoSuchMethodException, IllegalAccessException, InvocationTargetException {
+        if (!ASSIGNS.contains(expectedAnnotationClass)) {
+            final Method keyIndexMethod = clazz.getDeclaredMethod("keyIndex", null);
+            final int keyIndex = (Integer) keyIndexMethod.invoke(annotation, null);
+            if (keyIndex < -1) {
+                throw new InvalidParameterException(String.format(
+                        "KeyIndex for annotation [%s] must be -1 or greater on [%s]",
+                        expectedAnnotationClass.getName(),
+                        targetMethod.getName()
+                ));
+            }
+            data.setKeyIndex(keyIndex);
+        }
+    }
+
+    static Class populateClassName(final AnnotationData data,
+                                   final Annotation annotation,
+                                   final Class expectedAnnotationClass) {
         if (annotation == null) {
             throw new InvalidParameterException(String.format(
                     "No annotation of type [%s] found.",
@@ -87,83 +263,6 @@ class AnnotationDataBuilder {
             ));
         }
         data.setClassName(clazz.getName());
-
-        try {
-            if (!ASSIGNS.contains(expectedAnnotationClass)) {
-                final Method keyIndexMethod = clazz.getDeclaredMethod("keyIndex", null);
-                final int keyIndex = (Integer) keyIndexMethod.invoke(annotation, null);
-                if (keyIndex < -1) {
-                    throw new InvalidParameterException(String.format(
-                            "KeyIndex for annotation [%s] must be -1 or greater on [%s]",
-                            expectedAnnotationClass.getName(),
-                            targetMethodName
-                    ));
-                }
-                data.setKeyIndex(keyIndex);
-            }
-
-            if (UPDATES.contains(expectedAnnotationClass)) {
-                final Method dataIndexMethod = clazz.getDeclaredMethod("dataIndex", null);
-                final int dataIndex = (Integer) dataIndexMethod.invoke(annotation, null);
-                if (dataIndex < -1) {
-                    throw new InvalidParameterException(String.format(
-                            "DataIndex for annotation [%s] must be -1 or greater on [%s]",
-                            expectedAnnotationClass.getName(),
-                            targetMethodName
-                    ));
-                }
-                data.setDataIndex(dataIndex);                
-            }
-
-            if (!INVALIDATES.contains(expectedAnnotationClass)) {
-                final Method expirationMethod = clazz.getDeclaredMethod("expiration", null);
-                final int expiration = (Integer) expirationMethod.invoke(annotation, null);
-                if (expiration < 0) {
-                    throw new InvalidParameterException(String.format(
-                            "Expiration for annotation [%s] must be 0 or greater on [%s]",
-                            expectedAnnotationClass.getName(),
-                            targetMethodName
-                    ));
-                }
-                data.setExpiration(expiration);
-            }
-
-            final Method namespaceMethod = clazz.getDeclaredMethod("namespace", null);
-            final String namespace = (String) namespaceMethod.invoke(annotation, null);
-            if (AnnotationConstants.DEFAULT_STRING.equals(namespace)
-                    || namespace == null
-                    || namespace.length() < 1) {
-                throw new InvalidParameterException(String.format(
-                        "Namespace for annotation [%s] must be defined on [%s]",
-                        expectedAnnotationClass.getName(),
-                        targetMethodName
-                ));
-            }
-            data.setNamespace(namespace);
-
-            if (ASSIGNS.contains(expectedAnnotationClass)) {
-                final Method assignKeyMethod = clazz.getDeclaredMethod("assignedKey", null);
-                final String assignKey = (String) assignKeyMethod.invoke(annotation, null);
-                if (AnnotationConstants.DEFAULT_STRING.equals(assignKey)
-                        || assignKey == null
-                        || assignKey.length() < 1) {
-                    throw new InvalidParameterException(String.format(
-                            "AssignedKey for annotation [%s] must be defined on [%s]",
-                            expectedAnnotationClass.getName(),
-                            targetMethodName
-                    ));
-                }
-                data.setAssignedKey(assignKey);
-            }
-            
-        } catch (NoSuchMethodException ex) {
-            throw new RuntimeException("Problem assembling Annotation information.", ex);
-        } catch (IllegalAccessException ex) {
-            throw new RuntimeException("Problem assembling Annotation information.", ex);
-        } catch (InvocationTargetException ex) {
-            throw new RuntimeException("Problem assembling Annotation information.", ex);
-        }
-
-        return data;
+        return clazz;
     }
 }
