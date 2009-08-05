@@ -6,6 +6,9 @@ import java.security.InvalidParameterException;
 import java.lang.reflect.Method;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.annotation.Annotation;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.Collections;
 
 /**
 Copyright (c) 2008, 2009  Nelson Carpentier
@@ -30,6 +33,39 @@ THE SOFTWARE.
  */
 class AnnotationDataBuilder {
 
+    static final Set<Class> ASSIGNS = new HashSet<Class>();
+    static final Set<Class> SINGLES = new HashSet<Class>();
+    static final Set<Class> MULTIS = new HashSet<Class>();
+    static final Set<Class> INVALIDATES = new HashSet<Class>();
+    static final Set<Class> UPDATES = new HashSet<Class>();
+
+    static {
+        Collections.addAll(ASSIGNS,
+                ReadThroughAssignCache.class,
+                UpdateAssignCache.class,
+                InvalidateAssignCache.class);
+
+        Collections.addAll(SINGLES,
+                ReadThroughSingleCache.class,
+                UpdateSingleCache.class,
+                InvalidateSingleCache.class);
+
+        Collections.addAll(MULTIS,
+                ReadThroughMultiCache.class,
+                UpdateMultiCache.class,
+                InvalidateMultiCache.class);
+
+        Collections.addAll(UPDATES,
+                UpdateSingleCache.class,
+                UpdateMultiCache.class,
+                UpdateAssignCache.class);
+
+        Collections.addAll(INVALIDATES,
+                InvalidateAssignCache.class,
+                InvalidateSingleCache.class,
+                InvalidateMultiCache.class);
+    }
+
     static AnnotationData buildAnnotationData(final Annotation annotation,
                                               final Class expectedAnnotationClass,
                                               final String targetMethodName) {
@@ -53,9 +89,7 @@ class AnnotationDataBuilder {
         data.setClassName(clazz.getName());
 
         try {
-            if (expectedAnnotationClass != ReadThroughAssignCache.class
-                    && expectedAnnotationClass != InvalidateAssignCache.class
-                    && expectedAnnotationClass != UpdateAssignCache.class) {
+            if (!ASSIGNS.contains(expectedAnnotationClass)) {
                 final Method keyIndexMethod = clazz.getDeclaredMethod("keyIndex", null);
                 final int keyIndex = (Integer) keyIndexMethod.invoke(annotation, null);
                 if (keyIndex < -1) {
@@ -68,9 +102,7 @@ class AnnotationDataBuilder {
                 data.setKeyIndex(keyIndex);
             }
 
-            if (expectedAnnotationClass == UpdateSingleCache.class
-                    || expectedAnnotationClass == UpdateMultiCache.class
-                    || expectedAnnotationClass == UpdateAssignCache.class) {
+            if (UPDATES.contains(expectedAnnotationClass)) {
                 final Method dataIndexMethod = clazz.getDeclaredMethod("dataIndex", null);
                 final int dataIndex = (Integer) dataIndexMethod.invoke(annotation, null);
                 if (dataIndex < -1) {
@@ -83,9 +115,7 @@ class AnnotationDataBuilder {
                 data.setDataIndex(dataIndex);                
             }
 
-            if (expectedAnnotationClass != InvalidateSingleCache.class
-                    && expectedAnnotationClass != InvalidateMultiCache.class
-                    && expectedAnnotationClass != InvalidateAssignCache.class) {
+            if (!INVALIDATES.contains(expectedAnnotationClass)) {
                 final Method expirationMethod = clazz.getDeclaredMethod("expiration", null);
                 final int expiration = (Integer) expirationMethod.invoke(annotation, null);
                 if (expiration < 0) {
@@ -111,9 +141,7 @@ class AnnotationDataBuilder {
             }
             data.setNamespace(namespace);
 
-            if (expectedAnnotationClass == ReadThroughAssignCache.class
-                    || expectedAnnotationClass == InvalidateAssignCache.class
-                    || expectedAnnotationClass == UpdateAssignCache.class) {
+            if (ASSIGNS.contains(expectedAnnotationClass)) {
                 final Method assignKeyMethod = clazz.getDeclaredMethod("assignedKey", null);
                 final String assignKey = (String) assignKeyMethod.invoke(annotation, null);
                 if (AnnotationConstants.DEFAULT_STRING.equals(assignKey)
