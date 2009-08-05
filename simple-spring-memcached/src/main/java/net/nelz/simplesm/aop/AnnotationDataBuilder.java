@@ -224,6 +224,7 @@ class AnnotationDataBuilder {
         }
     }
 
+    // TODO: Implement using Annotations to calculate the keyIndex.
     private static void populateKeyIndex(final AnnotationData data,
                                          final Annotation annotation,
                                          final Class expectedAnnotationClass,

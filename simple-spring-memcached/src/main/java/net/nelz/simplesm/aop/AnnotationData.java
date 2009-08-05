@@ -24,6 +24,7 @@ THE SOFTWARE.
 class AnnotationData {
     private String namespace = "";
     private int keyIndex = Integer.MIN_VALUE;
+    private String keyProviderBeanName = "";
     private int dataIndex = Integer.MIN_VALUE;
     private int expiration = 0;
     private String className = "";
@@ -43,6 +44,14 @@ class AnnotationData {
 
     public void setKeyIndex(int keyIndex) {
         this.keyIndex = keyIndex;
+    }
+
+    public String getKeyProviderBeanName() {
+        return keyProviderBeanName;
+    }
+
+    public void setKeyProviderBeanName(String keyProviderBeanName) {
+        this.keyProviderBeanName = keyProviderBeanName;
     }
 
     public int getDataIndex() {
