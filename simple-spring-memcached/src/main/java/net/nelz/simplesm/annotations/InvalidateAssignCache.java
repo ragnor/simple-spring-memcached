@@ -1,5 +1,10 @@
 package net.nelz.simplesm.annotations;
 
+import java.lang.annotation.Retention;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
+
 /**
 Copyright (c) 2008, 2009  Nelson Carpentier
 
@@ -21,6 +26,8 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
  */
+@Retention(RetentionPolicy.RUNTIME)
+@Target(ElementType.METHOD)
 public @interface InvalidateAssignCache {
     /**
      * A namespace that is added to the key as it is stored in the distributed cache.
