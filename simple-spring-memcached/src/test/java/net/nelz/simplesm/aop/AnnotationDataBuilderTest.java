@@ -3,6 +3,14 @@ package net.nelz.simplesm.aop;
 import static org.testng.AssertJUnit.*;
 import org.testng.annotations.Test;
 
+import java.lang.annotation.Annotation;
+import java.security.InvalidParameterException;
+
+import net.nelz.simplesm.api.InvalidateAssignCache;
+import net.nelz.simplesm.api.InvalidateSingleCache;
+import net.nelz.simplesm.api.UpdateAssignCache;
+import net.vidageek.mirror.dsl.Mirror;
+
 /**
 Copyright (c) 2008, 2009  Nelson Carpentier
 
@@ -27,7 +35,176 @@ THE SOFTWARE.
 public class AnnotationDataBuilderTest {
 
     @Test
-    public void testPopulateClassName() {
-        fail("Need to implement tests for AnnotationDataBuilder methods.");
+    public void testPopulateAssignedKey() throws Exception {
+        final AnnotationData data = new AnnotationData();
+
+        Class expected;
+        String method;
+        Annotation annotation;
+
+        // Falls outside the set that assigns a key
+        expected = InvalidateSingleCache.class;
+        method = "populateAssign01";
+        annotation = new Mirror().on(AnnotationDataDummy.class).reflect()
+                        .annotation(expected)
+                        .atMethod(method).withArgs(String.class);
+        AnnotationDataBuilder.populateAssignedKey(data, annotation, expected, method);
+        assertEquals("", data.getAssignedKey());
+
+        // Default (or unassigned) value throws an exception
+        expected = InvalidateAssignCache.class;
+        method = "populateAssign02";
+        annotation = new Mirror().on(AnnotationDataDummy.class).reflect()
+                        .annotation(expected)
+                        .atMethod(method).withArgs(String.class);
+        try {
+            AnnotationDataBuilder.populateAssignedKey(data, annotation, expected, method);
+            fail("expected exception");
+        } catch (InvalidParameterException ex) {}
+        assertEquals("", data.getAssignedKey());
+
+        // 0-length value throws an exception
+        expected = InvalidateAssignCache.class;
+        method = "populateAssign03";
+        annotation = new Mirror().on(AnnotationDataDummy.class).reflect()
+                        .annotation(expected)
+                        .atMethod(method).withArgs(String.class);
+        try {
+            AnnotationDataBuilder.populateAssignedKey(data, annotation, expected, method);
+            fail("expected exception");
+        } catch (InvalidParameterException ex) {}
+        assertEquals("", data.getAssignedKey());
+
+        // Successful assignment
+        expected = InvalidateAssignCache.class;
+        method = "populateAssign04";
+        annotation = new Mirror().on(AnnotationDataDummy.class).reflect()
+                        .annotation(expected)
+                        .atMethod(method).withArgs(String.class);
+        AnnotationDataBuilder.populateAssignedKey(data, annotation, expected, method);
+        assertEquals(AnnotationDataDummy.SAMPLE_KEY, data.getAssignedKey());
+
+    }
+
+    @Test
+    public void testPopulateNamespace() throws Exception {
+        final AnnotationData data = new AnnotationData();
+
+        Class expected;
+        String method;
+        Annotation annotation;
+
+        // Default Namespace
+        expected = InvalidateAssignCache.class;
+        method = "populateNamespace01";
+        annotation = new Mirror().on(AnnotationDataDummy.class).reflect()
+                        .annotation(expected)
+                        .atMethod(method).withArgs(String.class);
+        try {
+            AnnotationDataBuilder.populateNamespace(data, annotation, expected, method);
+            fail("expected exception");
+        } catch (InvalidParameterException ex) {}
+        assertEquals("", data.getNamespace());
+
+        // 0-length String as Namespace
+        expected = InvalidateAssignCache.class;
+        method = "populateNamespace02";
+        annotation = new Mirror().on(AnnotationDataDummy.class).reflect()
+                        .annotation(expected)
+                        .atMethod(method).withArgs(String.class);
+        try {
+            AnnotationDataBuilder.populateNamespace(data, annotation, expected, method);
+            fail("expected exception");
+        } catch (InvalidParameterException ex) {}
+        assertEquals("", data.getNamespace());
+
+        // Get the Namespace successfully
+        expected = InvalidateAssignCache.class;
+        method = "populateNamespace03";
+        annotation = new Mirror().on(AnnotationDataDummy.class).reflect()
+                        .annotation(expected)
+                        .atMethod(method).withArgs(String.class);
+        AnnotationDataBuilder.populateNamespace(data, annotation, expected, method);
+        assertEquals(AnnotationDataDummy.SAMPLE_NS, data.getNamespace());        
+    }
+
+    @Test
+    public void testPopulateExpiration() throws Exception {
+        final AnnotationData data = new AnnotationData();
+
+        Class expected;
+        String method;
+        Annotation annotation;
+
+        // Excluded from having an Expiration
+        expected = InvalidateAssignCache.class;
+        method = "populateExpiration01";
+        annotation = new Mirror().on(AnnotationDataDummy.class).reflect()
+                        .annotation(expected)
+                        .atMethod(method).withArgs(String.class);
+        AnnotationDataBuilder.populateExpiration(data, annotation, expected, method);
+        assertEquals(0, data.getExpiration());
+
+        // Negative Expiration
+        expected = UpdateAssignCache.class;
+        method = "populateExpiration02";
+        annotation = new Mirror().on(AnnotationDataDummy.class).reflect()
+                        .annotation(expected)
+                        .atMethod(method).withArgs(String.class);
+        try {
+            AnnotationDataBuilder.populateExpiration(data, annotation, expected, method);
+            fail("expected exception");
+        } catch (InvalidParameterException ex) {}
+        assertEquals(0, data.getExpiration());
+
+        // Negative Expiration
+        expected = UpdateAssignCache.class;
+        method = "populateExpiration03";
+        annotation = new Mirror().on(AnnotationDataDummy.class).reflect()
+                        .annotation(expected)
+                        .atMethod(method).withArgs(String.class);
+        AnnotationDataBuilder.populateExpiration(data, annotation, expected, method);
+        assertEquals(AnnotationDataDummy.SAMPLE_EXP, data.getExpiration());
+    }
+
+
+    @Test
+    public void testPopulateClassName() throws Exception {
+        final AnnotationData data = new AnnotationData();
+
+        Class expected;
+        String method;
+        Annotation annotation;
+
+        // Null Annotation
+        expected = InvalidateAssignCache.class;
+        method = "populateClassName01";
+        try {
+            AnnotationDataBuilder.populateClassName(data, null, expected);
+            fail("expected exception");
+        } catch (InvalidParameterException ex) {}
+        assertEquals("", data.getClassName());
+
+        // Annotation doesn't match the expected Annotation Class.
+        expected = InvalidateAssignCache.class;
+        method = "populateClassName01";
+        annotation = new Mirror().on(AnnotationDataDummy.class).reflect()
+                        .annotation(expected)
+                        .atMethod(method).withArgs(String.class);
+        try {
+            AnnotationDataBuilder.populateClassName(data, annotation, UpdateAssignCache.class);
+            fail("expected exception");
+        } catch (InvalidParameterException ex) {}
+        assertEquals("", data.getClassName());
+
+        // Success
+        expected = InvalidateAssignCache.class;
+        method = "populateClassName01";
+        annotation = new Mirror().on(AnnotationDataDummy.class).reflect()
+                        .annotation(expected)
+                        .atMethod(method).withArgs(String.class);
+        AnnotationDataBuilder.populateClassName(data, annotation, expected);
+        assertEquals(expected.getName(), data.getClassName());
+
     }
 }
