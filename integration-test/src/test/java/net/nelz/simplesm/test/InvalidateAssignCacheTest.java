@@ -4,7 +4,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
-import static org.testng.AssertJUnit.assertEquals;
+import static org.testng.AssertJUnit.*;
 import net.nelz.simplesm.test.svc.TestSvc;
 
 import java.util.List;
@@ -52,9 +52,12 @@ public class InvalidateAssignCacheTest {
 
         test.invalidateAssignStrings();
         final List<String> result3 = test.getAssignStrings();
-        assertEquals(result1.size(), result3.size());
+
+        // This was wrong before. The 3rd array is supposed to come
+        // back different than the ones pulled before the invalidate
+        assertNotSame(result1.size(), result3.size());
         for (int ix = 0; ix < result1.size(); ix++) {
-            assertEquals(result1.get(ix), result3.get(ix));
+            assertFalse(result3.contains(result1.get(ix)));
         }                
     }
 }
