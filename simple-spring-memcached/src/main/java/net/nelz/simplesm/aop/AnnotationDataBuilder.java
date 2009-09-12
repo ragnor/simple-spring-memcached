@@ -101,7 +101,7 @@ class AnnotationDataBuilder {
         populateClassName(data, annotation, expectedAnnotationClass);
 
         try {
-            populateKeyIndex(data, annotation, expectedAnnotationClass, targetMethod.getName());
+            populateKeyIndexAndBeanName(data, expectedAnnotationClass, targetMethod);
 
             populateDataIndex(data, annotation, expectedAnnotationClass, targetMethod.getName());
 
@@ -221,9 +221,7 @@ class AnnotationDataBuilder {
         }
     }
 
-    // TODO: Implement using Annotations to calculate the keyIndex.
-    private static void populateKeyIndexAndBeanName(final AnnotationData data,
-                                         final Annotation annotation,
+    static void populateKeyIndexAndBeanName(final AnnotationData data,
                                          final Class expectedAnnotationClass,
                                          final Method targetMethod)
             throws NoSuchMethodException, IllegalAccessException, InvocationTargetException {
@@ -245,17 +243,51 @@ class AnnotationDataBuilder {
             return;
         }
 
+        final Annotation[][] paramAnnotationArrays = targetMethod.getParameterAnnotations();
+        int foundIndex = Integer.MIN_VALUE;
+        Annotation foundAnnotation = null;
 
-        final Method keyIndexMethod = expectedAnnotationClass.getDeclaredMethod("keyIndex", null);
-        final int keyIndex = (Integer) keyIndexMethod.invoke(annotation, null);
-        if (keyIndex < -1) {
+        if (paramAnnotationArrays != null && paramAnnotationArrays.length > 0) {
+            for (int ix = 0; ix < paramAnnotationArrays.length; ix++) {
+                final Annotation[] paramAnnotations = paramAnnotationArrays[ix];
+                if (paramAnnotations != null && paramAnnotations.length > 0) {
+                    for (int jx = 0; jx < paramAnnotations.length; jx++) {
+                        final Annotation paramAnnotation = paramAnnotations[jx];
+                        if (ParameterValueKeyProvider.class.equals(paramAnnotation.annotationType())) {
+                            if (foundIndex >= 0) {
+                                throw new InvalidParameterException(String.format(
+                                        "Multiple annotations of type [%s] found on method [%s]",
+                                        ParameterValueKeyProvider.class.getName(),
+                                        targetMethod.getName()
+                                ));
+                            }
+                            foundAnnotation = paramAnnotation;
+                            foundIndex = ix;
+                        }
+                    }
+                }
+            }
+        }
+
+        if (foundIndex < 0 || foundAnnotation == null) {
             throw new InvalidParameterException(String.format(
-                    "KeyIndex for annotation [%s] must be -1 or greater on [%s]",
-                    expectedAnnotationClass.getName(),
+                    "No KeyProvider annotation found method [%s]",
                     targetMethod.getName()
             ));
         }
-        data.setKeyIndex(keyIndex);
+
+
+        final Method beanMethod = ParameterValueKeyProvider.class.getDeclaredMethod("keyProviderBeanName", null);
+        final String beanName = (String) beanMethod.invoke(foundAnnotation, null);
+        if (beanName == null || beanName.length() < 1) {
+            throw new InvalidParameterException(String.format(
+                    "No valid keyIndexBeanName defined in annotation [%s] on method [%s]",
+                    ParameterValueKeyProvider.class.getName(),
+                    targetMethod.getName()
+            ));
+        }
+        data.setKeyIndex(foundIndex);
+        data.setKeyProviderBeanName(beanName);
     }
 
     static void populateClassName(final AnnotationData data,

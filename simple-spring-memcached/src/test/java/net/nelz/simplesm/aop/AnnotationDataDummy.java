@@ -1,8 +1,6 @@
 package net.nelz.simplesm.aop;
 
-import net.nelz.simplesm.api.InvalidateAssignCache;
-import net.nelz.simplesm.api.InvalidateSingleCache;
-import net.nelz.simplesm.api.UpdateAssignCache;
+import net.nelz.simplesm.api.*;
 
 /**
 Copyright (c) 2008, 2009  Nelson Carpentier
@@ -30,6 +28,8 @@ public class AnnotationDataDummy {
     public static final String SAMPLE_KEY = "bigSampleKey";
     public static final String SAMPLE_NS = "bigSampleNamespace";
     public static final int SAMPLE_EXP = 42;
+    public static final String SAMPLE_PARAM_BEAN = "bigParamBean";
+    public static final String SAMPLE_RETURN_BEAN = "bigReturnBean";
 
     @InvalidateSingleCache
     public void populateAssign01(final String key1) { }
@@ -66,8 +66,41 @@ public class AnnotationDataDummy {
     public void populateExpiration03(final String key1) { }
 
 
+
     @InvalidateAssignCache
     public void populateClassName01(final String key1) { }
 
 
+
+    @InvalidateSingleCache
+    public void populateKeyProvider01(final String key1) { }
+
+    @InvalidateSingleCache
+    @ReturnValueKeyProvider(keyProviderBeanName = "")
+    public void populateKeyProvider02(final String key1) { }
+
+    @InvalidateSingleCache
+    public void populateKeyProvider03(@ParameterValueKeyProvider(keyProviderBeanName = "") final String key1) { }
+
+    @InvalidateSingleCache
+    public void populateKeyProvider04(@ParameterValueKeyProvider(keyProviderBeanName = SAMPLE_PARAM_BEAN) final String key1,
+                                      @ParameterValueKeyProvider(keyProviderBeanName = "anotherSampleBean") final String key2) { }
+
+    @InvalidateSingleCache
+    public void populateKeyProvider05(final String key1,
+                                      final String key2,
+                                      @ParameterValueKeyProvider(keyProviderBeanName = SAMPLE_PARAM_BEAN) final String key3) { }
+
+    @InvalidateSingleCache
+    @ReturnValueKeyProvider(keyProviderBeanName = SAMPLE_RETURN_BEAN)
+    public void populateKeyProvider06(final String key1) { }
+
+    @InvalidateSingleCache
+    public void populateKeyProvider07(final String key1,
+                                      @ParameterValueKeyProvider final String key2,
+                                      final String key3) { }
+
+    @InvalidateSingleCache
+    @ReturnValueKeyProvider
+    public void populateKeyProvider08(final String key1) { }
 }

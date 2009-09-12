@@ -4,11 +4,13 @@ import static org.testng.AssertJUnit.*;
 import org.testng.annotations.Test;
 
 import java.lang.annotation.Annotation;
+import java.lang.reflect.Method;
 import java.security.InvalidParameterException;
 
 import net.nelz.simplesm.api.InvalidateAssignCache;
 import net.nelz.simplesm.api.InvalidateSingleCache;
 import net.nelz.simplesm.api.UpdateAssignCache;
+import net.nelz.simplesm.api.AnnotationConstants;
 import net.vidageek.mirror.dsl.Mirror;
 
 /**
@@ -205,6 +207,95 @@ public class AnnotationDataBuilderTest {
                         .atMethod(method).withArgs(String.class);
         AnnotationDataBuilder.populateClassName(data, annotation, expected);
         assertEquals(expected.getName(), data.getClassName());
+    }
+
+    @Test
+    public void testPopulateKeyProvider() throws Exception {
+        final AnnotationData data = new AnnotationData();
+
+        Class expected = InvalidateAssignCache.class;
+        Method targetMethod = null;
+
+        // Expected Annotation doesn't require keyProvider
+        AnnotationDataBuilder.populateKeyIndexAndBeanName(data, expected, targetMethod);
+        assertEquals("", data.getKeyProviderBeanName());
+        assertEquals(AnnotationData.DEFAULT_INTEGER, data.getKeyIndex());
+
+        // No KeyProvider annotations at all
+        expected = InvalidateSingleCache.class;
+        targetMethod = new Mirror().on(AnnotationDataDummy.class).reflect()
+                .method("populateKeyProvider01").withArgs(String.class);
+        try {
+            AnnotationDataBuilder.populateKeyIndexAndBeanName(data, expected, targetMethod);
+            fail("expected exception");
+        } catch (InvalidParameterException ex) {}
+        assertEquals("", data.getKeyProviderBeanName());
+        assertEquals(AnnotationData.DEFAULT_INTEGER, data.getKeyIndex());
+
+        // ReturnKeyProvider with an empty bean name
+        expected = InvalidateSingleCache.class;
+        targetMethod = new Mirror().on(AnnotationDataDummy.class).reflect()
+                .method("populateKeyProvider02").withArgs(String.class);
+        try {
+            AnnotationDataBuilder.populateKeyIndexAndBeanName(data, expected, targetMethod);
+            fail("expected exception");
+        } catch (InvalidParameterException ex) {}
+        assertEquals("", data.getKeyProviderBeanName());
+        assertEquals(AnnotationData.DEFAULT_INTEGER, data.getKeyIndex());
+
+        // ParamKeyProvider with an empty bean name
+        expected = InvalidateSingleCache.class;
+        targetMethod = new Mirror().on(AnnotationDataDummy.class).reflect()
+                .method("populateKeyProvider03").withArgs(String.class);
+        try {
+            AnnotationDataBuilder.populateKeyIndexAndBeanName(data, expected, targetMethod);
+            fail("expected exception");
+        } catch (InvalidParameterException ex) {}
+        assertEquals("", data.getKeyProviderBeanName());
+        assertEquals(AnnotationData.DEFAULT_INTEGER, data.getKeyIndex());
+
+        // Multiple ParamKeyProviders
+        expected = InvalidateSingleCache.class;
+        targetMethod = new Mirror().on(AnnotationDataDummy.class).reflect()
+                .method("populateKeyProvider04").withArgs(String.class, String.class);
+        try {
+            AnnotationDataBuilder.populateKeyIndexAndBeanName(data, expected, targetMethod);
+            fail("expected exception");
+        } catch (InvalidParameterException ex) {}
+        assertEquals("", data.getKeyProviderBeanName());
+        assertEquals(AnnotationData.DEFAULT_INTEGER, data.getKeyIndex());
+
+        // Param KeyProvider with override
+        expected = InvalidateSingleCache.class;
+        targetMethod = new Mirror().on(AnnotationDataDummy.class).reflect()
+                .method("populateKeyProvider05").withArgs(String.class, String.class, String.class);
+        AnnotationDataBuilder.populateKeyIndexAndBeanName(data, expected, targetMethod);
+        assertEquals(AnnotationDataDummy.SAMPLE_PARAM_BEAN, data.getKeyProviderBeanName());
+        assertEquals(2, data.getKeyIndex());
+
+        // Return KeyProvider with override
+        expected = InvalidateSingleCache.class;
+        targetMethod = new Mirror().on(AnnotationDataDummy.class).reflect()
+                .method("populateKeyProvider06").withArgs(String.class);
+        AnnotationDataBuilder.populateKeyIndexAndBeanName(data, expected, targetMethod);
+        assertEquals(AnnotationDataDummy.SAMPLE_RETURN_BEAN, data.getKeyProviderBeanName());
+        assertEquals(-1, data.getKeyIndex());
+
+        // Param KeyProvider without override
+        expected = InvalidateSingleCache.class;
+        targetMethod = new Mirror().on(AnnotationDataDummy.class).reflect()
+                .method("populateKeyProvider07").withArgs(String.class, String.class, String.class);
+        AnnotationDataBuilder.populateKeyIndexAndBeanName(data, expected, targetMethod);
+        assertEquals(AnnotationConstants.DEFAULT_KEY_PROVIDER_BEAN_NAME, data.getKeyProviderBeanName());
+        assertEquals(1, data.getKeyIndex());
+
+        // Return KeyProvider without override
+        expected = InvalidateSingleCache.class;
+        targetMethod = new Mirror().on(AnnotationDataDummy.class).reflect()
+                .method("populateKeyProvider08").withArgs(String.class);
+        AnnotationDataBuilder.populateKeyIndexAndBeanName(data, expected, targetMethod);
+        assertEquals(AnnotationConstants.DEFAULT_KEY_PROVIDER_BEAN_NAME, data.getKeyProviderBeanName());
+        assertEquals(-1, data.getKeyIndex());
 
     }
 }

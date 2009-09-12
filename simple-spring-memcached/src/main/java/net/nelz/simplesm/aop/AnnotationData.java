@@ -22,10 +22,11 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
  */
 class AnnotationData {
+    public static final int DEFAULT_INTEGER = Integer.MIN_VALUE;
     private String namespace = "";
-    private int keyIndex = Integer.MIN_VALUE;
+    private int keyIndex = DEFAULT_INTEGER;
     private String keyProviderBeanName = "";
-    private int dataIndex = Integer.MIN_VALUE;
+    private int dataIndex = DEFAULT_INTEGER;
     private int expiration = 0;
     private String className = "";
     private String assignedKey = "";

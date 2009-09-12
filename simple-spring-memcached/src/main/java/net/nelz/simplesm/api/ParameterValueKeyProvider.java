@@ -29,4 +29,12 @@ THE SOFTWARE.
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.PARAMETER)
 public @interface ParameterValueKeyProvider {
+
+    /**
+     * This Spring bean, which is expected to implement <code>ReturnValueKeyProvider</code>,
+     * will be passed the referenced object so that a key may be generated for memcached.
+     * @return
+     */
+    String keyProviderBeanName() default AnnotationConstants.DEFAULT_KEY_PROVIDER_BEAN_NAME;
+
 }
