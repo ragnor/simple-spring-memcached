@@ -103,4 +103,22 @@ public class AnnotationDataDummy {
     @InvalidateSingleCache
     @ReturnValueKeyProvider
     public void populateKeyProvider08(final String key1) { }
+
+
+
+    @UpdateAssignCache
+    public void populateData01(final String key1) { }
+
+    @UpdateAssignCache
+    public void populateData02(@ParameterDataUpdateContent final String key1,                               
+                               @ParameterDataUpdateContent final String key2) { }
+
+    @UpdateAssignCache
+    @ReturnDataUpdateContent
+    public void populateData03(final String key1) { }
+
+    @UpdateAssignCache
+    public void populateData04(final String key1,
+                               @ParameterDataUpdateContent final String key2) { }
+
 }

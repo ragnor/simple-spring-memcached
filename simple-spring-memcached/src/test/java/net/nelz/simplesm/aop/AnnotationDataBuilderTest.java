@@ -296,6 +296,53 @@ public class AnnotationDataBuilderTest {
         AnnotationDataBuilder.populateKeyIndexAndBeanName(data, expected, targetMethod);
         assertEquals(AnnotationConstants.DEFAULT_KEY_PROVIDER_BEAN_NAME, data.getKeyProviderBeanName());
         assertEquals(-1, data.getKeyIndex());
+    }
+
+
+    @Test
+    public void testPopulateDataIndex() throws Exception {
+        final AnnotationData data = new AnnotationData();
+
+        Class expected = InvalidateAssignCache.class;
+        Method targetMethod = null;
+
+        // Not an update type.
+        AnnotationDataBuilder.populateDataIndexFromAnnotations(data, expected, null);
+        assertEquals(AnnotationData.DEFAULT_INTEGER, data.getDataIndex());
+
+        // Not an update type.
+        expected = UpdateAssignCache.class;
+        targetMethod = new Mirror().on(AnnotationDataDummy.class).reflect()
+                .method("populateData01").withArgs(String.class);
+        try {
+            AnnotationDataBuilder.populateDataIndexFromAnnotations(data, expected, targetMethod);
+            fail("expected exception");
+        } catch (InvalidParameterException ex) {}
+        assertEquals(AnnotationData.DEFAULT_INTEGER, data.getDataIndex());
+
+        // Multiple Parameter data values
+        expected = UpdateAssignCache.class;
+        targetMethod = new Mirror().on(AnnotationDataDummy.class).reflect()
+                .method("populateData02").withArgs(String.class, String.class);
+        try {
+            AnnotationDataBuilder.populateDataIndexFromAnnotations(data, expected, targetMethod);
+            fail("expected exception");
+        } catch (InvalidParameterException ex) {}
+        assertEquals(AnnotationData.DEFAULT_INTEGER, data.getDataIndex());
+
+        // Return data values
+        expected = UpdateAssignCache.class;
+        targetMethod = new Mirror().on(AnnotationDataDummy.class).reflect()
+                .method("populateData03").withArgs(String.class);
+        AnnotationDataBuilder.populateDataIndexFromAnnotations(data, expected, targetMethod);
+        assertEquals(-1, data.getDataIndex());
+
+        // Parameter data values
+        expected = UpdateAssignCache.class;
+        targetMethod = new Mirror().on(AnnotationDataDummy.class).reflect()
+                .method("populateData04").withArgs(String.class, String.class);
+        AnnotationDataBuilder.populateDataIndexFromAnnotations(data, expected, targetMethod);
+        assertEquals(1, data.getDataIndex());
 
     }
 }

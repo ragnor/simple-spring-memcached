@@ -103,7 +103,7 @@ class AnnotationDataBuilder {
         try {
             populateKeyIndexAndBeanName(data, expectedAnnotationClass, targetMethod);
 
-            populateDataIndex(data, annotation, expectedAnnotationClass, targetMethod.getName());
+            populateDataIndexFromAnnotations(data, expectedAnnotationClass, targetMethod);
 
             populateExpiration(data, annotation, expectedAnnotationClass, targetMethod.getName());
 
@@ -199,6 +199,52 @@ class AnnotationDataBuilder {
             }
             data.setDataIndex(dataIndex);
         }
+    }
+
+    static void populateDataIndexFromAnnotations(final AnnotationData data,
+                                          final Class expectedAnnotationClass,
+                                          final Method targetMethod)
+            throws NoSuchMethodException, IllegalAccessException, InvocationTargetException {
+        if (!UPDATES.contains(expectedAnnotationClass)) { return; }
+
+        final ReturnDataUpdateContent returnAnnotation = targetMethod.getAnnotation(ReturnDataUpdateContent.class);
+        if (returnAnnotation != null) {
+            data.setDataIndex(-1);
+            return;
+        }
+
+        final Annotation[][] paramAnnotationArrays = targetMethod.getParameterAnnotations();
+        int foundIndex = Integer.MIN_VALUE;
+
+        if (paramAnnotationArrays != null && paramAnnotationArrays.length > 0) {
+            for (int ix = 0; ix < paramAnnotationArrays.length; ix++) {
+                final Annotation[] paramAnnotations = paramAnnotationArrays[ix];
+                if (paramAnnotations != null && paramAnnotations.length > 0) {
+                    for (int jx = 0; jx < paramAnnotations.length; jx++) {
+                        final Annotation paramAnnotation = paramAnnotations[jx];
+                        if (ParameterDataUpdateContent.class.equals(paramAnnotation.annotationType())) {
+                            if (foundIndex >= 0) {
+                                throw new InvalidParameterException(String.format(
+                                        "Multiple annotations of type [%s] found on method [%s]",
+                                        ParameterDataUpdateContent.class.getName(),
+                                        targetMethod.getName()
+                                ));
+                            }
+                            foundIndex = ix;
+                        }
+                    }
+                }
+            }
+        }
+
+        if (foundIndex < 0) {
+            throw new InvalidParameterException(String.format(
+                    "No KeyProvider annotation found method [%s]",
+                    targetMethod.getName()
+            ));
+        }
+
+        data.setDataIndex(foundIndex);
     }
 
     @Deprecated
