@@ -31,8 +31,8 @@ THE SOFTWARE.
 @Repository("testDao")
 public class TestDAOImpl implements TestDAO {
 
-	@ReadThroughSingleCache(namespace = "Alpha", keyIndex = 0, expiration = 30)
-	public String getDateString(final String key) {
+	@ReadThroughSingleCache(namespace = "Alpha", expiration = 30)
+	public String getDateString(@ParameterValueKeyProvider final String key) {
 		final Date now = new Date();
 		try {
 			Thread.sleep(1500);
@@ -85,8 +85,8 @@ public class TestDAOImpl implements TestDAO {
                                         final String nuthin,
                                         final List<String> overrideData) {}
 
-    @ReadThroughSingleCache(namespace = "Charlie", keyIndex = 0, expiration = 1000)
-    public String getRandomString(final Long key) {
+    @ReadThroughSingleCache(namespace = "Charlie", expiration = 1000)
+    public String getRandomString(@ParameterValueKeyProvider final Long key) {
         try {
             Thread.sleep(500);
         } catch (InterruptedException ex) {}

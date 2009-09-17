@@ -47,8 +47,8 @@ public class ReadThroughSingleCacheAdvice extends CacheBase {
             final AnnotationData annotationData =
                     AnnotationDataBuilder.buildAnnotationData(annotation,
                             ReadThroughSingleCache.class,
-                            methodToCache.getName());
-            final String objectId = getObjectId(annotation.keyIndex(), pjp, methodToCache);
+                            methodToCache);
+            final String objectId = getObjectId(annotationData.getKeyIndex(), pjp, methodToCache);
 			cacheKey = buildCacheKey(objectId, annotationData);
 			final Object result = cache.get(cacheKey);
 			if (result != null) {
@@ -73,7 +73,8 @@ public class ReadThroughSingleCacheAdvice extends CacheBase {
 		return result;
 	}
 
-	protected String getObjectId(final int keyIndex,
+    @Deprecated
+    protected String getObjectId(final int keyIndex,
 	                             final JoinPoint jp,
 	                             final Method methodToCache) throws Exception {
 		final Object keyObject = getIndexObject(keyIndex, jp, methodToCache);

@@ -36,13 +36,12 @@ public class AnnotationsTest {
 		assertEquals(ReadThroughSingleCache.class, annotations[0].annotationType());
 		final ReadThroughSingleCache ind = (ReadThroughSingleCache) annotations[0];
 		assertEquals("polk", ind.namespace());
-		assertEquals(5, ind.keyIndex());
 	}
 
 	private static class RandomClass {
 		private String name = "RandomClass";
 
-		@ReadThroughSingleCache(namespace="polk", keyIndex = 5)
+		@ReadThroughSingleCache(namespace="polk")
 		public String getName() {
 			return name;
 		}
