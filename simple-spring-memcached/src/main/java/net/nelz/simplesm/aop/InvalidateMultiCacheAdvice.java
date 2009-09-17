@@ -55,7 +55,7 @@ public class InvalidateMultiCacheAdvice extends CacheBase {
             annotationData =
                     AnnotationDataBuilder.buildAnnotationData(annotation,
                             InvalidateMultiCache.class,
-                            methodToCache.getName());
+                            methodToCache);
             if (annotationData.getKeyIndex() > -1) {
                 final Object keyObject = getIndexObject(annotationData.getKeyIndex(), pjp, methodToCache);
                 final List<Object> keyObjects = convertToKeyObjects(keyObject, annotationData.getKeyIndex(), methodDescription);

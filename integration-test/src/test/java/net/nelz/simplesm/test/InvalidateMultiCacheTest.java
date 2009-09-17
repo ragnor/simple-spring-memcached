@@ -1,6 +1,7 @@
 package net.nelz.simplesm.test;
 
 import static org.testng.AssertJUnit.*;
+import static org.testng.AssertJUnit.assertEquals;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.testng.annotations.BeforeClass;
@@ -46,11 +47,19 @@ public class InvalidateMultiCacheTest {
     public void test() {
         final TestSvc test = (TestSvc) context.getBean("testSvc");
 
+        // The full list of ids
         final List<Long> allIds = new ArrayList<Long>();
+
+        // The list of ids whose values we do not expect to change.
         final List<Long> noChangeIds = new ArrayList<Long>();
+
+        // The first set of ids whose values we do expect to change
         final List<Long> firstChangeIds = new ArrayList<Long>();
+
+        // The second set of ids whose values we do expect to change
         final List<Long> secondChangeIds = new ArrayList<Long>();
 
+        // Create the overall list, and distribute the keys to the different types
         final Long base = RandomUtils.nextLong();
         for (int ix = 0; ix < 30; ix++) {
             final Long key = base + (ix * 100);
@@ -60,38 +69,62 @@ public class InvalidateMultiCacheTest {
             if (ix % 3 == 2) { secondChangeIds.add(key); }
         }
 
-        final Map<Long, String> firstMap = createMap(allIds, test.getRandomStrings(allIds));
-        assertEquals(firstMap, createMap(allIds, test.getRandomStrings(allIds)));
-        assertEquals(firstMap, createMap(allIds, test.getRandomStrings(allIds)));
+        // Pull the generated results from the svc/dao. This is expected to be NOT cached.
+        final Map<Long, String> originalMap = createMap(allIds, test.getRandomStrings(allIds));
 
+        // Make sure successive calls to the svc/dao all generate the same results.
+        assertEquals(originalMap, createMap(allIds, test.getRandomStrings(allIds)));
+        assertEquals(originalMap, createMap(allIds, test.getRandomStrings(allIds)));
+
+        // Invalidate a set of IDs, so that when the DAO is called for them again,
+        // they will be regenerated.
         test.updateRandomStrings(firstChangeIds);
 
         final Map<Long, String> secondMap = createMap(allIds, test.getRandomStrings(allIds));
+
+        // Firstly, make sure the new data looks differently than the old data.
+        assertFalse(secondMap.equals(originalMap));
+
+        // Loop through all the values. Make sure that any value we didn't expect to change
+        // didn't, and that values we expect to be the same are.
         for (Map.Entry<Long, String> entry : secondMap.entrySet()) {
             final Long key = entry.getKey();
             if (firstChangeIds.contains(key)) {
-                assertNotSame(entry.getValue(), firstMap.get(key));
+                assertFalse(entry.getValue().equals(originalMap.get(key)));
             } else {
-                assertEquals(entry.getValue(), firstMap.get(key));
+                assertEquals(entry.getValue(), originalMap.get(key));
             }
         }
+
+        // Make sure successive calls to the svc/dao all generate the same results.
         assertEquals(secondMap, createMap(allIds, test.getRandomStrings(allIds)));
         assertEquals(secondMap, createMap(allIds, test.getRandomStrings(allIds)));
 
+        // Invalidate yet another subset of the ids.
         test.updateRandomStringsAgain(secondChangeIds);
+
         final Map<Long, String> thirdMap = createMap(allIds, test.getRandomStrings(allIds));
+
+        // Make sure this set of results is different from the last two sets
+        assertFalse(thirdMap.equals(originalMap));
+        assertFalse(thirdMap.equals(secondMap));
+
+        // Again, loop through all the individual id/value pairs, making sure they
+        // have updated or not according to our expectations.
         for (Map.Entry<Long, String> entry : thirdMap.entrySet()) {
             final Long key = entry.getKey();
             if (noChangeIds.contains(key)) {
-                assertEquals(entry.getValue(), firstMap.get(key));
+                assertEquals(entry.getValue(), originalMap.get(key));
             }
             if (firstChangeIds.contains(key)) {
                 assertEquals(entry.getValue(), secondMap.get(key));
             }
             if (secondChangeIds.contains(key)) {
-                assertNotSame(entry.getValue(), firstMap.get(key));
+                assertNotSame(entry.getValue(), originalMap.get(key));
             }
         }
+
+        // Make sure succcessive calls to the svc/dao return the same (cached) results.
         assertEquals(thirdMap, createMap(allIds, test.getRandomStrings(allIds)));
         assertEquals(thirdMap, createMap(allIds, test.getRandomStrings(allIds)));                
     }

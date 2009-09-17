@@ -116,13 +116,13 @@ public class TestDAOImpl implements TestDAO {
         return results;
     }
 
-    @InvalidateMultiCache(namespace = "Delta", keyIndex = 0)
-    public void updateRandomStrings(final List<Long> keys) {
+    @InvalidateMultiCache(namespace = "Delta")
+    public void updateRandomStrings(@ParameterValueKeyProvider final List<Long> keys) {
         // Nothing to do.
     }
 
-    @InvalidateMultiCache(namespace = "Delta", keyIndex = 0)
-    public List<Long> updateRandomStringsAgain(final List<Long> keys) {
+    @InvalidateMultiCache(namespace = "Delta")
+    public List<Long> updateRandomStringsAgain(@ParameterValueKeyProvider final List<Long> keys) {
         return keys;
     }
 

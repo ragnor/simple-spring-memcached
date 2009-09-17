@@ -36,14 +36,4 @@ public @interface InvalidateMultiCache {
      * @return the namespace for the objects cached in the given method.
      */
     String namespace() default AnnotationConstants.DEFAULT_STRING;
-
-    /**
-     * Of the arguments passed into the cached method, this identifies which
-     * argument provides the id by which the object will be cached. This is a
-     * 0-based array index. This annotation also takes a special value of -1 to signify
-     * that the object being returned is the object responsible for providing the cache key.
-     * @return the index into the arguments array for the item that will provide the id
-     */
-    int keyIndex() default 0;
-
 }
