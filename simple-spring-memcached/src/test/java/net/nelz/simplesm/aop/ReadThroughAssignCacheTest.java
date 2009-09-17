@@ -45,7 +45,7 @@ public class ReadThroughAssignCacheTest {
         Method method = testClass.getClass().getMethod("cacheMe1",null);
         Annotation annotation = method.getAnnotation(ReadThroughAssignCache.class);
         try {
-            AnnotationDataBuilder.buildAnnotationData(annotation, ReadThroughAssignCache.class, method.getName());
+            AnnotationDataBuilder.buildAnnotationData(annotation, ReadThroughAssignCache.class, method);
             fail("Expected Exception.");
         } catch (InvalidParameterException ex) {
             System.out.println(ex.getMessage());
@@ -55,7 +55,7 @@ public class ReadThroughAssignCacheTest {
         method = testClass.getClass().getMethod("cacheMe2",null);
         annotation = method.getAnnotation(ReadThroughAssignCache.class);
         try {
-            AnnotationDataBuilder.buildAnnotationData(annotation, ReadThroughAssignCache.class, method.getName());
+            AnnotationDataBuilder.buildAnnotationData(annotation, ReadThroughAssignCache.class, method);
             fail("Expected Exception.");
         } catch (InvalidParameterException ex) {
             System.out.println(ex.getMessage());
@@ -64,7 +64,7 @@ public class ReadThroughAssignCacheTest {
 
         method = testClass.getClass().getMethod("cacheMe3",null);
         annotation = method.getAnnotation(ReadThroughAssignCache.class);
-        AnnotationDataBuilder.buildAnnotationData(annotation, ReadThroughAssignCache.class, method.getName());
+        AnnotationDataBuilder.buildAnnotationData(annotation, ReadThroughAssignCache.class, method);
 
     }
 
