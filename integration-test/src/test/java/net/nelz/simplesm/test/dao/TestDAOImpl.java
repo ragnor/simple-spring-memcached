@@ -93,12 +93,13 @@ public class TestDAOImpl implements TestDAO {
         return RandomStringUtils.randomAlphanumeric(25 + RandomUtils.nextInt(30));
     }
 
-    @InvalidateSingleCache(namespace = "Charlie", keyIndex = 0)
-    public void updateRandomString(final Long key) {
+    @InvalidateSingleCache(namespace = "Charlie")
+    public void updateRandomString(@ParameterValueKeyProvider final Long key) {
         // Nothing really to do here.
     }
 
-    @InvalidateSingleCache(namespace = "Charlie", keyIndex = -1)
+    @InvalidateSingleCache(namespace = "Charlie")
+    @ReturnValueKeyProvider
     public Long updateRandomStringAgain(final Long key) {
         return key;
     }
@@ -122,7 +123,8 @@ public class TestDAOImpl implements TestDAO {
     }
 
     @InvalidateMultiCache(namespace = "Delta")
-    public List<Long> updateRandomStringsAgain(@ParameterValueKeyProvider final List<Long> keys) {
+    @ReturnValueKeyProvider
+    public List<Long> updateRandomStringsAgain(final List<Long> keys) {
         return keys;
     }
 

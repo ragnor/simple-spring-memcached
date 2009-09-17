@@ -58,8 +58,8 @@ public class InvalidateSingleCacheTest {
         final String s1 = test.getRandomString(key1);
         final String s2 = test.getRandomString(key2);
 
-        assertNotSame(f1, s1);
-        assertNotSame(f2, s2);
+        assertFalse(f1.equals(s1));
+        assertFalse(f2.equals(s2));
 
         assertEquals(s1, test.getRandomString(key1));
         assertEquals(s2, test.getRandomString(key2));
@@ -74,8 +74,8 @@ public class InvalidateSingleCacheTest {
         final String t1 = test.getRandomString(key1);
         final String t2 = test.getRandomString(key2);
 
-        assertNotSame(s1, t1);
-        assertNotSame(s2, t2);
+        assertFalse(s1.equals(t1));
+        assertFalse(s2.equals(t2));
 
         assertEquals(t1, test.getRandomString(key1));
         assertEquals(t2, test.getRandomString(key2));        

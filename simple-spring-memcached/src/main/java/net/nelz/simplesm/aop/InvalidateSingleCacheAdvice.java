@@ -51,7 +51,7 @@ public class InvalidateSingleCacheAdvice extends CacheBase {
             annotationData =
                     AnnotationDataBuilder.buildAnnotationData(annotation,
                             InvalidateSingleCache.class,
-                            methodToCache.getName());
+                            methodToCache);
             if (annotationData.getKeyIndex() > -1) {
                 final Object keyObject = getIndexObject(annotationData.getKeyIndex(), pjp, methodToCache);
                 final Method keyMethod = getKeyMethod(keyObject);
