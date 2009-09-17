@@ -189,13 +189,13 @@ public class ReadThroughMultiCacheTest {
 	}
 
 	private static class AnnotationValidator {
-		@ReadThroughMultiCache(keyIndex = -1, namespace = "bubba")
+		@ReadThroughMultiCache(namespace = "bubba")
 		public String cacheMe1() { return null; }
-		@ReadThroughMultiCache(keyIndex = 0, namespace = "")
+		@ReadThroughMultiCache(namespace = "")
 		public String cacheMe2() { return null; }
-		@ReadThroughMultiCache(keyIndex = 0)
+		@ReadThroughMultiCache()
 		public String cacheMe3() { return null; }
-		@ReadThroughMultiCache(keyIndex = 0, namespace = "bubba", expiration = -1)
+		@ReadThroughMultiCache(namespace = "bubba", expiration = -1)
 		public String cacheMe4() { return null; }
 	}
 }

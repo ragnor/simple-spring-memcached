@@ -36,14 +36,6 @@ public @interface ReadThroughMultiCache {
 	String namespace() default AnnotationConstants.DEFAULT_STRING;
 
 	/**
-	 * Of the arguments passed into the cached method, this identifies which
-	 * argument provides the ids by which the objects will be cached. This is a
-	 * 0-based array index. The identified argument must be a List.
-	 * @return the index into the arguments array for the item that will provide the id
-	 */
-	int keyIndex() default 0;
-
-	/**
 	 *  The exp value is passed along to memcached exactly as given, and will be
 	 * processed per the memcached protocol specification:
 	 *

@@ -43,8 +43,8 @@ public class TestDAOImpl implements TestDAO {
     @UpdateSingleCache(namespace = "Alpha", keyIndex = 1, dataIndex = 2, expiration = 30)
     public void overrideDateString(final int trash, final String key, final String overrideData) {}
 
-    @ReadThroughMultiCache(namespace = "Bravo", keyIndex = 0, expiration = 300)
-	public List<String> getTimestampValues(final List<Long> keys) {
+    @ReadThroughMultiCache(namespace = "Bravo", expiration = 300)
+	public List<String> getTimestampValues(@ParameterValueKeyProvider final List<Long> keys) {
 		final List<String> results = new ArrayList<String>();
 		try {
 			Thread.sleep(1500);
@@ -104,8 +104,8 @@ public class TestDAOImpl implements TestDAO {
         return key;
     }
 
-    @ReadThroughMultiCache(namespace = "Delta", keyIndex = 0, expiration = 1000)
-    public List<String> getRandomStrings(final List<Long> keys) {
+    @ReadThroughMultiCache(namespace = "Delta", expiration = 1000)
+    public List<String> getRandomStrings(@ParameterValueKeyProvider final List<Long> keys) {
         try {
             Thread.sleep(500);
         } catch (InterruptedException ex) {}

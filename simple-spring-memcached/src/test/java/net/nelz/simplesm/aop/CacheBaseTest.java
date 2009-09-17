@@ -156,15 +156,15 @@ public class CacheBaseTest {
 	}
 
 	private static class ReturnTypeCheck {
-		@ReadThroughMultiCache(keyIndex = 0, namespace = "bubba", expiration = 10)
+		@ReadThroughMultiCache(namespace = "bubba", expiration = 10)
 		public List checkA() {return null;}
-		@ReadThroughMultiCache(keyIndex = 0, namespace = "bubba", expiration = 10)
+		@ReadThroughMultiCache(namespace = "bubba", expiration = 10)
 		public List<String> checkB() {return null;}
-		@ReadThroughMultiCache(keyIndex = 0, namespace = "bubba", expiration = 10)
+		@ReadThroughMultiCache(namespace = "bubba", expiration = 10)
 		public ArrayList checkC() {return null;}
-		@ReadThroughMultiCache(keyIndex = 0, namespace = "bubba", expiration = 10)
+		@ReadThroughMultiCache(namespace = "bubba", expiration = 10)
 		public ArrayList<String> checkD() {return null;}
-		@ReadThroughMultiCache(keyIndex = 0, namespace = "bubba", expiration = 10)
+		@ReadThroughMultiCache(namespace = "bubba", expiration = 10)
 		public String checkE() {return null;}
 	}
 

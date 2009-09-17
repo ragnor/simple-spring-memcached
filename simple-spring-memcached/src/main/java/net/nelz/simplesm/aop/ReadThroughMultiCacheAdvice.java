@@ -53,7 +53,7 @@ public class ReadThroughMultiCacheAdvice extends CacheBase {
             final ReadThroughMultiCache annotation = coord.getMethod().getAnnotation(ReadThroughMultiCache.class);
 
             coord.setAnnotationData(AnnotationDataBuilder.buildAnnotationData(
-                    annotation, ReadThroughMultiCache.class, coord.getMethod().getName()));
+                    annotation, ReadThroughMultiCache.class, coord.getMethod()));
 
 			// Get the list of objects that will provide the keys to all the cache values.
 			coord.setKeyObjects(getKeyObjectList(coord.getAnnotationData().getKeyIndex(), pjp, coord.getMethod()));
