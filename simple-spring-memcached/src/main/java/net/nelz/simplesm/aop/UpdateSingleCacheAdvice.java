@@ -46,7 +46,7 @@ public class UpdateSingleCacheAdvice extends CacheBase {
             final AnnotationData annotationData =
                     AnnotationDataBuilder.buildAnnotationData(annotation,
                             UpdateSingleCache.class,
-                            methodToCache.getName());
+                            methodToCache);
             final String objectId = getObjectId(annotationData.getKeyIndex(), retVal, jp, methodToCache);
 			final String cacheKey = buildCacheKey(objectId, annotationData);
             final Object dataObject = annotationData.getDataIndex() == -1
@@ -70,15 +70,4 @@ public class UpdateSingleCacheAdvice extends CacheBase {
 		final Method keyMethod = getKeyMethod(keyObject);
 		return generateObjectId(keyMethod, keyObject);
 	}
-
-	protected void validateAnnotation(final UpdateSingleCache annotation,
-	                                  final Method method) {
-
-		final Class annotationClass = UpdateSingleCache.class;
-		validateAnnotationExists(annotation, annotationClass);
-		validateAnnotationIndex(annotation.keyIndex(), true, annotationClass, method);
-		validateAnnotationNamespace(annotation.namespace(), annotationClass, method);
-		validateAnnotationExpiration(annotation.expiration(), annotationClass, method);
-	}
-
 }

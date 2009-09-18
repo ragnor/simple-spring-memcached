@@ -47,8 +47,9 @@ public class UpdateSingleCacheAdviceTest {
     }
 
     private static class AnnotationValidator {
-		@UpdateSingleCache(keyIndex = -1, namespace = "bubba")
-		public String cacheMe1() { return null; }
+		@UpdateSingleCache(namespace = "bubba")
+        /*@ReturnValueKeyProvider*/
+        public String cacheMe1() { return null; }
 	}
 
     private static class KeyObject {

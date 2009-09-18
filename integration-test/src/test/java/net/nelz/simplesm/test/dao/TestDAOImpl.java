@@ -40,8 +40,10 @@ public class TestDAOImpl implements TestDAO {
 		return now.toString() + ":" + now.getTime();
 	}
 
-    @UpdateSingleCache(namespace = "Alpha", keyIndex = 1, dataIndex = 2, expiration = 30)
-    public void overrideDateString(final int trash, final String key, final String overrideData) {}
+    @UpdateSingleCache(namespace = "Alpha", expiration = 30)
+    public void overrideDateString(final int trash,
+                                   @ParameterValueKeyProvider final String key,
+                                   @ParameterDataUpdateContent final String overrideData) {}
 
     @ReadThroughMultiCache(namespace = "Bravo", expiration = 300)
 	public List<String> getTimestampValues(@ParameterValueKeyProvider final List<Long> keys) {
@@ -56,8 +58,9 @@ public class TestDAOImpl implements TestDAO {
 		return results;
 	}
 
-	@UpdateSingleCache(namespace = "Bravo", keyIndex = 0, expiration = 300, dataIndex = -1)
-	public String updateTimestampValue(final Long key) {
+	@UpdateSingleCache(namespace = "Bravo", expiration = 300)
+    @ReturnDataUpdateContent
+    public String updateTimestampValue(@ParameterValueKeyProvider final Long key) {
 		try {
 			Thread.sleep(100);
 		} catch (InterruptedException ex) {}
