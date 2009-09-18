@@ -82,9 +82,9 @@ public class UpdateMultiCacheAdviceTest {
 
     @Test
     public void testUpdateCache() throws Exception {
-        final Method method = AnnotationTest.class.getMethod("cacheMe01", null);
+        final Method method = AnnotationTest.class.getMethod("cacheMe01", String.class);
         final UpdateMultiCache annotation = method.getAnnotation(UpdateMultiCache.class);
-        final AnnotationData data = AnnotationDataBuilder.buildAnnotationData(annotation, UpdateMultiCache.class, "cacheMe01");
+        final AnnotationData data = AnnotationDataBuilder.buildAnnotationData(annotation, UpdateMultiCache.class, method);
 
         final List<String> keys = new ArrayList<String>();
         final List<Object> objs = new ArrayList<Object>();
@@ -119,8 +119,8 @@ public class UpdateMultiCacheAdviceTest {
     }
 
     static class AnnotationTest {
-		@UpdateMultiCache(namespace = "Bubba", expiration = 300, keyIndex = 0, dataIndex = 0)
-		public void cacheMe01() {}
+		@UpdateMultiCache(namespace = "Bubba", expiration = 300)
+		public void cacheMe01(@ParameterDataUpdateContent @ParameterValueKeyProvider final String nada) {}
 
 		public String cacheMe02() { return null; }
 

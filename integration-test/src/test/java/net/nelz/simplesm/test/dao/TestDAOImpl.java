@@ -66,8 +66,9 @@ public class TestDAOImpl implements TestDAO {
 		return result;
 	}
 
-	@UpdateMultiCache(namespace = "Bravo", keyIndex = 0, expiration = 300, dataIndex = -1)
-	public List<String> updateTimestamValues(final List<Long> keys) {
+	@UpdateMultiCache(namespace = "Bravo", expiration = 300)
+    @ReturnDataUpdateContent
+    public List<String> updateTimestamValues(@ParameterValueKeyProvider final List<Long> keys) {
 		try {
 			Thread.sleep(100);
 		} catch (InterruptedException ex) {}
@@ -79,11 +80,11 @@ public class TestDAOImpl implements TestDAO {
 		return results;
 	}
 
-    @UpdateMultiCache(namespace = "Bravo", keyIndex = 1, dataIndex = 3, expiration = 300)
+    @UpdateMultiCache(namespace = "Bravo", expiration = 300)
     public void overrideTimestampValues(final int trash,
-                                        final List<Long> keys,
+                                        @ParameterValueKeyProvider final List<Long> keys,
                                         final String nuthin,
-                                        final List<String> overrideData) {}
+                                         @ParameterDataUpdateContent final List<String> overrideData) {}
 
     @ReadThroughSingleCache(namespace = "Charlie", expiration = 1000)
     public String getRandomString(@ParameterValueKeyProvider final Long key) {

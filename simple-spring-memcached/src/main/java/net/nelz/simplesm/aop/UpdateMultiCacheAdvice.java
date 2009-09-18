@@ -47,7 +47,7 @@ public class UpdateMultiCacheAdvice extends CacheBase {
 			final UpdateMultiCache annotation = methodToCache.getAnnotation(UpdateMultiCache.class);
             final AnnotationData annotationData =
                     AnnotationDataBuilder.buildAnnotationData(annotation,
-                            UpdateMultiCache.class, methodToCache.getName());
+                            UpdateMultiCache.class, methodToCache);
             final List<Object> dataList = annotationData.getDataIndex() == -1
                     ? (List<Object>) retVal
                     : (List<Object>) getIndexObject(annotationData.getDataIndex(), jp, methodToCache);
