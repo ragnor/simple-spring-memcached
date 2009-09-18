@@ -68,34 +68,6 @@ class AnnotationDataBuilder {
 
     static AnnotationData buildAnnotationData(final Annotation annotation,
                                               final Class expectedAnnotationClass,
-                                              final String targetMethodName) {
-        final AnnotationData data = new AnnotationData();
-        populateClassName(data, annotation, expectedAnnotationClass);
-
-        try {
-            populateKeyIndex(data, annotation, expectedAnnotationClass, targetMethodName);
-
-            populateDataIndex(data, annotation, expectedAnnotationClass, targetMethodName);
-
-            populateExpiration(data, annotation, expectedAnnotationClass, targetMethodName);
-
-            populateNamespace(data, annotation, expectedAnnotationClass, targetMethodName);
-
-            populateAssignedKey(data, annotation, expectedAnnotationClass, targetMethodName);
-
-        } catch (NoSuchMethodException ex) {
-            throw new RuntimeException("Problem assembling Annotation information.", ex);
-        } catch (IllegalAccessException ex) {
-            throw new RuntimeException("Problem assembling Annotation information.", ex);
-        } catch (InvocationTargetException ex) {
-            throw new RuntimeException("Problem assembling Annotation information.", ex);
-        }
-
-        return data;
-    }
-
-    static AnnotationData buildAnnotationData(final Annotation annotation,
-                                              final Class expectedAnnotationClass,
                                               final Method targetMethod) {
         final AnnotationData data = new AnnotationData();
         populateClassName(data, annotation, expectedAnnotationClass);
