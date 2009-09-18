@@ -153,26 +153,6 @@ class AnnotationDataBuilder {
         }
     }
 
-    @Deprecated
-    private static void populateDataIndex(final AnnotationData data,
-                                          final Annotation annotation,
-                                          final Class expectedAnnotationClass,
-                                          final String targetMethodName)
-            throws NoSuchMethodException, IllegalAccessException, InvocationTargetException {
-        if (UPDATES.contains(expectedAnnotationClass)) {
-            final Method dataIndexMethod = expectedAnnotationClass.getDeclaredMethod("dataIndex", null);
-            final int dataIndex = (Integer) dataIndexMethod.invoke(annotation, null);
-            if (dataIndex < -1) {
-                throw new InvalidParameterException(String.format(
-                        "DataIndex for annotation [%s] must be -1 or greater on [%s]",
-                        expectedAnnotationClass.getName(),
-                        targetMethodName
-                ));
-            }
-            data.setDataIndex(dataIndex);
-        }
-    }
-
     static void populateDataIndexFromAnnotations(final AnnotationData data,
                                           final Class expectedAnnotationClass,
                                           final Method targetMethod)
@@ -217,26 +197,6 @@ class AnnotationDataBuilder {
         }
 
         data.setDataIndex(foundIndex);
-    }
-
-    @Deprecated
-    private static void populateKeyIndex(final AnnotationData data,
-                                         final Annotation annotation,
-                                         final Class expectedAnnotationClass,
-                                         final String targetMethodName)
-            throws NoSuchMethodException, IllegalAccessException, InvocationTargetException {
-        if (!ASSIGNS.contains(expectedAnnotationClass)) {
-            final Method keyIndexMethod = expectedAnnotationClass.getDeclaredMethod("keyIndex", null);
-            final int keyIndex = (Integer) keyIndexMethod.invoke(annotation, null);
-            if (keyIndex < -1) {
-                throw new InvalidParameterException(String.format(
-                        "KeyIndex for annotation [%s] must be -1 or greater on [%s]",
-                        expectedAnnotationClass.getName(),
-                        targetMethodName
-                ));
-            }
-            data.setKeyIndex(keyIndex);
-        }
     }
 
     static void populateKeyIndexAndBeanName(final AnnotationData data,
