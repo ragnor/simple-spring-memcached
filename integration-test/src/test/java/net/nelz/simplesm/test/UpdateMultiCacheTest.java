@@ -1,12 +1,23 @@
 package net.nelz.simplesm.test;
 
-import net.nelz.simplesm.test.svc.*;
-import org.springframework.context.*;
-import org.springframework.context.support.*;
-import static org.testng.AssertJUnit.*;
-import org.testng.annotations.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import net.nelz.simplesm.test.svc.TestSvc;
+
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.TestExecutionListeners;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
 
 /**
 Copyright (c) 2008, 2009  Nelson Carpentier
@@ -29,13 +40,12 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
  */
+@RunWith(SpringJUnit4ClassRunner.class)
+@TestExecutionListeners( {DependencyInjectionTestExecutionListener.class })
+@ContextConfiguration(locations = { "classpath*:META-INF/test-context.xml", "classpath*:simplesm-context.xml" })
 public class UpdateMultiCacheTest {
-	private ApplicationContext context;
-
-	@BeforeClass
-	public void beforeClass() {
-		context = new ClassPathXmlApplicationContext("/test-context.xml");
-	}
+	@Autowired
+	private TestSvc test;	
 
 	@Test
 	public void test() {
@@ -54,7 +64,7 @@ public class UpdateMultiCacheTest {
 		final Map<Long, String> originalResults = new HashMap<Long, String>();
 		final Map<Long, String> expectedResults = new HashMap<Long, String>();
 
-		final TestSvc test = (TestSvc) context.getBean("testSvc");
+		//final TestSvc test = (TestSvc) context.getBean("testSvc");
 
 		final List<String> r1List = test.getTimestampValues(superset);
 		for (int ix = 0; ix < r1List.size(); ix++) {
@@ -86,7 +96,7 @@ public class UpdateMultiCacheTest {
 	}
 
     @Test
-    public void testDataIndex() {
+    public void testDataIndex() throws InterruptedException {
         final Map<Long, String> expectedResults = new HashMap<Long, String>();
         final Long rawNow = System.currentTimeMillis();
         final Long now = (rawNow / 1000) * 10000;
@@ -106,7 +116,7 @@ public class UpdateMultiCacheTest {
 
         final Map<Long, String> originalResults = new HashMap<Long, String>();
 
-        final TestSvc test = (TestSvc) context.getBean("testSvc");
+        //final TestSvc test = (TestSvc) context.getBean("testSvc");
 
         final List<String> r1List = test.getTimestampValues(superset);
         for (int ix = 0; ix < r1List.size(); ix++) {
@@ -121,6 +131,7 @@ public class UpdateMultiCacheTest {
 
         test.overrideTimestampValues(42, subset, "Nada", overrideValues);
 
+        Thread.sleep(1000);
         final List<String> r2List = test.getTimestampValues(superset);
         for (int ix = 0; ix < r2List.size(); ix++) {
             final Long key = superset.get(ix);

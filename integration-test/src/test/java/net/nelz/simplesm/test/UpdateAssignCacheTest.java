@@ -1,14 +1,21 @@
 package net.nelz.simplesm.test;
 
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
-import org.testng.annotations.BeforeClass;
-import org.testng.annotations.Test;
-import static org.testng.AssertJUnit.*;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotSame;
+
+import java.util.ArrayList;
+import java.util.List;
+
 import net.nelz.simplesm.test.svc.TestSvc;
 
-import java.util.List;
-import java.util.ArrayList;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.TestExecutionListeners;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
 
 /**
 Copyright (c) 2008, 2009  Nelson Carpentier
@@ -31,17 +38,16 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
  */
+@RunWith(SpringJUnit4ClassRunner.class)
+@TestExecutionListeners( {DependencyInjectionTestExecutionListener.class })
+@ContextConfiguration(locations = { "classpath*:META-INF/test-context.xml", "classpath*:simplesm-context.xml" })
 public class UpdateAssignCacheTest {
-    private ApplicationContext context;
-
-    @BeforeClass
-    public void beforeClass() {
-        context = new ClassPathXmlApplicationContext("/test-context.xml");
-    }
+	@Autowired
+	private TestSvc test;	
 
     @Test
     public void test() {
-        final TestSvc test = (TestSvc) context.getBean("testSvc");
+        //final TestSvc test = (TestSvc) context.getBean("testSvc");
 
         final List<String> result1 = test.getAssignStrings();
 

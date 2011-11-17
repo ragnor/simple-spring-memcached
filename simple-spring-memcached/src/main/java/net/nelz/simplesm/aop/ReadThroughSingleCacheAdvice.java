@@ -1,84 +1,95 @@
 package net.nelz.simplesm.aop;
 
-import net.nelz.simplesm.api.*;
-import org.apache.commons.logging.*;
-import org.aspectj.lang.*;
-import org.aspectj.lang.annotation.*;
+import java.lang.reflect.Method;
 
-import java.lang.reflect.*;
+import net.nelz.simplesm.api.ReadThroughSingleCache;
+
+import org.aspectj.lang.JoinPoint;
+import org.aspectj.lang.ProceedingJoinPoint;
+import org.aspectj.lang.annotation.Around;
+import org.aspectj.lang.annotation.Aspect;
+import org.aspectj.lang.annotation.Pointcut;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
-Copyright (c) 2008, 2009  Nelson Carpentier
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in
-all copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-THE SOFTWARE.
+ * Copyright (c) 2008, 2009 Nelson Carpentier
+ * 
+ * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
+ * documentation files (the "Software"), to deal in the Software without restriction, including without limitation the
+ * rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to
+ * permit persons to whom the Software is furnished to do so, subject to the following conditions:
+ * 
+ * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the
+ * Software.
+ * 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE
+ * WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
+ * COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
+ * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ * 
+ * @author Nelson Carpentier, Jakub Białek
+ * 
  */
 @Aspect
 public class ReadThroughSingleCacheAdvice extends CacheBase {
-	private static final Log LOG = LogFactory.getLog(ReadThroughSingleCacheAdvice.class);
+    private static final Logger LOG = LoggerFactory.getLogger(ReadThroughSingleCacheAdvice.class);
 
-	@Pointcut("@annotation(net.nelz.simplesm.api.ReadThroughSingleCache)")
-	public void getSingle() {}
+    @Pointcut("@annotation(net.nelz.simplesm.api.ReadThroughSingleCache)")
+    public void getSingle() {
+    }
 
-	@Around("getSingle()")
-	public Object cacheGetSingle(final ProceedingJoinPoint pjp) throws Throwable {
-		// This is injected caching.  If anything goes wrong in the caching, LOG the crap outta it,
-		// but do not let it surface up past the AOP injection itself.
-		final String cacheKey;
-		final ReadThroughSingleCache annotation;
-		try {
-			final Method methodToCache = getMethodToCache(pjp);
-			annotation = methodToCache.getAnnotation(ReadThroughSingleCache.class);
-            final AnnotationData annotationData =
-                    AnnotationDataBuilder.buildAnnotationData(annotation,
-                            ReadThroughSingleCache.class,
-                            methodToCache);
-            final String objectId = getObjectId(annotationData.getKeyIndex(), pjp, methodToCache);
-			cacheKey = buildCacheKey(objectId, annotationData);
-			final Object result = cache.get(cacheKey);
-			if (result != null) {
-				LOG.debug("Cache hit.");
-				return (result instanceof PertinentNegativeNull) ? null : result;
-			}
-		} catch (Throwable ex) {
-			LOG.warn("Caching on " + pjp.toShortString() + " aborted due to an error.", ex);
-			return pjp.proceed();
-		}
+    @Around("getSingle()")
+    public Object cacheGetSingle(final ProceedingJoinPoint pjp) throws Throwable {
+        // This is injected caching. If anything goes wrong in the caching, LOG
+        // the crap outta it, but do not let it surface up past the AOP injection itself.
+        final String cacheKey;
+        final ReadThroughSingleCache annotation;
+        Class<?> jsonClass = null;
 
-		final Object result = pjp.proceed();
+        try {
+            final Method methodToCache = getMethodToCache(pjp);
+            annotation = methodToCache.getAnnotation(ReadThroughSingleCache.class);
+            verifyReturnTypeIsNoVoid(methodToCache, ReadThroughSingleCache.class);
+            final AnnotationData annotationData = AnnotationDataBuilder.buildAnnotationData(annotation, ReadThroughSingleCache.class,
+                    methodToCache);
+            final String[] objectsIds = getObjectIds(annotationData.getKeysIndex(), pjp, methodToCache);
+            cacheKey = buildCacheKey(objectsIds, annotationData);
+            jsonClass = getJsonClass(methodToCache, -1);
 
-		// This is injected caching.  If anything goes wrong in the caching, LOG the crap outta it,
-		// but do not let it surface up past the AOP injection itself.
-		try {
-			final Object submission = (result == null) ? new PertinentNegativeNull() : result;
-			cache.set(cacheKey, annotation.expiration(), submission);
-		} catch (Throwable ex) {
-			LOG.warn("Caching on " + pjp.toShortString() + " aborted due to an error.", ex);
-		}
-		return result;
-	}
+            final Object result = get(cacheKey, jsonClass);
+            if (result != null) {
+                getLogger().debug("Cache hit.");
+                return (result instanceof PertinentNegativeNull) ? null : result;
+            }
+        } catch (Throwable ex) {
+            warn("Caching on " + pjp.toShortString() + " aborted due to an error.", ex);
+            return pjp.proceed();
+        }
+
+        final Object result = pjp.proceed();
+
+        // This is injected caching. If anything goes wrong in the caching, LOG
+        // the crap outta it, but do not let it surface up past the AOP injection itself.
+        try {
+            final Object submission = (result == null) ? PertinentNegativeNull.NULL : result;
+            set(cacheKey, annotation.expiration(), submission, jsonClass);
+        } catch (Throwable ex) {
+            warn("Caching on " + pjp.toShortString() + " aborted due to an error.", ex);
+        }
+        return result;
+    }
 
     @Deprecated
-    protected String getObjectId(final int keyIndex,
-	                             final JoinPoint jp,
-	                             final Method methodToCache) throws Exception {
-		final Object keyObject = getIndexObject(keyIndex, jp, methodToCache);
-		final Method keyMethod = getKeyMethod(keyObject);
-		return generateObjectId(keyMethod, keyObject);
-	}
+    protected String getObjectId(final int keyIndex, final JoinPoint jp, final Method methodToCache) throws Exception {
+        final Object keyObject = getIndexObject(keyIndex, jp, methodToCache);
+        final Method keyMethod = getKeyMethod(keyObject);
+        return generateObjectId(keyMethod, keyObject);
+    }
+
+    @Override
+    protected Logger getLogger() {
+        return LOG;
+    }
+
 }

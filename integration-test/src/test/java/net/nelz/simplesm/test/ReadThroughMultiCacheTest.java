@@ -1,13 +1,28 @@
 package net.nelz.simplesm.test;
 
-import net.nelz.simplesm.test.svc.*;
-import net.spy.memcached.*;
-import org.springframework.context.*;
-import org.springframework.context.support.*;
-import static org.testng.AssertJUnit.*;
-import org.testng.annotations.*;
 
-import java.util.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.TimeoutException;
+
+import net.nelz.simplesm.providers.MemcacheClient;
+import net.nelz.simplesm.providers.MemcacheException;
+import net.nelz.simplesm.test.svc.TestSvc;
+
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.TestExecutionListeners;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
 
 /**
 Copyright (c) 2008, 2009  Nelson Carpentier
@@ -30,16 +45,19 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
  */
+@RunWith(SpringJUnit4ClassRunner.class)
+@TestExecutionListeners( {DependencyInjectionTestExecutionListener.class })
+@ContextConfiguration(locations = { "classpath*:META-INF/test-context.xml", "classpath*:simplesm-context.xml" })
 public class ReadThroughMultiCacheTest {
-	private ApplicationContext context;
-
-	@BeforeClass
-	public void beforeClass() {
-		context = new ClassPathXmlApplicationContext("/test-context.xml");
-	}
+	
+	@Autowired
+	private TestSvc test;
+	
+	@Autowired
+	private MemcacheClient cache;
 
 	@Test
-	public void test() {
+	public void test() {	    
 		final Long rawNow = System.currentTimeMillis();
 		final Long now = (rawNow / 1000) * 10000;
 		final List<Long> subset = new ArrayList<Long>();
@@ -55,7 +73,7 @@ public class ReadThroughMultiCacheTest {
 		}
 		Collections.shuffle(jumbleset);
 
-		final TestSvc test = (TestSvc) context.getBean("testSvc");
+		//final TestSvc test = (TestSvc) context.getBean("testSvc");
 
 		// Get all the results for the subset ids.
 		// Ensure the ids line up with the results, and have the same timestamp.
@@ -119,8 +137,8 @@ public class ReadThroughMultiCacheTest {
 	}
 
 	@Test
-	public void testMemcached() {
-		final MemcachedClientIF cache = (MemcachedClientIF) context.getBean("memcachedClient");
+	public void testMemcached() throws TimeoutException, MemcacheException {
+		//final MemcachedClientIF cache = (MemcachedClientIF) context.getBean("memcachedClient");
 
 		final List<String> keys = new ArrayList<String>();
 		final Map<String, String> answerMap = new HashMap<String, String>();

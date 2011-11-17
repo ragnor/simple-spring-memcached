@@ -1,18 +1,22 @@
 package net.nelz.simplesm.test;
 
-import static org.testng.AssertJUnit.*;
-import static org.testng.AssertJUnit.assertEquals;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
-import org.testng.annotations.BeforeClass;
-import org.testng.annotations.Test;
-import org.apache.commons.lang.math.RandomUtils;
+import static org.junit.Assert.*;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import net.nelz.simplesm.test.svc.TestSvc;
 
-import java.util.Map;
-import java.util.List;
-import java.util.HashMap;
-import java.util.ArrayList;
+import org.apache.commons.lang.math.RandomUtils;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.TestExecutionListeners;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
 
 /**
 Copyright (c) 2008, 2009  Nelson Carpentier
@@ -35,17 +39,16 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
  */
+@RunWith(SpringJUnit4ClassRunner.class)
+@TestExecutionListeners( {DependencyInjectionTestExecutionListener.class })
+@ContextConfiguration(locations = { "classpath*:META-INF/test-context.xml", "classpath*:simplesm-context.xml" })
 public class InvalidateMultiCacheTest {
-    private ApplicationContext context;
-
-    @BeforeClass
-    public void beforeClass() {
-        context = new ClassPathXmlApplicationContext("/test-context.xml");
-    }
+	@Autowired
+	private TestSvc test;
 
     @Test
-    public void test() {
-        final TestSvc test = (TestSvc) context.getBean("testSvc");
+    public void test() throws InterruptedException {
+        //final TestSvc test = (TestSvc) context.getBean("testSvc");
 
         // The full list of ids
         final List<Long> allIds = new ArrayList<Long>();
@@ -72,6 +75,7 @@ public class InvalidateMultiCacheTest {
         // Pull the generated results from the svc/dao. This is expected to be NOT cached.
         final Map<Long, String> originalMap = createMap(allIds, test.getRandomStrings(allIds));
 
+        Thread.sleep(1000);
         // Make sure successive calls to the svc/dao all generate the same results.
         assertEquals(originalMap, createMap(allIds, test.getRandomStrings(allIds)));
         assertEquals(originalMap, createMap(allIds, test.getRandomStrings(allIds)));
@@ -87,6 +91,7 @@ public class InvalidateMultiCacheTest {
 
         // Loop through all the values. Make sure that any value we didn't expect to change
         // didn't, and that values we expect to be the same are.
+        Thread.sleep(1000);
         for (Map.Entry<Long, String> entry : secondMap.entrySet()) {
             final Long key = entry.getKey();
             if (firstChangeIds.contains(key)) {

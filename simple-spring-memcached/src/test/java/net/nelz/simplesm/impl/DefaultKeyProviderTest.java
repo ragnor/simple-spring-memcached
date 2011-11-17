@@ -1,10 +1,6 @@
 package net.nelz.simplesm.impl;
 
-import org.testng.annotations.Test;
-import org.testng.annotations.BeforeClass;
-import static org.testng.AssertJUnit.fail;
-import static org.testng.AssertJUnit.assertTrue;
-import static org.testng.AssertJUnit.assertEquals;
+import static org.junit.Assert.*;
 import net.nelz.simplesm.exceptions.InvalidAnnotationException;
 import net.nelz.simplesm.aop.CacheKeyMethodStoreImpl;
 import net.nelz.simplesm.api.CacheKeyMethod;
@@ -14,32 +10,33 @@ import java.util.List;
 import java.util.ArrayList;
 import java.security.InvalidParameterException;
 
+import org.junit.BeforeClass;
+import org.junit.Test;
+
 /**
-Copyright (c) 2008, 2009  Nelson Carpentier
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in
-all copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-THE SOFTWARE.
+ * Copyright (c) 2008, 2009 Nelson Carpentier
+ * 
+ * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
+ * documentation files (the "Software"), to deal in the Software without restriction, including without limitation the
+ * rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to
+ * permit persons to whom the Software is furnished to do so, subject to the following conditions:
+ * 
+ * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the
+ * Software.
+ * 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE
+ * WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
+ * COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
+ * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ * 
+ * @author Nelson Carpentier
+ * 
  */
 public class DefaultKeyProviderTest {
-    private DefaultKeyProvider cut;
+    private static DefaultKeyProvider cut;
 
     @BeforeClass
-    public void beforeClass() {
+    public static void beforeClass() {
         cut = new DefaultKeyProvider();
         cut.setMethodStore(new CacheKeyMethodStoreImpl());
     }
@@ -84,7 +81,7 @@ public class DefaultKeyProviderTest {
 
     @Test
     public void testGenerateCacheKey() throws Exception {
-        final Method method = KeyObject.class.getMethod("toString", null);
+        final Method method = KeyObject.class.getMethod("toString", (Class<?>[]) null);
 
         try {
             cut.generateObjectId(method, new KeyObject(null));
@@ -109,7 +106,8 @@ public class DefaultKeyProviderTest {
         try {
             cut.generateKey(null);
             fail("Expected exception");
-        } catch (InvalidParameterException ex) { }
+        } catch (InvalidParameterException ex) {
+        }
     }
 
     @Test
@@ -117,12 +115,14 @@ public class DefaultKeyProviderTest {
         try {
             cut.generateKeys(null);
             fail("Expected exception");
-        } catch (InvalidParameterException ex) { }
+        } catch (InvalidParameterException ex) {
+        }
 
         try {
             cut.generateKeys(new ArrayList<Object>());
             fail("Expected exception");
-        } catch (InvalidParameterException ex) { }
+        } catch (InvalidParameterException ex) {
+        }
 
     }
 
@@ -137,48 +137,84 @@ public class DefaultKeyProviderTest {
             expectedResults.add(val);
         }
 
-        final List<String> results = cut.generateKeys(src);        
+        final List<String> results = cut.generateKeys(src);
         assertEquals(expectedResults, results);
     }
 
     private static class KeyObject {
         private String result;
-        private KeyObject(String result) { this.result = result;}
-        public String toString() { return result; }
-    }    
 
+        private KeyObject(String result) {
+            this.result = result;
+        }
+
+        public String toString() {
+            return result;
+        }
+    }
+
+    @SuppressWarnings("unused")
     private static class KeyObject01 {
+
         @CacheKeyMethod
-        public void doIt(final String nonsense) { }
+        public void doIt(final String nonsense) {
+        }
+
     }
 
+    @SuppressWarnings("unused")
     private static class KeyObject02 {
+
         @CacheKeyMethod
-        public void doIt() { }
+        public void doIt() {
+        }
     }
 
+    @SuppressWarnings("unused")
     private static class KeyObject03 {
+
         @CacheKeyMethod
-        public Long doIt() { return null; }
+        public Long doIt() {
+            return null;
+        }
     }
 
+    @SuppressWarnings("unused")
     private static class KeyObject04 {
+
         @CacheKeyMethod
-        public String doIt() { return null; }
+        public String doIt() {
+            return null;
+        }
+
         @CacheKeyMethod
-        public String doItAgain() { return null; }
+        public String doItAgain() {
+            return null;
+        }
     }
 
+    @SuppressWarnings("unused")
     private static class KeyObject05 {
+
         public static final String result = "shrimp";
+
         @CacheKeyMethod
-        public String doIt() { return result; }
+        public String doIt() {
+            return result;
+        }
     }
 
     private static class KeyObject06 {
+
         private String result;
-        private KeyObject06(String result) { this.result = result;}
-        public String toString() { return result; }
+
+        private KeyObject06(String result) {
+            this.result = result;
+        }
+
+        public String toString() {
+            return result;
+        }
     }
 
 }

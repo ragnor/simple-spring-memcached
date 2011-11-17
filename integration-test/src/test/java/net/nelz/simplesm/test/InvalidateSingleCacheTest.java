@@ -1,11 +1,16 @@
 package net.nelz.simplesm.test;
 
-import static org.testng.AssertJUnit.*;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
-import org.testng.annotations.BeforeClass;
-import org.testng.annotations.Test;
+import static org.junit.Assert.*;
 import net.nelz.simplesm.test.svc.TestSvc;
+
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.TestExecutionListeners;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
+
 
 /**
 Copyright (c) 2008, 2009  Nelson Carpentier
@@ -28,20 +33,19 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
  */
+@RunWith(SpringJUnit4ClassRunner.class)
+@TestExecutionListeners( {DependencyInjectionTestExecutionListener.class })
+@ContextConfiguration(locations = { "classpath*:META-INF/test-context.xml", "classpath*:simplesm-context.xml" })
 public class InvalidateSingleCacheTest {
-    private ApplicationContext context;
-
-    @BeforeClass
-    public void beforeClass() {
-        context = new ClassPathXmlApplicationContext("/test-context.xml");
-    }
+	@Autowired
+	private TestSvc test;
 
     @Test
     public void test() {
         final Long key1 = System.currentTimeMillis();
         final Long key2 = System.currentTimeMillis() + 10000;
 
-        final TestSvc test = (TestSvc) context.getBean("testSvc");
+        //final TestSvc test = (TestSvc) context.getBean("testSvc");
 
         final String f1 = test.getRandomString(key1);
         final String f2 = test.getRandomString(key2);
