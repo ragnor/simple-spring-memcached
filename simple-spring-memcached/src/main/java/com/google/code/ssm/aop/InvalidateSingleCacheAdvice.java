@@ -1,9 +1,6 @@
 package com.google.code.ssm.aop;
 
 import java.lang.reflect.Method;
-import java.security.InvalidParameterException;
-
-import com.google.code.ssm.api.InvalidateSingleCache;
 
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
@@ -11,6 +8,8 @@ import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.code.ssm.api.InvalidateSingleCache;
 
 /**
  * Copyright (c) 2008, 2009 Nelson Carpentier
@@ -45,12 +44,12 @@ public class InvalidateSingleCacheAdvice extends CacheBase {
         // the crap outta it, but do not let it surface up past the AOP injection itself.
         String cacheKey = null;
         final AnnotationData annotationData;
+        final Method methodToCache;
         try {
-            final Method methodToCache = getMethodToCache(pjp);
+            methodToCache = getMethodToCache(pjp);
             final InvalidateSingleCache annotation = methodToCache.getAnnotation(InvalidateSingleCache.class);
             annotationData = AnnotationDataBuilder.buildAnnotationData(annotation, InvalidateSingleCache.class, methodToCache);
             if (!annotationData.isReturnKeyIndex()) {
-                // FIXME only one key index is used, should getKeyIndexes()
                 final String[] objectsIds = getObjectIds(annotationData.getKeysIndex(), pjp, methodToCache);
                 cacheKey = buildCacheKey(objectsIds, annotationData);
             }
@@ -66,14 +65,12 @@ public class InvalidateSingleCacheAdvice extends CacheBase {
         try {
             // If we have a -1 key index, then build the cacheKey now.
             if (annotationData.isReturnKeyIndex()) {
+                verifyReturnTypeIsNoVoid(methodToCache, InvalidateSingleCache.class);
                 final Method keyMethod = getKeyMethod(result);
                 final String objectId = generateObjectId(keyMethod, result);
                 cacheKey = buildCacheKey(objectId, annotationData);
             }
-            if (cacheKey == null || cacheKey.trim().length() == 0) {
-                throw new InvalidParameterException("Unable to find a cache key");
-            }
-
+            
             delete(cacheKey);
         } catch (Throwable ex) {
             warn("Caching on " + pjp.toShortString() + " aborted due to an error.", ex);

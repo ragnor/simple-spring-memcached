@@ -1,9 +1,6 @@
 package com.google.code.ssm.aop;
 
 import java.lang.reflect.Method;
-import java.security.InvalidParameterException;
-
-import com.google.code.ssm.api.InvalidateAssignCache;
 
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
@@ -11,6 +8,8 @@ import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.code.ssm.api.InvalidateAssignCache;
 
 /**
  * Copyright (c) 2008, 2009 Nelson Carpentier
@@ -52,9 +51,7 @@ public class InvalidateAssignCacheAdvice extends CacheBase {
                     methodToCache);
 
             final String cacheKey = buildCacheKey(annotationData.getAssignedKey(), annotationData);
-            if (cacheKey == null || cacheKey.trim().length() == 0) {
-                throw new InvalidParameterException("Unable to find a cache key");
-            }
+
             delete(cacheKey);
         } catch (Throwable ex) {
             warn("Caching on " + pjp.toShortString() + " aborted due to an error.", ex);

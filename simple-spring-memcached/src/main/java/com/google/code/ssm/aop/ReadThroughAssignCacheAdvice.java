@@ -41,8 +41,7 @@ public class ReadThroughAssignCacheAdvice extends CacheBase {
     @Around("getSingleAssign()")
     public Object cacheSingleAssign(final ProceedingJoinPoint pjp) throws Throwable {
         // This is injected caching. If anything goes wrong in the caching, LOG
-        // the crap outta it,
-        // but do not let it surface up past the AOP injection itself.
+        // the crap outta it, but do not let it surface up past the AOP injection itself.
         final String cacheKey;
         final AnnotationData annotationData;
         Class<?> jsonClass = null;

@@ -12,14 +12,14 @@ import static org.mockito.Mockito.when;
 import java.util.Arrays;
 import java.util.Collection;
 
-import com.google.code.ssm.api.ParameterValueKeyProvider;
-import com.google.code.ssm.api.ReadThroughSingleCache;
-
 import org.hamcrest.CoreMatchers;
 import org.junit.Assume;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runners.Parameterized.Parameters;
+
+import com.google.code.ssm.api.ParameterValueKeyProvider;
+import com.google.code.ssm.api.ReadThroughAssignCache;
 
 /**
  * Copyright (c) 2011 Jakub Białek
@@ -40,28 +40,28 @@ import org.junit.runners.Parameterized.Parameters;
  * @author Jakub Białek
  * 
  */
-public class ReadThroughSingleCacheAdviceTest extends AbstractCacheTest<ReadThroughSingleCacheAdvice> {
+public class ReadThroughAssignCacheAdviceTest extends AbstractCacheTest<ReadThroughAssignCacheAdvice> {
 
     @Parameters
     public static Collection<Object[]> data() {
         return Arrays.asList(new Object[][] { //
-                { true, "method1", new Class[] { int.class }, new Object[] { 1 }, 1 }, //
-                        { true, "method2", new Class[] { int.class }, new Object[] { 2 }, "2" }, //
-                        { true, "method3", new Class[] { int.class, int.class }, new Object[] { 3, 44 }, 3 }, //
+                { true, "method1", new Class[] { int.class }, new Object[] { 22 }, 11, NS + ":1" }, //
+                        { true, "method2", new Class[] { int.class }, new Object[] { 22 }, "33", NS + ":2" }, //
+                        { true, "method3", new Class[] { int.class, int.class }, new Object[] { 33, 44 }, 33, NS + ":3" }, //
 
-                        { false, "method50", new Class[] { int.class }, new Object[] { 50 }, 50 }, //
-                        { false, "method51", new Class[] { int.class }, new Object[] { 51 }, null }, //
+                        { false, "method51", new Class[] { int.class }, new Object[] { 51 }, null, null }, //
                 });
     }
 
-    private static final String NS = "TEST_NS";
+    private static final String NS = "TEST-NS";
 
-    private static final int EXPIRATION = 110;
+    private static final int EXPIRATION = 220;
 
     private Object expectedValue;
 
-    public ReadThroughSingleCacheAdviceTest(boolean isValid, String methodName, Class<?>[] paramTypes, Object[] params, Object expectedValue) {
-        super(isValid, methodName, paramTypes, params, null);
+    public ReadThroughAssignCacheAdviceTest(boolean isValid, String methodName, Class<?>[] paramTypes, Object[] params,
+            Object expectedValue, String cacheKey) {
+        super(isValid, methodName, paramTypes, params, cacheKey);
         this.expectedValue = expectedValue;
     }
 
@@ -76,7 +76,7 @@ public class ReadThroughSingleCacheAdviceTest extends AbstractCacheTest<ReadThro
 
         when(pjp.proceed()).thenReturn(expectedValue);
 
-        assertEquals(expectedValue, advice.cacheGetSingle(pjp));
+        assertEquals(expectedValue, advice.cacheSingleAssign(pjp));
 
         verify(client).get(eq(cacheKey));
         verify(client).set(eq(cacheKey), eq(EXPIRATION), eq(expectedValue));
@@ -89,7 +89,7 @@ public class ReadThroughSingleCacheAdviceTest extends AbstractCacheTest<ReadThro
 
         when(client.get(eq(cacheKey))).thenReturn(expectedValue);
 
-        assertEquals(expectedValue, advice.cacheGetSingle(pjp));
+        assertEquals(expectedValue, advice.cacheSingleAssign(pjp));
 
         verify(client).get(eq(cacheKey));
         verify(client, never()).set(anyString(), anyInt(), any());
@@ -102,7 +102,7 @@ public class ReadThroughSingleCacheAdviceTest extends AbstractCacheTest<ReadThro
 
         when(pjp.proceed()).thenReturn(expectedValue);
 
-        assertEquals(expectedValue, advice.cacheGetSingle(pjp));
+        assertEquals(expectedValue, advice.cacheSingleAssign(pjp));
 
         verify(client, never()).get(anyString());
         verify(client, never()).set(anyString(), anyInt(), any());
@@ -110,8 +110,8 @@ public class ReadThroughSingleCacheAdviceTest extends AbstractCacheTest<ReadThro
     }
 
     @Override
-    protected ReadThroughSingleCacheAdvice createAdvice() {
-        return new ReadThroughSingleCacheAdvice();
+    protected ReadThroughAssignCacheAdvice createAdvice() {
+        return new ReadThroughAssignCacheAdvice();
     }
 
     @Override
@@ -122,29 +122,23 @@ public class ReadThroughSingleCacheAdviceTest extends AbstractCacheTest<ReadThro
     @SuppressWarnings("unused")
     private static class TestService {
 
-        @ReadThroughSingleCache(namespace = NS, expiration = EXPIRATION)
-        public int method1(@ParameterValueKeyProvider int id1) {
+        @ReadThroughAssignCache(namespace = NS, assignedKey = "1", expiration = EXPIRATION)
+        public int method1(int id1) {
             return 1;
         }
 
-        @ReadThroughSingleCache(namespace = NS, expiration = EXPIRATION)
+        @ReadThroughAssignCache(namespace = NS, assignedKey = "2", expiration = EXPIRATION)
         public String method2(@ParameterValueKeyProvider int id1) {
             return "2";
         }
 
-        @ReadThroughSingleCache(namespace = NS, expiration = EXPIRATION)
+        @ReadThroughAssignCache(namespace = NS, assignedKey = "3", expiration = EXPIRATION)
         public int method3(@ParameterValueKeyProvider(order = 1) int id1, @ParameterValueKeyProvider(order = 2) int id2) {
             return 3;
         }
 
-        // no @ParameterValueKeyProvider
-        @ReadThroughSingleCache(namespace = NS, expiration = EXPIRATION)
-        public int method50(int id1) {
-            return 50;
-        }
-
         // void method
-        @ReadThroughSingleCache(namespace = NS, expiration = EXPIRATION)
+        @ReadThroughAssignCache(namespace = NS, assignedKey = "51", expiration = EXPIRATION)
         public void method51(@ParameterValueKeyProvider int id1) {
 
         }

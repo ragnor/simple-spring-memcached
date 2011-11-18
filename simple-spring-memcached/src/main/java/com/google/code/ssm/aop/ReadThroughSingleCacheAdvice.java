@@ -53,8 +53,10 @@ public class ReadThroughSingleCacheAdvice extends CacheBase {
             verifyReturnTypeIsNoVoid(methodToCache, ReadThroughSingleCache.class);
             final AnnotationData annotationData = AnnotationDataBuilder.buildAnnotationData(annotation, ReadThroughSingleCache.class,
                     methodToCache);
+            
             final String[] objectsIds = getObjectIds(annotationData.getKeysIndex(), pjp, methodToCache);
             cacheKey = buildCacheKey(objectsIds, annotationData);
+            
             jsonClass = getJsonClass(methodToCache, -1);
 
             final Object result = get(cacheKey, jsonClass);

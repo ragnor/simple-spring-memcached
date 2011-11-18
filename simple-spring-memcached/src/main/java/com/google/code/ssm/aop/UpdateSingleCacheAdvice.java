@@ -1,9 +1,6 @@
 package com.google.code.ssm.aop;
 
 import java.lang.reflect.Method;
-import java.util.Collection;
-
-import com.google.code.ssm.api.UpdateSingleCache;
 
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.AfterReturning;
@@ -11,6 +8,8 @@ import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.code.ssm.api.UpdateSingleCache;
 
 /**
  * Copyright (c) 2008, 2009 Nelson Carpentier
@@ -55,26 +54,12 @@ public class UpdateSingleCacheAdvice extends CacheBase {
 
             final Object dataObject = annotationData.isReturnDataIndex() ? retVal : getIndexObject(annotationData.getDataIndex(), jp,
                     methodToCache);
-            Class<?> jsonClass = getJsonClass(methodToCache, annotationData.getDataIndex());
+            final Class<?> jsonClass = getJsonClass(methodToCache, annotationData.getDataIndex());
             final Object submission = (dataObject == null) ? PertinentNegativeNull.NULL : dataObject;
             set(cacheKey, annotationData.getExpiration(), submission, jsonClass);
         } catch (Exception ex) {
             warn("Updating caching via " + jp.toShortString() + " aborted due to an error.", ex);
         }
-    }
-
-    protected String getObjectId(final int keyIndex, final Object returnValue, final JoinPoint jp, final Method methodToCache)
-            throws Exception {
-        final Object keyObject = keyIndex == -1 ? validateReturnValueAsKeyObject(returnValue, methodToCache) : getIndexObject(keyIndex, jp,
-                methodToCache);
-        final Method keyMethod = getKeyMethod(keyObject);
-        return generateObjectId(keyMethod, keyObject);
-    }
-
-    protected String[] getObjectIds(final Collection<Integer> keysIndexes, final JoinPoint jp, final Method methodToCache) throws Exception {
-        final Object[] keysObjects = getIndexObjects(keysIndexes, jp, methodToCache);
-        final Method[] keysMethods = getKeysMethods(keysObjects);
-        return generateObjectIds(keysMethods, keysObjects);
     }
 
     @Override

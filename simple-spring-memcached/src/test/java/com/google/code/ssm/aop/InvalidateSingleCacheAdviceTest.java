@@ -7,18 +7,16 @@ import static org.mockito.Mockito.when;
 import java.util.Arrays;
 import java.util.Collection;
 
-import com.google.code.ssm.api.InvalidateSingleCache;
-import com.google.code.ssm.api.ParameterDataUpdateContent;
-import com.google.code.ssm.api.ParameterValueKeyProvider;
-import com.google.code.ssm.api.ReturnDataUpdateContent;
-import com.google.code.ssm.api.ReturnValueKeyProvider;
-import com.google.code.ssm.test.Point;
-
 import org.hamcrest.CoreMatchers;
 import org.junit.Assume;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runners.Parameterized.Parameters;
+
+import com.google.code.ssm.api.InvalidateSingleCache;
+import com.google.code.ssm.api.ParameterValueKeyProvider;
+import com.google.code.ssm.api.ReturnValueKeyProvider;
+import com.google.code.ssm.test.Point;
 
 /**
  * Copyright (c) 2011 Jakub Białek
@@ -47,10 +45,11 @@ public class InvalidateSingleCacheAdviceTest extends AbstractCacheTest<Invalidat
                 { true, "method1", new Class[] { int.class }, new Object[] { 1 }, 1, null }, //
                         { true, "method2", new Class[] { int.class }, new Object[] { 2 }, "2", null }, //
                         { true, "method3", new Class[] { int.class, int.class }, new Object[] { 3, 44 }, 3, null }, //
-                        { true, "method4", new Class[] { int.class }, new Object[] { 4 }, 4, null }, //
+                        { true, "method4", new Class[] { int.class }, new Object[] { 4 }, 5, NS + ":5" }, //
                         { true, "method5", new Class[] { int.class, Point.class }, new Object[] { 5, new Point(1, 2) }, "5", NS + ":(1,2)/5" }, //
+                        { true, "method6", new Class[] { int.class }, new Object[] { 6 }, new Point(6,7), NS + ":(6,7)" }, //
+                        { true, "method7", new Class[] { int.class }, new Object[] { 7 }, 8, NS + ":8" }, //
 
-                        { false, "method50", new Class[] { int.class }, new Object[] { 50 }, 50, null }, //
                         { false, "method51", new Class[] { int.class }, new Object[] { 51 }, 51, null }, //
                         { false, "method52", new Class[] { int.class }, new Object[] { 52 }, null, null }, //
                         { false, "method53", new Class[] { int.class }, new Object[] { 53 }, 53, null }, //
@@ -113,33 +112,40 @@ public class InvalidateSingleCacheAdviceTest extends AbstractCacheTest<Invalidat
             return 1;
         }
 
-        @ReturnDataUpdateContent
         @InvalidateSingleCache(namespace = NS)
         public String method2(@ParameterValueKeyProvider int id1) {
             return "2";
         }
 
-        @ReturnDataUpdateContent
         @InvalidateSingleCache(namespace = NS)
         public int method3(@ParameterValueKeyProvider(order = 1) int id1, @ParameterValueKeyProvider(order = 2) int id2) {
             return 3;
         }
 
+        @ReturnValueKeyProvider
         @InvalidateSingleCache(namespace = NS)
-        public int method4(@ParameterDataUpdateContent @ParameterValueKeyProvider int id1) {
+        public int method4(int id1) {
             return 4;
         }
 
         @InvalidateSingleCache(namespace = NS)
-        public String method5(@ParameterValueKeyProvider(order = 2) int id1, @ParameterDataUpdateContent @ParameterValueKeyProvider(order = 1) Point p) {
+        public String method5(@ParameterValueKeyProvider(order = 2) int id1, @ParameterValueKeyProvider(order = 1) Point p) {
             return "5";
         }
 
-        // no @ParameterValueKeyProvider or @ReturnValueKeyProvider
+        @ReturnValueKeyProvider
         @InvalidateSingleCache(namespace = NS)
-        public int method50(int id1) {
-            return 50;
+        public Point method6(int id1) {
+            return new Point(1,1);
         }
+        
+        // both @ParameterValueKeyProvider and @ReturnValueKeyProvider currently is valid
+        @ReturnValueKeyProvider
+        @InvalidateSingleCache(namespace = NS)
+        public int method7(@ParameterValueKeyProvider int id1) {
+            return 7;
+        }
+
 
         // no @ParameterValueKeyProvider or @ReturnValueKeyProvider
         @InvalidateSingleCache(namespace = NS)
