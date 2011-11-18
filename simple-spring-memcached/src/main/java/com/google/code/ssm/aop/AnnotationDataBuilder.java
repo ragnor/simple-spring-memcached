@@ -1,4 +1,4 @@
-package net.nelz.simplesm.aop;
+package com.google.code.ssm.aop;
 
 import java.io.Serializable;
 import java.lang.annotation.Annotation;
@@ -11,21 +11,21 @@ import java.util.Set;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
-import net.nelz.simplesm.api.AnnotationConstants;
-import net.nelz.simplesm.api.InvalidateAssignCache;
-import net.nelz.simplesm.api.InvalidateMultiCache;
-import net.nelz.simplesm.api.InvalidateSingleCache;
-import net.nelz.simplesm.api.ParameterDataUpdateContent;
-import net.nelz.simplesm.api.ParameterValueKeyProvider;
-import net.nelz.simplesm.api.ReadThroughAssignCache;
-import net.nelz.simplesm.api.ReturnDataUpdateContent;
-import net.nelz.simplesm.api.ReturnValueKeyProvider;
-import net.nelz.simplesm.api.UpdateAssignCache;
-import net.nelz.simplesm.api.UpdateMultiCache;
-import net.nelz.simplesm.api.UpdateSingleCache;
-import net.nelz.simplesm.api.counter.DecrementCounterInCache;
-import net.nelz.simplesm.api.counter.IncrementCounterInCache;
-import net.nelz.simplesm.api.counter.UpdateCounterInCache;
+import com.google.code.ssm.api.AnnotationConstants;
+import com.google.code.ssm.api.InvalidateAssignCache;
+import com.google.code.ssm.api.InvalidateMultiCache;
+import com.google.code.ssm.api.InvalidateSingleCache;
+import com.google.code.ssm.api.ParameterDataUpdateContent;
+import com.google.code.ssm.api.ParameterValueKeyProvider;
+import com.google.code.ssm.api.ReadThroughAssignCache;
+import com.google.code.ssm.api.ReturnDataUpdateContent;
+import com.google.code.ssm.api.ReturnValueKeyProvider;
+import com.google.code.ssm.api.UpdateAssignCache;
+import com.google.code.ssm.api.UpdateMultiCache;
+import com.google.code.ssm.api.UpdateSingleCache;
+import com.google.code.ssm.api.counter.DecrementCounterInCache;
+import com.google.code.ssm.api.counter.IncrementCounterInCache;
+import com.google.code.ssm.api.counter.UpdateCounterInCache;
 
 import com.google.common.collect.ImmutableSet;
 

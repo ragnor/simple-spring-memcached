@@ -1,4 +1,4 @@
-package net.nelz.simplesm.providers;
+package com.google.code.ssm.providers;
 
 /**
  * Copyright (c) 2010, 2011 Jakub Białek

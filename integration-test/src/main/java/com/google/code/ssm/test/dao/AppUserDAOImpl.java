@@ -1,4 +1,4 @@
-package net.nelz.simplesm.test.dao;
+package com.google.code.ssm.test.dao;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -8,16 +8,16 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import org.springframework.stereotype.Service;
 
-import net.nelz.simplesm.api.InvalidateSingleCache;
-import net.nelz.simplesm.api.ParameterDataUpdateContent;
-import net.nelz.simplesm.api.ParameterValueKeyProvider;
-import net.nelz.simplesm.api.ReadThroughMultiCache;
-import net.nelz.simplesm.api.ReadThroughMultiCacheOptions;
-import net.nelz.simplesm.api.ReadThroughSingleCache;
-import net.nelz.simplesm.api.ReturnDataUpdateContent;
-import net.nelz.simplesm.api.UpdateSingleCache;
-import net.nelz.simplesm.test.entity.AppUser;
-import net.nelz.simplesm.test.entity.AppUserPK;
+import com.google.code.ssm.api.InvalidateSingleCache;
+import com.google.code.ssm.api.ParameterDataUpdateContent;
+import com.google.code.ssm.api.ParameterValueKeyProvider;
+import com.google.code.ssm.api.ReadThroughMultiCache;
+import com.google.code.ssm.api.ReadThroughMultiCacheOptions;
+import com.google.code.ssm.api.ReadThroughSingleCache;
+import com.google.code.ssm.api.ReturnDataUpdateContent;
+import com.google.code.ssm.api.UpdateSingleCache;
+import com.google.code.ssm.test.entity.AppUser;
+import com.google.code.ssm.test.entity.AppUserPK;
 
 /**
  * Copyright (c) 2010, 2011 Jakub Białek

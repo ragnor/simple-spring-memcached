@@ -1,13 +1,13 @@
-package net.nelz.simplesm.config;
+package com.google.code.ssm.config;
 
 import java.net.SocketAddress;
 import java.util.Collection;
 import java.util.Map;
 import java.util.concurrent.TimeoutException;
 
-import net.nelz.simplesm.providers.MemcacheClient;
-import net.nelz.simplesm.providers.MemcacheException;
-import net.nelz.simplesm.providers.MemcacheTranscoder;
+import com.google.code.ssm.providers.MemcacheClient;
+import com.google.code.ssm.providers.MemcacheException;
+import com.google.code.ssm.providers.MemcacheTranscoder;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

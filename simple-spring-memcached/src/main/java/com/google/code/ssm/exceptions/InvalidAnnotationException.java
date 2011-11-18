@@ -1,4 +1,4 @@
-package net.nelz.simplesm.exceptions;
+package com.google.code.ssm.exceptions;
 
 /**
  * Copyright (c) 2008, 2009 Nelson Carpentier

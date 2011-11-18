@@ -1,4 +1,4 @@
-package net.nelz.simplesm.test.svc;
+package com.google.code.ssm.test.svc;
 
 import java.util.*;
 

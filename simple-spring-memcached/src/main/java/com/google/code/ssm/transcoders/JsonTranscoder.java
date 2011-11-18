@@ -1,12 +1,12 @@
-package net.nelz.simplesm.transcoders;
+package com.google.code.ssm.transcoders;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
-import net.nelz.simplesm.providers.CachedObject;
-import net.nelz.simplesm.providers.CachedObjectImpl;
-import net.nelz.simplesm.providers.MemcacheTranscoder;
+import com.google.code.ssm.providers.CachedObject;
+import com.google.code.ssm.providers.CachedObjectImpl;
+import com.google.code.ssm.providers.MemcacheTranscoder;
 
 import org.codehaus.jackson.map.ObjectMapper;
 import org.slf4j.Logger;

@@ -1,9 +1,9 @@
-package net.nelz.simplesm.impl;
+package com.google.code.ssm.impl;
 
 import static org.junit.Assert.*;
-import net.nelz.simplesm.exceptions.InvalidAnnotationException;
-import net.nelz.simplesm.aop.CacheKeyMethodStoreImpl;
-import net.nelz.simplesm.api.CacheKeyMethod;
+import com.google.code.ssm.exceptions.InvalidAnnotationException;
+import com.google.code.ssm.aop.CacheKeyMethodStoreImpl;
+import com.google.code.ssm.api.CacheKeyMethod;
 
 import java.lang.reflect.Method;
 import java.util.List;

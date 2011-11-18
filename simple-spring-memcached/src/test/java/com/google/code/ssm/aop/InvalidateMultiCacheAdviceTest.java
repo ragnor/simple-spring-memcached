@@ -1,4 +1,4 @@
-package net.nelz.simplesm.aop;
+package com.google.code.ssm.aop;
 
 import static org.junit.Assert.*;
 
@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import net.nelz.simplesm.exceptions.InvalidAnnotationException;
+import com.google.code.ssm.exceptions.InvalidAnnotationException;
 
 /**
  * Copyright (c) 2008, 2009 Nelson Carpentier

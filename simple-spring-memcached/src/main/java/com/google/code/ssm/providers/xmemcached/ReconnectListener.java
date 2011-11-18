@@ -1,4 +1,4 @@
-package net.nelz.simplesm.providers.xmemcached;
+package com.google.code.ssm.providers.xmemcached;
 
 import java.net.InetSocketAddress;
 import java.util.HashMap;

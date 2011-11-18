@@ -1,4 +1,4 @@
-package net.nelz.simplesm.api;
+package com.google.code.ssm.api;
 
 import java.lang.annotation.*;
 

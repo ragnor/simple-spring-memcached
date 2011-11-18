@@ -1,6 +1,6 @@
-package net.nelz.simplesm.aop.counter;
+package com.google.code.ssm.aop.counter;
 
-import net.nelz.simplesm.aop.AbstractCacheTest;
+import com.google.code.ssm.aop.AbstractCacheTest;
 
 /**
  * Copyright (c) 2011 Jakub Białek

@@ -1,4 +1,4 @@
-package net.nelz.simplesm.providers.xmemcached;
+package com.google.code.ssm.providers.xmemcached;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -9,8 +9,8 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.concurrent.TimeoutException;
 
-import net.nelz.simplesm.providers.MemcacheException;
-import net.nelz.simplesm.providers.MemcacheTranscoder;
+import com.google.code.ssm.providers.MemcacheException;
+import com.google.code.ssm.providers.MemcacheTranscoder;
 import net.rubyeye.xmemcached.MemcachedClient;
 import net.rubyeye.xmemcached.exception.MemcachedException;
 import net.rubyeye.xmemcached.transcoders.Transcoder;

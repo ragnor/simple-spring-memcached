@@ -1,9 +1,9 @@
-package net.nelz.simplesm.aop;
+package com.google.code.ssm.aop;
 
 import java.lang.reflect.Method;
 import java.security.InvalidParameterException;
 
-import net.nelz.simplesm.api.InvalidateSingleCache;
+import com.google.code.ssm.api.InvalidateSingleCache;
 
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
@@ -35,7 +35,7 @@ import org.slf4j.LoggerFactory;
 public class InvalidateSingleCacheAdvice extends CacheBase {
     private static final Logger LOG = LoggerFactory.getLogger(InvalidateSingleCacheAdvice.class);
 
-    @Pointcut("@annotation(net.nelz.simplesm.api.InvalidateSingleCache)")
+    @Pointcut("@annotation(com.google.code.ssm.api.InvalidateSingleCache)")
     public void invalidateSingle() {
     }
 

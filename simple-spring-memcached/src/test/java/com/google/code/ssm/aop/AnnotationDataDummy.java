@@ -1,6 +1,6 @@
-package net.nelz.simplesm.aop;
+package com.google.code.ssm.aop;
 
-import net.nelz.simplesm.api.*;
+import com.google.code.ssm.api.*;
 
 /**
  * Copyright (c) 2008, 2009 Nelson Carpentier

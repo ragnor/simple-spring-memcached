@@ -1,10 +1,10 @@
-package net.nelz.simplesm.test;
+package com.google.code.ssm.test;
 
 import static org.junit.Assert.assertEquals;
 
 import java.util.List;
 
-import net.nelz.simplesm.test.svc.TestSvc;
+import com.google.code.ssm.test.svc.TestSvc;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;

@@ -1,12 +1,12 @@
-package net.nelz.simplesm.aop.counter;
+package com.google.code.ssm.aop.counter;
 
 import java.lang.reflect.Method;
 
-import net.nelz.simplesm.aop.AnnotationData;
-import net.nelz.simplesm.aop.AnnotationDataBuilder;
-import net.nelz.simplesm.api.counter.ReadCounterFromCache;
-import net.nelz.simplesm.providers.MemcacheTranscoder;
-import net.nelz.simplesm.transcoders.LongToStringTranscoder;
+import com.google.code.ssm.aop.AnnotationData;
+import com.google.code.ssm.aop.AnnotationDataBuilder;
+import com.google.code.ssm.api.counter.ReadCounterFromCache;
+import com.google.code.ssm.providers.MemcacheTranscoder;
+import com.google.code.ssm.transcoders.LongToStringTranscoder;
 
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
@@ -41,7 +41,7 @@ public class ReadCounterFromCacheAdvice extends CounterInCacheBase {
 
     private final MemcacheTranscoder<Long> transcoder = new LongToStringTranscoder();
 
-    @Pointcut("@annotation(net.nelz.simplesm.api.counter.ReadCounterFromCache)")
+    @Pointcut("@annotation(com.google.code.ssm.api.counter.ReadCounterFromCache)")
     public void readSingleCounter() {
     }
 

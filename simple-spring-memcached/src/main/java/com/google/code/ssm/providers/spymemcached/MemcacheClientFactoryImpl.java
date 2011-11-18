@@ -1,12 +1,12 @@
-package net.nelz.simplesm.providers.spymemcached;
+package com.google.code.ssm.providers.spymemcached;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.util.List;
 
-import net.nelz.simplesm.config.MemcachedConnectionBean;
-import net.nelz.simplesm.providers.MemcacheClient;
-import net.nelz.simplesm.providers.MemcacheClientFactory;
+import com.google.code.ssm.config.MemcachedConnectionBean;
+import com.google.code.ssm.providers.MemcacheClient;
+import com.google.code.ssm.providers.MemcacheClientFactory;
 import net.spy.memcached.ConnectionFactory;
 import net.spy.memcached.ConnectionFactoryBuilder;
 import net.spy.memcached.FailureMode;

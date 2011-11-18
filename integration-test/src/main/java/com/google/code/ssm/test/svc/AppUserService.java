@@ -1,8 +1,8 @@
-package net.nelz.simplesm.test.svc;
+package com.google.code.ssm.test.svc;
 
 import java.util.List;
 
-import net.nelz.simplesm.test.entity.AppUser;
+import com.google.code.ssm.test.entity.AppUser;
 
 /**
  * Copyright (c) 2010, 2011 Jakub Białek

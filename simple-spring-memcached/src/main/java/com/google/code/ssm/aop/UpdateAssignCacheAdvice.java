@@ -1,8 +1,8 @@
-package net.nelz.simplesm.aop;
+package com.google.code.ssm.aop;
 
 import java.lang.reflect.Method;
 
-import net.nelz.simplesm.api.UpdateAssignCache;
+import com.google.code.ssm.api.UpdateAssignCache;
 
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.AfterReturning;
@@ -34,7 +34,7 @@ import org.slf4j.LoggerFactory;
 public class UpdateAssignCacheAdvice extends CacheBase {
     private static final Logger LOG = LoggerFactory.getLogger(UpdateAssignCacheAdvice.class);
 
-    @Pointcut("@annotation(net.nelz.simplesm.api.UpdateAssignCache)")
+    @Pointcut("@annotation(com.google.code.ssm.api.UpdateAssignCache)")
     public void updateAssign() {
     }
 

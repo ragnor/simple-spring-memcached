@@ -1,4 +1,4 @@
-package net.nelz.simplesm.providers.xmemcached;
+package com.google.code.ssm.providers.xmemcached;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
@@ -11,11 +11,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeoutException;
 
-import net.nelz.simplesm.providers.CachedObject;
-import net.nelz.simplesm.providers.CachedObjectImpl;
-import net.nelz.simplesm.providers.MemcacheClient;
-import net.nelz.simplesm.providers.MemcacheException;
-import net.nelz.simplesm.providers.MemcacheTranscoder;
+import com.google.code.ssm.providers.CachedObject;
+import com.google.code.ssm.providers.CachedObjectImpl;
+import com.google.code.ssm.providers.MemcacheClient;
+import com.google.code.ssm.providers.MemcacheException;
+import com.google.code.ssm.providers.MemcacheTranscoder;
 import net.rubyeye.xmemcached.MemcachedClient;
 import net.rubyeye.xmemcached.exception.MemcachedException;
 import net.rubyeye.xmemcached.transcoders.CachedData;

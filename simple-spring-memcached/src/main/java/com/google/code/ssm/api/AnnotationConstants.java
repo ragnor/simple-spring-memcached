@@ -1,4 +1,4 @@
-package net.nelz.simplesm.api;
+package com.google.code.ssm.api;
 
 /**
  * Copyright (c) 2008, 2009 Nelson Carpentier

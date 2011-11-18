@@ -1,4 +1,4 @@
-package net.nelz.simplesm.providers;
+package com.google.code.ssm.providers;
 
 import java.net.SocketAddress;
 import java.util.Collection;

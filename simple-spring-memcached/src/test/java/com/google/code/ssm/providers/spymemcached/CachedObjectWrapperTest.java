@@ -1,7 +1,7 @@
-package net.nelz.simplesm.providers.spymemcached;
+package com.google.code.ssm.providers.spymemcached;
 
 import static org.junit.Assert.assertEquals;
-import net.nelz.simplesm.providers.CachedObject;
+import com.google.code.ssm.providers.CachedObject;
 import net.spy.memcached.CachedData;
 
 import org.junit.Before;

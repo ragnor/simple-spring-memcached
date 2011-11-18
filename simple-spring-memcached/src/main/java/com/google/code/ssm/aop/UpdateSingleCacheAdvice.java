@@ -1,9 +1,9 @@
-package net.nelz.simplesm.aop;
+package com.google.code.ssm.aop;
 
 import java.lang.reflect.Method;
 import java.util.Collection;
 
-import net.nelz.simplesm.api.UpdateSingleCache;
+import com.google.code.ssm.api.UpdateSingleCache;
 
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.AfterReturning;
@@ -35,7 +35,7 @@ import org.slf4j.LoggerFactory;
 public class UpdateSingleCacheAdvice extends CacheBase {
     private static final Logger LOG = LoggerFactory.getLogger(UpdateSingleCacheAdvice.class);
 
-    @Pointcut("@annotation(net.nelz.simplesm.api.UpdateSingleCache)")
+    @Pointcut("@annotation(com.google.code.ssm.api.UpdateSingleCache)")
     public void updateSingle() {
     }
 

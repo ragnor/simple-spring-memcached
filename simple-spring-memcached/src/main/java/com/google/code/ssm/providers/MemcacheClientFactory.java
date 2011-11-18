@@ -1,10 +1,10 @@
-package net.nelz.simplesm.providers;
+package com.google.code.ssm.providers;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.util.List;
 
-import net.nelz.simplesm.config.MemcachedConnectionBean;
+import com.google.code.ssm.config.MemcachedConnectionBean;
 
 /**
  * Copyright (c) 2010, 2011 Jakub Białek

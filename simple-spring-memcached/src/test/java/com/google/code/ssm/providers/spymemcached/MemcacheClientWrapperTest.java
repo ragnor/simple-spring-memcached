@@ -1,4 +1,4 @@
-package net.nelz.simplesm.providers.spymemcached;
+package com.google.code.ssm.providers.spymemcached;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -11,8 +11,8 @@ import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
-import net.nelz.simplesm.providers.MemcacheException;
-import net.nelz.simplesm.providers.MemcacheTranscoder;
+import com.google.code.ssm.providers.MemcacheException;
+import com.google.code.ssm.providers.MemcacheTranscoder;
 import net.spy.memcached.MemcachedClientIF;
 import net.spy.memcached.transcoders.Transcoder;
 

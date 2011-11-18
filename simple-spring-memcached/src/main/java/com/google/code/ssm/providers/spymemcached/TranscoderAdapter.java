@@ -1,7 +1,7 @@
-package net.nelz.simplesm.providers.spymemcached;
+package com.google.code.ssm.providers.spymemcached;
 
-import net.nelz.simplesm.providers.CachedObject;
-import net.nelz.simplesm.providers.MemcacheTranscoder;
+import com.google.code.ssm.providers.CachedObject;
+import com.google.code.ssm.providers.MemcacheTranscoder;
 import net.spy.memcached.CachedData;
 import net.spy.memcached.transcoders.Transcoder;
 

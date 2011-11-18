@@ -1,4 +1,4 @@
-package net.nelz.simplesm.aop;
+package com.google.code.ssm.aop;
 
 import static org.easymock.EasyMock.createMock;
 import static org.easymock.EasyMock.expect;
@@ -12,8 +12,8 @@ import static org.junit.Assert.fail;
 import java.lang.reflect.Method;
 import java.security.InvalidParameterException;
 
-import net.nelz.simplesm.api.CacheKeyMethod;
-import net.nelz.simplesm.providers.MemcacheClient;
+import com.google.code.ssm.api.CacheKeyMethod;
+import com.google.code.ssm.providers.MemcacheClient;
 
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.reflect.MethodSignature;
@@ -242,7 +242,7 @@ public class ReadThroughSingleCacheMockTest {
     @SuppressWarnings("unused")
     private static class AOPTargetClass2 {
 
-        @net.nelz.simplesm.api.ReadThroughSingleCache(namespace = "BUBBA", expiration = 3600)
+        @com.google.code.ssm.api.ReadThroughSingleCache(namespace = "BUBBA", expiration = 3600)
         public String cacheThis(final AOPKeyClass p1) {
             throw new RuntimeException("Forced.");
         }

@@ -1,4 +1,4 @@
-package net.nelz.simplesm.test;
+package com.google.code.ssm.test;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -9,7 +9,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import net.nelz.simplesm.test.svc.TestSvc;
+import com.google.code.ssm.test.svc.TestSvc;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;

@@ -1,4 +1,4 @@
-package net.nelz.simplesm.config;
+package com.google.code.ssm.config;
 
 import static org.junit.Assert.*;
 

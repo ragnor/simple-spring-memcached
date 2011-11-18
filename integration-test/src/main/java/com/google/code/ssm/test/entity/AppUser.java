@@ -1,11 +1,11 @@
-package net.nelz.simplesm.test.entity;
+package com.google.code.ssm.test.entity;
 
 import java.io.Externalizable;
 import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
 
-import net.nelz.simplesm.api.CacheKeyMethod;
+import com.google.code.ssm.api.CacheKeyMethod;
 
 /**
  * Copyright (c) 2010, 2011 Jakub Białek

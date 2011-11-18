@@ -1,4 +1,4 @@
-package net.nelz.simplesm.mapper;
+package com.google.code.ssm.mapper;
 
 import org.codehaus.jackson.map.DeserializationConfig;
 import org.codehaus.jackson.map.ObjectMapper;

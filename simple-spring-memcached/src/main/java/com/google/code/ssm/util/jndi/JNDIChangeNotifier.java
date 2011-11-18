@@ -1,4 +1,4 @@
-package net.nelz.simplesm.util.jndi;
+package com.google.code.ssm.util.jndi;
 
 import javax.annotation.PostConstruct;
 import javax.naming.NamingException;

@@ -1,4 +1,4 @@
-package net.nelz.simplesm.util.jndi;
+package com.google.code.ssm.util.jndi;
 
 /**
  * Copyright (c) 2010, 2011 Jakub Białek

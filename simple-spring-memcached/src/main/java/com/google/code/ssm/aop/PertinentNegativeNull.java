@@ -1,8 +1,8 @@
-package net.nelz.simplesm.aop;
+package com.google.code.ssm.aop;
 
 import java.io.*;
 
-import net.nelz.simplesm.parser.PertinentNegativeNullJsonSerializer;
+import com.google.code.ssm.parser.PertinentNegativeNullJsonSerializer;
 
 import org.codehaus.jackson.map.annotate.JsonSerialize;
 

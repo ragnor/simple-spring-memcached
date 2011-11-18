@@ -1,9 +1,9 @@
-package net.nelz.simplesm.impl;
+package com.google.code.ssm.impl;
 
-import net.nelz.simplesm.api.KeyProvider;
-import net.nelz.simplesm.api.CacheKeyMethod;
-import net.nelz.simplesm.exceptions.InvalidAnnotationException;
-import net.nelz.simplesm.aop.CacheKeyMethodStore;
+import com.google.code.ssm.api.KeyProvider;
+import com.google.code.ssm.api.CacheKeyMethod;
+import com.google.code.ssm.exceptions.InvalidAnnotationException;
+import com.google.code.ssm.aop.CacheKeyMethodStore;
 
 import java.util.List;
 import java.util.ArrayList;

@@ -1,4 +1,4 @@
-package net.nelz.simplesm.config;
+package com.google.code.ssm.config;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -14,8 +14,8 @@ import java.util.List;
 
 import javax.naming.NamingException;
 
-import net.nelz.simplesm.providers.MemcacheClient;
-import net.nelz.simplesm.providers.MemcacheClientFactory;
+import com.google.code.ssm.providers.MemcacheClient;
+import com.google.code.ssm.providers.MemcacheClientFactory;
 
 import org.easymock.EasyMock;
 import org.easymock.IAnswer;

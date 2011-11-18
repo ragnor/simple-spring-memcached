@@ -1,7 +1,7 @@
-package net.nelz.simplesm.test.counter;
+package com.google.code.ssm.test.counter;
 
 import static org.junit.Assert.assertEquals;
-import net.nelz.simplesm.test.svc.TestSvc;
+import com.google.code.ssm.test.svc.TestSvc;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;

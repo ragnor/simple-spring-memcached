@@ -1,8 +1,8 @@
-package net.nelz.simplesm.aop;
+package com.google.code.ssm.aop;
 
 import java.lang.reflect.Method;
 
-import net.nelz.simplesm.api.ReadThroughSingleCache;
+import com.google.code.ssm.api.ReadThroughSingleCache;
 
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.ProceedingJoinPoint;
@@ -35,7 +35,7 @@ import org.slf4j.LoggerFactory;
 public class ReadThroughSingleCacheAdvice extends CacheBase {
     private static final Logger LOG = LoggerFactory.getLogger(ReadThroughSingleCacheAdvice.class);
 
-    @Pointcut("@annotation(net.nelz.simplesm.api.ReadThroughSingleCache)")
+    @Pointcut("@annotation(com.google.code.ssm.api.ReadThroughSingleCache)")
     public void getSingle() {
     }
 

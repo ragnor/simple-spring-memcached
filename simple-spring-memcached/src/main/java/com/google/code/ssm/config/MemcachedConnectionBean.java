@@ -1,4 +1,4 @@
-package net.nelz.simplesm.config;
+package com.google.code.ssm.config;
 
 /**
  * Copyright (c) 2008, 2009 Nelson Carpentier

@@ -1,10 +1,10 @@
-package net.nelz.simplesm.test.dao;
+package com.google.code.ssm.test.dao;
 
 import java.util.Collection;
 import java.util.List;
 
-import net.nelz.simplesm.test.entity.AppUser;
-import net.nelz.simplesm.test.entity.AppUserPK;
+import com.google.code.ssm.test.entity.AppUser;
+import com.google.code.ssm.test.entity.AppUserPK;
 
 /**
  * Copyright (c) 2010, 2011 Jakub Białek

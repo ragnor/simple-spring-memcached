@@ -1,6 +1,6 @@
-package net.nelz.simplesm.test.svc;
+package com.google.code.ssm.test.svc;
 
-import net.nelz.simplesm.test.dao.*;
+import com.google.code.ssm.test.dao.*;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.*;

@@ -1,4 +1,4 @@
-package net.nelz.simplesm.aop;
+package com.google.code.ssm.aop;
 
 import java.util.Collection;
 

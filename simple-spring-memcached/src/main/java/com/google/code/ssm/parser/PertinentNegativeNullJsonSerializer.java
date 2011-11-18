@@ -1,8 +1,8 @@
-package net.nelz.simplesm.parser;
+package com.google.code.ssm.parser;
 
 import java.io.IOException;
 
-import net.nelz.simplesm.aop.PertinentNegativeNull;
+import com.google.code.ssm.aop.PertinentNegativeNull;
 
 import org.codehaus.jackson.JsonGenerator;
 import org.codehaus.jackson.JsonProcessingException;

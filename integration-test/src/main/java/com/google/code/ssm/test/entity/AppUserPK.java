@@ -1,8 +1,8 @@
-package net.nelz.simplesm.test.entity;
+package com.google.code.ssm.test.entity;
 
 import java.io.Serializable;
 
-import net.nelz.simplesm.api.CacheKeyMethod;
+import com.google.code.ssm.api.CacheKeyMethod;
 
 /**
  * Copyright (c) 2010, 2011 Jakub Białek

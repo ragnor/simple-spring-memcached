@@ -1,4 +1,4 @@
-package net.nelz.simplesm.aop;
+package com.google.code.ssm.aop;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -8,11 +8,11 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 
-import net.nelz.simplesm.api.ParameterDataUpdateContent;
-import net.nelz.simplesm.api.ParameterValueKeyProvider;
-import net.nelz.simplesm.api.UpdateMultiCache;
-import net.nelz.simplesm.exceptions.InvalidAnnotationException;
-import net.nelz.simplesm.providers.MemcacheClient;
+import com.google.code.ssm.api.ParameterDataUpdateContent;
+import com.google.code.ssm.api.ParameterValueKeyProvider;
+import com.google.code.ssm.api.UpdateMultiCache;
+import com.google.code.ssm.exceptions.InvalidAnnotationException;
+import com.google.code.ssm.providers.MemcacheClient;
 
 import org.apache.commons.lang.RandomStringUtils;
 import org.easymock.EasyMock;

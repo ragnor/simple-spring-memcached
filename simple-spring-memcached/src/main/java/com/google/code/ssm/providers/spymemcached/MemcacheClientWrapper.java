@@ -1,4 +1,4 @@
-package net.nelz.simplesm.providers.spymemcached;
+package com.google.code.ssm.providers.spymemcached;
 
 import java.net.SocketAddress;
 import java.util.Collection;
@@ -9,11 +9,11 @@ import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
-import net.nelz.simplesm.providers.CachedObject;
-import net.nelz.simplesm.providers.CachedObjectImpl;
-import net.nelz.simplesm.providers.MemcacheClient;
-import net.nelz.simplesm.providers.MemcacheException;
-import net.nelz.simplesm.providers.MemcacheTranscoder;
+import com.google.code.ssm.providers.CachedObject;
+import com.google.code.ssm.providers.CachedObjectImpl;
+import com.google.code.ssm.providers.MemcacheClient;
+import com.google.code.ssm.providers.MemcacheException;
+import com.google.code.ssm.providers.MemcacheTranscoder;
 import net.spy.memcached.CachedData;
 import net.spy.memcached.MemcachedClientIF;
 import net.spy.memcached.OperationTimeoutException;

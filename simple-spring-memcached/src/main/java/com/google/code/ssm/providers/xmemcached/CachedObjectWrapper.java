@@ -1,6 +1,6 @@
-package net.nelz.simplesm.providers.xmemcached;
+package com.google.code.ssm.providers.xmemcached;
 
-import net.nelz.simplesm.providers.CachedObject;
+import com.google.code.ssm.providers.CachedObject;
 import net.rubyeye.xmemcached.transcoders.CachedData;
 
 /**

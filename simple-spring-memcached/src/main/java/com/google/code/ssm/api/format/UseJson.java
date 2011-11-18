@@ -1,11 +1,11 @@
-package net.nelz.simplesm.api.format;
+package com.google.code.ssm.api.format;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import net.nelz.simplesm.impl.NoClass;
+import com.google.code.ssm.impl.NoClass;
 
 /**
  * Copyright (c) 2010, 2011 Jakub Białek

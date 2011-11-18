@@ -1,8 +1,8 @@
-package net.nelz.simplesm.transcoders;
+package com.google.code.ssm.transcoders;
 
 import java.util.Map;
 
-import net.nelz.simplesm.providers.MemcacheTranscoder;
+import com.google.code.ssm.providers.MemcacheTranscoder;
 
 import org.springframework.beans.factory.annotation.Autowired;
 

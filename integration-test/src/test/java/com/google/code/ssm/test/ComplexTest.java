@@ -1,12 +1,12 @@
-package net.nelz.simplesm.test;
+package com.google.code.ssm.test;
 
 import static org.junit.Assert.*;
 
 import java.util.Arrays;
 import java.util.List;
 
-import net.nelz.simplesm.test.entity.AppUser;
-import net.nelz.simplesm.test.svc.AppUserService;
+import com.google.code.ssm.test.entity.AppUser;
+import com.google.code.ssm.test.svc.AppUserService;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;

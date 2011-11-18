@@ -9,11 +9,11 @@
 
 	<aop:aspectj-autoproxy />
 	
-	<bean id="memcachedConnectionBean" class="net.nelz.simplesm.config.MemcachedConnectionBean">
+	<bean id="memcachedConnectionBean" class="com.google.code.ssm.config.MemcachedConnectionBean">
 		<property name="consistentHashing" value="true" />
 		<property name="nodeList" value="127.0.0.1:11211" />
 	</bean>
 
-	<bean id="clientFactory" class="net.nelz.simplesm.providers.spymemcached.MemcacheClientFactoryImpl" />
+	<bean id="clientFactory" class="com.google.code.ssm.providers.spymemcached.MemcacheClientFactoryImpl" />
 
 </beans>

@@ -1,11 +1,11 @@
-package net.nelz.simplesm.aop.counter;
+package com.google.code.ssm.aop.counter;
 
 import java.lang.reflect.Method;
 import java.util.Collection;
 
-import net.nelz.simplesm.aop.CacheBase;
-
 import org.aspectj.lang.JoinPoint;
+
+import com.google.code.ssm.aop.CacheBase;
 
 /**
  * Copyright (c) 2011 Jakub Białek

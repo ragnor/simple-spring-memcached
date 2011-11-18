@@ -1,4 +1,4 @@
-package net.nelz.simplesm.aop;
+package com.google.code.ssm.aop;
 
 import java.lang.reflect.Method;
 import java.security.InvalidParameterException;
@@ -10,16 +10,16 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeoutException;
 
-import net.nelz.simplesm.api.CacheKeyMethod;
-import net.nelz.simplesm.api.KeyProvider;
-import net.nelz.simplesm.api.ReadThroughMultiCache;
-import net.nelz.simplesm.api.format.UseJson;
-import net.nelz.simplesm.exceptions.InvalidAnnotationException;
-import net.nelz.simplesm.impl.NoClass;
-import net.nelz.simplesm.providers.MemcacheClient;
-import net.nelz.simplesm.providers.MemcacheException;
-import net.nelz.simplesm.providers.MemcacheTranscoder;
-import net.nelz.simplesm.transcoders.JsonTranscoders;
+import com.google.code.ssm.api.CacheKeyMethod;
+import com.google.code.ssm.api.KeyProvider;
+import com.google.code.ssm.api.ReadThroughMultiCache;
+import com.google.code.ssm.api.format.UseJson;
+import com.google.code.ssm.exceptions.InvalidAnnotationException;
+import com.google.code.ssm.impl.NoClass;
+import com.google.code.ssm.providers.MemcacheClient;
+import com.google.code.ssm.providers.MemcacheException;
+import com.google.code.ssm.providers.MemcacheTranscoder;
+import com.google.code.ssm.transcoders.JsonTranscoders;
 
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.Signature;

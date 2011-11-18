@@ -1,4 +1,4 @@
-package net.nelz.simplesm.aop.counter;
+package com.google.code.ssm.aop.counter;
 
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.only;
@@ -7,8 +7,8 @@ import static org.mockito.Mockito.verify;
 import java.util.Arrays;
 import java.util.Collection;
 
-import net.nelz.simplesm.api.ParameterValueKeyProvider;
-import net.nelz.simplesm.api.counter.IncrementCounterInCache;
+import com.google.code.ssm.api.ParameterValueKeyProvider;
+import com.google.code.ssm.api.counter.IncrementCounterInCache;
 
 import org.hamcrest.CoreMatchers;
 import org.junit.Assume;

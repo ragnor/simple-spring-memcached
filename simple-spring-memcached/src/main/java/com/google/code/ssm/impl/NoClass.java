@@ -1,4 +1,4 @@
-package net.nelz.simplesm.impl;
+package com.google.code.ssm.impl;
 
 /**
  * Copyright (c) 2010, 2011 Jakub Białek

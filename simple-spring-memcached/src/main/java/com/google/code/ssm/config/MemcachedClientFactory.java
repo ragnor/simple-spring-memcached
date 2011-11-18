@@ -1,4 +1,4 @@
-package net.nelz.simplesm.config;
+package com.google.code.ssm.config;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
@@ -7,9 +7,9 @@ import java.util.List;
 
 import javax.naming.NamingException;
 
-import net.nelz.simplesm.providers.MemcacheClient;
-import net.nelz.simplesm.providers.MemcacheClientFactory;
-import net.nelz.simplesm.util.jndi.JNDIChangeListener;
+import com.google.code.ssm.providers.MemcacheClient;
+import com.google.code.ssm.providers.MemcacheClientFactory;
+import com.google.code.ssm.util.jndi.JNDIChangeListener;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

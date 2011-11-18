@@ -1,8 +1,8 @@
-package net.nelz.simplesm.aop;
+package com.google.code.ssm.aop;
 
 import java.lang.reflect.Method;
 
-import net.nelz.simplesm.api.ReadThroughAssignCache;
+import com.google.code.ssm.api.ReadThroughAssignCache;
 
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
@@ -34,7 +34,7 @@ import org.slf4j.LoggerFactory;
 public class ReadThroughAssignCacheAdvice extends CacheBase {
     private static final Logger LOG = LoggerFactory.getLogger(ReadThroughAssignCacheAdvice.class);
 
-    @Pointcut("@annotation(net.nelz.simplesm.api.ReadThroughAssignCache)")
+    @Pointcut("@annotation(com.google.code.ssm.api.ReadThroughAssignCache)")
     public void getSingleAssign() {
     }
 

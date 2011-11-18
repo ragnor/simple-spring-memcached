@@ -1,4 +1,4 @@
-package net.nelz.simplesm.aop;
+package com.google.code.ssm.aop;
 
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
@@ -7,7 +7,7 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.security.InvalidParameterException;
 
-import net.nelz.simplesm.api.ReadThroughAssignCache;
+import com.google.code.ssm.api.ReadThroughAssignCache;
 
 import org.junit.Test;
 

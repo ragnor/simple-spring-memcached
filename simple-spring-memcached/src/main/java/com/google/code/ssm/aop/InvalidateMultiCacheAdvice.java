@@ -1,10 +1,10 @@
-package net.nelz.simplesm.aop;
+package com.google.code.ssm.aop;
 
 import java.lang.reflect.Method;
 import java.util.List;
 
-import net.nelz.simplesm.api.InvalidateMultiCache;
-import net.nelz.simplesm.exceptions.InvalidAnnotationException;
+import com.google.code.ssm.api.InvalidateMultiCache;
+import com.google.code.ssm.exceptions.InvalidAnnotationException;
 
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
@@ -35,7 +35,7 @@ import org.slf4j.LoggerFactory;
 public class InvalidateMultiCacheAdvice extends CacheBase {
     private static final Logger LOG = LoggerFactory.getLogger(InvalidateMultiCacheAdvice.class);
 
-    @Pointcut("@annotation(net.nelz.simplesm.api.InvalidateMultiCache)")
+    @Pointcut("@annotation(com.google.code.ssm.api.InvalidateMultiCache)")
     public void invalidateMulti() {
     }
 

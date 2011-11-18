@@ -1,26 +1,26 @@
-package net.nelz.simplesm.test.dao;
+package com.google.code.ssm.test.dao;
 
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import net.nelz.simplesm.api.InvalidateAssignCache;
-import net.nelz.simplesm.api.InvalidateMultiCache;
-import net.nelz.simplesm.api.InvalidateSingleCache;
-import net.nelz.simplesm.api.ParameterDataUpdateContent;
-import net.nelz.simplesm.api.ParameterValueKeyProvider;
-import net.nelz.simplesm.api.ReadThroughAssignCache;
-import net.nelz.simplesm.api.ReadThroughMultiCache;
-import net.nelz.simplesm.api.ReadThroughSingleCache;
-import net.nelz.simplesm.api.ReturnDataUpdateContent;
-import net.nelz.simplesm.api.ReturnValueKeyProvider;
-import net.nelz.simplesm.api.UpdateAssignCache;
-import net.nelz.simplesm.api.UpdateMultiCache;
-import net.nelz.simplesm.api.UpdateSingleCache;
-import net.nelz.simplesm.api.counter.DecrementCounterInCache;
-import net.nelz.simplesm.api.counter.IncrementCounterInCache;
-import net.nelz.simplesm.api.counter.ReadCounterFromCache;
-import net.nelz.simplesm.api.counter.UpdateCounterInCache;
+import com.google.code.ssm.api.InvalidateAssignCache;
+import com.google.code.ssm.api.InvalidateMultiCache;
+import com.google.code.ssm.api.InvalidateSingleCache;
+import com.google.code.ssm.api.ParameterDataUpdateContent;
+import com.google.code.ssm.api.ParameterValueKeyProvider;
+import com.google.code.ssm.api.ReadThroughAssignCache;
+import com.google.code.ssm.api.ReadThroughMultiCache;
+import com.google.code.ssm.api.ReadThroughSingleCache;
+import com.google.code.ssm.api.ReturnDataUpdateContent;
+import com.google.code.ssm.api.ReturnValueKeyProvider;
+import com.google.code.ssm.api.UpdateAssignCache;
+import com.google.code.ssm.api.UpdateMultiCache;
+import com.google.code.ssm.api.UpdateSingleCache;
+import com.google.code.ssm.api.counter.DecrementCounterInCache;
+import com.google.code.ssm.api.counter.IncrementCounterInCache;
+import com.google.code.ssm.api.counter.ReadCounterFromCache;
+import com.google.code.ssm.api.counter.UpdateCounterInCache;
 
 import org.apache.commons.lang.RandomStringUtils;
 import org.apache.commons.lang.math.RandomUtils;

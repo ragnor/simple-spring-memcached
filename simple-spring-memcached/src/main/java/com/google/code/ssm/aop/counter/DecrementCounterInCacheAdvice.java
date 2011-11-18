@@ -1,10 +1,6 @@
-package net.nelz.simplesm.aop.counter;
+package com.google.code.ssm.aop.counter;
 
 import java.lang.reflect.Method;
-
-import net.nelz.simplesm.aop.AnnotationData;
-import net.nelz.simplesm.aop.AnnotationDataBuilder;
-import net.nelz.simplesm.api.counter.DecrementCounterInCache;
 
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.AfterReturning;
@@ -12,6 +8,10 @@ import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.code.ssm.aop.AnnotationData;
+import com.google.code.ssm.aop.AnnotationDataBuilder;
+import com.google.code.ssm.api.counter.DecrementCounterInCache;
 
 /**
  * Copyright (c) 2010, 2011 Jakub Białek
@@ -37,7 +37,7 @@ public class DecrementCounterInCacheAdvice extends CounterInCacheBase {
 
     private static final Logger LOG = LoggerFactory.getLogger(DecrementCounterInCacheAdvice.class);
 
-    @Pointcut("@annotation(net.nelz.simplesm.api.counter.DecrementCounterInCache)")
+    @Pointcut("@annotation(com.google.code.ssm.api.counter.DecrementCounterInCache)")
     public void decrementSingleCounter() {
     }
 

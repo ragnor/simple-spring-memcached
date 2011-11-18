@@ -1,4 +1,4 @@
-package net.nelz.simplesm.aop.counter;
+package com.google.code.ssm.aop.counter;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Matchers.any;
@@ -13,10 +13,10 @@ import static org.mockito.Mockito.when;
 import java.util.Arrays;
 import java.util.Collection;
 
-import net.nelz.simplesm.api.ParameterValueKeyProvider;
-import net.nelz.simplesm.api.counter.ReadCounterFromCache;
-import net.nelz.simplesm.providers.MemcacheTranscoder;
-import net.nelz.simplesm.test.Point;
+import com.google.code.ssm.api.ParameterValueKeyProvider;
+import com.google.code.ssm.api.counter.ReadCounterFromCache;
+import com.google.code.ssm.providers.MemcacheTranscoder;
+import com.google.code.ssm.test.Point;
 
 import org.hamcrest.CoreMatchers;
 import org.junit.Assume;

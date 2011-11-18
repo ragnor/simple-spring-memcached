@@ -1,7 +1,7 @@
-package net.nelz.simplesm.aop;
+package com.google.code.ssm.aop;
 
 import static org.junit.Assert.*;
-import net.nelz.simplesm.api.*;
+import com.google.code.ssm.api.*;
 import org.apache.commons.lang.*;
 import org.apache.commons.lang.math.*;
 import org.junit.Before;

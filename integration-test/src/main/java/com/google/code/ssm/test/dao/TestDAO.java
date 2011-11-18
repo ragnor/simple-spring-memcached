@@ -1,4 +1,4 @@
-package net.nelz.simplesm.test.dao;
+package com.google.code.ssm.test.dao;
 
 import java.util.*;
 

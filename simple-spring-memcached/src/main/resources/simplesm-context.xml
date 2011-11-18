@@ -10,9 +10,9 @@
 	<!-- mode: ${mode} -->
 	<!--<aop:aspectj-autoproxy /> -->
 
-	<context:component-scan base-package="net.nelz.simplesm" />
+	<context:component-scan base-package="com.google.code.ssm" />
 
-	<bean id="memcachedClientFactory" class="net.nelz.simplesm.config.MemcachedClientFactory">
+	<bean id="memcachedClientFactory" class="com.google.code.ssm.config.MemcachedClientFactory">
 		<property name="bean" ref="memcachedConnectionBean" />
 		<property name="clientFactory" ref="clientFactory" />
 	</bean>
@@ -20,72 +20,72 @@
 	<bean id="memcachedClient" factory-bean="memcachedClientFactory"
 		factory-method="createMemcachedClient" destroy-method="shutdown" />
 
-	<bean id="readThroughSingleCache" class="net.nelz.simplesm.aop.ReadThroughSingleCacheAdvice">
+	<bean id="readThroughSingleCache" class="com.google.code.ssm.aop.ReadThroughSingleCacheAdvice">
 		<property name="cache" ref="memcachedClient" />
 		<property name="methodStore" ref="methodStore" />
 		<property name="defaultKeyProvider" ref="defaultKeyProvider" />
 	</bean>
-	<bean id="readThroughMultiCache" class="net.nelz.simplesm.aop.ReadThroughMultiCacheAdvice">
+	<bean id="readThroughMultiCache" class="com.google.code.ssm.aop.ReadThroughMultiCacheAdvice">
 		<property name="cache" ref="memcachedClient" />
 		<property name="methodStore" ref="methodStore" />
 		<property name="defaultKeyProvider" ref="defaultKeyProvider" />
 	</bean>
-	<bean id="readThroughAssignCache" class="net.nelz.simplesm.aop.ReadThroughAssignCacheAdvice">
+	<bean id="readThroughAssignCache" class="com.google.code.ssm.aop.ReadThroughAssignCacheAdvice">
 		<property name="cache" ref="memcachedClient" />
 		<property name="methodStore" ref="methodStore" />
 		<property name="defaultKeyProvider" ref="defaultKeyProvider" />
 	</bean>
-	<bean id="updateSingleCache" class="net.nelz.simplesm.aop.UpdateSingleCacheAdvice">
+	<bean id="updateSingleCache" class="com.google.code.ssm.aop.UpdateSingleCacheAdvice">
 		<property name="cache" ref="memcachedClient" />
 		<property name="methodStore" ref="methodStore" />
 		<property name="defaultKeyProvider" ref="defaultKeyProvider" />
 	</bean>
-	<bean id="updateMultiCache" class="net.nelz.simplesm.aop.UpdateMultiCacheAdvice">
+	<bean id="updateMultiCache" class="com.google.code.ssm.aop.UpdateMultiCacheAdvice">
 		<property name="cache" ref="memcachedClient" />
 		<property name="methodStore" ref="methodStore" />
 		<property name="defaultKeyProvider" ref="defaultKeyProvider" />
 	</bean>
-	<bean id="updateAssignCache" class="net.nelz.simplesm.aop.UpdateAssignCacheAdvice">
+	<bean id="updateAssignCache" class="com.google.code.ssm.aop.UpdateAssignCacheAdvice">
 		<property name="cache" ref="memcachedClient" />
 		<property name="methodStore" ref="methodStore" />
 		<property name="defaultKeyProvider" ref="defaultKeyProvider" />
 	</bean>
-	<bean id="invalidateSingleCache" class="net.nelz.simplesm.aop.InvalidateSingleCacheAdvice">
+	<bean id="invalidateSingleCache" class="com.google.code.ssm.aop.InvalidateSingleCacheAdvice">
 		<property name="cache" ref="memcachedClient" />
 		<property name="methodStore" ref="methodStore" />
 		<property name="defaultKeyProvider" ref="defaultKeyProvider" />
 	</bean>
-	<bean id="invalidateMultiCache" class="net.nelz.simplesm.aop.InvalidateMultiCacheAdvice">
+	<bean id="invalidateMultiCache" class="com.google.code.ssm.aop.InvalidateMultiCacheAdvice">
 		<property name="cache" ref="memcachedClient" />
 		<property name="methodStore" ref="methodStore" />
 		<property name="defaultKeyProvider" ref="defaultKeyProvider" />
 	</bean>
-	<bean id="invalidateAssignCache" class="net.nelz.simplesm.aop.InvalidateAssignCacheAdvice">
+	<bean id="invalidateAssignCache" class="com.google.code.ssm.aop.InvalidateAssignCacheAdvice">
 		<property name="cache" ref="memcachedClient" />
 		<property name="methodStore" ref="methodStore" />
 		<property name="defaultKeyProvider" ref="defaultKeyProvider" />
 	</bean>
 
 	<bean id="incrementCounterInCache"
-		class="net.nelz.simplesm.aop.counter.IncrementCounterInCacheAdvice">
+		class="com.google.code.ssm.aop.counter.IncrementCounterInCacheAdvice">
 		<property name="cache" ref="memcachedClient" />
 		<property name="methodStore" ref="methodStore" />
 		<property name="defaultKeyProvider" ref="defaultKeyProvider" />
 	</bean>
 	<bean id="decrementCounterInCache"
-		class="net.nelz.simplesm.aop.counter.DecrementCounterInCacheAdvice">
+		class="com.google.code.ssm.aop.counter.DecrementCounterInCacheAdvice">
 		<property name="cache" ref="memcachedClient" />
 		<property name="methodStore" ref="methodStore" />
 		<property name="defaultKeyProvider" ref="defaultKeyProvider" />
 	</bean>
 	<bean id="readCounterFromCache"
-		class="net.nelz.simplesm.aop.counter.ReadCounterFromCacheAdvice">
+		class="com.google.code.ssm.aop.counter.ReadCounterFromCacheAdvice">
 		<property name="cache" ref="memcachedClient" />
 		<property name="methodStore" ref="methodStore" />
 		<property name="defaultKeyProvider" ref="defaultKeyProvider" />
 	</bean>
 	<bean id="updateCounterInCache"
-		class="net.nelz.simplesm.aop.counter.UpdateCounterInCacheAdvice">
+		class="com.google.code.ssm.aop.counter.UpdateCounterInCacheAdvice">
 		<property name="cache" ref="memcachedClient" />
 		<property name="methodStore" ref="methodStore" />
 		<property name="defaultKeyProvider" ref="defaultKeyProvider" />

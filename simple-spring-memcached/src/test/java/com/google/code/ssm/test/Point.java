@@ -1,6 +1,6 @@
-package net.nelz.simplesm.test;
+package com.google.code.ssm.test;
 
-import net.nelz.simplesm.api.CacheKeyMethod;
+import com.google.code.ssm.api.CacheKeyMethod;
 
 /**
  * Copyright (c) 2011 Jakub Białek

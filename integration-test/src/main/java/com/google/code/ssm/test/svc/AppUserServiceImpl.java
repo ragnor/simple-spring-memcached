@@ -1,4 +1,4 @@
-package net.nelz.simplesm.test.svc;
+package com.google.code.ssm.test.svc;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -7,9 +7,9 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
-import net.nelz.simplesm.test.dao.AppUserDAO;
-import net.nelz.simplesm.test.entity.AppUser;
-import net.nelz.simplesm.test.entity.AppUserPK;
+import com.google.code.ssm.test.dao.AppUserDAO;
+import com.google.code.ssm.test.entity.AppUser;
+import com.google.code.ssm.test.entity.AppUserPK;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

@@ -1,8 +1,8 @@
-package net.nelz.simplesm.aop;
+package com.google.code.ssm.aop;
 
 import static org.mockito.Mockito.when;
-import net.nelz.simplesm.api.KeyProvider;
-import net.nelz.simplesm.providers.MemcacheClient;
+import com.google.code.ssm.api.KeyProvider;
+import com.google.code.ssm.providers.MemcacheClient;
 
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.reflect.MethodSignature;

@@ -1,11 +1,11 @@
-package net.nelz.simplesm.api.counter;
+package com.google.code.ssm.api.counter;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import net.nelz.simplesm.api.AnnotationConstants;
+import com.google.code.ssm.api.AnnotationConstants;
 
 /**
  * Copyright (c) 2010, 2011 Jakub Białek

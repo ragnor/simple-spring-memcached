@@ -1,4 +1,4 @@
-package net.nelz.simplesm.test;
+package com.google.code.ssm.test;
 
 
 import static org.junit.Assert.assertEquals;
@@ -12,9 +12,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeoutException;
 
-import net.nelz.simplesm.providers.MemcacheClient;
-import net.nelz.simplesm.providers.MemcacheException;
-import net.nelz.simplesm.test.svc.TestSvc;
+import com.google.code.ssm.providers.MemcacheClient;
+import com.google.code.ssm.providers.MemcacheException;
+import com.google.code.ssm.test.svc.TestSvc;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;

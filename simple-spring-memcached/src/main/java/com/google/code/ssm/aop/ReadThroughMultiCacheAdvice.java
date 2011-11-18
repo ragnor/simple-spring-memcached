@@ -1,4 +1,4 @@
-package net.nelz.simplesm.aop;
+package com.google.code.ssm.aop;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
@@ -13,9 +13,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import net.nelz.simplesm.api.ReadThroughMultiCache;
-import net.nelz.simplesm.api.ReadThroughMultiCacheOptions;
-import net.nelz.simplesm.exceptions.InvalidAnnotationException;
+import com.google.code.ssm.api.ReadThroughMultiCache;
+import com.google.code.ssm.api.ReadThroughMultiCacheOptions;
+import com.google.code.ssm.exceptions.InvalidAnnotationException;
 
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
@@ -49,7 +49,7 @@ public class ReadThroughMultiCacheAdvice extends CacheBase {
 
     private static final Integer[] INTEGER_ARRAY = new Integer[0];
 
-    @Pointcut("@annotation(net.nelz.simplesm.api.ReadThroughMultiCache)")
+    @Pointcut("@annotation(com.google.code.ssm.api.ReadThroughMultiCache)")
     public void getMulti() {
     }
 

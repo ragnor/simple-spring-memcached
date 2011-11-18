@@ -1,4 +1,4 @@
-package net.nelz.simplesm.aop;
+package com.google.code.ssm.aop;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.verify;
@@ -7,12 +7,12 @@ import static org.mockito.Mockito.when;
 import java.util.Arrays;
 import java.util.Collection;
 
-import net.nelz.simplesm.api.InvalidateSingleCache;
-import net.nelz.simplesm.api.ParameterDataUpdateContent;
-import net.nelz.simplesm.api.ParameterValueKeyProvider;
-import net.nelz.simplesm.api.ReturnDataUpdateContent;
-import net.nelz.simplesm.api.ReturnValueKeyProvider;
-import net.nelz.simplesm.test.Point;
+import com.google.code.ssm.api.InvalidateSingleCache;
+import com.google.code.ssm.api.ParameterDataUpdateContent;
+import com.google.code.ssm.api.ParameterValueKeyProvider;
+import com.google.code.ssm.api.ReturnDataUpdateContent;
+import com.google.code.ssm.api.ReturnValueKeyProvider;
+import com.google.code.ssm.test.Point;
 
 import org.hamcrest.CoreMatchers;
 import org.junit.Assume;

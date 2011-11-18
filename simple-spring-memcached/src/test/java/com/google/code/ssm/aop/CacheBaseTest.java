@@ -1,8 +1,8 @@
-package net.nelz.simplesm.aop;
+package com.google.code.ssm.aop;
 
 import static org.junit.Assert.*;
-import net.nelz.simplesm.api.*;
-import net.nelz.simplesm.exceptions.*;
+import com.google.code.ssm.api.*;
+import com.google.code.ssm.exceptions.*;
 import org.apache.commons.lang.*;
 import org.junit.BeforeClass;
 import org.junit.Test;

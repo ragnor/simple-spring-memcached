@@ -1,4 +1,4 @@
-package net.nelz.simplesm.providers.xmemcached;
+package com.google.code.ssm.providers.xmemcached;
 
 import static org.junit.Assert.assertEquals;
 import net.rubyeye.xmemcached.transcoders.CachedData;

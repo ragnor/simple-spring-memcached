@@ -1,4 +1,4 @@
-package net.nelz.simplesm.aop;
+package com.google.code.ssm.aop;
 
 import static org.junit.Assert.*;
 
@@ -9,10 +9,10 @@ import java.util.Iterator;
 
 import org.junit.Test;
 
-import net.nelz.simplesm.api.InvalidateAssignCache;
-import net.nelz.simplesm.api.InvalidateSingleCache;
-import net.nelz.simplesm.api.UpdateAssignCache;
-import net.nelz.simplesm.api.AnnotationConstants;
+import com.google.code.ssm.api.InvalidateAssignCache;
+import com.google.code.ssm.api.InvalidateSingleCache;
+import com.google.code.ssm.api.UpdateAssignCache;
+import com.google.code.ssm.api.AnnotationConstants;
 import net.vidageek.mirror.dsl.Mirror;
 
 /**

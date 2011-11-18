@@ -1,10 +1,10 @@
-package net.nelz.simplesm.transcoders;
+package com.google.code.ssm.transcoders;
 
 import java.io.UnsupportedEncodingException;
 
-import net.nelz.simplesm.providers.CachedObject;
-import net.nelz.simplesm.providers.CachedObjectImpl;
-import net.nelz.simplesm.providers.MemcacheTranscoder;
+import com.google.code.ssm.providers.CachedObject;
+import com.google.code.ssm.providers.CachedObjectImpl;
+import com.google.code.ssm.providers.MemcacheTranscoder;
 
 /**
  * Copyright (c) 2010, 2011 Jakub Białek
