@@ -13,7 +13,7 @@ import java.lang.reflect.Method;
 import java.security.InvalidParameterException;
 
 import com.google.code.ssm.api.CacheKeyMethod;
-import com.google.code.ssm.providers.MemcacheClient;
+import com.google.code.ssm.providers.CacheClient;
 
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.reflect.MethodSignature;
@@ -44,7 +44,7 @@ public class ReadThroughSingleCacheMockTest {
 
     private static ReadThroughSingleCacheAdvice cut;
     private static ProceedingJoinPoint pjp;
-    private static MemcacheClient cache;
+    private static CacheClient cache;
     private static MethodSignature sig;
 
     @BeforeClass
@@ -52,7 +52,7 @@ public class ReadThroughSingleCacheMockTest {
         cut = new ReadThroughSingleCacheAdvice();
 
         pjp = createMock(ProceedingJoinPoint.class);
-        cache = createMock(MemcacheClient.class);
+        cache = createMock(CacheClient.class);
         sig = createMock(MethodSignature.class);
 
         cut.setCache(cache);

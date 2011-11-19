@@ -71,6 +71,16 @@ public class InvalidateAssignCacheAdviceTest extends AbstractCacheTest<Invalidat
         verify(pjp).proceed();
     }
 
+    @Override
+    protected InvalidateAssignCacheAdvice createAdvice() {
+        return new InvalidateAssignCacheAdvice();
+    }
+
+    @Override
+    protected String getNamespace() {
+        return NS;
+    }
+    
     @SuppressWarnings("unused")
     private static class TestService {
 
@@ -84,16 +94,6 @@ public class InvalidateAssignCacheAdviceTest extends AbstractCacheTest<Invalidat
         public String method2(@ParameterValueKeyProvider int id1) {
             return "2";
         }
-    }
-
-    @Override
-    protected InvalidateAssignCacheAdvice createAdvice() {
-        return new InvalidateAssignCacheAdvice();
-    }
-
-    @Override
-    protected String getNamespace() {
-        return NS;
     }
 
 }

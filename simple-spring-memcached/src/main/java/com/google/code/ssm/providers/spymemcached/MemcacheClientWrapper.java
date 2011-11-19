@@ -11,9 +11,9 @@ import java.util.concurrent.TimeoutException;
 
 import com.google.code.ssm.providers.CachedObject;
 import com.google.code.ssm.providers.CachedObjectImpl;
-import com.google.code.ssm.providers.MemcacheClient;
-import com.google.code.ssm.providers.MemcacheException;
-import com.google.code.ssm.providers.MemcacheTranscoder;
+import com.google.code.ssm.providers.CacheClient;
+import com.google.code.ssm.providers.CacheException;
+import com.google.code.ssm.providers.CacheTranscoder;
 import net.spy.memcached.CachedData;
 import net.spy.memcached.MemcachedClientIF;
 import net.spy.memcached.OperationTimeoutException;
@@ -41,11 +41,11 @@ import org.slf4j.LoggerFactory;
  * @author Jakub Białek
  * 
  */
-public class MemcacheClientWrapper implements MemcacheClient {
+public class MemcacheClientWrapper implements CacheClient {
 
     private final static Logger LOGGER = LoggerFactory.getLogger(MemcacheClientWrapper.class);
 
-    private Map<MemcacheTranscoder<?>, Transcoder<?>> adapters = new HashMap<MemcacheTranscoder<?>, Transcoder<?>>();
+    private Map<CacheTranscoder<?>, Transcoder<?>> adapters = new HashMap<CacheTranscoder<?>, Transcoder<?>>();
 
     private MemcachedClientIF memcachedClient;
 
@@ -54,37 +54,37 @@ public class MemcacheClientWrapper implements MemcacheClient {
     }
 
     @Override
-    public boolean add(String key, int exp, Object value) throws TimeoutException, MemcacheException {
+    public boolean add(String key, int exp, Object value) throws TimeoutException, CacheException {
         Future<Boolean> f = null;
         try {
             f = memcachedClient.add(key, exp, value);
             return f.get();
         } catch (InterruptedException e) {
             cancel(f);
-            throw new MemcacheException(e);
+            throw new CacheException(e);
         } catch (ExecutionException e) {
             cancel(f);
-            throw new MemcacheException(e);
+            throw new CacheException(e);
         }
     }
 
     @Override
-    public <T> boolean add(String key, int exp, T value, MemcacheTranscoder<T> transcoder) throws TimeoutException, MemcacheException {
+    public <T> boolean add(String key, int exp, T value, CacheTranscoder<T> transcoder) throws TimeoutException, CacheException {
         Future<Boolean> f = null;
         try {
             f = memcachedClient.add(key, exp, value, getTranscoder(transcoder));
             return f.get();
         } catch (InterruptedException e) {
             cancel(f);
-            throw new MemcacheException(e);
+            throw new CacheException(e);
         } catch (ExecutionException e) {
             cancel(f);
-            throw new MemcacheException(e);
+            throw new CacheException(e);
         }
     }
 
     @Override
-    public long decr(String key, int by) throws TimeoutException, MemcacheException {
+    public long decr(String key, int by) throws TimeoutException, CacheException {
         try {
             return memcachedClient.decr(key, by);
         } catch (OperationTimeoutException e) {
@@ -92,14 +92,14 @@ public class MemcacheClientWrapper implements MemcacheClient {
             throw new TimeoutException(e.getMessage());
         } catch (RuntimeException e) {
             if (translateException(e)) {
-                throw new MemcacheException(e);
+                throw new CacheException(e);
             }
             throw e;
         }
     }
 
     @Override
-    public long decr(String key, int by, long def) throws TimeoutException, MemcacheException {
+    public long decr(String key, int by, long def) throws TimeoutException, CacheException {
         try {
             return memcachedClient.decr(key, by, def);
         } catch (OperationTimeoutException e) {
@@ -107,41 +107,52 @@ public class MemcacheClientWrapper implements MemcacheClient {
             throw new TimeoutException(e.getMessage());
         } catch (RuntimeException e) {
             if (translateException(e)) {
-                throw new MemcacheException(e);
+                throw new CacheException(e);
             }
             throw e;
         }
     }
 
     @Override
-    public boolean delete(String key) throws TimeoutException, MemcacheException {
+    public boolean delete(String key) throws TimeoutException, CacheException {
         try {
             return memcachedClient.delete(key).get();
         } catch (InterruptedException e) {
-            throw new MemcacheException(e);
+            throw new CacheException(e);
         } catch (ExecutionException e) {
-            throw new MemcacheException(e);
+            throw new CacheException(e);
         }
     }
 
     @Override
-    public void flush() throws MemcacheException {
+    public void delete(Collection<String> keys) throws TimeoutException, CacheException {
+        if (keys != null && keys.size() > 0) {
+            for (final String key : keys) {
+                if (key != null) {
+                    delete(key);
+                }
+            }
+        }
+    }
+    
+    @Override
+    public void flush() throws CacheException {
         try {
             memcachedClient.flush().get();
         } catch (InterruptedException e) {
-            throw new MemcacheException(e);
+            throw new CacheException(e);
         } catch (ExecutionException e) {
-            throw new MemcacheException(e);
+            throw new CacheException(e);
         }
     }
 
     @Override
-    public Object get(String key) throws TimeoutException, MemcacheException {
+    public Object get(String key) throws TimeoutException, CacheException {
         try {
             return memcachedClient.get(key);
         } catch (RuntimeException e) {
             if (translateException(e)) {
-                throw new MemcacheException(e);
+                throw new CacheException(e);
             } else if (e.getCause() instanceof TimeoutException) {
                 throw (TimeoutException) e.getCause();
             }
@@ -151,12 +162,12 @@ public class MemcacheClientWrapper implements MemcacheClient {
     }
 
     @Override
-    public <T> T get(String key, MemcacheTranscoder<T> transcoder) throws MemcacheException, TimeoutException {
+    public <T> T get(String key, CacheTranscoder<T> transcoder) throws CacheException, TimeoutException {
         try {
             return memcachedClient.get(key, getTranscoder(transcoder));
         } catch (RuntimeException e) {
             if (translateException(e)) {
-                throw new MemcacheException(e);
+                throw new CacheException(e);
             } else if (e.getCause() instanceof TimeoutException) {
                 throw (TimeoutException) e.getCause();
             }
@@ -166,17 +177,17 @@ public class MemcacheClientWrapper implements MemcacheClient {
     }
 
     @Override
-    public <T> T get(String key, MemcacheTranscoder<T> transcoder, final long timeout) throws TimeoutException, MemcacheException {
+    public <T> T get(String key, CacheTranscoder<T> transcoder, final long timeout) throws TimeoutException, CacheException {
         Future<T> f = null;
         try {
             f = memcachedClient.asyncGet(key, getTranscoder(transcoder));
             return f.get(timeout, TimeUnit.MILLISECONDS);
         } catch (InterruptedException e) {
             cancel(f);
-            throw new MemcacheException(e);
+            throw new CacheException(e);
         } catch (ExecutionException e) {
             cancel(f);
-            throw new MemcacheException(e);
+            throw new CacheException(e);
         }
     }
 
@@ -186,35 +197,35 @@ public class MemcacheClientWrapper implements MemcacheClient {
     }
 
     @Override
-    public Map<String, Object> getBulk(Collection<String> keys) throws TimeoutException, MemcacheException {
+    public Map<String, Object> getBulk(Collection<String> keys) throws TimeoutException, CacheException {
         try {
             return memcachedClient.getBulk(keys);
         } catch (OperationTimeoutException e) {
             throw (TimeoutException) e.getCause();
         } catch (RuntimeException e) {
             if (translateException(e)) {
-                throw new MemcacheException(e);
+                throw new CacheException(e);
             }
             throw e;
         }
     }
 
     @Override
-    public <T> Map<String, T> getBulk(Collection<String> keys, MemcacheTranscoder<T> transcoder) throws TimeoutException, MemcacheException {
+    public <T> Map<String, T> getBulk(Collection<String> keys, CacheTranscoder<T> transcoder) throws TimeoutException, CacheException {
         try {
             return memcachedClient.getBulk(keys, getTranscoder(transcoder));
         } catch (OperationTimeoutException e) {
             throw (TimeoutException) e.getCause();
         } catch (RuntimeException e) {
             if (translateException(e)) {
-                throw new MemcacheException(e);
+                throw new CacheException(e);
             }
             throw e;
         }
     }
 
     @Override
-    public long incr(String key, int by) throws TimeoutException, MemcacheException {
+    public long incr(String key, int by) throws TimeoutException, CacheException {
         try {
             return memcachedClient.incr(key, by);
         } catch (OperationTimeoutException e) {
@@ -222,14 +233,14 @@ public class MemcacheClientWrapper implements MemcacheClient {
             throw new TimeoutException(e.getMessage());
         } catch (RuntimeException e) {
             if (translateException(e)) {
-                throw new MemcacheException(e);
+                throw new CacheException(e);
             }
             throw e;
         }
     }
 
     @Override
-    public long incr(String key, int by, long def) throws TimeoutException, MemcacheException {
+    public long incr(String key, int by, long def) throws TimeoutException, CacheException {
         try {
             return memcachedClient.incr(key, by, def);
         } catch (OperationTimeoutException e) {
@@ -237,14 +248,14 @@ public class MemcacheClientWrapper implements MemcacheClient {
             throw new TimeoutException(e.getMessage());
         } catch (RuntimeException e) {
             if (translateException(e)) {
-                throw new MemcacheException(e);
+                throw new CacheException(e);
             }
             throw e;
         }
     }
 
     @Override
-    public long incr(String key, int by, long def, int expiration) throws TimeoutException, MemcacheException {
+    public long incr(String key, int by, long def, int expiration) throws TimeoutException, CacheException {
         try {
             return memcachedClient.incr(key, by, def, expiration);
         } catch (OperationTimeoutException e) {
@@ -252,39 +263,39 @@ public class MemcacheClientWrapper implements MemcacheClient {
             throw new TimeoutException(e.getMessage());
         } catch (RuntimeException e) {
             if (translateException(e)) {
-                throw new MemcacheException(e);
+                throw new CacheException(e);
             }
             throw e;
         }
     }
 
     @Override
-    public boolean set(String key, int exp, Object value) throws TimeoutException, MemcacheException {
+    public boolean set(String key, int exp, Object value) throws TimeoutException, CacheException {
         Future<Boolean> f = null;
         try {
             f = memcachedClient.set(key, exp, value);
             return f.get();
         } catch (InterruptedException e) {
             cancel(f);
-            throw new MemcacheException(e);
+            throw new CacheException(e);
         } catch (ExecutionException e) {
             cancel(f);
-            throw new MemcacheException(e);
+            throw new CacheException(e);
         }
     }
 
     @Override
-    public <T> boolean set(String key, int exp, T value, MemcacheTranscoder<T> transcoder) throws TimeoutException, MemcacheException {
+    public <T> boolean set(String key, int exp, T value, CacheTranscoder<T> transcoder) throws TimeoutException, CacheException {
         Future<Boolean> f = null;
         try {
             f = memcachedClient.set(key, exp, value, getTranscoder(transcoder));
             return f.get();
         } catch (InterruptedException e) {
             cancel(f);
-            throw new MemcacheException(e);
+            throw new CacheException(e);
         } catch (ExecutionException e) {
             cancel(f);
-            throw new MemcacheException(e);
+            throw new CacheException(e);
         }
     }
 
@@ -294,7 +305,7 @@ public class MemcacheClientWrapper implements MemcacheClient {
     }
     
     @Override
-    public MemcacheTranscoder<?> getTranscoder() {
+    public CacheTranscoder<?> getTranscoder() {
         return new TranscoderWrapper(memcachedClient.getTranscoder());
     }
 
@@ -305,7 +316,7 @@ public class MemcacheClientWrapper implements MemcacheClient {
     }
 
     @SuppressWarnings("unchecked")
-    private <T> Transcoder<T> getTranscoder(MemcacheTranscoder<T> transcoder) {
+    private <T> Transcoder<T> getTranscoder(CacheTranscoder<T> transcoder) {
         Transcoder<T> transcoderAdapter = (Transcoder<T>) adapters.get(transcoder);
         if (transcoderAdapter == null) {
             transcoderAdapter = new TranscoderAdapter<T>(transcoder);
@@ -319,7 +330,7 @@ public class MemcacheClientWrapper implements MemcacheClient {
         return e.getCause() instanceof InterruptedException || e.getCause() instanceof ExecutionException;
     }
 
-    private static class TranscoderWrapper implements MemcacheTranscoder<Object> {
+    private static class TranscoderWrapper implements CacheTranscoder<Object> {
 
         private Transcoder<Object> transcoder;
 

@@ -6,7 +6,7 @@ import java.io.IOException;
 
 import com.google.code.ssm.providers.CachedObject;
 import com.google.code.ssm.providers.CachedObjectImpl;
-import com.google.code.ssm.providers.MemcacheTranscoder;
+import com.google.code.ssm.providers.CacheTranscoder;
 
 import org.codehaus.jackson.map.ObjectMapper;
 import org.slf4j.Logger;
@@ -35,19 +35,19 @@ import org.slf4j.LoggerFactory;
  * @param <T>
  *            the type of class to transcode
  */
-public class JsonTranscoder<T> implements MemcacheTranscoder<T> {
+public class JsonTranscoder<T> implements CacheTranscoder<T> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(JsonTranscoder.class);
 
     private static final int JSON_SERIALIZED = 8; // json format
 
-    private MemcacheTranscoder<? super T> defaultTranscoder;
+    private CacheTranscoder<? super T> defaultTranscoder;
 
     private ObjectMapper mapper;
 
     private Class<T> clazz;
 
-    public JsonTranscoder(Class<T> clazz, ObjectMapper mapper, MemcacheTranscoder<? super T> defaultTranscoder) {
+    public JsonTranscoder(Class<T> clazz, ObjectMapper mapper, CacheTranscoder<? super T> defaultTranscoder) {
         this.clazz = clazz;
         this.mapper = mapper;
         this.defaultTranscoder = defaultTranscoder;

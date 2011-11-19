@@ -1,5 +1,11 @@
 package com.google.code.ssm.providers;
 
+import java.io.IOException;
+import java.net.InetSocketAddress;
+import java.util.List;
+
+import com.google.code.ssm.config.MemcachedConnectionBean;
+
 /**
  * Copyright (c) 2010, 2011 Jakub Białek
  * 
@@ -18,13 +24,9 @@ package com.google.code.ssm.providers;
  * 
  * @author Jakub Białek
  * 
- * @param <T>
- *            the type of object to decode/encode
  */
-public interface MemcacheTranscoder<T> {
+public interface CacheClientFactory {
 
-    T decode(CachedObject data);
-
-    CachedObject encode(T o);
+    CacheClient create(List<InetSocketAddress> addrs, MemcachedConnectionBean connectionBean) throws IOException;
 
 }

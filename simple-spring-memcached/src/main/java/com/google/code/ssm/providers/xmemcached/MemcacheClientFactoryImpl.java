@@ -5,8 +5,8 @@ import java.net.InetSocketAddress;
 import java.util.List;
 
 import com.google.code.ssm.config.MemcachedConnectionBean;
-import com.google.code.ssm.providers.MemcacheClient;
-import com.google.code.ssm.providers.MemcacheClientFactory;
+import com.google.code.ssm.providers.CacheClient;
+import com.google.code.ssm.providers.CacheClientFactory;
 import net.rubyeye.xmemcached.MemcachedClient;
 import net.rubyeye.xmemcached.MemcachedClientBuilder;
 import net.rubyeye.xmemcached.XMemcachedClientBuilder;
@@ -32,10 +32,10 @@ import net.rubyeye.xmemcached.impl.KetamaMemcachedSessionLocator;
  * @author Jakub Białek
  * 
  */
-public class MemcacheClientFactoryImpl implements MemcacheClientFactory {
+public class MemcacheClientFactoryImpl implements CacheClientFactory {
 
     @Override
-    public MemcacheClient create(List<InetSocketAddress> addrs, MemcachedConnectionBean connectionBean) throws IOException {
+    public CacheClient create(List<InetSocketAddress> addrs, MemcachedConnectionBean connectionBean) throws IOException {
         MemcachedClientBuilder builder = new XMemcachedClientBuilder(addrs);
         builder.setConnectionPoolSize(1);
 

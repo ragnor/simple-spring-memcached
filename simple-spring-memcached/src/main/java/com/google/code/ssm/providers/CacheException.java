@@ -1,11 +1,5 @@
 package com.google.code.ssm.providers;
 
-import java.io.IOException;
-import java.net.InetSocketAddress;
-import java.util.List;
-
-import com.google.code.ssm.config.MemcachedConnectionBean;
-
 /**
  * Copyright (c) 2010, 2011 Jakub Białek
  * 
@@ -22,11 +16,29 @@ import com.google.code.ssm.config.MemcachedConnectionBean;
  * COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  * 
+ * Wraps providers exceptions.
+ * 
  * @author Jakub Białek
  * 
  */
-public interface MemcacheClientFactory {
+public class CacheException extends Exception {
 
-    MemcacheClient create(List<InetSocketAddress> addrs, MemcachedConnectionBean connectionBean) throws IOException;
+    private static final long serialVersionUID = -8079095237716455457L;
+
+    public CacheException() {
+        super();
+    }
+
+    public CacheException(String s) {
+        super(s);
+    }
+
+    public CacheException(String message, Throwable cause) {
+        super(message, cause);
+    }
+
+    public CacheException(Throwable cause) {
+        super(cause);
+    }
 
 }

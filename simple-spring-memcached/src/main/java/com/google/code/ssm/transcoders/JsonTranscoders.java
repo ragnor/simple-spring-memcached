@@ -3,7 +3,7 @@ package com.google.code.ssm.transcoders;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.google.code.ssm.providers.MemcacheTranscoder;
+import com.google.code.ssm.providers.CacheTranscoder;
 
 import org.springframework.stereotype.Component;
 
@@ -31,15 +31,15 @@ import org.springframework.stereotype.Component;
 @Component
 public class JsonTranscoders {
 
-    private Map<Class<?>, MemcacheTranscoder<?>> transcoders = new HashMap<Class<?>, MemcacheTranscoder<?>>();
+    private Map<Class<?>, CacheTranscoder<?>> transcoders = new HashMap<Class<?>, CacheTranscoder<?>>();
 
-    public Map<Class<?>, MemcacheTranscoder<?>> getTranscoders() {
+    public Map<Class<?>, CacheTranscoder<?>> getTranscoders() {
         return transcoders;
     }
 
     @SuppressWarnings("unchecked")
-    public MemcacheTranscoder<Object> getTranscoder(Class<?> clazz) {
-        return (MemcacheTranscoder<Object>) transcoders.get(clazz);
+    public CacheTranscoder<Object> getTranscoder(Class<?> clazz) {
+        return (CacheTranscoder<Object>) transcoders.get(clazz);
     }
 
 }

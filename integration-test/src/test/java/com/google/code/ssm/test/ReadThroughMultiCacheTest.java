@@ -12,8 +12,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeoutException;
 
-import com.google.code.ssm.providers.MemcacheClient;
-import com.google.code.ssm.providers.MemcacheException;
+import com.google.code.ssm.providers.CacheClient;
+import com.google.code.ssm.providers.CacheException;
 import com.google.code.ssm.test.svc.TestSvc;
 
 import org.junit.Test;
@@ -54,7 +54,7 @@ public class ReadThroughMultiCacheTest {
 	private TestSvc test;
 	
 	@Autowired
-	private MemcacheClient cache;
+	private CacheClient cache;
 
 	@Test
 	public void test() {	    
@@ -137,7 +137,7 @@ public class ReadThroughMultiCacheTest {
 	}
 
 	@Test
-	public void testMemcached() throws TimeoutException, MemcacheException {
+	public void testMemcached() throws TimeoutException, CacheException {
 		//final MemcachedClientIF cache = (MemcachedClientIF) context.getBean("memcachedClient");
 
 		final List<String> keys = new ArrayList<String>();

@@ -16,7 +16,7 @@ import com.google.code.ssm.api.ParameterDataUpdateContent;
 import com.google.code.ssm.api.ParameterValueKeyProvider;
 import com.google.code.ssm.api.ReturnDataUpdateContent;
 import com.google.code.ssm.api.counter.UpdateCounterInCache;
-import com.google.code.ssm.providers.MemcacheTranscoder;
+import com.google.code.ssm.providers.CacheTranscoder;
 import com.google.code.ssm.test.Point;
 
 import org.hamcrest.CoreMatchers;
@@ -96,7 +96,7 @@ public class UpdateCounterInCacheAdviceTest extends AbstractCounterTest<UpdateCo
 
         advice.cacheCounterInCache(pjp, reternValue);
 
-        verify(client, only()).set(eq(cacheKey), eq(EXPIRATION), eq(((Number) expectedValue).longValue()), any(MemcacheTranscoder.class));
+        verify(client, only()).set(eq(cacheKey), eq(EXPIRATION), eq(((Number) expectedValue).longValue()), any(CacheTranscoder.class));
         verify(pjp, never()).proceed();
     }
 
@@ -107,7 +107,7 @@ public class UpdateCounterInCacheAdviceTest extends AbstractCounterTest<UpdateCo
 
         advice.cacheCounterInCache(pjp, reternValue);
 
-        verify(client, never()).set(anyString(), anyInt(), anyLong(), any(MemcacheTranscoder.class));
+        verify(client, never()).set(anyString(), anyInt(), anyLong(), any(CacheTranscoder.class));
         verify(pjp, never()).proceed();
     }
 

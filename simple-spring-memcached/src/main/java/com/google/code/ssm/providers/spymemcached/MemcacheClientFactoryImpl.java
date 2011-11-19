@@ -5,8 +5,8 @@ import java.net.InetSocketAddress;
 import java.util.List;
 
 import com.google.code.ssm.config.MemcachedConnectionBean;
-import com.google.code.ssm.providers.MemcacheClient;
-import com.google.code.ssm.providers.MemcacheClientFactory;
+import com.google.code.ssm.providers.CacheClient;
+import com.google.code.ssm.providers.CacheClientFactory;
 import net.spy.memcached.ConnectionFactory;
 import net.spy.memcached.ConnectionFactoryBuilder;
 import net.spy.memcached.FailureMode;
@@ -33,12 +33,12 @@ import net.spy.memcached.ConnectionFactoryBuilder.Protocol;
  * @author Jakub Białek
  * 
  */
-public class MemcacheClientFactoryImpl implements MemcacheClientFactory {
+public class MemcacheClientFactoryImpl implements CacheClientFactory {
 
     private ConnectionFactory connectionFactory;
 
     @Override
-    public MemcacheClient create(List<InetSocketAddress> addrs, MemcachedConnectionBean connectionBean) throws IOException {
+    public CacheClient create(List<InetSocketAddress> addrs, MemcachedConnectionBean connectionBean) throws IOException {
         if (connectionFactory == null) {
             connectionFactory = connectionBean.isConsistentHashing() ? new KetamaConnectionFactory() : new ConnectionFactoryBuilder()
                     .setFailureMode(FailureMode.Cancel).setOpTimeout(connectionBean.getOperationTimeout()).setOpQueueMaxBlockTime(500)

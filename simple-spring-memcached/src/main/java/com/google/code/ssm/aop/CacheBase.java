@@ -16,9 +16,9 @@ import com.google.code.ssm.api.ReadThroughMultiCache;
 import com.google.code.ssm.api.format.UseJson;
 import com.google.code.ssm.exceptions.InvalidAnnotationException;
 import com.google.code.ssm.impl.NoClass;
-import com.google.code.ssm.providers.MemcacheClient;
-import com.google.code.ssm.providers.MemcacheException;
-import com.google.code.ssm.providers.MemcacheTranscoder;
+import com.google.code.ssm.providers.CacheClient;
+import com.google.code.ssm.providers.CacheException;
+import com.google.code.ssm.providers.CacheTranscoder;
 import com.google.code.ssm.transcoders.JsonTranscoders;
 
 import org.aspectj.lang.JoinPoint;
@@ -54,7 +54,7 @@ public abstract class CacheBase implements ApplicationContextAware {
 
     protected static final String ID_SEPARATOR = "/";
 
-    protected MemcacheClient cache;
+    protected CacheClient cache;
 
     @Autowired
     protected CacheKeyMethodStore methodStore;
@@ -70,7 +70,7 @@ public abstract class CacheBase implements ApplicationContextAware {
         this.applicationContext = applicationContext;
     }
 
-    public void setCache(MemcacheClient cache) {
+    public void setCache(CacheClient cache) {
         this.cache = cache;
     }
 
@@ -282,9 +282,9 @@ public abstract class CacheBase implements ApplicationContextAware {
     }
 
     @SuppressWarnings("unchecked")
-    protected <T> T get(String cacheKey, Class<T> clazz) throws TimeoutException, MemcacheException {
+    protected <T> T get(String cacheKey, Class<T> clazz) throws TimeoutException, CacheException {
         if (clazz != null) {
-            MemcacheTranscoder<?> transcoder = jsonTranscoders.getTranscoder(clazz);
+            CacheTranscoder<?> transcoder = jsonTranscoders.getTranscoder(clazz);
             if (transcoder != null) {
                 return (T) get(cacheKey, transcoder);
             } else {
@@ -295,16 +295,16 @@ public abstract class CacheBase implements ApplicationContextAware {
         return (T) cache.get(cacheKey);
     }
 
-    protected <T> T get(String cacheKey, MemcacheTranscoder<T> transcoder) throws TimeoutException, MemcacheException {
+    protected <T> T get(String cacheKey, CacheTranscoder<T> transcoder) throws TimeoutException, CacheException {
         return cache.get(cacheKey, transcoder);
     }
 
     @SuppressWarnings("unchecked")
-    protected <T> void set(String cacheKey, int expiration, Object value, Class<?> clazz) throws TimeoutException, MemcacheException {
+    protected <T> void set(String cacheKey, int expiration, Object value, Class<?> clazz) throws TimeoutException, CacheException {
         if (clazz != null) {
-            MemcacheTranscoder<?> transcoder = jsonTranscoders.getTranscoder(clazz);
+            CacheTranscoder<?> transcoder = jsonTranscoders.getTranscoder(clazz);
             if (transcoder != null) {
-                set(cacheKey, expiration, (T) value, (MemcacheTranscoder<T>) transcoder);
+                set(cacheKey, expiration, (T) value, (CacheTranscoder<T>) transcoder);
                 return;
             } else {
                 warn("There's no json transcoder for class " + clazz.getName() + ", standard transcoder will be used for key " + cacheKey);
@@ -314,8 +314,8 @@ public abstract class CacheBase implements ApplicationContextAware {
         cache.set(cacheKey, expiration, value);
     }
 
-    protected <T> void set(String cacheKey, int expiration, T value, MemcacheTranscoder<T> transcoder) throws TimeoutException,
-            MemcacheException {
+    protected <T> void set(String cacheKey, int expiration, T value, CacheTranscoder<T> transcoder) throws TimeoutException,
+            CacheException {
         cache.set(cacheKey, expiration, value, transcoder);
         if (getLogger().isInfoEnabled()) {
             info("Set [json] under key: " + cacheKey + ", object: " + value + ", json: " + (value != null ? value.getClass() : null));
@@ -327,14 +327,14 @@ public abstract class CacheBase implements ApplicationContextAware {
             set(cacheKey, expiration, value, clazz);
         } catch (TimeoutException e) {
             warn("Cannot set on key " + cacheKey, e);
-        } catch (MemcacheException e) {
+        } catch (CacheException e) {
             warn("Cannot set on key " + cacheKey, e);
         }
     }
 
-    protected <T> void add(String cacheKey, int expiration, Object value, Class<T> clazz) throws TimeoutException, MemcacheException {
+    protected <T> void add(String cacheKey, int expiration, Object value, Class<T> clazz) throws TimeoutException, CacheException {
         if (clazz != null) {
-            MemcacheTranscoder<?> transcoder = jsonTranscoders.getTranscoder(clazz);
+            CacheTranscoder<?> transcoder = jsonTranscoders.getTranscoder(clazz);
             if (transcoder != null) {
                 cache.add(cacheKey, expiration, value, jsonTranscoders.getTranscoder(clazz));
                 if (getLogger().isInfoEnabled()) {
@@ -354,38 +354,42 @@ public abstract class CacheBase implements ApplicationContextAware {
             add(cacheKey, expiration, value, clazz);
         } catch (TimeoutException e) {
             warn("Cannot add to key " + cacheKey, e);
-        } catch (MemcacheException e) {
+        } catch (CacheException e) {
             warn("Cannot add to key " + cacheKey, e);
         }
     }
 
-    protected long decr(String key, int by) throws TimeoutException, MemcacheException {
+    protected long decr(String key, int by) throws TimeoutException, CacheException {
         return cache.decr(key, by);
     }
 
-    protected long decr(String key, int by, long def) throws TimeoutException, MemcacheException {
+    protected long decr(String key, int by, long def) throws TimeoutException, CacheException {
         return cache.decr(key, by, def);
     }
 
-    protected long incr(String key, int by) throws TimeoutException, MemcacheException {
+    protected long incr(String key, int by) throws TimeoutException, CacheException {
         return cache.incr(key, by);
     }
 
-    protected long incr(String key, int by, long def) throws TimeoutException, MemcacheException {
+    protected long incr(String key, int by, long def) throws TimeoutException, CacheException {
         return cache.incr(key, by, def);
     }
 
-    protected long incr(String key, int by, long def, int exp) throws TimeoutException, MemcacheException {
+    protected long incr(String key, int by, long def, int exp) throws TimeoutException, CacheException {
         return cache.incr(key, by, def, exp);
     }
 
-    protected void delete(String key) throws TimeoutException, MemcacheException {
+    protected void delete(String key) throws TimeoutException, CacheException {
         cache.delete(key);
     }
 
-    protected Map<String, Object> getBulk(Collection<String> keys, Class<?> clazz) throws TimeoutException, MemcacheException {
+    protected void delete(Collection<String> keys) throws TimeoutException, CacheException {
+        cache.delete(keys);
+    }
+    
+    protected Map<String, Object> getBulk(Collection<String> keys, Class<?> clazz) throws TimeoutException, CacheException {
         if (clazz != null) {
-            MemcacheTranscoder<?> transcoder = jsonTranscoders.getTranscoder(clazz);
+            CacheTranscoder<?> transcoder = jsonTranscoders.getTranscoder(clazz);
             if (transcoder != null) {
                 return cache.getBulk(keys, jsonTranscoders.getTranscoder(clazz));
             } else {

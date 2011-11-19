@@ -42,7 +42,7 @@ import org.junit.runners.Parameterized.Parameters;
  * @author Jakub Białek
  * 
  */
-public class UpdateSingleCacheAdviceTest2 extends AbstractCacheTest<UpdateSingleCacheAdvice> {
+public class UpdateSingleCacheAdviceTest extends AbstractCacheTest<UpdateSingleCacheAdvice> {
 
     @Parameters
     public static Collection<Object[]> data() {
@@ -70,7 +70,7 @@ public class UpdateSingleCacheAdviceTest2 extends AbstractCacheTest<UpdateSingle
 
     private Object expectedValue;
 
-    public UpdateSingleCacheAdviceTest2(boolean isValid, String methodName, Class<?>[] paramTypes, Object[] params, Object expectedValue,
+    public UpdateSingleCacheAdviceTest(boolean isValid, String methodName, Class<?>[] paramTypes, Object[] params, Object expectedValue,
             String cacheKey) {
         super(isValid, methodName, paramTypes, params, cacheKey);
         this.expectedValue = expectedValue;

@@ -15,7 +15,7 @@ import java.util.Collection;
 
 import com.google.code.ssm.api.ParameterValueKeyProvider;
 import com.google.code.ssm.api.counter.ReadCounterFromCache;
-import com.google.code.ssm.providers.MemcacheTranscoder;
+import com.google.code.ssm.providers.CacheTranscoder;
 import com.google.code.ssm.test.Point;
 
 import org.hamcrest.CoreMatchers;
@@ -86,7 +86,7 @@ public class ReadCounterFromCacheAdviceTest extends AbstractCounterTest<ReadCoun
 
         assertEquals(expectedValue, advice.readCounter(pjp));
 
-        verify(client).get(eq(cacheKey), any(MemcacheTranscoder.class));
+        verify(client).get(eq(cacheKey), any(CacheTranscoder.class));
         verify(client).incr(eq(cacheKey), eq(0), eq(((Number) expectedValue).longValue()), eq(EXPIRATION));
         verify(pjp).proceed();
     }
@@ -98,11 +98,11 @@ public class ReadCounterFromCacheAdviceTest extends AbstractCounterTest<ReadCoun
 
         Long value = 100L;
 
-        when(client.get(eq(cacheKey), any(MemcacheTranscoder.class))).thenReturn(value);
+        when(client.get(eq(cacheKey), any(CacheTranscoder.class))).thenReturn(value);
 
         assertEquals(value.intValue(), ((Number) advice.readCounter(pjp)).intValue());
 
-        verify(client).get(eq(cacheKey), any(MemcacheTranscoder.class));
+        verify(client).get(eq(cacheKey), any(CacheTranscoder.class));
         verify(client, never()).incr(anyString(), anyInt(), anyLong(), anyInt());
         verify(pjp, never()).proceed();
     }
@@ -116,7 +116,7 @@ public class ReadCounterFromCacheAdviceTest extends AbstractCounterTest<ReadCoun
 
         assertEquals(expectedValue, advice.readCounter(pjp));
 
-        verify(client, never()).get(anyString(), any(MemcacheTranscoder.class));
+        verify(client, never()).get(anyString(), any(CacheTranscoder.class));
         verify(client, never()).incr(anyString(), anyInt(), anyLong(), anyInt());
         verify(pjp).proceed();
     }

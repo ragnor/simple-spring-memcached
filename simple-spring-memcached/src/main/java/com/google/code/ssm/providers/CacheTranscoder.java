@@ -16,29 +16,15 @@ package com.google.code.ssm.providers;
  * COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  * 
- * Wraps providers exceptions.
- * 
  * @author Jakub Białek
  * 
+ * @param <T>
+ *            the type of object to decode/encode
  */
-public class MemcacheException extends Exception {
+public interface CacheTranscoder<T> {
 
-    private static final long serialVersionUID = -8079095237716455457L;
+    T decode(CachedObject data);
 
-    public MemcacheException() {
-        super();
-    }
-
-    public MemcacheException(String s) {
-        super(s);
-    }
-
-    public MemcacheException(String message, Throwable cause) {
-        super(message, cause);
-    }
-
-    public MemcacheException(Throwable cause) {
-        super(cause);
-    }
+    CachedObject encode(T o);
 
 }

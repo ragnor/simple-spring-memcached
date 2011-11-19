@@ -7,8 +7,8 @@ import java.util.List;
 
 import javax.naming.NamingException;
 
-import com.google.code.ssm.providers.MemcacheClient;
-import com.google.code.ssm.providers.MemcacheClientFactory;
+import com.google.code.ssm.providers.CacheClient;
+import com.google.code.ssm.providers.CacheClientFactory;
 import com.google.code.ssm.util.jndi.JNDIChangeListener;
 
 import org.slf4j.Logger;
@@ -46,13 +46,13 @@ public class MemcachedClientFactory implements JNDIChangeListener {
 
     private String currentAddrs;
 
-    private MemcacheClientFactory memcacheClientFactory;
+    private CacheClientFactory memcacheClientFactory;
 
     public void setBean(MemcachedConnectionBean bean) {
         this.bean = bean;
     }
 
-    public void setClientFactory(MemcacheClientFactory memcacheClientFactory) {
+    public void setClientFactory(CacheClientFactory memcacheClientFactory) {
         this.memcacheClientFactory = memcacheClientFactory;
     }
 
@@ -63,7 +63,7 @@ public class MemcachedClientFactory implements JNDIChangeListener {
      * @throws IOException
      * @throws NamingException
      */
-    public MemcacheClient createMemcachedClient() throws IOException, NamingException {
+    public CacheClient createMemcachedClient() throws IOException, NamingException {
         // this factory creates only one single memcached client and return it if someone invoked this method twice or
         // more
         if (memcachedClientWrapper != null) {
@@ -110,7 +110,7 @@ public class MemcachedClientFactory implements JNDIChangeListener {
             return;
         }
 
-        MemcacheClient memcacheClient = null;
+        CacheClient memcacheClient = null;
         try {
             LOGGER.info("Creating new memcached client for new jndi value: " + newValue);
             memcacheClient = createClient(getAddresses((String) newValue));
@@ -156,7 +156,7 @@ public class MemcachedClientFactory implements JNDIChangeListener {
         return addrs;
     }
 
-    private MemcacheClient createClient(List<InetSocketAddress> addrs) throws IOException {
+    private CacheClient createClient(List<InetSocketAddress> addrs) throws IOException {
         return memcacheClientFactory.create(addrs, bean);
     }
 

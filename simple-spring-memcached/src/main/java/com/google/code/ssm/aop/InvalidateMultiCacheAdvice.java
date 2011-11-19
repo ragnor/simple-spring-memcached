@@ -1,10 +1,8 @@
 package com.google.code.ssm.aop;
 
 import java.lang.reflect.Method;
+import java.util.Collection;
 import java.util.List;
-
-import com.google.code.ssm.api.InvalidateMultiCache;
-import com.google.code.ssm.exceptions.InvalidAnnotationException;
 
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
@@ -12,6 +10,9 @@ import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.code.ssm.api.InvalidateMultiCache;
+import com.google.code.ssm.exceptions.InvalidAnnotationException;
 
 /**
  * Copyright (c) 2008, 2009 Nelson Carpentier
@@ -32,7 +33,7 @@ import org.slf4j.LoggerFactory;
  * @author Nelson Carpentier
  */
 @Aspect
-public class InvalidateMultiCacheAdvice extends CacheBase {
+public class InvalidateMultiCacheAdvice extends MultiCacheAdvice {
     private static final Logger LOG = LoggerFactory.getLogger(InvalidateMultiCacheAdvice.class);
 
     @Pointcut("@annotation(com.google.code.ssm.api.InvalidateMultiCache)")
@@ -43,20 +44,25 @@ public class InvalidateMultiCacheAdvice extends CacheBase {
     public Object cacheInvalidateMulti(final ProceedingJoinPoint pjp) throws Throwable {
         // This is injected caching. If anything goes wrong in the caching, LOG
         // the crap outta it, but do not let it surface up past the AOP injection itself.
-        List<String> cacheKeys = null;
+        Collection<String> cacheKeys = null;
         final AnnotationData annotationData;
         final String methodDescription;
+        final MultiCacheCoordinator coord = new MultiCacheCoordinator();
         try {
             final Method methodToCache = getMethodToCache(pjp);
             methodDescription = methodToCache.toString();
             final InvalidateMultiCache annotation = methodToCache.getAnnotation(InvalidateMultiCache.class);
             annotationData = AnnotationDataBuilder.buildAnnotationData(annotation, InvalidateMultiCache.class, methodToCache);
+            coord.setAnnotationData(annotationData);
             if (!annotationData.isReturnKeyIndex()) {
-                // FIXME only one key index is used, should getKeyIndexes()
-                final Object keyObject = getIndexObject(annotationData.getKeyIndex(), pjp, methodToCache);
-                // FIXME only one key index is used, should getKeyIndexes()
-                final List<Object> keyObjects = convertToKeyObjects(keyObject, annotationData.getKeyIndex(), methodDescription);
-                cacheKeys = getCacheKeys(keyObjects, annotationData);
+                // Get the list of objects that will provide the keys to all the cache values.
+                coord.setKeyObjects(getKeyObjects(coord.getAnnotationData().getKeysIndex(), pjp, coord.getMethod(), coord, annotation));
+
+                // Create key->object and object->key mappings.
+                coord.setHolder(convertIdObjectsToKeyMap(coord.getListObjects(), coord.getKeyObjects(), coord.getListIndexInKeys(),
+                        coord.getAnnotationData()));
+
+                cacheKeys = coord.getKey2Obj().keySet();
             }
         } catch (Throwable ex) {
             warn("Caching on " + pjp.toShortString() + " aborted due to an error.", ex);
@@ -70,31 +76,22 @@ public class InvalidateMultiCacheAdvice extends CacheBase {
         try {
             // If we have a -1 key index, then build the cacheKeys now.
             if (annotationData.isReturnKeyIndex()) {
-                // FIXME only one key index is used, should getKeyIndexes()
-                final List<Object> keyObjects = convertToKeyObjects(result, annotationData.getKeyIndex(), methodDescription);
+                if (!verifyTypeIsList(result.getClass())) {
+                    throw new InvalidAnnotationException(String.format("The return type is not a [%s]. "
+                            + "The method [%s] does not fulfill the requirements.", List.class.getName(), methodDescription));
+
+                }
+
+                @SuppressWarnings("unchecked")
+                final List<Object> keyObjects = (List<Object>) result;
                 cacheKeys = getCacheKeys(keyObjects, annotationData);
             }
-            if (cacheKeys != null && cacheKeys.size() > 0) {
-                for (final String key : cacheKeys) {
-                    if (key != null && key.trim().length() > 0) {
-                        delete(key);
-                    }
-                }
-            }
+            delete(cacheKeys);
         } catch (Throwable ex) {
             warn("Caching on " + pjp.toShortString() + " aborted due to an error.", ex);
         }
         return result;
 
-    }
-
-    @SuppressWarnings("unchecked")
-    protected List<Object> convertToKeyObjects(final Object keyObject, final int keyIndex, final String methodDescription) throws Exception {
-        if (verifyTypeIsList(keyObject.getClass())) {
-            return (List<Object>) keyObject;
-        }
-        throw new InvalidAnnotationException(String.format("The parameter object found at dataIndex [%s] is not a [%s]. "
-                + "[%s] does not fulfill the requirements.", keyIndex, List.class.getName(), methodDescription));
     }
 
     @Override

@@ -3,6 +3,8 @@ package com.google.code.ssm.aop;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.never;
+import static org.mockito.Matchers.anyString;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -52,7 +54,6 @@ public class InvalidateSingleCacheAdviceTest extends AbstractCacheTest<Invalidat
 
                         { false, "method51", new Class[] { int.class }, new Object[] { 51 }, 51, null }, //
                         { false, "method52", new Class[] { int.class }, new Object[] { 52 }, null, null }, //
-                        { false, "method53", new Class[] { int.class }, new Object[] { 53 }, 53, null }, //
                 });
     }
 
@@ -92,6 +93,7 @@ public class InvalidateSingleCacheAdviceTest extends AbstractCacheTest<Invalidat
         assertEquals(expectedValue, advice.cacheInvalidateSingle(pjp));
 
         verify(pjp).proceed();
+        verify(client, never()).delete(anyString());
     }
 
     @Override
@@ -158,13 +160,6 @@ public class InvalidateSingleCacheAdviceTest extends AbstractCacheTest<Invalidat
         @InvalidateSingleCache(namespace = NS)
         public void method52(int id1) {
 
-        }
-
-        // both @ParameterValueKeyProvider and @ReturnValueKeyProvider
-        @ReturnValueKeyProvider
-        @InvalidateSingleCache(namespace = NS)
-        public int method53(@ParameterValueKeyProvider int id1) {
-            return 53;
         }
 
     }

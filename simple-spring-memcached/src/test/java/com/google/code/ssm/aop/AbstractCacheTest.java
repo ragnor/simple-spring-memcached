@@ -2,7 +2,7 @@ package com.google.code.ssm.aop;
 
 import static org.mockito.Mockito.when;
 import com.google.code.ssm.api.KeyProvider;
-import com.google.code.ssm.providers.MemcacheClient;
+import com.google.code.ssm.providers.CacheClient;
 
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.reflect.MethodSignature;
@@ -34,7 +34,7 @@ import org.mockito.MockitoAnnotations;
 public abstract class AbstractCacheTest<T extends CacheBase> {
 
     @Mock
-    protected MemcacheClient client;
+    protected CacheClient client;
 
     @Mock
     protected KeyProvider keyProvider;

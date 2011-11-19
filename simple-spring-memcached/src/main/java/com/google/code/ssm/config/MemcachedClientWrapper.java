@@ -5,9 +5,9 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.concurrent.TimeoutException;
 
-import com.google.code.ssm.providers.MemcacheClient;
-import com.google.code.ssm.providers.MemcacheException;
-import com.google.code.ssm.providers.MemcacheTranscoder;
+import com.google.code.ssm.providers.CacheClient;
+import com.google.code.ssm.providers.CacheException;
+import com.google.code.ssm.providers.CacheTranscoder;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,28 +31,30 @@ import org.slf4j.LoggerFactory;
  * @author Jakub Białek
  * 
  */
-public class MemcachedClientWrapper implements MemcacheClient {
+public class MemcachedClientWrapper implements CacheClient {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MemcachedClientWrapper.class);
 
-    private volatile MemcacheClient memcachedClient;
+    private volatile CacheClient memcachedClient;
 
-    public MemcachedClientWrapper(MemcacheClient memcachedClient) {
+    public MemcachedClientWrapper(CacheClient memcachedClient) {
         this.memcachedClient = memcachedClient;
     }
 
-    public boolean add(String key, int exp, Object value) throws TimeoutException, MemcacheException {
+    @Override
+    public boolean add(String key, int exp, Object value) throws TimeoutException, CacheException {
         return memcachedClient.add(key, exp, value);
     }
 
-    public <T> boolean add(String key, int exp, T value, MemcacheTranscoder<T> transcoder) throws TimeoutException, MemcacheException {
+    @Override
+    public <T> boolean add(String key, int exp, T value, CacheTranscoder<T> transcoder) throws TimeoutException, CacheException {
         return memcachedClient.add(key, exp, value, transcoder);
     }
 
-    public void changeMemcachedClient(MemcacheClient newMemcachedClient) {
+    public void changeMemcachedClient(CacheClient newMemcachedClient) {
         if (newMemcachedClient != null) {
             LOGGER.info("Replacing the memcached client");
-            MemcacheClient oldMemcachedClient = memcachedClient;
+            CacheClient oldMemcachedClient = memcachedClient;
             memcachedClient = newMemcachedClient;
             LOGGER.info("Memcached client replaced");
             LOGGER.info("Closing old memcached client");
@@ -61,69 +63,88 @@ public class MemcachedClientWrapper implements MemcacheClient {
         }
     }
 
-    public long decr(String key, int by) throws TimeoutException, MemcacheException {
+    @Override
+    public long decr(String key, int by) throws TimeoutException, CacheException {
         return memcachedClient.decr(key, by);
     }
 
-    public long decr(String key, int by, long def) throws TimeoutException, MemcacheException {
+    @Override
+    public long decr(String key, int by, long def) throws TimeoutException, CacheException {
         return memcachedClient.decr(key, by, def);
     }
-
-    public boolean delete(String key) throws TimeoutException, MemcacheException {
+    
+    @Override
+    public boolean delete(String key) throws TimeoutException, CacheException {
         return memcachedClient.delete(key);
     }
 
     @Override
-    public void flush() throws TimeoutException, MemcacheException {
+    public void delete(Collection<String> keys) throws TimeoutException, CacheException {
+        memcachedClient.delete(keys);        
+    }
+    
+    @Override
+    public void flush() throws TimeoutException, CacheException {
         memcachedClient.flush();
     }
 
-    public Object get(String key) throws TimeoutException, MemcacheException {
+    @Override
+    public Object get(String key) throws TimeoutException, CacheException {
         return memcachedClient.get(key);
     }
 
-    public <T> T get(String key, MemcacheTranscoder<T> transcoder) throws TimeoutException, MemcacheException {
+    @Override
+    public <T> T get(String key, CacheTranscoder<T> transcoder) throws TimeoutException, CacheException {
         return memcachedClient.get(key, transcoder);
     }
 
-    public <T> T get(String key, MemcacheTranscoder<T> transcoder, long timeout) throws TimeoutException, MemcacheException {
+    @Override
+    public <T> T get(String key, CacheTranscoder<T> transcoder, long timeout) throws TimeoutException, CacheException {
         return memcachedClient.get(key, transcoder, timeout);
     }
 
+    @Override
     public Collection<SocketAddress> getAvailableServers() {
         return memcachedClient.getAvailableServers();
     }
 
-    public Map<String, Object> getBulk(Collection<String> keys) throws TimeoutException, MemcacheException {
+    @Override
+    public Map<String, Object> getBulk(Collection<String> keys) throws TimeoutException, CacheException {
         return memcachedClient.getBulk(keys);
     }
 
-    public <T> Map<String, T> getBulk(Collection<String> keys, MemcacheTranscoder<T> transcoder) throws TimeoutException, MemcacheException {
+    @Override
+    public <T> Map<String, T> getBulk(Collection<String> keys, CacheTranscoder<T> transcoder) throws TimeoutException, CacheException {
         return memcachedClient.getBulk(keys, transcoder);
     }
 
     @Override
-    public MemcacheTranscoder<?> getTranscoder() {
+    public CacheTranscoder<?> getTranscoder() {
         return memcachedClient.getTranscoder();
     }
 
-    public long incr(String key, int by) throws TimeoutException, MemcacheException {
+    @Override
+    public long incr(String key, int by) throws TimeoutException, CacheException {
         return memcachedClient.incr(key, by);
     }
 
-    public long incr(String key, int by, long def) throws TimeoutException, MemcacheException {
+    @Override
+    public long incr(String key, int by, long def) throws TimeoutException, CacheException {
         return memcachedClient.incr(key, by, def);
     }
 
-    public long incr(String key, int by, long def, int exp) throws TimeoutException, MemcacheException {
+    @Override
+    public long incr(String key, int by, long def, int exp) throws TimeoutException, CacheException {
         return memcachedClient.incr(key, by, def, exp);
     }
 
-    public boolean set(String key, int exp, Object value) throws TimeoutException, MemcacheException {
+    @Override
+    public boolean set(String key, int exp, Object value) throws TimeoutException, CacheException {
         return memcachedClient.set(key, exp, value);
     }
 
-    public <T> boolean set(String key, int exp, T value, MemcacheTranscoder<T> transcoder) throws TimeoutException, MemcacheException {
+    @Override
+    public <T> boolean set(String key, int exp, T value, CacheTranscoder<T> transcoder) throws TimeoutException, CacheException {
         return memcachedClient.set(key, exp, value, transcoder);
     }
 

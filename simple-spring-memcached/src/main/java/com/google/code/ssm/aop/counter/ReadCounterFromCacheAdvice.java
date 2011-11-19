@@ -5,7 +5,7 @@ import java.lang.reflect.Method;
 import com.google.code.ssm.aop.AnnotationData;
 import com.google.code.ssm.aop.AnnotationDataBuilder;
 import com.google.code.ssm.api.counter.ReadCounterFromCache;
-import com.google.code.ssm.providers.MemcacheTranscoder;
+import com.google.code.ssm.providers.CacheTranscoder;
 import com.google.code.ssm.transcoders.LongToStringTranscoder;
 
 import org.aspectj.lang.ProceedingJoinPoint;
@@ -39,7 +39,7 @@ public class ReadCounterFromCacheAdvice extends CounterInCacheBase {
 
     private static final Logger LOG = LoggerFactory.getLogger(ReadCounterFromCacheAdvice.class);
 
-    private final MemcacheTranscoder<Long> transcoder = new LongToStringTranscoder();
+    private final CacheTranscoder<Long> transcoder = new LongToStringTranscoder();
 
     @Pointcut("@annotation(com.google.code.ssm.api.counter.ReadCounterFromCache)")
     public void readSingleCounter() {

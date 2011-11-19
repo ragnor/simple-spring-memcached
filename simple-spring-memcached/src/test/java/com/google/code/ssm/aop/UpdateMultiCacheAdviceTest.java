@@ -12,7 +12,7 @@ import com.google.code.ssm.api.ParameterDataUpdateContent;
 import com.google.code.ssm.api.ParameterValueKeyProvider;
 import com.google.code.ssm.api.UpdateMultiCache;
 import com.google.code.ssm.exceptions.InvalidAnnotationException;
-import com.google.code.ssm.providers.MemcacheClient;
+import com.google.code.ssm.providers.CacheClient;
 
 import org.apache.commons.lang.RandomStringUtils;
 import org.easymock.EasyMock;
@@ -104,7 +104,7 @@ public class UpdateMultiCacheAdviceTest {
             assertTrue(ex.getMessage().contains("do not match in size"));
         }
 
-        final MemcacheClient cache = EasyMock.createMock(MemcacheClient.class);
+        final CacheClient cache = EasyMock.createMock(CacheClient.class);
         cut.setCache(cache);
 
         for (final String key : keys) {

@@ -2,7 +2,7 @@ package com.google.code.ssm.transcoders;
 
 import java.util.Map;
 
-import com.google.code.ssm.providers.MemcacheTranscoder;
+import com.google.code.ssm.providers.CacheTranscoder;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -32,7 +32,7 @@ public class JsonTranscodersConfigurer {
     @Autowired
     private JsonTranscoders jsonTranscoders;
 
-    public void setTranscoders(Map<Class<?>, MemcacheTranscoder<?>> transcoders) {
+    public void setTranscoders(Map<Class<?>, CacheTranscoder<?>> transcoders) {
         jsonTranscoders.getTranscoders().putAll(transcoders);
     }
 

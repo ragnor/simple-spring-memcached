@@ -14,8 +14,8 @@ import java.util.List;
 
 import javax.naming.NamingException;
 
-import com.google.code.ssm.providers.MemcacheClient;
-import com.google.code.ssm.providers.MemcacheClientFactory;
+import com.google.code.ssm.providers.CacheClient;
+import com.google.code.ssm.providers.CacheClientFactory;
 
 import org.easymock.EasyMock;
 import org.easymock.IAnswer;
@@ -60,10 +60,10 @@ public class MemcachedClientFactoryTest {
         bean.setNodeList("127.0.0.1:11211");
         MemcachedClientFactory factory = new MemcachedClientFactory();
         factory.setBean(bean);
-        MemcacheClientFactory clientFactory = getClientFactoryMock(bean);
+        CacheClientFactory clientFactory = getClientFactoryMock(bean);
         factory.setClientFactory(clientFactory);
 
-        MemcacheClient cache = factory.createMemcachedClient();
+        CacheClient cache = factory.createMemcachedClient();
 
         assertNotNull(cache);
         EasyMock.verify(clientFactory);
@@ -113,10 +113,10 @@ public class MemcachedClientFactoryTest {
         final MemcachedClientFactory factory = new MemcachedClientFactory();
         factory.setBean(bean);
         String newValue = "128.0.0.1:11211";
-        MemcacheClientFactory clientFactory = getClientFactoryMock(bean);
+        CacheClientFactory clientFactory = getClientFactoryMock(bean);
         factory.setClientFactory(clientFactory);
 
-        MemcacheClient cache = factory.createMemcachedClient();
+        CacheClient cache = factory.createMemcachedClient();
 
         factory.handleNotification(jndiKey, newValue);
         Collection<SocketAddress> c = cache.getAvailableServers();
@@ -141,15 +141,15 @@ public class MemcachedClientFactoryTest {
     }
 
     @SuppressWarnings("unchecked")
-    private MemcacheClientFactory getClientFactoryMock(MemcachedConnectionBean bean) throws IOException {
-        MemcacheClientFactory clientFactory = EasyMock.createMock(MemcacheClientFactory.class);
+    private CacheClientFactory getClientFactoryMock(MemcachedConnectionBean bean) throws IOException {
+        CacheClientFactory clientFactory = EasyMock.createMock(CacheClientFactory.class);
 
-        EasyMock.expect(clientFactory.create(EasyMock.anyObject(List.class), EasyMock.eq(bean))).andAnswer(new IAnswer<MemcacheClient>() {
+        EasyMock.expect(clientFactory.create(EasyMock.anyObject(List.class), EasyMock.eq(bean))).andAnswer(new IAnswer<CacheClient>() {
 
             @Override
-            public MemcacheClient answer() throws Throwable {
+            public CacheClient answer() throws Throwable {
                 List<InetSocketAddress> address = (List<InetSocketAddress>) EasyMock.getCurrentArguments()[0];
-                MemcacheClient client = EasyMock.createMock(MemcacheClient.class);
+                CacheClient client = EasyMock.createMock(CacheClient.class);
 
                 List<SocketAddress> socketAddress = new ArrayList<SocketAddress>();
                 socketAddress.addAll(address);

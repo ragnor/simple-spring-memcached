@@ -4,7 +4,7 @@ import java.io.UnsupportedEncodingException;
 
 import com.google.code.ssm.providers.CachedObject;
 import com.google.code.ssm.providers.CachedObjectImpl;
-import com.google.code.ssm.providers.MemcacheTranscoder;
+import com.google.code.ssm.providers.CacheTranscoder;
 
 /**
  * Copyright (c) 2010, 2011 Jakub Białek
@@ -29,7 +29,7 @@ import com.google.code.ssm.providers.MemcacheTranscoder;
  * @author Jakub Białek
  * 
  */
-public class LongToStringTranscoder implements MemcacheTranscoder<Long> {
+public class LongToStringTranscoder implements CacheTranscoder<Long> {
 
     @Override
     public Long decode(CachedObject data) {

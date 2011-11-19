@@ -24,16 +24,16 @@ import java.util.concurrent.TimeoutException;
  * @author Jakub Białek
  * 
  */
-public interface MemcacheClient {
+public interface CacheClient {
 
-    boolean add(String key, int exp, Object value) throws TimeoutException, MemcacheException;
+    boolean add(String key, int exp, Object value) throws TimeoutException, CacheException;
 
-    <T> boolean add(final String key, final int exp, final T value, final MemcacheTranscoder<T> transcoder) throws TimeoutException,
-            MemcacheException;
+    <T> boolean add(final String key, final int exp, final T value, final CacheTranscoder<T> transcoder) throws TimeoutException,
+            CacheException;
 
-    long decr(String key, int by) throws TimeoutException, MemcacheException;
+    long decr(String key, int by) throws TimeoutException, CacheException;
 
-    long decr(String key, int by, long def) throws TimeoutException, MemcacheException;
+    long decr(String key, int by, long def) throws TimeoutException, CacheException;
 
     /**
      * Deletes value under given key.
@@ -42,21 +42,30 @@ public interface MemcacheClient {
      *            the key
      * @return
      * @throws TimeoutException
-     * @throws MemcacheException
+     * @throws CacheException
      */
-    boolean delete(String key) throws TimeoutException, MemcacheException;
+    boolean delete(String key) throws TimeoutException, CacheException;
+
+    /**
+     * Deletes values under given keys.
+     * 
+     * @param keys
+     * @throws TimeoutException
+     * @throws CacheException
+     */
+    void delete(Collection<String> keys) throws TimeoutException, CacheException;
 
     /**
      * Flushes all data.
      * 
      * @throws TimeoutException
-     * @throws MemcacheException
+     * @throws CacheException
      */
-    void flush() throws TimeoutException, MemcacheException;
+    void flush() throws TimeoutException, CacheException;
 
-    Object get(final String key) throws TimeoutException, MemcacheException;
+    Object get(final String key) throws TimeoutException, CacheException;
 
-    <T> T get(final String key, final MemcacheTranscoder<T> transcoder) throws TimeoutException, MemcacheException;
+    <T> T get(final String key, final CacheTranscoder<T> transcoder) throws TimeoutException, CacheException;
 
     /**
      * Get value by key.
@@ -70,9 +79,9 @@ public interface MemcacheClient {
      *            the timeout, if the method is not returned in this time, throws TimeoutException
      * @return value associated with given key or null
      * @throws TimeoutException
-     * @throws MemcacheException
+     * @throws CacheException
      */
-    <T> T get(String key, MemcacheTranscoder<T> transcoder, final long timeout) throws TimeoutException, MemcacheException;
+    <T> T get(String key, CacheTranscoder<T> transcoder, final long timeout) throws TimeoutException, CacheException;
 
     /**
      * Gets available memcached servers.
@@ -81,24 +90,24 @@ public interface MemcacheClient {
      */
     Collection<SocketAddress> getAvailableServers();
 
-    Map<String, Object> getBulk(Collection<String> keys) throws TimeoutException, MemcacheException;
+    Map<String, Object> getBulk(Collection<String> keys) throws TimeoutException, CacheException;
 
-    <T> Map<String, T> getBulk(Collection<String> keys, MemcacheTranscoder<T> transcoder) throws TimeoutException, MemcacheException;
+    <T> Map<String, T> getBulk(Collection<String> keys, CacheTranscoder<T> transcoder) throws TimeoutException, CacheException;
 
     /**
      * Gets default transcoder.
      * 
      * @return default transcoder
      */
-    MemcacheTranscoder<?> getTranscoder();
+    CacheTranscoder<?> getTranscoder();
 
-    long incr(String key, int by) throws TimeoutException, MemcacheException;
+    long incr(String key, int by) throws TimeoutException, CacheException;
 
-    long incr(String key, int by, long def) throws TimeoutException, MemcacheException;
+    long incr(String key, int by, long def) throws TimeoutException, CacheException;
 
-    long incr(String key, int by, long def, int exp) throws TimeoutException, MemcacheException;
+    long incr(String key, int by, long def, int exp) throws TimeoutException, CacheException;
 
-    boolean set(String key, int exp, Object value) throws TimeoutException, MemcacheException;
+    boolean set(String key, int exp, Object value) throws TimeoutException, CacheException;
 
     /**
      * Store key-value item to memcached.
@@ -114,10 +123,10 @@ public interface MemcacheClient {
      *            the transcoder to use
      * @return boolean result
      * @throws TimeoutException
-     * @throws MemcacheException
+     * @throws CacheException
      */
-    <T> boolean set(final String key, final int exp, final T value, final MemcacheTranscoder<T> transcoder) throws TimeoutException,
-            MemcacheException;
+    <T> boolean set(final String key, final int exp, final T value, final CacheTranscoder<T> transcoder) throws TimeoutException,
+            CacheException;
 
     /**
      * Shutdowns memcached client.
