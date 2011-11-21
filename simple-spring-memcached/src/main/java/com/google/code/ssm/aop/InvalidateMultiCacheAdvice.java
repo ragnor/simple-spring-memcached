@@ -46,11 +46,10 @@ public class InvalidateMultiCacheAdvice extends MultiCacheAdvice {
         // the crap outta it, but do not let it surface up past the AOP injection itself.
         Collection<String> cacheKeys = null;
         final AnnotationData annotationData;
-        final String methodDescription;
+        final Method methodToCache;
         final MultiCacheCoordinator coord = new MultiCacheCoordinator();
         try {
-            final Method methodToCache = getMethodToCache(pjp);
-            methodDescription = methodToCache.toString();
+            methodToCache = getMethodToCache(pjp);
             final InvalidateMultiCache annotation = methodToCache.getAnnotation(InvalidateMultiCache.class);
             annotationData = AnnotationDataBuilder.buildAnnotationData(annotation, InvalidateMultiCache.class, methodToCache);
             coord.setAnnotationData(annotationData);
@@ -78,8 +77,7 @@ public class InvalidateMultiCacheAdvice extends MultiCacheAdvice {
             if (annotationData.isReturnKeyIndex()) {
                 if (!verifyTypeIsList(result.getClass())) {
                     throw new InvalidAnnotationException(String.format("The return type is not a [%s]. "
-                            + "The method [%s] does not fulfill the requirements.", List.class.getName(), methodDescription));
-
+                            + "The method [%s] does not fulfill the requirements.", List.class.getName(), methodToCache.toString()));
                 }
 
                 @SuppressWarnings("unchecked")

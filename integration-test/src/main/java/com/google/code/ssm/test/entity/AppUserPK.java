@@ -83,7 +83,7 @@ public class AppUserPK implements Serializable {
 
     @Override
     public String toString() {
-        return "ApplicationUserPK [applicationId=" + applicationId + ", userId=" + userId + "]";
+        return "AppUserPK [applicationId=" + applicationId + ", userId=" + userId + "]";
     }
     
     @CacheKeyMethod

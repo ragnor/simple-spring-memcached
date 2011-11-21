@@ -57,7 +57,7 @@ public class ReadThroughMultiCacheAdvice extends MultiCacheAdvice {
 
             // Get the annotation associated with this method, and make sure the values are valid.
             final ReadThroughMultiCache annotation = coord.getMethod().getAnnotation(ReadThroughMultiCache.class);
-            jsonClass = getJsonClass(coord.getMethod(), -1);
+            jsonClass = getJsonClass(coord.getMethod(), AnnotationData.RETURN_INDEX);
 
             coord.setAnnotationData(AnnotationDataBuilder.buildAnnotationData(annotation, ReadThroughMultiCache.class, coord.getMethod()));
             ReadThroughMultiCacheOptions options = annotation.options();
@@ -152,9 +152,7 @@ public class ReadThroughMultiCacheAdvice extends MultiCacheAdvice {
 
         int ix = 0;
         for (Object resultObject : results) {
-            if (resultObject == null) {
-                resultObject = PertinentNegativeNull.NULL;
-            }
+            resultObject = getSubmission(resultObject);
             Object keyObject = coord.getMissObjects().get(ix);
             String cacheKey = coord.getObj2Key().get(keyObject);
             setSilently(cacheKey, coord.getAnnotationData().getExpiration(), resultObject, jsonClass);

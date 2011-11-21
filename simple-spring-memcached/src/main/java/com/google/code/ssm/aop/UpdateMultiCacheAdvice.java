@@ -51,8 +51,7 @@ public class UpdateMultiCacheAdvice extends CacheBase {
             final UpdateMultiCache annotation = methodToCache.getAnnotation(UpdateMultiCache.class);
             final AnnotationData annotationData = AnnotationDataBuilder.buildAnnotationData(annotation, UpdateMultiCache.class,
                     methodToCache);
-            final List<Object> dataList = annotationData.isReturnDataIndex() ? (List<Object>) retVal : (List<Object>) getIndexObject(
-                    annotationData.getDataIndex(), jp, methodToCache);
+            final List<Object> dataList = this.<List<Object>>getUpdateData(annotationData, methodToCache, jp, retVal);
             Class<?> jsonClass = getJsonClass(methodToCache, annotationData.getDataIndex());
             // FIXME only one key index is used, should getKeyIndexes()
             final List<Object> keyObjects = getKeyObjects(annotationData.getKeyIndex(), retVal, jp, methodToCache);
@@ -73,7 +72,7 @@ public class UpdateMultiCacheAdvice extends CacheBase {
         for (int ix = 0; ix < returnList.size(); ix++) {
             final Object result = returnList.get(ix);
             final String cacheKey = cacheKeys.get(ix);
-            final Object cacheObject = result != null ? result : PertinentNegativeNull.NULL;
+            final Object cacheObject = getSubmission(result);
             setSilently(cacheKey, annotationData.getExpiration(), cacheObject, jsonClass);
         }
     }

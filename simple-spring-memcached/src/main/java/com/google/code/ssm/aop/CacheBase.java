@@ -10,6 +10,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeoutException;
 
+import org.aspectj.lang.JoinPoint;
+import org.aspectj.lang.Signature;
+import org.aspectj.lang.reflect.MethodSignature;
+import org.slf4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
+
 import com.google.code.ssm.api.CacheKeyMethod;
 import com.google.code.ssm.api.KeyProvider;
 import com.google.code.ssm.api.ReadThroughMultiCache;
@@ -20,14 +28,6 @@ import com.google.code.ssm.providers.CacheClient;
 import com.google.code.ssm.providers.CacheException;
 import com.google.code.ssm.providers.CacheTranscoder;
 import com.google.code.ssm.transcoders.JsonTranscoders;
-
-import org.aspectj.lang.JoinPoint;
-import org.aspectj.lang.Signature;
-import org.aspectj.lang.reflect.MethodSignature;
-import org.slf4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.ApplicationContextAware;
 
 /**
  * Copyright (c) 2008, 2009 Nelson Carpentier
@@ -99,7 +99,7 @@ public abstract class CacheBase implements ApplicationContextAware {
         final Method[] keysMethods = getKeysMethods(keysObjects);
         return generateObjectIds(keysMethods, keysObjects);
     }
-    
+
     protected String generateObjectId(final Method keyMethod, final Object keyObject) throws Exception {
         final String objectId = (String) keyMethod.invoke(keyObject, new Object[0]);
         if (objectId == null || objectId.length() < 1) {
@@ -123,6 +123,20 @@ public abstract class CacheBase implements ApplicationContextAware {
         return ids;
     }
 
+    @SuppressWarnings("unchecked")
+    protected <T> T getUpdateData(AnnotationData annotationData, Method method, JoinPoint jp, Object returnValue) throws Exception {
+        return annotationData.isReturnDataIndex() ? (T) returnValue : (T) getIndexObject(annotationData.getDataIndex(), jp, method);
+    }
+
+    protected String getCacheKey(AnnotationData annotationData, JoinPoint jp, Method method) throws Exception {
+        final String[] objectsIds = getObjectIds(annotationData.getKeysIndex(), jp, method);
+        return buildCacheKey(objectsIds, annotationData);
+    }
+    
+    protected Object getSubmission(Object o) {
+        return o == null ? PertinentNegativeNull.NULL : o;
+    }
+
     /**
      * Builds cache key from one object id.
      * 
@@ -144,7 +158,7 @@ public abstract class CacheBase implements ApplicationContextAware {
      * @param namespace
      * @return
      */
-    protected String buildCacheKey(final String[] objectIds, final String namespace) {
+    private String buildCacheKey(final String[] objectIds, final String namespace) {
         StringBuilder cacheKey = new StringBuilder(namespace);
         cacheKey.append(SEPARATOR);
         for (String id : objectIds) {
@@ -314,8 +328,7 @@ public abstract class CacheBase implements ApplicationContextAware {
         cache.set(cacheKey, expiration, value);
     }
 
-    protected <T> void set(String cacheKey, int expiration, T value, CacheTranscoder<T> transcoder) throws TimeoutException,
-            CacheException {
+    protected <T> void set(String cacheKey, int expiration, T value, CacheTranscoder<T> transcoder) throws TimeoutException, CacheException {
         cache.set(cacheKey, expiration, value, transcoder);
         if (getLogger().isInfoEnabled()) {
             info("Set [json] under key: " + cacheKey + ", object: " + value + ", json: " + (value != null ? value.getClass() : null));
@@ -386,7 +399,7 @@ public abstract class CacheBase implements ApplicationContextAware {
     protected void delete(Collection<String> keys) throws TimeoutException, CacheException {
         cache.delete(keys);
     }
-    
+
     protected Map<String, Object> getBulk(Collection<String> keys, Class<?> clazz) throws TimeoutException, CacheException {
         if (clazz != null) {
             CacheTranscoder<?> transcoder = jsonTranscoders.getTranscoder(clazz);
@@ -410,7 +423,7 @@ public abstract class CacheBase implements ApplicationContextAware {
             return useJsonAnnotation.value();
         }
 
-        if (index == -1) {
+        if (index == AnnotationData.RETURN_INDEX) {
             return methodToCache.getReturnType();
         } else {
             return methodToCache.getParameterTypes()[index];

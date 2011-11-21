@@ -48,14 +48,12 @@ public class UpdateSingleCacheAdvice extends CacheBase {
             final UpdateSingleCache annotation = methodToCache.getAnnotation(UpdateSingleCache.class);
             final AnnotationData annotationData = AnnotationDataBuilder.buildAnnotationData(annotation, UpdateSingleCache.class,
                     methodToCache);
+  
+            final String cacheKey = getCacheKey(annotationData, jp, methodToCache);
 
-            final String[] objectsIds = getObjectIds(annotationData.getKeysIndex(), jp, methodToCache);
-            final String cacheKey = buildCacheKey(objectsIds, annotationData);
-
-            final Object dataObject = annotationData.isReturnDataIndex() ? retVal : getIndexObject(annotationData.getDataIndex(), jp,
-                    methodToCache);
+            final Object dataObject = this.<Object>getUpdateData(annotationData, methodToCache, jp, retVal);
             final Class<?> jsonClass = getJsonClass(methodToCache, annotationData.getDataIndex());
-            final Object submission = (dataObject == null) ? PertinentNegativeNull.NULL : dataObject;
+            final Object submission = getSubmission(dataObject);
             set(cacheKey, annotationData.getExpiration(), submission, jsonClass);
         } catch (Exception ex) {
             warn("Updating caching via " + jp.toShortString() + " aborted due to an error.", ex);

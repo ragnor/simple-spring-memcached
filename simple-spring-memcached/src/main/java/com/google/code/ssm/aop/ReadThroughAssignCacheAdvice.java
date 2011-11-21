@@ -49,7 +49,7 @@ public class ReadThroughAssignCacheAdvice extends CacheBase {
             final Method methodToCache = getMethodToCache(pjp);
             verifyReturnTypeIsNoVoid(methodToCache, ReadThroughAssignCache.class);
             final ReadThroughAssignCache annotation = methodToCache.getAnnotation(ReadThroughAssignCache.class);
-            jsonClass = getJsonClass(methodToCache, -1);
+            jsonClass = getJsonClass(methodToCache, AnnotationData.RETURN_INDEX);
             annotationData = AnnotationDataBuilder.buildAnnotationData(annotation, ReadThroughAssignCache.class, methodToCache);
             cacheKey = buildCacheKey(annotationData.getAssignedKey(), annotationData);
             final Object result = get(cacheKey, jsonClass);
@@ -67,7 +67,7 @@ public class ReadThroughAssignCacheAdvice extends CacheBase {
         // This is injected caching. If anything goes wrong in the caching, LOG
         // the crap outta it, but do not let it surface up past the AOP injection itself.
         try {
-            final Object submission = (result == null) ? PertinentNegativeNull.NULL : result;
+            final Object submission = getSubmission(result);
             set(cacheKey, annotationData.getExpiration(), submission, jsonClass);
         } catch (Throwable ex) {
             warn("Caching on " + pjp.toShortString() + " aborted due to an error.", ex);

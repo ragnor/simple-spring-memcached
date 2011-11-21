@@ -25,31 +25,32 @@ import com.google.code.ssm.test.entity.AppUserPK;
  * @author Jakub Białek
  * 
  */
-public interface AppUserDAO  {
+public interface AppUserDAO {
 
     AppUserPK create(AppUser entity);
 
     List<Integer> getAppIdList(int userId, boolean enbled);
 
     AppUser getByPk(AppUserPK pk);
-    
+
     AppUser getByPKFromDB(AppUserPK pk);
 
     /**
-     * IMPORTAN: Parameter appsIds must be sorted in ASC order.
      * 
-     * @param userId the user ID
-     * @param appsIds sorted list of applications' IDs in ASC order
+     * @param userId
+     *            the user ID
+     * @param appsIds
+     *            sorted list of applications' IDs in ASC order
      * @return list of entities
      */
     List<AppUser> getList(int userId, List<Integer> appsIds);
 
     /**
      * 
-     * IMPORTAN: Parameter userIds must be sorted in ASC order.
-     * 
-     * @param applicationId the ID of application
-     * @param userIds sorted list of users IDs
+     * @param applicationId
+     *            the ID of application
+     * @param userIds
+     *            sorted list of users IDs
      * @return list of entities
      */
     List<AppUser> getUsersList(int applicationId, List<Integer> userIds);
@@ -57,15 +58,15 @@ public interface AppUserDAO  {
     /**
      * Fetch {@link AppUser} entities from remote cache (memcached).
      * 
-     * @param applicationId ID of application
+     * @param applicationId
+     *            ID of application
      * @param usersIds
      *            list of users IDs to fetch
      * @param notFoundUsersIds
      *            collection with users IDs that weren't found in cache
      * @return list of users of given application with given IDs from cache
      */
-    List<AppUser> getUsersListFromCache(int applicationId, List<Integer> usersIds,
-            Collection<Integer> notFoundUsersIds);
+    List<AppUser> getUsersListFromCache(int applicationId, List<Integer> usersIds, Collection<Integer> notFoundUsersIds);
 
     void remove(AppUserPK pk);
 

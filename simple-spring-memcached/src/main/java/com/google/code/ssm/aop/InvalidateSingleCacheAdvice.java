@@ -50,8 +50,7 @@ public class InvalidateSingleCacheAdvice extends CacheBase {
             final InvalidateSingleCache annotation = methodToCache.getAnnotation(InvalidateSingleCache.class);
             annotationData = AnnotationDataBuilder.buildAnnotationData(annotation, InvalidateSingleCache.class, methodToCache);
             if (!annotationData.isReturnKeyIndex()) {
-                final String[] objectsIds = getObjectIds(annotationData.getKeysIndex(), pjp, methodToCache);
-                cacheKey = buildCacheKey(objectsIds, annotationData);
+                cacheKey = getCacheKey(annotationData, pjp, methodToCache);
             }
         } catch (Throwable ex) {
             warn("Caching on " + pjp.toShortString() + " aborted due to an error.", ex);

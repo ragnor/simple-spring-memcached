@@ -50,10 +50,9 @@ public class UpdateAssignCacheAdvice extends CacheBase {
 
             final String cacheKey = buildCacheKey(annotationData.getAssignedKey(), annotationData);
 
-            final Object dataObject = annotationData.isReturnDataIndex() ? retVal : getIndexObject(annotationData.getDataIndex(), jp,
-                    methodToCache);
+            final Object dataObject = this.<Object>getUpdateData(annotationData, methodToCache, jp, retVal);
             final Class<?> jsonClass = getJsonClass(methodToCache, annotationData.getDataIndex());
-            final Object submission = (dataObject == null) ? PertinentNegativeNull.NULL : dataObject;
+            final Object submission = getSubmission(dataObject);
             set(cacheKey, annotationData.getExpiration(), submission, jsonClass);
         } catch (Exception ex) {
             warn("Updating caching via " + jp.toShortString() + " aborted due to an error.", ex);
