@@ -1,12 +1,5 @@
-package com.google.code.ssm.api;
-
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
-
-/**
- * Copyright (c) 2008, 2009 Nelson Carpentier
+/*
+ * Copyright (c) 2008-2009 Nelson Carpentier
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
  * documentation files (the "Software"), to deal in the Software without restriction, including without limitation the
@@ -21,56 +14,69 @@ import java.lang.annotation.Target;
  * COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  * 
+ */
+
+package com.google.code.ssm.api;
+
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
+
+/**
+ * 
  * @author Nelson Carpentier
+ * @since 1.0.0
  * 
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)
 public @interface UpdateMultiCache {
-	
-    /**
-	 * A namespace that is added to the key as it is stored in the distributed cache.
-	 * This allows differing object that may have the same ID to coexist.
-	 * This value must be assigned.
-	 * @return the namespace for the objects cached in the given method.
-	 */
-	String namespace() default AnnotationConstants.DEFAULT_STRING;
 
-	/**
-	 *  The exp value is passed along to memcached exactly as given, and will be
-	 * processed per the memcached protocol specification:
-	 *
-	 * The actual value sent may either be Unix time (number of seconds since January 1, 1970,
-	 * as a 32-bit value), or a number of seconds starting from current time. In the latter case,
-	 * this number of seconds may not exceed 60*60*24*30 (number of seconds in 30 days); if the
-	 * number sent by a client is larger than that, the server will consider it to be real Unix
-	 * time value rather than an offset from current time.
-	 *
-	 * (Also note: a value of 0 means the given value should never expire. The value is still
-	 * susceptible to purging by memcached for space and LRU (least recently used) considerations.)
-	 *
-	 * @return
-	 */
-	int expiration() default 0;
-	
-	/**
-	 * If no one argument is annotated by {@link ParameterDataUpdateContent} and {@link ParameterValueKeyProvider} or
-	 * method is not annotated by both {@link ReturnValueKeyProvider} and {@link ReturnDataUpdateContent}
-	 * then null values will be added under keys that occurred in list parameter annotated by {@link ParameterValueKeyProvider}
-	 * or {@link ReturnValueKeyProvider} but not occurred in {@link ParameterDataUpdateContent} or {@link ReturnDataUpdateContent}.
-	 * Example: <br/>
-	 * @ReadThroughMultiCache(namespace = MemcacheSettings.APP_USER_SINGLE, expiration = 0, generateKeysFromResult = true, 
-     *       addNulls = true) <br/>
-     *	public List<ApplicationUser> getUsersList(@ParameterValueKeyProvider(order = 1) int applicationId, 
-     *       @ParameterValueKeyProvider(order = 0) List<Integer> userIds) <br/>
+    /**
+     * A namespace that is added to the key as it is stored in the distributed cache. This allows differing object that
+     * may have the same ID to coexist. This value must be assigned.
+     * 
+     * @return the namespace for the objects cached in the given method.
+     */
+    String namespace() default AnnotationConstants.DEFAULT_STRING;
+
+    /**
+     * The exp value is passed along to memcached exactly as given, and will be processed per the memcached protocol
+     * specification:
+     * 
+     * The actual value sent may either be Unix time (number of seconds since January 1, 1970, as a 32-bit value), or a
+     * number of seconds starting from current time. In the latter case, this number of seconds may not exceed
+     * 60*60*24*30 (number of seconds in 30 days); if the number sent by a client is larger than that, the server will
+     * consider it to be real Unix time value rather than an offset from current time.
+     * 
+     * (Also note: a value of 0 means the given value should never expire. The value is still susceptible to purging by
+     * memcached for space and LRU (least recently used) considerations.)
+     * 
+     * @return
+     */
+    int expiration() default 0;
+
+    /**
+     * If no one argument is annotated by {@link ParameterDataUpdateContent} and {@link ParameterValueKeyProvider} or
+     * method is not annotated by both {@link ReturnValueKeyProvider} and {@link ReturnDataUpdateContent} then null
+     * values will be added under keys that occurred in list parameter annotated by {@link ParameterValueKeyProvider} or
+     * {@link ReturnValueKeyProvider} but not occurred in {@link ParameterDataUpdateContent} or
+     * {@link ReturnDataUpdateContent}. Example: <br/>
+     * 
+     * @ReadThroughMultiCache(namespace = MemcacheSettings.APP_USER_SINGLE, expiration = 0, generateKeysFromResult =
+     *                                  true, addNulls = true) <br/>
+     *                                  public List<ApplicationUser> getUsersList(@ParameterValueKeyProvider(order = 1)
+     *                                  int applicationId,
+     * @ParameterValueKeyProvider(order = 0) List<Integer> userIds) <br/>
      * <br/>
-     * invocation:  getUsersList(1, Arrays.asList(1,2,3,4,5)) will return entities for userId 1,3,4 then null values will be added 
-     * for userId 2 and 5.  
-	 * 
-	 * @return
-	 * 
-	 * TODO move this property to dedicated annotation UpdateMultiCacheOptions
-	 */
-	boolean addNulls() default false;
-	
+     *                                  invocation: getUsersList(1, Arrays.asList(1,2,3,4,5)) will return entities for
+     *                                  userId 1,3,4 then null values will be added for userId 2 and 5.
+     * 
+     * @return
+     * 
+     *         TODO move this property to dedicated annotation UpdateMultiCacheOptions
+     */
+    boolean addNulls() default false;
+
 }

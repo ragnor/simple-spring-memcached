@@ -1,9 +1,5 @@
-package com.google.code.ssm.aop;
-
-import com.google.code.ssm.api.*;
-
-/**
- * Copyright (c) 2008, 2009 Nelson Carpentier
+/*
+ * Copyright (c) 2008-2009 Nelson Carpentier
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
  * documentation files (the "Software"), to deal in the Software without restriction, including without limitation the
@@ -17,6 +13,13 @@ import com.google.code.ssm.api.*;
  * WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
  * COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ */
+
+package com.google.code.ssm.aop;
+
+import com.google.code.ssm.api.*;
+
+/**
  * 
  * @author Nelson Carpentier
  * 
@@ -77,7 +80,7 @@ public class AnnotationDataDummy {
     public void populateKeyProvider01(final String key1) {
     }
 
-    @InvalidateSingleCache
+/*    @InvalidateSingleCache
     @ReturnValueKeyProvider(keyProviderBeanName = "")
     public void populateKeyProvider02(final String key1) {
     }
@@ -100,7 +103,7 @@ public class AnnotationDataDummy {
     @ReturnValueKeyProvider(keyProviderBeanName = SAMPLE_RETURN_BEAN)
     public void populateKeyProvider06(final String key1) {
     }
-
+*/
     @InvalidateSingleCache
     public void populateKeyProvider07(final String key1, @ParameterValueKeyProvider final String key2, final String key3) {
     }
@@ -110,10 +113,10 @@ public class AnnotationDataDummy {
     public void populateKeyProvider08(final String key1) {
     }
 
-    @InvalidateSingleCache
+  /*  @InvalidateSingleCache
     public void populateKeyProvider09(@ParameterValueKeyProvider(keyProviderBeanName = SAMPLE_PARAM_BEAN, order = 1) final String key1,
             @ParameterValueKeyProvider(keyProviderBeanName = "anotherSampleBean", order = 0) final String key2) {
-    }
+    }*/
 
     @UpdateAssignCache
     public void populateData01(final String key1) {

@@ -1,11 +1,4 @@
-package com.google.code.ssm.api;
-
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
-
-/**
+/*
  * Copyright (c) 2010, 2011 Jakub Białek
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
@@ -20,8 +13,19 @@ import java.lang.annotation.Target;
  * WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
  * COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ */
+
+package com.google.code.ssm.api;
+
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
+
+/**
  * 
  * @author Jakub Białek
+ * @since 2.0.0
  * 
  */
 @Retention(RetentionPolicy.RUNTIME)
@@ -62,5 +66,5 @@ public @interface ReadThroughMultiCacheOptions {
      * 
      */
     boolean skipNullsInResult() default false;
-    
+
 }

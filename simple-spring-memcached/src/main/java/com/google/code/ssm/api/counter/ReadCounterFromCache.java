@@ -1,14 +1,5 @@
-package com.google.code.ssm.api.counter;
-
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
-
-import com.google.code.ssm.api.AnnotationConstants;
-
-/**
- * Copyright (c) 2010, 2011 Jakub Białek
+/*
+ * Copyright (c) 2010-2011 Jakub Białek
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
  * documentation files (the "Software"), to deal in the Software without restriction, including without limitation the
@@ -22,14 +13,30 @@ import com.google.code.ssm.api.AnnotationConstants;
  * WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
  * COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ */
+
+package com.google.code.ssm.api.counter;
+
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
+
+import com.google.code.ssm.api.AnnotationConstants;
+
+/**
+ * 
+ * Reads counter value from cache. If counter doesn't exist intercepted method is executed and return value is used to
+ * initialize counter. Annotated method must return one of {@link int}, {@link Integer}, {@link long} or {@link Long}.
  * 
  * @author Jakub Białek
+ * @since 2.0.0
  * 
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)
 public @interface ReadCounterFromCache {
-    
+
     /**
      * A namespace that is added to the key as it is stored in the distributed cache. This allows differing object that
      * may have the same ID to coexist. This value must be assigned.
@@ -39,7 +46,7 @@ public @interface ReadCounterFromCache {
     String namespace() default AnnotationConstants.DEFAULT_STRING;
 
     /**
-     * The exp value is passed along to memcached exactly as given, and will be processed per the memcached protocol
+     * The exp value is passed along to cache exactly as given, and will be processed per the memcached protocol
      * specification:
      * 
      * The actual value sent may either be Unix time (number of seconds since January 1, 1970, as a 32-bit value), or a
@@ -53,5 +60,5 @@ public @interface ReadCounterFromCache {
      * @return
      */
     int expiration() default 0;
-    
+
 }

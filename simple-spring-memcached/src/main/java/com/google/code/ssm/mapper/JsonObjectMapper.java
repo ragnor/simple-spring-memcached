@@ -1,12 +1,5 @@
-package com.google.code.ssm.mapper;
-
-import org.codehaus.jackson.map.DeserializationConfig;
-import org.codehaus.jackson.map.ObjectMapper;
-import org.codehaus.jackson.map.SerializationConfig;
-import org.springframework.stereotype.Component;
-
-/**
- * Copyright (c) 2010, 2011 Jakub Białek
+/*
+ * Copyright (c) 2010-2011 Jakub Białek
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
  * documentation files (the "Software"), to deal in the Software without restriction, including without limitation the
@@ -20,10 +13,21 @@ import org.springframework.stereotype.Component;
  * WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
  * COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ */
+
+package com.google.code.ssm.mapper;
+
+import org.codehaus.jackson.map.DeserializationConfig;
+import org.codehaus.jackson.map.ObjectMapper;
+import org.codehaus.jackson.map.SerializationConfig;
+import org.springframework.stereotype.Component;
+
+/**
  * 
  * Default jackson {@link ObjectMapper} initialized with disabled auto detecting of fields, getters and setters.
  * 
  * @author Jakub Białek
+ * @since 2.0.0
  * 
  */
 @Component("jsonObjectMapper")

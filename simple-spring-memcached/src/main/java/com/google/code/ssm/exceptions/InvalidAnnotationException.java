@@ -1,7 +1,5 @@
-package com.google.code.ssm.exceptions;
-
-/**
- * Copyright (c) 2008, 2009 Nelson Carpentier
+/*
+ * Copyright (c) 2008-2009 Nelson Carpentier
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
  * documentation files (the "Software"), to deal in the Software without restriction, including without limitation the
@@ -15,6 +13,12 @@ package com.google.code.ssm.exceptions;
  * WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
  * COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ * 
+ */
+
+package com.google.code.ssm.exceptions;
+
+/**
  * 
  * @author Nelson Carpentier
  * 

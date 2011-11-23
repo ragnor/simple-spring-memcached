@@ -1,3 +1,19 @@
+/* Copyright (c) 2011 Jakub Białek
+ * 
+ * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
+ * documentation files (the "Software"), to deal in the Software without restriction, including without limitation the
+ * rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to
+ * permit persons to whom the Software is furnished to do so, subject to the following conditions:
+ * 
+ * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the
+ * Software.
+ * 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE
+ * WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
+ * COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
+ * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ */
+
 package com.google.code.ssm.aop.counter;
 
 import static org.junit.Assert.assertEquals;
@@ -25,20 +41,6 @@ import org.junit.Test;
 import org.junit.runners.Parameterized.Parameters;
 
 /**
- * Copyright (c) 2011 Jakub Białek
- * 
- * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
- * documentation files (the "Software"), to deal in the Software without restriction, including without limitation the
- * rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to
- * permit persons to whom the Software is furnished to do so, subject to the following conditions:
- * 
- * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the
- * Software.
- * 
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE
- * WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
- * COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
- * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  * 
  * @author Jakub Białek
  * 
@@ -48,12 +50,13 @@ public class ReadCounterFromCacheAdviceTest extends AbstractCounterTest<ReadCoun
     @Parameters
     public static Collection<Object[]> data() {
         return Arrays.asList(new Object[][] { //
-                { true, "readCounter1", new Class[] { int.class }, new Object[] { 1 }, new Integer(1), null }, //
+                        { true, "readCounter1", new Class[] { int.class }, new Object[] { 1 }, new Integer(1), null }, //
                         { true, "readCounter2", new Class[] { int.class }, new Object[] { 2 }, new Long(2), null }, //
                         { true, "readCounter3", new Class[] { int.class }, new Object[] { 3 }, 3L, null }, //
                         { true, "readCounter4", new Class[] { int.class }, new Object[] { 4 }, 4, null }, //
                         { true, "readCounter5", new Class[] { int.class, String.class }, new Object[] { 5, "v1" }, 5, null }, //
-                        { true, "readCounter6", new Class[] { int.class, String.class, Point.class, String.class }, new Object[] { 6, "v1", new Point(2,3), "test" }, 5, NS +":v1/(2,3)/6" }, //
+                        { true, "readCounter6", new Class[] { int.class, String.class, Point.class, String.class },
+                                new Object[] { 6, "v1", new Point(2, 3), "test" }, 5, NS + ":v1/(2,3)/6" }, //
 
                         { false, "readCounter20", new Class[] { int.class }, new Object[] { 20 }, "20xx", null }, //
                         { false, "readCounter21", new Class[] { int.class }, new Object[] { 21 }, new Object(), null }, //
@@ -67,7 +70,8 @@ public class ReadCounterFromCacheAdviceTest extends AbstractCounterTest<ReadCoun
 
     private Object expectedValue;
 
-    public ReadCounterFromCacheAdviceTest(boolean isValid, String methodName, Class<?>[] paramTypes, Object[] params, Object expectedValue, String cacheKey) {
+    public ReadCounterFromCacheAdviceTest(boolean isValid, String methodName, Class<?>[] paramTypes, Object[] params, Object expectedValue,
+            String cacheKey) {
         super(isValid, methodName, paramTypes, params, cacheKey);
         this.expectedValue = expectedValue;
     }

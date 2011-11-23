@@ -1,3 +1,21 @@
+/*
+ * Copyright (c) 2008-2011 Nelson Carpentier, Jakub Białek
+ * 
+ * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
+ * documentation files (the "Software"), to deal in the Software without restriction, including without limitation the
+ * rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to
+ * permit persons to whom the Software is furnished to do so, subject to the following conditions:
+ * 
+ * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the
+ * Software.
+ * 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE
+ * WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
+ * COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
+ * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ * 
+ */
+
 package com.google.code.ssm.aop;
 
 import java.lang.reflect.Method;
@@ -18,7 +36,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 
-import com.google.code.ssm.api.CacheKeyMethod;
 import com.google.code.ssm.api.KeyProvider;
 import com.google.code.ssm.api.ReadThroughMultiCache;
 import com.google.code.ssm.api.format.UseJson;
@@ -30,20 +47,6 @@ import com.google.code.ssm.providers.CacheTranscoder;
 import com.google.code.ssm.transcoders.JsonTranscoders;
 
 /**
- * Copyright (c) 2008, 2009 Nelson Carpentier
- * 
- * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
- * documentation files (the "Software"), to deal in the Software without restriction, including without limitation the
- * rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to
- * permit persons to whom the Software is furnished to do so, subject to the following conditions:
- * 
- * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the
- * Software.
- * 
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE
- * WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
- * COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
- * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  * 
  * @author Nelson Carpentier, Jakub Białek
  * 
@@ -132,7 +135,7 @@ public abstract class CacheBase implements ApplicationContextAware {
         final String[] objectsIds = getObjectIds(annotationData.getKeysIndex(), jp, method);
         return buildCacheKey(objectsIds, annotationData);
     }
-    
+
     protected Object getSubmission(Object o) {
         return o == null ? PertinentNegativeNull.NULL : o;
     }
@@ -221,38 +224,7 @@ public abstract class CacheBase implements ApplicationContextAware {
     }
 
     protected Method getKeyMethod(final Object keyObject) throws NoSuchMethodException {
-        final Method storedMethod = methodStore.find(keyObject.getClass());
-        if (storedMethod != null) {
-            return storedMethod;
-        }
-        final Method[] methods = keyObject.getClass().getDeclaredMethods();
-        Method targetMethod = null;
-        for (final Method method : methods) {
-            if (method != null && method.getAnnotation(CacheKeyMethod.class) != null) {
-                if (method.getParameterTypes().length > 0) {
-                    throw new InvalidAnnotationException(String.format("Method [%s] must have 0 arguments to be annotated with [%s]",
-                            method.toString(), CacheKeyMethod.class.getName()));
-                }
-                if (!String.class.equals(method.getReturnType())) {
-                    throw new InvalidAnnotationException(String.format("Method [%s] must return a String to be annotated with [%s]",
-                            method.toString(), CacheKeyMethod.class.getName()));
-                }
-                if (targetMethod != null) {
-                    throw new InvalidAnnotationException(String.format(
-                            "Class [%s] should have only one method annotated with [%s]. See [%s] and [%s]",
-                            keyObject.getClass().getName(), CacheKeyMethod.class.getName(), targetMethod.getName(), method.getName()));
-                }
-                targetMethod = method;
-            }
-        }
-
-        if (targetMethod == null) {
-            targetMethod = keyObject.getClass().getMethod("toString", (Class<?>[]) null);
-        }
-
-        methodStore.add(keyObject.getClass(), targetMethod);
-
-        return targetMethod;
+        return methodStore.getKeyMethod(keyObject.getClass());
     }
 
     protected Method[] getKeysMethods(final Object[] keysObjects) throws NoSuchMethodException {

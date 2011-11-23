@@ -1,3 +1,20 @@
+/*
+ * Copyright (c) 2011 Jakub Białek
+ * 
+ * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
+ * documentation files (the "Software"), to deal in the Software without restriction, including without limitation the
+ * rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to
+ * permit persons to whom the Software is furnished to do so, subject to the following conditions:
+ * 
+ * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the
+ * Software.
+ * 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE
+ * WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
+ * COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
+ * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ */
+
 package com.google.code.ssm.aop;
 
 import java.lang.annotation.Annotation;
@@ -17,28 +34,15 @@ import org.aspectj.lang.ProceedingJoinPoint;
 import com.google.code.ssm.exceptions.InvalidAnnotationException;
 
 /**
- * Copyright (c) 2011 Jakub Białek
- * 
- * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
- * documentation files (the "Software"), to deal in the Software without restriction, including without limitation the
- * rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to
- * permit persons to whom the Software is furnished to do so, subject to the following conditions:
- * 
- * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the
- * Software.
- * 
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE
- * WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
- * COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
- * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  * 
  * @author Jakub Białek
+ * @since 2.0.0
  * 
  */
 public abstract class MultiCacheAdvice extends CacheBase {
 
     static final Integer[] INTEGER_ARRAY = new Integer[0];
-    
+
     MapHolder convertIdObjectsToKeyMap(final List<Object> idObjects, final Object[] keys, final int listIndex, final AnnotationData data)
             throws Exception {
         final MapHolder holder = new MapHolder();
@@ -69,7 +73,7 @@ public abstract class MultiCacheAdvice extends CacheBase {
 
         return holder;
     }
-    
+
     @SuppressWarnings("unchecked")
     Object[] getKeyObjects(final Collection<Integer> keysIndex, final ProceedingJoinPoint pjp, final Method method,
             MultiCacheCoordinator coord, Annotation annotation) throws Exception {
@@ -99,7 +103,6 @@ public abstract class MultiCacheAdvice extends CacheBase {
                 + "[%s] does not fulfill the requirements.", annotation.getClass().getName(), List.class.getName(), method.toString()));
     }
 
-
     static class MapHolder {
         final Map<String, Object> key2Obj = new LinkedHashMap<String, Object>();
         final Map<Object, String> obj2Key = new LinkedHashMap<Object, String>();
@@ -112,8 +115,7 @@ public abstract class MultiCacheAdvice extends CacheBase {
             return obj2Key;
         }
     }
-    
-    
+
     static class MultiCacheCoordinator {
         private Method method;
         private AnnotationData annotationData;
@@ -269,6 +271,5 @@ public abstract class MultiCacheAdvice extends CacheBase {
             return skipNullsInResult;
         }
     }
-
 
 }

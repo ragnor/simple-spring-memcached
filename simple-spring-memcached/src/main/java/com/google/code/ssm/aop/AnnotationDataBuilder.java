@@ -1,3 +1,21 @@
+/*
+ * Copyright (c) 2008-2011 Nelson Carpentier, Jakub Białek
+ * 
+ * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
+ * documentation files (the "Software"), to deal in the Software without restriction, including without limitation the
+ * rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to
+ * permit persons to whom the Software is furnished to do so, subject to the following conditions:
+ * 
+ * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the
+ * Software.
+ * 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE
+ * WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
+ * COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
+ * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ * 
+ */
+
 package com.google.code.ssm.aop;
 
 import java.io.Serializable;
@@ -30,20 +48,6 @@ import com.google.code.ssm.api.counter.UpdateCounterInCache;
 import com.google.common.collect.ImmutableSet;
 
 /**
- * Copyright (c) 2008, 2009 Nelson Carpentier
- * 
- * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
- * documentation files (the "Software"), to deal in the Software without restriction, including without limitation the
- * rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to
- * permit persons to whom the Software is furnished to do so, subject to the following conditions:
- * 
- * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the
- * Software.
- * 
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE
- * WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
- * COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
- * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  * 
  * @author Nelson Carpentier, Jakub Białek
  * 
@@ -156,9 +160,9 @@ public class AnnotationDataBuilder {
 
         final ReturnDataUpdateContent returnAnnotation = targetMethod.getAnnotation(ReturnDataUpdateContent.class);
         if (returnAnnotation != null) {
-            if (targetMethod.getReturnType().equals(void.class)) {               
-                throw new InvalidParameterException(String.format("Annotation [%s] is defined on void method  [%s]",
-                        returnAnnotation, targetMethod.getName())); 
+            if (targetMethod.getReturnType().equals(void.class)) {
+                throw new InvalidParameterException(String.format("Annotation [%s] is defined on void method  [%s]", returnAnnotation,
+                        targetMethod.getName()));
             }
             data.setDataIndex(AnnotationData.RETURN_INDEX);
             return;
@@ -202,13 +206,14 @@ public class AnnotationDataBuilder {
 
         final ReturnValueKeyProvider returnAnnotation = targetMethod.getAnnotation(ReturnValueKeyProvider.class);
         if (returnAnnotation != null) {
-            final String beanName = returnAnnotation.keyProviderBeanName();
-            if (beanName == null || beanName.length() < 1) {
-                throw new InvalidParameterException(String.format("No valid keyIndexBeanName defined in annotation [%s] on method [%s]",
-                        ReturnValueKeyProvider.class.getName(), targetMethod.getName()));
-            }
-            data.setKeyIndex(-1);
-            data.setKeyProviderBeanName(beanName);
+            /*
+             * final String beanName = returnAnnotation.keyProviderBeanName(); if (beanName == null || beanName.length()
+             * < 1) { throw new
+             * InvalidParameterException(String.format("No valid keyIndexBeanName defined in annotation [%s] on method [%s]"
+             * , ReturnValueKeyProvider.class.getName(), targetMethod.getName())); }
+             */
+            data.setKeyIndex(AnnotationData.RETURN_INDEX);
+            // data.setKeyProviderBeanName(beanName);
             return;
         }
 
@@ -243,15 +248,15 @@ public class AnnotationDataBuilder {
                             }
 
                             founds.put(foundAnnotation, foundIndex);
-                            final String beanName = foundAnnotation.keyProviderBeanName();
-                            if (beanName == null || beanName.length() < 1) {
-                                throw new InvalidParameterException(String.format(
-                                        "No valid beanName defined in annotation [%s] on method [%s]",
-                                        ParameterValueKeyProvider.class.getName(), targetMethod.getName()));
-                            }
+                            /*
+                             * final String beanName = foundAnnotation.keyProviderBeanName(); if (beanName == null ||
+                             * beanName.length() < 1) { throw new InvalidParameterException(String.format(
+                             * "No valid beanName defined in annotation [%s] on method [%s]",
+                             * ParameterValueKeyProvider.class.getName(), targetMethod.getName())); }
+                             */
                             // TODO KeyProvider is not supported (issue with many ParameterValueKeyProvider in one
                             // method), this line is only to pass prev junit tests
-                            data.setKeyProviderBeanName(beanName);
+                            // data.setKeyProviderBeanName(beanName);
                         }
                     }
                 }

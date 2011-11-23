@@ -1,13 +1,4 @@
-package com.google.code.ssm.aop.counter;
-
-import java.lang.reflect.Method;
-import java.util.Collection;
-
-import org.aspectj.lang.JoinPoint;
-
-import com.google.code.ssm.aop.CacheBase;
-
-/**
+/*
  * Copyright (c) 2011 Jakub Białek
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
@@ -22,8 +13,20 @@ import com.google.code.ssm.aop.CacheBase;
  * WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
  * COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
- * 
+ */
+
+package com.google.code.ssm.aop.counter;
+
+import java.lang.reflect.Method;
+import java.util.Collection;
+
+import org.aspectj.lang.JoinPoint;
+
+import com.google.code.ssm.aop.CacheBase;
+
+/**
  * @author Jakub Białek
+ * @since 2.0.0
  * 
  */
 public abstract class CounterInCacheBase extends CacheBase {

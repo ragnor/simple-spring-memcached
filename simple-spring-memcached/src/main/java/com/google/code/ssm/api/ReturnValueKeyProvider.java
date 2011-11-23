@@ -1,12 +1,5 @@
-package com.google.code.ssm.api;
-
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
-import java.lang.annotation.ElementType;
-
-/**
- * Copyright (c) 2008, 2009 Nelson Carpentier
+/*
+ * Copyright (c) 2008-2009 Nelson Carpentier
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
  * documentation files (the "Software"), to deal in the Software without restriction, including without limitation the
@@ -21,19 +14,25 @@ import java.lang.annotation.ElementType;
  * COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  * 
+ */
+
+package com.google.code.ssm.api;
+
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
+import java.lang.annotation.ElementType;
+
+/**
+ * 
+ * Marks the return value of method as a generator for cache keys. If any of the method in return object is marked with
+ * {@link CacheKeyMethod} then this method is used to generate cache key otherwise toString() method is used.
+ * 
  * @author Nelson Carpentier
  * 
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)
 public @interface ReturnValueKeyProvider {
-
-    /**
-     * The name of Spring bean, which is expected to implement {@link KeyProvider}, will be passed the
-     * referenced object so that a key may be generated for memcached.
-     * 
-     * @return
-     */
-    String keyProviderBeanName() default AnnotationConstants.DEFAULT_KEY_PROVIDER_BEAN_NAME;
 
 }

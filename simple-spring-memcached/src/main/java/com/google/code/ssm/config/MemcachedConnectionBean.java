@@ -1,7 +1,5 @@
-package com.google.code.ssm.config;
-
-/**
- * Copyright (c) 2008, 2009 Nelson Carpentier
+/*
+ * Copyright (c) 2008-2011 Nelson Carpentier, Jakub Białek
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
  * documentation files (the "Software"), to deal in the Software without restriction, including without limitation the
@@ -16,11 +14,17 @@ package com.google.code.ssm.config;
  * COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  * 
+ */
+
+package com.google.code.ssm.config;
+
+/**
+ * 
  * @author Nelson Carpentier, Jakub Białek
  * 
  */
 public class MemcachedConnectionBean {
-    
+
     private String nodeList;
 
     private String jndiKey;
@@ -80,5 +84,5 @@ public class MemcachedConnectionBean {
     public Integer getMaxAwayTime() {
         return maxAwayTime;
     }
-    
+
 }
