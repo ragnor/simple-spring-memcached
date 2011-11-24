@@ -49,7 +49,7 @@ import com.google.code.ssm.test.Point;
  * @author Jakub Białek
  * 
  */
-public class InvalidateMultiCacheAdvice2Test extends AbstractCacheTest<InvalidateMultiCacheAdvice> {
+public class InvalidateMultiCacheAdviceTest extends AbstractCacheTest<InvalidateMultiCacheAdvice> {
 
     @Parameters
     public static Collection<Object[]> data() {
@@ -85,7 +85,7 @@ public class InvalidateMultiCacheAdvice2Test extends AbstractCacheTest<Invalidat
 
     private String[] cacheKeys;
 
-    public InvalidateMultiCacheAdvice2Test(boolean isValid, String methodName, Class<?>[] paramTypes, Object[] params,
+    public InvalidateMultiCacheAdviceTest(boolean isValid, String methodName, Class<?>[] paramTypes, Object[] params,
             Object expectedValue, String[] cacheKeys) {
         super(isValid, methodName, paramTypes, params, null);
         this.expectedValue = expectedValue;

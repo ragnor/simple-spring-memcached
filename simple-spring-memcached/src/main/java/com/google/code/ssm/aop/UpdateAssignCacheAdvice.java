@@ -55,14 +55,14 @@ public class UpdateAssignCacheAdvice extends CacheBase {
             final String cacheKey = buildCacheKey(annotationData.getAssignedKey(), annotationData);
 
             final Object dataObject = this.<Object> getUpdateData(annotationData, methodToCache, jp, retVal);
-            final Class<?> jsonClass = getJsonClass(methodToCache, annotationData.getDataIndex());
+            final Class<?> jsonClass = getDataJsonClass(methodToCache, annotationData);
             final Object submission = getSubmission(dataObject);
             set(cacheKey, annotationData.getExpiration(), submission, jsonClass);
         } catch (Exception ex) {
             warn("Updating caching via " + jp.toShortString() + " aborted due to an error.", ex);
         }
     }
-
+    
     @Override
     protected Logger getLogger() {
         return LOG;

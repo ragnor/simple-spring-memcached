@@ -80,30 +80,28 @@ public class AnnotationDataDummy {
     public void populateKeyProvider01(final String key1) {
     }
 
-/*    @InvalidateSingleCache
-    @ReturnValueKeyProvider(keyProviderBeanName = "")
+    @InvalidateSingleCache
+    @ReturnValueKeyProvider
     public void populateKeyProvider02(final String key1) {
     }
 
     @InvalidateSingleCache
-    public void populateKeyProvider03(@ParameterValueKeyProvider(keyProviderBeanName = "") final String key1) {
+    public void populateKeyProvider03(@ParameterValueKeyProvider final String key1) {
     }
 
     @InvalidateSingleCache
-    public void populateKeyProvider04(@ParameterValueKeyProvider(keyProviderBeanName = SAMPLE_PARAM_BEAN) final String key1,
-            @ParameterValueKeyProvider(keyProviderBeanName = "anotherSampleBean") final String key2) {
+    public void populateKeyProvider04(@ParameterValueKeyProvider final String key1, @ParameterValueKeyProvider final String key2) {
     }
 
     @InvalidateSingleCache
-    public void populateKeyProvider05(final String key1, final String key2,
-            @ParameterValueKeyProvider(keyProviderBeanName = SAMPLE_PARAM_BEAN) final String key3) {
+    public void populateKeyProvider05(final String key1, final String key2, @ParameterValueKeyProvider final String key3) {
     }
 
     @InvalidateSingleCache
-    @ReturnValueKeyProvider(keyProviderBeanName = SAMPLE_RETURN_BEAN)
+    @ReturnValueKeyProvider
     public void populateKeyProvider06(final String key1) {
     }
-*/
+
     @InvalidateSingleCache
     public void populateKeyProvider07(final String key1, @ParameterValueKeyProvider final String key2, final String key3) {
     }
@@ -113,10 +111,10 @@ public class AnnotationDataDummy {
     public void populateKeyProvider08(final String key1) {
     }
 
-  /*  @InvalidateSingleCache
-    public void populateKeyProvider09(@ParameterValueKeyProvider(keyProviderBeanName = SAMPLE_PARAM_BEAN, order = 1) final String key1,
-            @ParameterValueKeyProvider(keyProviderBeanName = "anotherSampleBean", order = 0) final String key2) {
-    }*/
+    @InvalidateSingleCache
+    public void populateKeyProvider09(@ParameterValueKeyProvider(order = 2) final String key1,
+            @ParameterValueKeyProvider(order = 1) final String key2) {
+    }
 
     @UpdateAssignCache
     public void populateData01(final String key1) {

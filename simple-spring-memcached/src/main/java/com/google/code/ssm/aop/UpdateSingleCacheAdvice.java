@@ -56,7 +56,7 @@ public class UpdateSingleCacheAdvice extends CacheBase {
             final String cacheKey = getCacheKey(annotationData, jp, methodToCache);
 
             final Object dataObject = this.<Object> getUpdateData(annotationData, methodToCache, jp, retVal);
-            final Class<?> jsonClass = getJsonClass(methodToCache, annotationData.getDataIndex());
+            final Class<?> jsonClass = getDataJsonClass(methodToCache, annotationData);
             final Object submission = getSubmission(dataObject);
             set(cacheKey, annotationData.getExpiration(), submission, jsonClass);
         } catch (Exception ex) {

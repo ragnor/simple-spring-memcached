@@ -29,7 +29,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.aspectj.lang.ProceedingJoinPoint;
+import org.aspectj.lang.JoinPoint;
 
 import com.google.code.ssm.exceptions.InvalidAnnotationException;
 
@@ -75,9 +75,9 @@ public abstract class MultiCacheAdvice extends CacheBase {
     }
 
     @SuppressWarnings("unchecked")
-    Object[] getKeyObjects(final Collection<Integer> keysIndex, final ProceedingJoinPoint pjp, final Method method,
+    Object[] getKeyObjects(final Collection<Integer> keysIndex, final JoinPoint jp, final Method method,
             MultiCacheCoordinator coord, Annotation annotation) throws Exception {
-        Object[] results = getIndexObjects(keysIndex, pjp, method);
+        Object[] results = getIndexObjects(keysIndex, jp, method);
         Integer[] keyIndexArray = keysIndex.toArray(INTEGER_ARRAY);
 
         boolean listOccured = false;

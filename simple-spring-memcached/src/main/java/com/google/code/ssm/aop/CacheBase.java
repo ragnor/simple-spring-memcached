@@ -385,8 +385,8 @@ public abstract class CacheBase implements ApplicationContextAware {
         return cache.getBulk(keys);
     }
 
-    protected Class<?> getJsonClass(Method methodToCache, int index) {
-        UseJson useJsonAnnotation = methodToCache.getAnnotation(UseJson.class);
+    protected Class<?> getParameterJsonClass(Method method, int index) {
+        UseJson useJsonAnnotation = method.getAnnotation(UseJson.class);
         if (useJsonAnnotation == null) {
             return null;
         }
@@ -395,13 +395,34 @@ public abstract class CacheBase implements ApplicationContextAware {
             return useJsonAnnotation.value();
         }
 
-        if (index == AnnotationData.RETURN_INDEX) {
-            return methodToCache.getReturnType();
-        } else {
-            return methodToCache.getParameterTypes()[index];
+        if (index < 0) {
+            throw new IllegalArgumentException("Parameter index is below 0");
         }
+
+        return method.getParameterTypes()[index];
     }
 
+    protected Class<?> getReturnJsonClass(Method method) {
+        UseJson useJsonAnnotation = method.getAnnotation(UseJson.class);
+        if (useJsonAnnotation == null) {
+            return null;
+        }
+
+        if (useJsonAnnotation.value() != NoClass.class) {
+            return useJsonAnnotation.value();
+        }
+
+        return method.getReturnType();
+    }
+
+    protected Class<?> getDataJsonClass(Method method, AnnotationData annotationData) {
+        if (annotationData.isReturnDataIndex()) {
+            return getReturnJsonClass(method);
+        } else {
+            return getParameterJsonClass(method, annotationData.getDataIndex());
+        }
+    }
+    
     protected void info(String msg) {
         getLogger().info(msg);
     }

@@ -61,14 +61,11 @@ public class ReadThroughMultiCacheAdvice extends MultiCacheAdvice {
 
             // Get the annotation associated with this method, and make sure the values are valid.
             final ReadThroughMultiCache annotation = coord.getMethod().getAnnotation(ReadThroughMultiCache.class);
-            jsonClass = getJsonClass(coord.getMethod(), AnnotationData.RETURN_INDEX);
+            jsonClass = getReturnJsonClass(coord.getMethod());
 
             coord.setAnnotationData(AnnotationDataBuilder.buildAnnotationData(annotation, ReadThroughMultiCache.class, coord.getMethod()));
             ReadThroughMultiCacheOptions options = annotation.options();
-
-            coord.setGenerateKeysFromResult(options.generateKeysFromResult());
-            coord.setAddNullsToCache(options.addNullsToCache());
-            coord.setSkipNullsInResult(options.skipNullsInResult());
+            setMultiCacheOptions(coord, options);
 
             // Get the list of objects that will provide the keys to all the cache values.
             coord.setKeyObjects(getKeyObjects(coord.getAnnotationData().getKeysIndex(), pjp, coord.getMethod(), coord, annotation));
@@ -123,6 +120,17 @@ public class ReadThroughMultiCacheAdvice extends MultiCacheAdvice {
         }
     }
 
+    @Override
+    protected Logger getLogger() {
+        return LOG;
+    }
+    
+    private void setMultiCacheOptions(final MultiCacheCoordinator coord, final ReadThroughMultiCacheOptions options) {
+        coord.setGenerateKeysFromResult(options.generateKeysFromResult());
+        coord.setAddNullsToCache(options.addNullsToCache());
+        coord.setSkipNullsInResult(options.skipNullsInResult());
+    }
+
     private List<?> generateByKeysFromResult(List<Object> results, MultiCacheCoordinator coord, Class<?> jsonClass) {
         if (results == null) {
             results = new ArrayList<Object>();
@@ -165,11 +173,6 @@ public class ReadThroughMultiCacheAdvice extends MultiCacheAdvice {
         }
 
         return coord.generateResultList();
-    }
-
-    @Override
-    protected Logger getLogger() {
-        return LOG;
     }
 
     private void addNullsValuesForMissedObjects(List<Object> missObjects, MultiCacheCoordinator coord, Class<?> jsonClass) {

@@ -36,6 +36,8 @@ import com.google.code.ssm.api.InvalidateSingleCache;
 import com.google.code.ssm.api.ParameterDataUpdateContent;
 import com.google.code.ssm.api.ParameterValueKeyProvider;
 import com.google.code.ssm.api.ReadThroughAssignCache;
+import com.google.code.ssm.api.ReadThroughMultiCache;
+import com.google.code.ssm.api.ReadThroughSingleCache;
 import com.google.code.ssm.api.ReturnDataUpdateContent;
 import com.google.code.ssm.api.ReturnValueKeyProvider;
 import com.google.code.ssm.api.UpdateAssignCache;
@@ -43,6 +45,7 @@ import com.google.code.ssm.api.UpdateMultiCache;
 import com.google.code.ssm.api.UpdateSingleCache;
 import com.google.code.ssm.api.counter.DecrementCounterInCache;
 import com.google.code.ssm.api.counter.IncrementCounterInCache;
+import com.google.code.ssm.api.counter.ReadCounterFromCache;
 import com.google.code.ssm.api.counter.UpdateCounterInCache;
 
 import com.google.common.collect.ImmutableSet;
@@ -69,6 +72,12 @@ public class AnnotationDataBuilder {
      * private static final Set<Class<? extends Annotation>> MULTIS = ImmutableSet.of( // ReadThroughMultiCache.class,
      * // UpdateMultiCache.class, // InvalidateMultiCache.class);
      */
+
+    private static final Set<Class<? extends Annotation>> READS = ImmutableSet.of( //
+            ReadThroughAssignCache.class, //
+            ReadThroughSingleCache.class, //
+            ReadThroughMultiCache.class, //
+            ReadCounterFromCache.class);
 
     private static final Set<Class<? extends Annotation>> INVALIDATES = ImmutableSet.of( //
             InvalidateAssignCache.class, //
@@ -164,7 +173,7 @@ public class AnnotationDataBuilder {
                 throw new InvalidParameterException(String.format("Annotation [%s] is defined on void method  [%s]", returnAnnotation,
                         targetMethod.getName()));
             }
-            data.setDataIndex(AnnotationData.RETURN_INDEX);
+            data.setReturnDataIndex(true);
             return;
         }
 
@@ -204,17 +213,14 @@ public class AnnotationDataBuilder {
             return;
         }
 
-        final ReturnValueKeyProvider returnAnnotation = targetMethod.getAnnotation(ReturnValueKeyProvider.class);
-        if (returnAnnotation != null) {
-            /*
-             * final String beanName = returnAnnotation.keyProviderBeanName(); if (beanName == null || beanName.length()
-             * < 1) { throw new
-             * InvalidParameterException(String.format("No valid keyIndexBeanName defined in annotation [%s] on method [%s]"
-             * , ReturnValueKeyProvider.class.getName(), targetMethod.getName())); }
-             */
-            data.setKeyIndex(AnnotationData.RETURN_INDEX);
-            // data.setKeyProviderBeanName(beanName);
-            return;
+        // Read*Cache annotations don't support ReturnValueKeyProvider, to cache method result cache keys must be
+        // available before executing method.
+        if (!READS.contains(expectedAnnotationClass)) {
+            final ReturnValueKeyProvider returnAnnotation = targetMethod.getAnnotation(ReturnValueKeyProvider.class);
+            if (returnAnnotation != null) {
+                data.setReturnKeyIndex(true);
+                return;
+            }
         }
 
         final Annotation[][] paramAnnotationArrays = targetMethod.getParameterAnnotations();
@@ -248,15 +254,6 @@ public class AnnotationDataBuilder {
                             }
 
                             founds.put(foundAnnotation, foundIndex);
-                            /*
-                             * final String beanName = foundAnnotation.keyProviderBeanName(); if (beanName == null ||
-                             * beanName.length() < 1) { throw new InvalidParameterException(String.format(
-                             * "No valid beanName defined in annotation [%s] on method [%s]",
-                             * ParameterValueKeyProvider.class.getName(), targetMethod.getName())); }
-                             */
-                            // TODO KeyProvider is not supported (issue with many ParameterValueKeyProvider in one
-                            // method), this line is only to pass prev junit tests
-                            // data.setKeyProviderBeanName(beanName);
                         }
                     }
                 }
@@ -267,7 +264,6 @@ public class AnnotationDataBuilder {
             throw new InvalidParameterException(String.format("No KeyProvider annotation found method [%s]", targetMethod.getName()));
         }
 
-        data.setKeyIndex(foundIndex);
         data.setKeysIndex(founds.values());
     }
 

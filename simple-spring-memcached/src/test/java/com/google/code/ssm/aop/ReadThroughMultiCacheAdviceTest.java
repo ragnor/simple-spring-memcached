@@ -41,6 +41,7 @@ import org.junit.runners.Parameterized.Parameters;
 
 import com.google.code.ssm.api.ParameterValueKeyProvider;
 import com.google.code.ssm.api.ReadThroughMultiCache;
+import com.google.code.ssm.api.ReturnValueKeyProvider;
 import com.google.code.ssm.test.Point;
 
 /**
@@ -73,6 +74,9 @@ public class ReadThroughMultiCacheAdviceTest extends AbstractCacheTest<ReadThrou
                         { false, "method51", new Class[] { List.class }, new Object[] { Arrays.asList(1, 2, 3, 4) }, null, null }, //
                         { false, "method52", new Class[] { List.class }, new Object[] { Arrays.asList(1, 2, 3, 4) }, null, null }, //
                         { false, "method53", new Class[] { int.class }, new Object[] { 53 }, Arrays.asList(1, 2, 3, 4), null }, //
+                        { false, "method54", new Class[] { List.class }, new Object[] { Arrays.asList(1, 2, 3, 4) },
+                                Arrays.asList(2, 4, 6, 8), null }, //
+
                 });
     }
 
@@ -200,6 +204,14 @@ public class ReadThroughMultiCacheAdviceTest extends AbstractCacheTest<ReadThrou
         public List<Integer> method53(@ParameterValueKeyProvider int id1) {
             return Collections.<Integer> emptyList();
         }
+        
+        // ReturnValueKeyProvider is not supported by ReadThroughMultiCache
+        @ReturnValueKeyProvider
+        @ReadThroughMultiCache(namespace = NS, expiration = EXPIRATION)
+        public List<Integer> method54(List<Integer> id1) {
+            return Collections.<Integer> emptyList();
+        }
+
     }
 
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2008-2009 Nelson Carpentier
+ * Copyright (c) 2008-2011 Nelson Carpentier, Jakub Białek
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
  * documentation files (the "Software"), to deal in the Software without restriction, including without limitation the
@@ -22,19 +22,18 @@ import java.util.Collection;
 
 /**
  * 
- * @author Nelson Carpentier
+ * @author Nelson Carpentier, Jakub Białek
  * 
  */
 public class AnnotationData {
 
     public static final int DEFAULT_INTEGER = Integer.MIN_VALUE;
 
-    public static final int RETURN_INDEX = -1;
+    private static final int RETURN_INDEX = -1;
 
     private String namespace = "";
-    private int keyIndex = DEFAULT_INTEGER;
+    private boolean isReturnKeyIndex;
     private Collection<Integer> keysIndex;
-    private String keyProviderBeanName = "";
     private int dataIndex = DEFAULT_INTEGER;
     private int expiration = 0;
     private String className = "";
@@ -48,26 +47,12 @@ public class AnnotationData {
         this.namespace = namespace;
     }
 
-    /** use {@link #getKeysIndex()} */
-    @Deprecated
-    public int getKeyIndex() {
-        return keyIndex;
-    }
-
-    public void setKeyIndex(int keyIndex) {
-        this.keyIndex = keyIndex;
-    }
-
     public boolean isReturnKeyIndex() {
-        return keyIndex == RETURN_INDEX;
+        return isReturnKeyIndex;
     }
 
-    public String getKeyProviderBeanName() {
-        return keyProviderBeanName;
-    }
-
-    public void setKeyProviderBeanName(String keyProviderBeanName) {
-        this.keyProviderBeanName = keyProviderBeanName;
+    public void setReturnKeyIndex(boolean isReturnKeyIndex) {
+        this.isReturnKeyIndex = isReturnKeyIndex;
     }
 
     public int getDataIndex() {
@@ -80,6 +65,14 @@ public class AnnotationData {
 
     public boolean isReturnDataIndex() {
         return dataIndex == RETURN_INDEX;
+    }
+    
+    public void setReturnDataIndex(boolean isReturnDataIndex) {
+        if (isReturnDataIndex) {
+            dataIndex = RETURN_INDEX;
+        } else {
+            dataIndex = DEFAULT_INTEGER;
+        }
     }
 
     public int getExpiration() {

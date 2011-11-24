@@ -30,6 +30,7 @@ import java.util.Arrays;
 import java.util.Collection;
 
 import com.google.code.ssm.api.ParameterValueKeyProvider;
+import com.google.code.ssm.api.ReturnValueKeyProvider;
 import com.google.code.ssm.api.counter.ReadCounterFromCache;
 import com.google.code.ssm.providers.CacheTranscoder;
 import com.google.code.ssm.test.Point;
@@ -63,6 +64,7 @@ public class ReadCounterFromCacheAdviceTest extends AbstractCounterTest<ReadCoun
                         { false, "readCounter22", new Class[] { int.class }, new Object[] { 4 }, 22, null }, //
                         { false, "readCounter23", new Class[] { int.class, int.class }, new Object[] { 144, 43 }, 23, null }, //
                         { false, "readCounter24", new Class[] { int.class }, new Object[] { 24 }, null, null }, //
+                        { false, "readCounter25", new Class[] { int.class }, new Object[] { 25 }, new Integer(25), null }, //
                 });
     }
 
@@ -193,6 +195,13 @@ public class ReadCounterFromCacheAdviceTest extends AbstractCounterTest<ReadCoun
         public void readCounter24(@ParameterValueKeyProvider int id) {
 
         }
+        
+        @ReturnValueKeyProvider
+        @ReadCounterFromCache(namespace = NS, expiration = EXPIRATION)
+        public Integer readCounter25(int id) {
+            return 25;
+        }
+
 
     }
 

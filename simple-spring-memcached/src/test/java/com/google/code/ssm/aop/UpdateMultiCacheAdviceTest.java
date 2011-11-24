@@ -75,21 +75,6 @@ public class UpdateMultiCacheAdviceTest {
     }
 
     @Test
-    public void testGetKeyObjects() throws Exception {
-        final Method method1 = AnnotationTest.class.getMethod("cacheMe02", (Class<?>[]) null);
-        try {
-            cut.getKeyObjects(-1, "bubba", null, method1);
-        } catch (InvalidAnnotationException ex) {
-            assertTrue(true);
-        }
-
-        final Method method2 = AnnotationTest.class.getMethod("cacheMe03", (Class<?>[]) null);
-        final ArrayList<String> results = new ArrayList<String>();
-        results.add("gump");
-        cut.getKeyObjects(-1, results, null, method2);
-    }
-
-    @Test
     public void testUpdateCache() throws Exception {
         final Method method = AnnotationTest.class.getMethod("cacheMe01", String.class);
         final UpdateMultiCache annotation = method.getAnnotation(UpdateMultiCache.class);

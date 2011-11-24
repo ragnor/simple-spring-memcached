@@ -78,7 +78,8 @@ public class JsonTranscoder<T> implements CacheTranscoder<T> {
             try {
                 bais.close();
             } catch (IOException e) {
-
+                LOGGER.warn("Error while closing stream", e);
+                throw new RuntimeException(e);
             }
         }
     }
@@ -96,7 +97,8 @@ public class JsonTranscoder<T> implements CacheTranscoder<T> {
             try {
                 baos.close();
             } catch (IOException e) {
-
+                LOGGER.warn("Error while closing stream", e);
+                throw new RuntimeException(e);
             }
         }
     }

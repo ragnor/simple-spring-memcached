@@ -30,6 +30,7 @@ import java.util.Collection;
 
 import com.google.code.ssm.api.ParameterValueKeyProvider;
 import com.google.code.ssm.api.ReadThroughSingleCache;
+import com.google.code.ssm.api.ReturnValueKeyProvider;
 
 import org.hamcrest.CoreMatchers;
 import org.junit.Assume;
@@ -53,6 +54,7 @@ public class ReadThroughSingleCacheAdviceTest extends AbstractCacheTest<ReadThro
 
                         { false, "method50", new Class[] { int.class }, new Object[] { 50 }, 50 }, //
                         { false, "method51", new Class[] { int.class }, new Object[] { 51 }, null }, //
+                        { false, "method52", new Class[] { int.class }, new Object[] { 1 }, 1 }, //
                 });
     }
 
@@ -149,6 +151,13 @@ public class ReadThroughSingleCacheAdviceTest extends AbstractCacheTest<ReadThro
         @ReadThroughSingleCache(namespace = NS, expiration = EXPIRATION)
         public void method51(@ParameterValueKeyProvider int id1) {
 
+        }
+        
+        // ReturnValueKeyProvider is not supported by ReadThroughSingleCache
+        @ReturnValueKeyProvider
+        @ReadThroughSingleCache(namespace = NS, expiration = EXPIRATION)
+        public int method52(int id1) {
+            return 1;
         }
 
     }

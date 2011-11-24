@@ -53,7 +53,7 @@ public class ReadThroughAssignCacheAdvice extends CacheBase {
             final Method methodToCache = getMethodToCache(pjp);
             verifyReturnTypeIsNoVoid(methodToCache, ReadThroughAssignCache.class);
             final ReadThroughAssignCache annotation = methodToCache.getAnnotation(ReadThroughAssignCache.class);
-            jsonClass = getJsonClass(methodToCache, AnnotationData.RETURN_INDEX);
+            jsonClass = getReturnJsonClass(methodToCache);
             annotationData = AnnotationDataBuilder.buildAnnotationData(annotation, ReadThroughAssignCache.class, methodToCache);
             cacheKey = buildCacheKey(annotationData.getAssignedKey(), annotationData);
             final Object result = get(cacheKey, jsonClass);

@@ -60,7 +60,7 @@ public class ReadThroughSingleCacheAdvice extends CacheBase {
 
             cacheKey = getCacheKey(annotationData, pjp, methodToCache);
 
-            jsonClass = getJsonClass(methodToCache, AnnotationData.RETURN_INDEX);
+            jsonClass = getReturnJsonClass(methodToCache);
 
             final Object result = get(cacheKey, jsonClass);
             if (result != null) {
