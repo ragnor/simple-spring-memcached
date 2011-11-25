@@ -54,7 +54,7 @@ public class ReadCounterFromCacheAdvice extends CounterInCacheBase {
         // This is injected caching. If anything goes wrong in the caching, LOG
         // the crap outta it, but do not let it surface up past the AOP injection itself.
         // It will be invoked only if underlying method completes successfully.
-        String cacheKey;
+        String cacheKey = null;
         ReadCounterFromCache annotation;
         try {
             Method methodToCache = getMethodToCache(pjp);
@@ -62,8 +62,7 @@ public class ReadCounterFromCacheAdvice extends CounterInCacheBase {
             annotation = methodToCache.getAnnotation(ReadCounterFromCache.class);
             AnnotationData annotationData = AnnotationDataBuilder
                     .buildAnnotationData(annotation, ReadCounterFromCache.class, methodToCache);
-            String[] objectsIds = getObjectIds(annotationData.getKeysIndex(), pjp, methodToCache);
-            cacheKey = buildCacheKey(objectsIds, annotationData);
+            cacheKey = getCacheKey(annotationData, pjp, methodToCache);
             Long result = get(cacheKey, transcoder);
 
             if (result != null) {
@@ -71,7 +70,8 @@ public class ReadCounterFromCacheAdvice extends CounterInCacheBase {
                 return convertResult(methodToCache, result);
             }
         } catch (Throwable ex) {
-            getLogger().warn(String.format("Caching on %s aborted due to an error.", pjp.toShortString()), ex);
+            getLogger()
+                    .warn(String.format("Caching on method %s and key [%s] aborted due to an error.", pjp.toShortString(), cacheKey), ex);
             return pjp.proceed();
         }
 
@@ -86,7 +86,8 @@ public class ReadCounterFromCacheAdvice extends CounterInCacheBase {
                 incr(cacheKey, 0, value, annotation.expiration());
             }
         } catch (Throwable ex) {
-            getLogger().warn(String.format("Caching on %s aborted due to an error.", pjp.toShortString()), ex);
+            getLogger()
+                    .warn(String.format("Caching on method %s and key [%s] aborted due to an error.", pjp.toShortString(), cacheKey), ex);
         }
         return result;
     }

@@ -29,7 +29,7 @@ import com.google.code.ssm.api.InvalidateSingleCache;
 import com.google.code.ssm.api.ParameterDataUpdateContent;
 import com.google.code.ssm.api.ParameterValueKeyProvider;
 import com.google.code.ssm.api.ReadThroughMultiCache;
-import com.google.code.ssm.api.ReadThroughMultiCacheOptions;
+import com.google.code.ssm.api.ReadThroughMultiCacheOption;
 import com.google.code.ssm.api.ReadThroughSingleCache;
 import com.google.code.ssm.api.ReturnDataUpdateContent;
 import com.google.code.ssm.api.UpdateSingleCache;
@@ -108,7 +108,7 @@ public class AppUserDAOImpl implements AppUserDAO {
     }
 
     @Override
-    @ReadThroughMultiCache(namespace = SINGLE_NS, expiration = 0, options = @ReadThroughMultiCacheOptions(generateKeysFromResult = true))
+    @ReadThroughMultiCache(namespace = SINGLE_NS, expiration = 0, option = @ReadThroughMultiCacheOption(generateKeysFromResult = true))
     public List<AppUser> getList(@ParameterValueKeyProvider(order = 0) int userId,
             @ParameterValueKeyProvider(order = 1) final List<Integer> appsIds) {
         List<AppUser> list = new ArrayList<AppUser>();
@@ -140,7 +140,7 @@ public class AppUserDAOImpl implements AppUserDAO {
     }
 
     @Override
-    @ReadThroughMultiCache(namespace = SINGLE_NS, expiration = 0, options = @ReadThroughMultiCacheOptions(generateKeysFromResult = true))
+    @ReadThroughMultiCache(namespace = SINGLE_NS, expiration = 0, option = @ReadThroughMultiCacheOption(generateKeysFromResult = true))
     public List<AppUser> getUsersList(@ParameterValueKeyProvider(order = 1) int applicationId,
             @ParameterValueKeyProvider(order = 0) List<Integer> userIds) {
         List<AppUser> list = new ArrayList<AppUser>();
@@ -155,7 +155,7 @@ public class AppUserDAOImpl implements AppUserDAO {
     }
 
     @Override
-    @ReadThroughMultiCache(namespace = SINGLE_NS, expiration = 0, options = @ReadThroughMultiCacheOptions(generateKeysFromResult = true))
+    @ReadThroughMultiCache(namespace = SINGLE_NS, expiration = 0, option = @ReadThroughMultiCacheOption(generateKeysFromResult = true))
     public List<AppUser> getUsersListFromCache(@ParameterValueKeyProvider(order = 1) int applicationId,
             @ParameterValueKeyProvider(order = 0) List<Integer> usersIds, Collection<Integer> notFoundUsersIds) {
         notFoundUsersIds.addAll(usersIds);

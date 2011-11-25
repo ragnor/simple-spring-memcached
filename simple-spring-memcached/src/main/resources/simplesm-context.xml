@@ -22,73 +22,47 @@
 
 	<bean id="readThroughSingleCache" class="com.google.code.ssm.aop.ReadThroughSingleCacheAdvice">
 		<property name="cache" ref="memcachedClient" />
-		<property name="methodStore" ref="methodStore" />
-		<property name="defaultKeyProvider" ref="defaultKeyProvider" />
 	</bean>
 	<bean id="readThroughMultiCache" class="com.google.code.ssm.aop.ReadThroughMultiCacheAdvice">
 		<property name="cache" ref="memcachedClient" />
-		<property name="methodStore" ref="methodStore" />
-		<property name="defaultKeyProvider" ref="defaultKeyProvider" />
 	</bean>
 	<bean id="readThroughAssignCache" class="com.google.code.ssm.aop.ReadThroughAssignCacheAdvice">
 		<property name="cache" ref="memcachedClient" />
-		<property name="methodStore" ref="methodStore" />
-		<property name="defaultKeyProvider" ref="defaultKeyProvider" />
 	</bean>
 	<bean id="updateSingleCache" class="com.google.code.ssm.aop.UpdateSingleCacheAdvice">
 		<property name="cache" ref="memcachedClient" />
-		<property name="methodStore" ref="methodStore" />
-		<property name="defaultKeyProvider" ref="defaultKeyProvider" />
 	</bean>
 	<bean id="updateMultiCache" class="com.google.code.ssm.aop.UpdateMultiCacheAdvice">
 		<property name="cache" ref="memcachedClient" />
-		<property name="methodStore" ref="methodStore" />
-		<property name="defaultKeyProvider" ref="defaultKeyProvider" />
 	</bean>
 	<bean id="updateAssignCache" class="com.google.code.ssm.aop.UpdateAssignCacheAdvice">
 		<property name="cache" ref="memcachedClient" />
-		<property name="methodStore" ref="methodStore" />
-		<property name="defaultKeyProvider" ref="defaultKeyProvider" />
 	</bean>
 	<bean id="invalidateSingleCache" class="com.google.code.ssm.aop.InvalidateSingleCacheAdvice">
 		<property name="cache" ref="memcachedClient" />
-		<property name="methodStore" ref="methodStore" />
-		<property name="defaultKeyProvider" ref="defaultKeyProvider" />
 	</bean>
 	<bean id="invalidateMultiCache" class="com.google.code.ssm.aop.InvalidateMultiCacheAdvice">
 		<property name="cache" ref="memcachedClient" />
-		<property name="methodStore" ref="methodStore" />
-		<property name="defaultKeyProvider" ref="defaultKeyProvider" />
 	</bean>
 	<bean id="invalidateAssignCache" class="com.google.code.ssm.aop.InvalidateAssignCacheAdvice">
 		<property name="cache" ref="memcachedClient" />
-		<property name="methodStore" ref="methodStore" />
-		<property name="defaultKeyProvider" ref="defaultKeyProvider" />
 	</bean>
 
 	<bean id="incrementCounterInCache"
 		class="com.google.code.ssm.aop.counter.IncrementCounterInCacheAdvice">
 		<property name="cache" ref="memcachedClient" />
-		<property name="methodStore" ref="methodStore" />
-		<property name="defaultKeyProvider" ref="defaultKeyProvider" />
 	</bean>
 	<bean id="decrementCounterInCache"
 		class="com.google.code.ssm.aop.counter.DecrementCounterInCacheAdvice">
 		<property name="cache" ref="memcachedClient" />
-		<property name="methodStore" ref="methodStore" />
-		<property name="defaultKeyProvider" ref="defaultKeyProvider" />
 	</bean>
 	<bean id="readCounterFromCache"
 		class="com.google.code.ssm.aop.counter.ReadCounterFromCacheAdvice">
 		<property name="cache" ref="memcachedClient" />
-		<property name="methodStore" ref="methodStore" />
-		<property name="defaultKeyProvider" ref="defaultKeyProvider" />
 	</bean>
 	<bean id="updateCounterInCache"
 		class="com.google.code.ssm.aop.counter.UpdateCounterInCacheAdvice">
 		<property name="cache" ref="memcachedClient" />
-		<property name="methodStore" ref="methodStore" />
-		<property name="defaultKeyProvider" ref="defaultKeyProvider" />
 	</bean>
 
 </beans>

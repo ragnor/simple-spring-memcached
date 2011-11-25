@@ -39,6 +39,8 @@ import com.google.code.ssm.api.ParameterValueKeyProvider;
 import com.google.code.ssm.api.ReturnDataUpdateContent;
 import com.google.code.ssm.api.ReturnValueKeyProvider;
 import com.google.code.ssm.api.UpdateMultiCache;
+import com.google.code.ssm.api.UpdateMultiCacheOption;
+import com.google.code.ssm.impl.PertinentNegativeNull;
 import com.google.code.ssm.test.Point;
 
 /**
@@ -91,6 +93,22 @@ public class UpdateMultiCacheAdvice2Test extends AbstractCacheTest<UpdateMultiCa
                                 Arrays.asList(new Point(1, 2), new Point(2, 3), new Point(3, 4), new Point(4, 5)),
                                 Arrays.asList(new Point(1, 2), new Point(2, 3), new Point(3, 4), new Point(4, 5)),
                                 new String[] { NS + ":(1,2)", NS + ":(2,3)", NS + ":(3,4)", NS + ":(4,5)" } }, //
+                        { true, "method13", new Class[] { List.class }, new Object[] { Arrays.asList("(1,2)", "(2,3)", "(3,4)", "(4,5)") },
+                                Arrays.asList(new Point(1, 2), new Point(2, 3), new Point(3, 4), new Point(4, 5)),
+                                Arrays.asList(new Point(1, 2), new Point(2, 3), new Point(3, 4), new Point(4, 5)),
+                                new String[] { NS + ":(1,2)", NS + ":(2,3)", NS + ":(3,4)", NS + ":(4,5)" } }, //
+                        { true, "method13", new Class[] { List.class }, new Object[] { Arrays.asList("(1,2)", "(2,3)", "(3,4)", "(4,5)") },
+                                Arrays.asList(new Point(1, 2), PertinentNegativeNull.NULL, new Point(3, 4), PertinentNegativeNull.NULL),
+                                Arrays.asList(new Point(1, 2), new Point(3, 4)),
+                                new String[] { NS + ":(1,2)", NS + ":(2,3)", NS + ":(3,4)", NS + ":(4,5)" } }, //
+                        { true, "method14", new Class[] { List.class }, new Object[] { Arrays.asList("(1,2)", "(2,3)", "(3,4)", "(4,5)") },
+                                Arrays.asList(new Point(1, 2), new Point(2, 3), new Point(3, 4), new Point(4, 5)),
+                                Arrays.asList(new Point(1, 2), new Point(2, 3), new Point(3, 4), new Point(4, 5)),
+                                new String[] { NS + ":(1,2)", NS + ":(2,3)", NS + ":(3,4)", NS + ":(4,5)" } }, //
+                        { true, "method14", new Class[] { List.class }, new Object[] { Arrays.asList("(1,2)", "(2,3)", "(3,4)", "(4,5)") },
+                                Arrays.asList(new Point(1, 2), PertinentNegativeNull.NULL, new Point(3, 4), PertinentNegativeNull.NULL),
+                                Arrays.asList(new Point(1, 2), new Point(3, 4)),
+                                new String[] { NS + ":(1,2)", NS + ":(2,3)", NS + ":(3,4)", NS + ":(4,5)" } }, //
 
                         { false, "method50", new Class[] { List.class }, new Object[] { Arrays.asList("1", "2", "3", "4") }, null,
                                 Arrays.asList("1", "2", "3", "4"), null }, //
@@ -105,6 +123,17 @@ public class UpdateMultiCacheAdvice2Test extends AbstractCacheTest<UpdateMultiCa
                                 new Object[] { Arrays.asList("1", "2", "3", "4"), "abc" }, null, null, null }, //
                         { false, "method56", new Class[] { List.class, String.class },
                                 new Object[] { Arrays.asList("1", "2", "3", "4"), "abc" }, null, null, null }, //
+                        // amount of elements on list annotated @ParameterValueKeyProvider is different than on
+                        // @ReturnDataUpdateContent
+                        { false, "method1", new Class[] { List.class }, new Object[] { Arrays.asList(1, 2, 3, 4) }, null,
+                                Arrays.asList(2, 4, 6), null }, //
+                        // amount of elements on list annotated @ParameterValueKeyProvider is different than on
+                        // @ReturnDataUpdateContent
+                        { false, "method1", new Class[] { List.class }, new Object[] { Arrays.asList(1, 2, 3, 4) }, null, null, null }, //
+                        // amount of elements on list annotated @ParameterValueKeyProvider is different than on
+                        // @ReturnDataUpdateContent
+                        { false, "method1", new Class[] { List.class }, new Object[] { null }, null, Arrays.asList(2, 4, 6), null }, //
+
                 });
     }
 
@@ -138,7 +167,15 @@ public class UpdateMultiCacheAdvice2Test extends AbstractCacheTest<UpdateMultiCa
         advice.cacheUpdateMulti(pjp, returnValue);
 
         for (int i = 0; i < cacheKeys.length; i++) {
-            verify(client).set(eq(cacheKeys[i]), eq(EXPIRATION), eq(expectedValue.get(i)));
+            if (advice.getMethodToCache(pjp).getAnnotation(UpdateMultiCache.class).option().overwriteNoNulls()) {
+                verify(client).set(eq(cacheKeys[i]), eq(EXPIRATION), eq(expectedValue.get(i)));
+            } else if (advice.getMethodToCache(pjp).getAnnotation(UpdateMultiCache.class).option().addNullsToCache()
+                    && expectedValue.get(i) instanceof PertinentNegativeNull) {
+                verify(client).add(eq(cacheKeys[i]), eq(EXPIRATION), eq(expectedValue.get(i)));
+            } else {
+                verify(client).set(eq(cacheKeys[i]), eq(EXPIRATION), eq(expectedValue.get(i)));
+            }
+
         }
     }
 
@@ -237,6 +274,18 @@ public class UpdateMultiCacheAdvice2Test extends AbstractCacheTest<UpdateMultiCa
         @ReturnDataUpdateContent
         @UpdateMultiCache(namespace = NS, expiration = EXPIRATION)
         public List<Point> method12() {
+            return Collections.<Point> emptyList();
+        }
+
+        @ReturnDataUpdateContent
+        @UpdateMultiCache(namespace = NS, expiration = EXPIRATION, option = @UpdateMultiCacheOption(addNullsToCache = true))
+        public List<Point> method13(@ParameterValueKeyProvider List<String> ids) {
+            return Collections.<Point> emptyList();
+        }
+
+        @ReturnDataUpdateContent
+        @UpdateMultiCache(namespace = NS, expiration = EXPIRATION, option = @UpdateMultiCacheOption(addNullsToCache = true, overwriteNoNulls = true))
+        public List<Point> method14(@ParameterValueKeyProvider List<String> ids) {
             return Collections.<Point> emptyList();
         }
 

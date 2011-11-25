@@ -19,7 +19,7 @@ package com.google.code.ssm.parser;
 
 import java.io.IOException;
 
-import com.google.code.ssm.aop.PertinentNegativeNull;
+import com.google.code.ssm.impl.PertinentNegativeNull;
 
 import org.codehaus.jackson.JsonGenerator;
 import org.codehaus.jackson.JsonProcessingException;

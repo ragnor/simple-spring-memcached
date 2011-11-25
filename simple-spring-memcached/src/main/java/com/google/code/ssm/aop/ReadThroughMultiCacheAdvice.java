@@ -19,7 +19,6 @@
 package com.google.code.ssm.aop;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import org.aspectj.lang.ProceedingJoinPoint;
@@ -30,7 +29,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.code.ssm.api.ReadThroughMultiCache;
-import com.google.code.ssm.api.ReadThroughMultiCacheOptions;
+import com.google.code.ssm.api.ReadThroughMultiCacheOption;
 
 /**
  * 
@@ -64,22 +63,17 @@ public class ReadThroughMultiCacheAdvice extends MultiCacheAdvice {
             jsonClass = getReturnJsonClass(coord.getMethod());
 
             coord.setAnnotationData(AnnotationDataBuilder.buildAnnotationData(annotation, ReadThroughMultiCache.class, coord.getMethod()));
-            ReadThroughMultiCacheOptions options = annotation.options();
-            setMultiCacheOptions(coord, options);
+            setMultiCacheOptions(coord, annotation.option());
 
             // Get the list of objects that will provide the keys to all the cache values.
-            coord.setKeyObjects(getKeyObjects(coord.getAnnotationData().getKeysIndex(), pjp, coord.getMethod(), coord, annotation));
+            coord.setKeyObjects(getKeyObjects(coord.getAnnotationData().getKeyIndexes(), pjp, coord.getMethod(), coord, annotation));
 
             // Create key->object and object->key mappings.
             coord.setHolder(convertIdObjectsToKeyMap(coord.getListObjects(), coord.getKeyObjects(), coord.getListIndexInKeys(),
                     coord.getAnnotationData()));
 
-            if (options.readDirectlyFromDB()) {
-                coord.setInitialKey2Result(Collections.EMPTY_MAP);
-            } else {
-                // Get the full list of cache keys and ask the cache for the corresponding values.
-                coord.setInitialKey2Result(getBulk(coord.getKey2Obj().keySet(), jsonClass));
-            }
+            // Get the full list of cache keys and ask the cache for the corresponding values.
+            coord.setInitialKey2Result(getBulk(coord.getKey2Obj().keySet(), jsonClass));
 
             // We've gotten all positive cache results back, so build up a results list and return it.
             if (coord.getMissObjects().size() < 1) {
@@ -104,7 +98,7 @@ public class ReadThroughMultiCacheAdvice extends MultiCacheAdvice {
             // there are no results
             if (results == null || results.isEmpty()) {
                 if (coord.isAddNullsToCache()) {
-                    addNullsValuesForMissedObjects(coord.getMissObjects(), coord, jsonClass);
+                    addNullValues(coord.getMissObjects(), coord, jsonClass);
                 }
                 return coord.generatePartialResultList();
             }
@@ -124,31 +118,31 @@ public class ReadThroughMultiCacheAdvice extends MultiCacheAdvice {
     protected Logger getLogger() {
         return LOG;
     }
-    
-    private void setMultiCacheOptions(final MultiCacheCoordinator coord, final ReadThroughMultiCacheOptions options) {
+
+    private void setMultiCacheOptions(final MultiCacheCoordinator coord, final ReadThroughMultiCacheOption options) {
         coord.setGenerateKeysFromResult(options.generateKeysFromResult());
         coord.setAddNullsToCache(options.addNullsToCache());
         coord.setSkipNullsInResult(options.skipNullsInResult());
     }
 
-    private List<?> generateByKeysFromResult(List<Object> results, MultiCacheCoordinator coord, Class<?> jsonClass) {
+    private List<?> generateByKeysFromResult(List<Object> results, MultiCacheCoordinator coord, Class<?> jsonClass) throws Exception {
         if (results == null) {
             results = new ArrayList<Object>();
         } else if (!results.isEmpty()) {
-            List<String> keys = defaultKeyProvider.generateKeys(results);
+            final AnnotationData annotationData = coord.getAnnotationData();
             String cacheKey;
 
             int ix = 0;
             for (Object resultObject : results) {
-                cacheKey = buildCacheKey(keys.get(ix), coord.getAnnotationData());
-                setSilently(cacheKey, coord.getAnnotationData().getExpiration(), resultObject, jsonClass);
+                cacheKey = cacheKeyBuilder.getCacheKey(results.get(ix), annotationData.getNamespace());
+                setSilently(cacheKey, annotationData.getExpiration(), resultObject, jsonClass);
                 coord.getMissObjects().remove(coord.getKey2Obj().get(cacheKey));
                 ix++;
             }
         }
 
         if (coord.isAddNullsToCache()) {
-            addNullsValuesForMissedObjects(coord.getMissObjects(), coord, jsonClass);
+            addNullValues(coord.getMissObjects(), coord, jsonClass);
         }
 
         results.addAll(coord.generatePartialResultList());
@@ -173,12 +167,6 @@ public class ReadThroughMultiCacheAdvice extends MultiCacheAdvice {
         }
 
         return coord.generateResultList();
-    }
-
-    private void addNullsValuesForMissedObjects(List<Object> missObjects, MultiCacheCoordinator coord, Class<?> jsonClass) {
-        for (Object keyObject : missObjects) {
-            addSilently(coord.getObj2Key().get(keyObject), coord.getAnnotationData().getExpiration(), PertinentNegativeNull.NULL, jsonClass);
-        }
     }
 
 }

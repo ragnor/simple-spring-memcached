@@ -19,7 +19,6 @@ package com.google.code.ssm.impl;
 
 import static org.junit.Assert.*;
 import com.google.code.ssm.exceptions.InvalidAnnotationException;
-import com.google.code.ssm.aop.CacheKeyMethodStoreImpl;
 import com.google.code.ssm.api.CacheKeyMethod;
 
 import java.lang.reflect.Method;
@@ -116,7 +115,7 @@ public class DefaultKeyProviderTest {
     @Test
     public void testMultiplexExceptions() {
         try {
-            cut.generateKeys(null);
+            cut.generateKeys((List<Object>)null);
             fail("Expected exception");
         } catch (InvalidParameterException ex) {
         }

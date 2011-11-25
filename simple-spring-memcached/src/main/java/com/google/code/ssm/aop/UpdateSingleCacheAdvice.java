@@ -47,20 +47,21 @@ public class UpdateSingleCacheAdvice extends CacheBase {
         // For Update*Cache, an AfterReturning aspect is fine. We will only
         // apply our caching after the underlying method completes successfully, and we will have
         // the same access to the method params.
+        String cacheKey = null;
         try {
             final Method methodToCache = getMethodToCache(jp);
             final UpdateSingleCache annotation = methodToCache.getAnnotation(UpdateSingleCache.class);
             final AnnotationData annotationData = AnnotationDataBuilder.buildAnnotationData(annotation, UpdateSingleCache.class,
                     methodToCache);
 
-            final String cacheKey = getCacheKey(annotationData, jp, methodToCache);
+            cacheKey = getCacheKey(annotationData, jp, methodToCache);
 
             final Object dataObject = this.<Object> getUpdateData(annotationData, methodToCache, jp, retVal);
             final Class<?> jsonClass = getDataJsonClass(methodToCache, annotationData);
             final Object submission = getSubmission(dataObject);
             set(cacheKey, annotationData.getExpiration(), submission, jsonClass);
         } catch (Exception ex) {
-            warn("Updating caching via " + jp.toShortString() + " aborted due to an error.", ex);
+            warn(String.format("Caching on method %s and key [%s] aborted due to an error.", jp.toShortString(), cacheKey), ex);
         }
     }
 

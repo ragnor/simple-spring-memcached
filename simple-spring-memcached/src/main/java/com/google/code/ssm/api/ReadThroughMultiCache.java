@@ -55,10 +55,11 @@ public @interface ReadThroughMultiCache {
     int expiration() default 0;
 
     /**
-     * Additional options.
+     * Additional cache options.
      * 
      * @return
+     * @since 2.0.0
      */
-    ReadThroughMultiCacheOptions options() default @ReadThroughMultiCacheOptions();
+    ReadThroughMultiCacheOption option() default @ReadThroughMultiCacheOption();
 
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2008-2009 Nelson Carpentier
+ * Copyright (c) 2008-2011 Nelson Carpentier, Jakub Białek
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
  * documentation files (the "Software"), to deal in the Software without restriction, including without limitation the
@@ -20,8 +20,6 @@ package com.google.code.ssm.aop;
 
 import java.lang.reflect.Method;
 
-import com.google.code.ssm.api.ReadThroughAssignCache;
-
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
@@ -29,9 +27,11 @@ import org.aspectj.lang.annotation.Pointcut;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.code.ssm.api.ReadThroughAssignCache;
+
 /**
  * 
- * @author Nelson Carpentier
+ * @author Nelson Carpentier, Jakub Białek
  * 
  */
 @Aspect
@@ -46,8 +46,8 @@ public class ReadThroughAssignCacheAdvice extends CacheBase {
     public Object cacheSingleAssign(final ProceedingJoinPoint pjp) throws Throwable {
         // This is injected caching. If anything goes wrong in the caching, LOG
         // the crap outta it, but do not let it surface up past the AOP injection itself.
-        final String cacheKey;
         final AnnotationData annotationData;
+        String cacheKey = null;
         Class<?> jsonClass = null;
         try {
             final Method methodToCache = getMethodToCache(pjp);
@@ -55,14 +55,14 @@ public class ReadThroughAssignCacheAdvice extends CacheBase {
             final ReadThroughAssignCache annotation = methodToCache.getAnnotation(ReadThroughAssignCache.class);
             jsonClass = getReturnJsonClass(methodToCache);
             annotationData = AnnotationDataBuilder.buildAnnotationData(annotation, ReadThroughAssignCache.class, methodToCache);
-            cacheKey = buildCacheKey(annotationData.getAssignedKey(), annotationData);
+            cacheKey = getAssignCacheKey(annotationData);
             final Object result = get(cacheKey, jsonClass);
             if (result != null) {
                 getLogger().debug("Cache hit.");
-                return (result instanceof PertinentNegativeNull) ? null : result;
+                return getResult(result);
             }
         } catch (Throwable ex) {
-            warn("Caching on " + pjp.toShortString() + " aborted due to an error.", ex);
+            warn(String.format("Caching on method %s and key [%s] aborted due to an error.", pjp.toShortString(), cacheKey), ex);
             return pjp.proceed();
         }
 
@@ -74,7 +74,7 @@ public class ReadThroughAssignCacheAdvice extends CacheBase {
             final Object submission = getSubmission(result);
             set(cacheKey, annotationData.getExpiration(), submission, jsonClass);
         } catch (Throwable ex) {
-            warn("Caching on " + pjp.toShortString() + " aborted due to an error.", ex);
+            warn(String.format("Caching on method %s and key [%s] aborted due to an error.", pjp.toShortString(), cacheKey), ex);
         }
         return result;
     }

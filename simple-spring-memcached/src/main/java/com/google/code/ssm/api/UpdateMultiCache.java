@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2008-2009 Nelson Carpentier
+ * Copyright (c) 2008-2011 Nelson Carpentier, Jakub Białek
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
  * documentation files (the "Software"), to deal in the Software without restriction, including without limitation the
@@ -25,7 +25,7 @@ import java.lang.annotation.Target;
 
 /**
  * 
- * @author Nelson Carpentier
+ * @author Nelson Carpentier, Jakub Białek
  * @since 1.0.0
  * 
  */
@@ -58,25 +58,10 @@ public @interface UpdateMultiCache {
     int expiration() default 0;
 
     /**
-     * If no one argument is annotated by {@link ParameterDataUpdateContent} and {@link ParameterValueKeyProvider} or
-     * method is not annotated by both {@link ReturnValueKeyProvider} and {@link ReturnDataUpdateContent} then null
-     * values will be added under keys that occurred in list parameter annotated by {@link ParameterValueKeyProvider} or
-     * {@link ReturnValueKeyProvider} but not occurred in {@link ParameterDataUpdateContent} or
-     * {@link ReturnDataUpdateContent}. Example: <br/>
-     * 
-     * @ReadThroughMultiCache(namespace = MemcacheSettings.APP_USER_SINGLE, expiration = 0, generateKeysFromResult =
-     *                                  true, addNulls = true) <br/>
-     *                                  public List<ApplicationUser> getUsersList(@ParameterValueKeyProvider(order = 1)
-     *                                  int applicationId,
-     * @ParameterValueKeyProvider(order = 0) List<Integer> userIds) <br/>
-     * <br/>
-     *                                  invocation: getUsersList(1, Arrays.asList(1,2,3,4,5)) will return entities for
-     *                                  userId 1,3,4 then null values will be added for userId 2 and 5.
+     * Additional cache options.
      * 
      * @return
-     * 
-     *         TODO move this property to dedicated annotation UpdateMultiCacheOptions
+     * @since 2.0.0
      */
-    boolean addNulls() default false;
-
+    UpdateMultiCacheOption option() default @UpdateMultiCacheOption();
 }

@@ -16,7 +16,7 @@
  * 
  */
 
-package com.google.code.ssm.aop;
+package com.google.code.ssm.impl;
 
 import java.lang.reflect.*;
 import java.util.*;
@@ -24,6 +24,7 @@ import java.util.concurrent.*;
 
 import org.springframework.stereotype.Service;
 
+import com.google.code.ssm.aop.CacheKeyMethodStore;
 import com.google.code.ssm.api.CacheKeyMethod;
 import com.google.code.ssm.exceptions.InvalidAnnotationException;
 

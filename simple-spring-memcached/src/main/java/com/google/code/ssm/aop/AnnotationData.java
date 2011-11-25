@@ -33,7 +33,7 @@ public class AnnotationData {
 
     private String namespace = "";
     private boolean isReturnKeyIndex;
-    private Collection<Integer> keysIndex;
+    private Collection<Integer> keyIndexes;
     private int dataIndex = DEFAULT_INTEGER;
     private int expiration = 0;
     private String className = "";
@@ -99,11 +99,11 @@ public class AnnotationData {
         this.assignedKey = assignedKey;
     }
 
-    public void setKeysIndex(Collection<Integer> keysIndex) {
-        this.keysIndex = keysIndex;
+    public void setKeyIndexes(Collection<Integer> keyIndexes) {
+        this.keyIndexes = keyIndexes;
     }
 
-    public Collection<Integer> getKeysIndex() {
-        return keysIndex;
+    public Collection<Integer> getKeyIndexes() {
+        return keyIndexes;
     }
 }

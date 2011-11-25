@@ -49,18 +49,17 @@ public class IncrementCounterInCacheAdvice extends CounterInCacheBase {
         // This is injected caching. If anything goes wrong in the caching, LOG
         // the crap outta it, but do not let it surface up past the AOP injection itself.
         // It will be invoked only if underlying method completes successfully.
-        String cacheKey;
+        String cacheKey = null;
         IncrementCounterInCache annotation;
         try {
             Method methodToCache = getMethodToCache(jp);
             annotation = methodToCache.getAnnotation(IncrementCounterInCache.class);
             AnnotationData annotationData = AnnotationDataBuilder.buildAnnotationData(annotation, IncrementCounterInCache.class,
                     methodToCache);
-            String[] objectsIds = getObjectIds(annotationData.getKeysIndex(), jp, methodToCache);
-            cacheKey = buildCacheKey(objectsIds, annotationData);
+            cacheKey = getCacheKey(annotationData, jp, methodToCache);
             incr(cacheKey, 1, 1);
         } catch (Throwable ex) {
-            getLogger().warn(String.format("Incrementing counter on %s aborted due to an error.", jp.toShortString()), ex);
+            getLogger().warn(String.format("Incrementing counter [%s] via %s aborted due to an error.", cacheKey, jp.toShortString()), ex);
         }
     }
 

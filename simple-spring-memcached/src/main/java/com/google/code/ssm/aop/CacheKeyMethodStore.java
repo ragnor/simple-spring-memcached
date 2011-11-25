@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2008-2009 Nelson Carpentier
+ * Copyright (c) 2008-2011 Nelson Carpentier, Jakub Białek
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
  * documentation files (the "Software"), to deal in the Software without restriction, including without limitation the
@@ -20,13 +20,24 @@ package com.google.code.ssm.aop;
 
 import java.lang.reflect.*;
 
+import com.google.code.ssm.api.CacheKeyMethod;
+
 /**
+ * Stores methods used to calculate part of the cache key for given class.
  * 
- * @author Nelson Carpentier
+ * @author Nelson Carpentier, Jakub Białek
  * 
  */
 public interface CacheKeyMethodStore {
 
-    public Method getKeyMethod(final Class<?> keyClass) throws NoSuchMethodException;    
+    /**
+     * Gets method used to calculate cache key on given class.
+     * 
+     * @param keyClass
+     * @return
+     * @throws NoSuchMethodException
+     *             if class doesn't contain method annotated by {@link CacheKeyMethod} or toString() method
+     */
+    public Method getKeyMethod(final Class<?> keyClass) throws NoSuchMethodException;
 
 }

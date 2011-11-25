@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2010, 2011 Jakub Białek
+ * Copyright (c) 2011 Jakub Białek
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
  * documentation files (the "Software"), to deal in the Software without restriction, including without limitation the
@@ -30,12 +30,12 @@ import java.lang.annotation.Target;
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.ANNOTATION_TYPE)
-public @interface ReadThroughMultiCacheOptions {
+public @interface ReadThroughMultiCacheOption {
 
     /**
      * If true then objects from result will be added to cache not by concatenating method arguments annotated by
-     * {@link ParameterValueKeyProvider} but invoking {@link CacheKeyMethod} on each object in result list. So order of
-     * the IDs on collection argument don't have to correspond the order of elements in result list.
+     * {@link ParameterValueKeyProvider} but invoking {@link CacheKeyMethod} or toString() on each object in result
+     * list. So order of the IDs on collection argument don't have to correspond the order of elements in result list.
      * 
      * It can increase performance increasing amount of objects added to cache if number of IDs in collection method
      * argument is different than number of objects in result list.
@@ -44,19 +44,10 @@ public @interface ReadThroughMultiCacheOptions {
     boolean generateKeysFromResult() default false;
 
     /**
-     * If true then data aren't read from cache so {@link ReadThroughMultiCache} will work like {@link UpdateMultiCache}
-     * but also can add null to cache as missed value.
      * 
-     * TODO move it to UpdateMutiCache
-     * 
-     */
-    boolean readDirectlyFromDB() default false;
-
-    /**
-     * 
-     * If true and generateKeysFromResult is true then null value will be added to cache under keys that don't occurred
-     * in result list. If true and result from annotated method is null then null will be add to all keys regardless of
-     * generateKeysFromResult value.
+     * If true and {@link #generateKeysFromResult()} is true then null value will be added to cache under keys that
+     * don't occurred in result list. If true and result from annotated method is null then null will be add to all keys
+     * regardless of {@link #generateKeysFromResult()} value.
      * 
      */
     boolean addNullsToCache() default false;

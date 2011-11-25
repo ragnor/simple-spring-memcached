@@ -37,7 +37,8 @@ import org.junit.runners.Parameterized.Parameters;
 
 import com.google.code.ssm.api.ParameterValueKeyProvider;
 import com.google.code.ssm.api.ReadThroughMultiCache;
-import com.google.code.ssm.api.ReadThroughMultiCacheOptions;
+import com.google.code.ssm.api.ReadThroughMultiCacheOption;
+import com.google.code.ssm.impl.PertinentNegativeNull;
 import com.google.code.ssm.test.Point;
 
 /**
@@ -196,19 +197,19 @@ public class ReadThroughMultiCacheAdvicePartialMissTest extends AbstractCacheTes
             return Collections.<Integer> emptyList();
         }
 
-        @ReadThroughMultiCache(namespace = NS, expiration = EXPIRATION, options = @ReadThroughMultiCacheOptions(addNullsToCache = true))
+        @ReadThroughMultiCache(namespace = NS, expiration = EXPIRATION, option = @ReadThroughMultiCacheOption(addNullsToCache = true))
         public List<Integer> method5(@ParameterValueKeyProvider(order = 2) String id1,
                 @ParameterValueKeyProvider(order = 1) List<Integer> id2) {
             return Collections.<Integer> emptyList();
         }
 
-        @ReadThroughMultiCache(namespace = NS, expiration = EXPIRATION, options = @ReadThroughMultiCacheOptions(skipNullsInResult = true))
+        @ReadThroughMultiCache(namespace = NS, expiration = EXPIRATION, option = @ReadThroughMultiCacheOption(skipNullsInResult = true))
         public List<Integer> method6(@ParameterValueKeyProvider(order = 2) String id1,
                 @ParameterValueKeyProvider(order = 1) List<Integer> id2) {
             return Collections.<Integer> emptyList();
         }
 
-        @ReadThroughMultiCache(namespace = NS, expiration = EXPIRATION, options = @ReadThroughMultiCacheOptions(addNullsToCache = true, generateKeysFromResult = true))
+        @ReadThroughMultiCache(namespace = NS, expiration = EXPIRATION, option = @ReadThroughMultiCacheOption(addNullsToCache = true, generateKeysFromResult = true))
         public List<Point> method7(@ParameterValueKeyProvider(order = 1) List<String> id2) {
             return Collections.<Point> emptyList();
         }

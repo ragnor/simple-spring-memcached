@@ -17,16 +17,28 @@
 
 package com.google.code.ssm.aop;
 
-import static org.junit.Assert.*;
-import com.google.code.ssm.api.*;
-import org.apache.commons.lang.*;
-import org.apache.commons.lang.math.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
+import java.security.InvalidParameterException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import org.apache.commons.lang.RandomStringUtils;
+import org.apache.commons.lang.math.RandomUtils;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import java.security.*;
-import java.util.*;
+import com.google.code.ssm.api.ReadThroughMultiCache;
+import com.google.code.ssm.impl.CacheKeyBuilderImpl;
+import com.google.code.ssm.impl.DefaultKeyProvider;
+import com.google.code.ssm.impl.PertinentNegativeNull;
 
 /**
  * 
@@ -40,6 +52,9 @@ public class ReadThroughMultiCacheTest {
     @BeforeClass
     public static void beforeClass() {
         cut = new ReadThroughMultiCacheAdvice();
+        CacheKeyBuilderImpl cacheKeyBuilder = new CacheKeyBuilderImpl();
+        cacheKeyBuilder.setDefaultKeyProvider(new DefaultKeyProvider());
+        cut.setCacheKeyBuilder(cacheKeyBuilder);
     }
 
     @Before
@@ -57,13 +72,12 @@ public class ReadThroughMultiCacheTest {
         final int length = 10;
         for (int ix = 0; ix < length; ix++) {
             final String object = RandomStringUtils.randomAlphanumeric(2 + ix);
-            final String key = cut.buildCacheKey(object, data);
+            final String key = cut.cacheKeyBuilder.getCacheKey(object, data.getNamespace());
             idObjects.add(object);
             expectedObject2String.put(object, key);
             expectedString2Object.put(key, object);
         }
 
-        cut.setMethodStore(new CacheKeyMethodStoreImpl());
         final List<Object> exceptionObjects = new ArrayList<Object>(idObjects);
         Object[] objs = new Object[] { exceptionObjects };
         exceptionObjects.add(null);
@@ -106,7 +120,7 @@ public class ReadThroughMultiCacheTest {
         for (int ix = 0; ix < length; ix++) {
 
             final String object = RandomStringUtils.randomAlphanumeric(2 + ix);
-            final String key = cut.buildCacheKey(object, annotation);
+            final String key = cut.cacheKeyBuilder.getCacheKey(object, annotation.getNamespace());
             expectedString2Object.put(key, object);
 
             // There are 3 possible outcomes when fetching by key from memcached:

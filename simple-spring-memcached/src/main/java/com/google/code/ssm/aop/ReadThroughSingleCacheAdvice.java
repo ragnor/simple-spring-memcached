@@ -20,15 +20,14 @@ package com.google.code.ssm.aop;
 
 import java.lang.reflect.Method;
 
-import com.google.code.ssm.api.ReadThroughSingleCache;
-
-import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.code.ssm.api.ReadThroughSingleCache;
 
 /**
  * 
@@ -47,10 +46,9 @@ public class ReadThroughSingleCacheAdvice extends CacheBase {
     public Object cacheGetSingle(final ProceedingJoinPoint pjp) throws Throwable {
         // This is injected caching. If anything goes wrong in the caching, LOG
         // the crap outta it, but do not let it surface up past the AOP injection itself.
-        final String cacheKey;
         final ReadThroughSingleCache annotation;
         Class<?> jsonClass = null;
-
+        String cacheKey = null;
         try {
             final Method methodToCache = getMethodToCache(pjp);
             annotation = methodToCache.getAnnotation(ReadThroughSingleCache.class);
@@ -65,10 +63,10 @@ public class ReadThroughSingleCacheAdvice extends CacheBase {
             final Object result = get(cacheKey, jsonClass);
             if (result != null) {
                 getLogger().debug("Cache hit.");
-                return (result instanceof PertinentNegativeNull) ? null : result;
+                return getResult(result);
             }
         } catch (Throwable ex) {
-            warn("Caching on " + pjp.toShortString() + " aborted due to an error.", ex);
+            warn(String.format("Caching on method %s and key [%s] aborted due to an error.", pjp.toShortString(), cacheKey), ex);
             return pjp.proceed();
         }
 
@@ -80,16 +78,9 @@ public class ReadThroughSingleCacheAdvice extends CacheBase {
             final Object submission = getSubmission(result);
             set(cacheKey, annotation.expiration(), submission, jsonClass);
         } catch (Throwable ex) {
-            warn("Caching on " + pjp.toShortString() + " aborted due to an error.", ex);
+            warn(String.format("Caching on method %s and key [%s] aborted due to an error.", pjp.toShortString(), cacheKey), ex);
         }
         return result;
-    }
-
-    @Deprecated
-    protected String getObjectId(final int keyIndex, final JoinPoint jp, final Method methodToCache) throws Exception {
-        final Object keyObject = getIndexObject(keyIndex, jp, methodToCache);
-        final Method keyMethod = getKeyMethod(keyObject);
-        return generateObjectId(keyMethod, keyObject);
     }
 
     @Override

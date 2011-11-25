@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2008-2009 Nelson Carpentier
+ * Copyright (c) 2008-2011 Nelson Carpentier, Jakub Białek
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
  * documentation files (the "Software"), to deal in the Software without restriction, including without limitation the
@@ -31,7 +31,7 @@ import com.google.code.ssm.api.InvalidateSingleCache;
 
 /**
  * 
- * @author Nelson Carpentier
+ * @author Nelson Carpentier, Jakub Białek
  * 
  */
 @Aspect
@@ -57,7 +57,7 @@ public class InvalidateSingleCacheAdvice extends CacheBase {
                 cacheKey = getCacheKey(annotationData, pjp, methodToCache);
             }
         } catch (Throwable ex) {
-            warn("Caching on " + pjp.toShortString() + " aborted due to an error.", ex);
+            warn(String.format("Caching on method %s and key [%s] aborted due to an error.", pjp.toShortString(), cacheKey), ex);
             return pjp.proceed();
         }
 
@@ -66,17 +66,14 @@ public class InvalidateSingleCacheAdvice extends CacheBase {
         // This is injected caching. If anything goes wrong in the caching, LOG
         // the crap outta it, but do not let it surface up past the AOP injection itself.
         try {
-            // If we have a -1 key index, then build the cacheKey now.
             if (annotationData.isReturnKeyIndex()) {
                 verifyReturnTypeIsNoVoid(methodToCache, InvalidateSingleCache.class);
-                final Method keyMethod = getKeyMethod(result);
-                final String objectId = generateObjectId(keyMethod, result);
-                cacheKey = buildCacheKey(objectId, annotationData);
+                cacheKey = cacheKeyBuilder.getCacheKey(result, annotationData.getNamespace());
             }
 
             delete(cacheKey);
         } catch (Throwable ex) {
-            warn("Caching on " + pjp.toShortString() + " aborted due to an error.", ex);
+            warn(String.format("Caching on method %s and key [%s] aborted due to an error.", pjp.toShortString(), cacheKey), ex);
         }
         return result;
     }

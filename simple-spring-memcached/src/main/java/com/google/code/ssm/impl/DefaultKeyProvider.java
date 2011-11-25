@@ -37,8 +37,9 @@ import com.google.code.ssm.api.KeyProvider;
 @Service("defaultKeyProvider")
 public class DefaultKeyProvider implements KeyProvider {
 
+    // FIXME
     @Autowired
-    private CacheKeyMethodStore methodStore;
+    private CacheKeyMethodStore methodStore = new CacheKeyMethodStoreImpl();
 
     public void setMethodStore(CacheKeyMethodStore methodStore) {
         this.methodStore = methodStore;
@@ -64,6 +65,19 @@ public class DefaultKeyProvider implements KeyProvider {
         for (final Object keyObject : keyObjects) {
             results.add(generateKey(keyObject));
         }
+        return results;
+    }
+
+    public String[] generateKeys(final Object[] keyObjects) {
+        if (keyObjects == null || keyObjects.length < 1) {
+            throw new InvalidParameterException("The key objects must be defined.");
+        }
+
+        final String[] results = new String[(keyObjects.length)];
+        for (int i = 0; i < keyObjects.length; i++) {
+            results[i] = generateKey(keyObjects[i]);
+        }
+
         return results;
     }
 

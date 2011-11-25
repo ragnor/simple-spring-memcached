@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2008-2009 Nelson Carpentier
+ * Copyright (c) 2008-2011 Nelson Carpentier, Jakub Białek
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
  * documentation files (the "Software"), to deal in the Software without restriction, including without limitation the
@@ -31,7 +31,7 @@ import com.google.code.ssm.api.InvalidateAssignCache;
 
 /**
  * 
- * @author Nelson Carpentier
+ * @author Nelson Carpentier, Jakub Białek
  * 
  */
 @Aspect
@@ -48,17 +48,18 @@ public class InvalidateAssignCacheAdvice extends CacheBase {
 
         // This is injected caching. If anything goes wrong in the caching, LOG
         // the crap outta it, but do not let it surface up past the AOP injection itself.
+        String cacheKey = null;
         try {
             final Method methodToCache = getMethodToCache(pjp);
             final InvalidateAssignCache annotation = methodToCache.getAnnotation(InvalidateAssignCache.class);
             final AnnotationData annotationData = AnnotationDataBuilder.buildAnnotationData(annotation, InvalidateAssignCache.class,
                     methodToCache);
 
-            final String cacheKey = buildCacheKey(annotationData.getAssignedKey(), annotationData);
+            cacheKey = getAssignCacheKey(annotationData);
 
             delete(cacheKey);
         } catch (Throwable ex) {
-            warn("Caching on " + pjp.toShortString() + " aborted due to an error.", ex);
+            warn(String.format("Caching on method %s and key [%s] aborted due to an error.", pjp.toShortString(), cacheKey), ex);
         }
         return result;
     }

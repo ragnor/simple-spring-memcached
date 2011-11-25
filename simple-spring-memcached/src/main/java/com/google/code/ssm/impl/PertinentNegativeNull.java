@@ -16,7 +16,7 @@
  * 
  */
 
-package com.google.code.ssm.aop;
+package com.google.code.ssm.impl;
 
 import java.io.*;
 

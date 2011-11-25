@@ -25,16 +25,19 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.google.code.ssm.api.ParameterDataUpdateContent;
-import com.google.code.ssm.api.ParameterValueKeyProvider;
-import com.google.code.ssm.api.UpdateMultiCache;
-import com.google.code.ssm.exceptions.InvalidAnnotationException;
-import com.google.code.ssm.providers.CacheClient;
-
 import org.apache.commons.lang.RandomStringUtils;
 import org.easymock.EasyMock;
 import org.junit.BeforeClass;
 import org.junit.Test;
+
+import com.google.code.ssm.api.ParameterDataUpdateContent;
+import com.google.code.ssm.api.ParameterValueKeyProvider;
+import com.google.code.ssm.api.UpdateMultiCache;
+import com.google.code.ssm.exceptions.InvalidAnnotationException;
+import com.google.code.ssm.impl.CacheKeyBuilderImpl;
+import com.google.code.ssm.impl.DefaultKeyProvider;
+import com.google.code.ssm.impl.PertinentNegativeNull;
+import com.google.code.ssm.providers.CacheClient;
 
 /**
  * 
@@ -48,8 +51,9 @@ public class UpdateMultiCacheAdviceTest {
     @BeforeClass
     public static void beforeClass() {
         cut = new UpdateMultiCacheAdvice();
-        cut.setMethodStore(new CacheKeyMethodStoreImpl());
-        // cut.updateMulti();
+        CacheKeyBuilderImpl cacheKeyBuilder = new CacheKeyBuilderImpl();
+        cacheKeyBuilder.setDefaultKeyProvider(new DefaultKeyProvider());
+        cut.setCacheKeyBuilder(cacheKeyBuilder);
     }
 
     @Test

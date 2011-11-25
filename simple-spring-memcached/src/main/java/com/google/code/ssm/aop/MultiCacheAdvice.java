@@ -32,6 +32,8 @@ import java.util.Set;
 import org.aspectj.lang.JoinPoint;
 
 import com.google.code.ssm.exceptions.InvalidAnnotationException;
+import com.google.code.ssm.impl.PertinentNegativeNull;
+import com.google.code.ssm.util.Utils;
 
 /**
  * 
@@ -47,22 +49,13 @@ public abstract class MultiCacheAdvice extends CacheBase {
             throws Exception {
         final MapHolder holder = new MapHolder();
 
-        // initialize methods that will be used to generate keys from not collection method's arguments
-        final Method[] methods = new Method[keys.length];
-        for (int i = 0; i < keys.length; i++) {
-            if (i != listIndex) {
-                methods[i] = getKeyMethod(keys[i]);
-            }
-        }
-
         for (final Object obj : idObjects) {
             if (obj == null) {
                 throw new InvalidParameterException("One of the passed in key objects is null");
             }
 
             keys[listIndex] = obj;
-            methods[listIndex] = getKeyMethod(keys[listIndex]);
-            String cacheKey = buildCacheKey(generateObjectIds(methods, keys), data);
+            String cacheKey = cacheKeyBuilder.getCacheKey(keys, data.getNamespace());
             if (holder.getObj2Key().get(obj) == null) {
                 holder.getObj2Key().put(obj, cacheKey);
             }
@@ -75,9 +68,9 @@ public abstract class MultiCacheAdvice extends CacheBase {
     }
 
     @SuppressWarnings("unchecked")
-    Object[] getKeyObjects(final Collection<Integer> keysIndex, final JoinPoint jp, final Method method,
-            MultiCacheCoordinator coord, Annotation annotation) throws Exception {
-        Object[] results = getIndexObjects(keysIndex, jp, method);
+    Object[] getKeyObjects(final Collection<Integer> keysIndex, final JoinPoint jp, final Method method, MultiCacheCoordinator coord,
+            Annotation annotation) throws Exception {
+        Object[] results = Utils.getMethodArgs(keysIndex, jp.getArgs(), method);
         Integer[] keyIndexArray = keysIndex.toArray(INTEGER_ARRAY);
 
         boolean listOccured = false;
@@ -101,6 +94,18 @@ public abstract class MultiCacheAdvice extends CacheBase {
 
         throw new InvalidAnnotationException(String.format("The parameter object found at dataIndex [%s] is not a [%s]. "
                 + "[%s] does not fulfill the requirements.", annotation.getClass().getName(), List.class.getName(), method.toString()));
+    }
+
+    protected void addNullValues(List<Object> missObjects, MultiCacheCoordinator coord, Class<?> jsonClass) {
+        for (Object keyObject : missObjects) {
+            addSilently(coord.getObj2Key().get(keyObject), coord.getAnnotationData().getExpiration(), PertinentNegativeNull.NULL, jsonClass);
+        }
+    }
+
+    protected void setNullValues(List<Object> missObjects, MultiCacheCoordinator coord, Class<?> jsonClass) {
+        for (Object keyObject : missObjects) {
+            setSilently(coord.getObj2Key().get(keyObject), coord.getAnnotationData().getExpiration(), PertinentNegativeNull.NULL, jsonClass);
+        }
     }
 
     static class MapHolder {
@@ -222,7 +227,7 @@ public abstract class MultiCacheAdvice extends CacheBase {
                 }
 
                 if (!isSkipNullsInResult() || !(keyResult instanceof PertinentNegativeNull)) {
-                    results.add(keyResult instanceof PertinentNegativeNull ? null : keyResult);
+                    results.add(getResult(keyResult));
                 }
             }
 
@@ -235,13 +240,17 @@ public abstract class MultiCacheAdvice extends CacheBase {
                 final String cacheKey = obj2Key.get(keyObject);
                 final Object keyResult = key2Result.get(cacheKey);
                 if (keyResult != null && (!isSkipNullsInResult() || !(keyResult instanceof PertinentNegativeNull))) {
-                    results.add(keyResult instanceof PertinentNegativeNull ? null : keyResult);
+                    results.add(getResult(keyResult));
                 }
             }
 
             return results;
         }
 
+        protected Object getResult(Object result) {
+            return (result instanceof PertinentNegativeNull) ? null : result;
+        }
+        
         public List<Object> getMissObjects() {
             return missObjects;
         }

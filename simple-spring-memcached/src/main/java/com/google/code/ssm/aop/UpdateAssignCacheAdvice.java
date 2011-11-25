@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2008-2009 Nelson Carpentier
+ * Copyright (c) 2008-2011 Nelson Carpentier, Jakub Białek
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
  * documentation files (the "Software"), to deal in the Software without restriction, including without limitation the
@@ -31,7 +31,7 @@ import org.slf4j.LoggerFactory;
 
 /**
  * 
- * @author Nelson Carpentier
+ * @author Nelson Carpentier, Jakub Białek
  * 
  */
 @Aspect
@@ -46,20 +46,21 @@ public class UpdateAssignCacheAdvice extends CacheBase {
     public void cacheUpdateAssign(final JoinPoint jp, final Object retVal) throws Throwable {
         // This is injected caching. If anything goes wrong in the caching, LOG
         // the crap outta it, but do not let it surface up past the AOP injection itself.
+        String cacheKey = null;
         try {
             final Method methodToCache = getMethodToCache(jp);
             final UpdateAssignCache annotation = methodToCache.getAnnotation(UpdateAssignCache.class);
             final AnnotationData annotationData = AnnotationDataBuilder.buildAnnotationData(annotation, UpdateAssignCache.class,
                     methodToCache);
 
-            final String cacheKey = buildCacheKey(annotationData.getAssignedKey(), annotationData);
+            cacheKey = getAssignCacheKey(annotationData);
 
             final Object dataObject = this.<Object> getUpdateData(annotationData, methodToCache, jp, retVal);
             final Class<?> jsonClass = getDataJsonClass(methodToCache, annotationData);
             final Object submission = getSubmission(dataObject);
             set(cacheKey, annotationData.getExpiration(), submission, jsonClass);
         } catch (Exception ex) {
-            warn("Updating caching via " + jp.toShortString() + " aborted due to an error.", ex);
+            warn(String.format("Caching on method %s and key [%s] aborted due to an error.", jp.toShortString(), cacheKey), ex);
         }
     }
     

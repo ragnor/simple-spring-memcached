@@ -15,35 +15,45 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package com.google.code.ssm.aop.counter;
+package com.google.code.ssm.aop;
 
-import org.aspectj.lang.JoinPoint;
-
-import com.google.code.ssm.aop.CacheBase;
+import java.lang.reflect.Method;
+import java.util.Collection;
+import java.util.List;
 
 /**
+ * Builds whole cache key.
+ * 
  * @author Jakub Białek
  * @since 2.0.0
  * 
  */
-public abstract class CounterInCacheBase extends CacheBase {
+public interface CacheKeyBuilder {
 
-    protected boolean checkData(Object data, JoinPoint pjp) {
-        if (!isTypeSupported(data)) {
-            getLogger().warn("Caching on {} aborted due to incorrect return type. Should be int, long, Integer or Long is {}",
-                    new Object[] { pjp.toShortString(), data == null ? null : data.getClass() });
-            return false;
-        }
+    public String getCacheKey(final Collection<Integer> keyIndexes, final Object[] args, final String namespace, final Method method)
+            throws Exception;
 
-        return true;
-    }
+    public String getCacheKey(final Object[] keyObjects, final String namespace);
 
-    protected boolean isTypeSupported(Object result) {
-        return result instanceof Long || result instanceof Integer;
-    }
+    /**
+     * Builds cache key from one object id.
+     * 
+     * @param objectId
+     * @param data
+     * @return
+     */
+    public String getCacheKey(final Object keyObject, final String namespace);
 
-    protected boolean isReturnTypeSupported(Class<?> clazz) {
-        return int.class.equals(clazz) || Integer.class.equals(clazz) || long.class.equals(clazz) || Long.class.equals(clazz);
-    }
+    
+    public List<String> getCacheKeys(final List<Object> keyObjects, final String namespace) throws Exception;
+
+    /**
+     * Builds cache key from one object id.
+     * 
+     * @param objectId
+     * @param data
+     * @return
+     */
+    public String getAssignCacheKey(final String objectId, final String namespace);
 
 }

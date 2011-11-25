@@ -17,8 +17,6 @@
 package com.google.code.ssm.aop;
 
 import static org.mockito.Mockito.when;
-import com.google.code.ssm.api.KeyProvider;
-import com.google.code.ssm.providers.CacheClient;
 
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.reflect.MethodSignature;
@@ -26,6 +24,11 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+
+import com.google.code.ssm.api.KeyProvider;
+import com.google.code.ssm.impl.CacheKeyBuilderImpl;
+import com.google.code.ssm.impl.DefaultKeyProvider;
+import com.google.code.ssm.providers.CacheClient;
 
 /**
  * 
@@ -71,8 +74,9 @@ public abstract class AbstractCacheTest<T extends CacheBase> {
         MockitoAnnotations.initMocks(this);
         advice = createAdvice();
         advice.setCache(client);
-        advice.setDefaultKeyProvider(keyProvider);
-        advice.setMethodStore(new CacheKeyMethodStoreImpl());
+        CacheKeyBuilderImpl cacheKeyBuilder = new CacheKeyBuilderImpl();
+        cacheKeyBuilder.setDefaultKeyProvider(new DefaultKeyProvider());
+        advice.setCacheKeyBuilder(cacheKeyBuilder);
 
         when(signature.getName()).thenReturn(methodName);
         when(signature.getParameterTypes()).thenReturn(paramTypes);
@@ -83,7 +87,7 @@ public abstract class AbstractCacheTest<T extends CacheBase> {
         when(signature.getDeclaringType()).thenReturn(testService.getClass());
         when(pjp.getTarget()).thenReturn(testService);
 
-        if (cacheKey == null) {
+        if (isValid && cacheKey == null) {
             cacheKey = getKey(getNamespace(), params);
         }
 

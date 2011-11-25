@@ -20,10 +20,7 @@ package com.google.code.ssm.aop;
 
 import java.lang.reflect.Method;
 import java.security.InvalidParameterException;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeoutException;
@@ -33,25 +30,24 @@ import org.aspectj.lang.Signature;
 import org.aspectj.lang.reflect.MethodSignature;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.ApplicationContextAware;
 
-import com.google.code.ssm.api.KeyProvider;
 import com.google.code.ssm.api.ReadThroughMultiCache;
 import com.google.code.ssm.api.format.UseJson;
 import com.google.code.ssm.exceptions.InvalidAnnotationException;
 import com.google.code.ssm.impl.NoClass;
+import com.google.code.ssm.impl.PertinentNegativeNull;
 import com.google.code.ssm.providers.CacheClient;
 import com.google.code.ssm.providers.CacheException;
 import com.google.code.ssm.providers.CacheTranscoder;
 import com.google.code.ssm.transcoders.JsonTranscoders;
+import com.google.code.ssm.util.Utils;
 
 /**
  * 
  * @author Nelson Carpentier, Jakub Białek
  * 
  */
-public abstract class CacheBase implements ApplicationContextAware {
+public abstract class CacheBase {
 
     protected static final String SEPARATOR = ":";
 
@@ -60,31 +56,19 @@ public abstract class CacheBase implements ApplicationContextAware {
     protected CacheClient cache;
 
     @Autowired
-    protected CacheKeyMethodStore methodStore;
-
-    protected KeyProvider defaultKeyProvider;
-
-    protected ApplicationContext applicationContext;
+    protected CacheKeyBuilder cacheKeyBuilder;
 
     @Autowired
     protected JsonTranscoders jsonTranscoders;
-
-    public void setApplicationContext(ApplicationContext applicationContext) {
-        this.applicationContext = applicationContext;
-    }
 
     public void setCache(CacheClient cache) {
         this.cache = cache;
     }
 
-    public void setMethodStore(CacheKeyMethodStore methodStore) {
-        this.methodStore = methodStore;
+    public void setCacheKeyBuilder(CacheKeyBuilder cacheKeyBuilder) {
+        this.cacheKeyBuilder = cacheKeyBuilder;
     }
-
-    public void setDefaultKeyProvider(KeyProvider defaultKeyProvider) {
-        this.defaultKeyProvider = defaultKeyProvider;
-    }
-
+    
     protected Method getMethodToCache(final JoinPoint jp) throws NoSuchMethodException {
         final Signature sig = jp.getSignature();
         if (!(sig instanceof MethodSignature)) {
@@ -97,122 +81,30 @@ public abstract class CacheBase implements ApplicationContextAware {
         return target.getClass().getMethod(msig.getName(), msig.getParameterTypes());
     }
 
-    protected String[] getObjectIds(final Collection<Integer> keysIndexes, final JoinPoint jp, final Method methodToCache) throws Exception {
-        final Object[] keysObjects = getIndexObjects(keysIndexes, jp, methodToCache);
-        final Method[] keysMethods = getKeysMethods(keysObjects);
-        return generateObjectIds(keysMethods, keysObjects);
-    }
-
-    protected String generateObjectId(final Method keyMethod, final Object keyObject) throws Exception {
-        final String objectId = (String) keyMethod.invoke(keyObject, new Object[0]);
-        if (objectId == null || objectId.length() < 1) {
-            throw new RuntimeException("Got an empty key value from " + keyMethod.getName());
-        }
-        return objectId;
-    }
-
-    protected String[] generateObjectIds(final Method[] keysMethods, final Object[] keysObjects) throws Exception {
-        if (keysMethods == null || keysObjects == null || keysMethods.length != keysObjects.length) {
-            throw new RuntimeException("Got arrays of key and method with different size. Keys: "
-                    + (keysObjects == null ? null : Arrays.asList(keysObjects)) + ", methods: "
-                    + (keysMethods == null ? null : Arrays.asList(keysMethods)));
-        }
-
-        String[] ids = new String[keysMethods.length];
-        for (int i = 0; i < keysMethods.length; i++) {
-            ids[i] = generateObjectId(keysMethods[i], keysObjects[i]);
-        }
-
-        return ids;
-    }
-
     @SuppressWarnings("unchecked")
-    protected <T> T getUpdateData(AnnotationData annotationData, Method method, JoinPoint jp, Object returnValue) throws Exception {
+    protected <T> T getUpdateData(final AnnotationData annotationData, final Method method, final JoinPoint jp, final Object returnValue)
+            throws Exception {
         return annotationData.isReturnDataIndex() ? (T) returnValue : (T) getIndexObject(annotationData.getDataIndex(), jp, method);
     }
 
-    protected String getCacheKey(AnnotationData annotationData, JoinPoint jp, Method method) throws Exception {
-        final String[] objectsIds = getObjectIds(annotationData.getKeysIndex(), jp, method);
-        return buildCacheKey(objectsIds, annotationData);
+    protected String getCacheKey(final AnnotationData annotationData, final JoinPoint jp, final Method method) throws Exception {
+        return cacheKeyBuilder.getCacheKey(annotationData.getKeyIndexes(), jp.getArgs(), annotationData.getNamespace(), method);
     }
 
     protected Object getSubmission(Object o) {
         return o == null ? PertinentNegativeNull.NULL : o;
     }
 
-    /**
-     * Builds cache key from one object id.
-     * 
-     * @param objectId
-     * @param data
-     * @return
-     */
-    protected String buildCacheKey(final String objectId, final AnnotationData data) {
-        if (objectId == null || objectId.length() < 1) {
-            throw new InvalidParameterException("Ids for objects in the cache must be at least 1 character long.");
-        }
-        return data.getNamespace() + SEPARATOR + objectId;
+    protected Object getResult(Object result) {
+        return (result instanceof PertinentNegativeNull) ? null : result;
     }
-
-    /**
-     * Build cache key from more than one object id.
-     * 
-     * @param objectIds
-     * @param namespace
-     * @return
-     */
-    private String buildCacheKey(final String[] objectIds, final String namespace) {
-        StringBuilder cacheKey = new StringBuilder(namespace);
-        cacheKey.append(SEPARATOR);
-        for (String id : objectIds) {
-            if (id == null || id.length() < 1) {
-                throw new InvalidParameterException("Ids for objects in the cache must be at least 1 character long.");
-            }
-            cacheKey.append(id);
-            cacheKey.append(ID_SEPARATOR);
-        }
-
-        cacheKey.deleteCharAt(cacheKey.length() - 1);
-        return cacheKey.toString();
-    }
-
-    protected String buildCacheKey(final String[] objectIds, final AnnotationData data) {
-        if (objectIds == null || objectIds.length < 1) {
-            throw new InvalidParameterException("Ids for objects in the cache must be at least 1 character long.");
-        }
-
-        if (objectIds.length == 1) {
-            return buildCacheKey(objectIds[0], data);
-        } else {
-            return buildCacheKey(objectIds, data.getNamespace());
-        }
+    
+    protected String getAssignCacheKey(final AnnotationData data) {
+        return cacheKeyBuilder.getAssignCacheKey(data.getAssignedKey(), data.getNamespace());
     }
 
     protected Object getIndexObject(final int index, final JoinPoint jp, final Method methodToCache) throws Exception {
-        if (index < 0) {
-            throw new InvalidParameterException(String.format("An index of %s is invalid", index));
-        }
-        final Object[] args = jp.getArgs();
-        if (args.length <= index) {
-            throw new InvalidParameterException(String.format("An index of %s is too big for the number of arguments in [%s]", index,
-                    methodToCache.toString()));
-        }
-        final Object indexObject = args[index];
-        if (indexObject == null) {
-            throw new InvalidParameterException(String.format("The argument passed into [%s] at index %s is null.",
-                    methodToCache.toString(), index));
-        }
-        return indexObject;
-    }
-
-    protected Object[] getIndexObjects(final Collection<Integer> indexes, final JoinPoint jp, final Method methodToCache) throws Exception {
-        Object[] results = new Object[indexes.size()];
-        Iterator<Integer> iter = indexes.iterator();
-        for (int i = 0; i < indexes.size(); i++) {
-            results[i] = getIndexObject(iter.next(), jp, methodToCache);
-        }
-
-        return results;
+        return Utils.getMethodArg(index, jp.getArgs(), methodToCache);
     }
 
     protected Object validateReturnValueAsKeyObject(final Object returnValue, final Method methodToCache) throws Exception {
@@ -221,19 +113,6 @@ public abstract class CacheBase implements ApplicationContextAware {
                     "The result of the method [%s] is null, which will not give an appropriate cache key.", methodToCache.toString()));
         }
         return returnValue;
-    }
-
-    protected Method getKeyMethod(final Object keyObject) throws NoSuchMethodException {
-        return methodStore.getKeyMethod(keyObject.getClass());
-    }
-
-    protected Method[] getKeysMethods(final Object[] keysObjects) throws NoSuchMethodException {
-        Method[] methods = new Method[keysObjects.length];
-        for (int i = 0; i < keysObjects.length; i++) {
-            methods[i] = getKeyMethod(keysObjects[i]);
-        }
-
-        return methods;
     }
 
     protected void verifyReturnTypeIsList(final Method method, final Class<?> annotationClass) {
@@ -257,14 +136,7 @@ public abstract class CacheBase implements ApplicationContextAware {
     }
 
     protected List<String> getCacheKeys(final List<Object> keyObjects, final AnnotationData annotationData) throws Exception {
-        final List<String> results = new ArrayList<String>();
-        for (final Object object : keyObjects) {
-            final Method keyMethod = getKeyMethod(object);
-            final String objectId = generateObjectId(keyMethod, object);
-            results.add(buildCacheKey(objectId, annotationData));
-        }
-
-        return results;
+        return cacheKeyBuilder.getCacheKeys(keyObjects, annotationData.getNamespace());
     }
 
     @SuppressWarnings("unchecked")
@@ -422,7 +294,7 @@ public abstract class CacheBase implements ApplicationContextAware {
             return getParameterJsonClass(method, annotationData.getDataIndex());
         }
     }
-    
+
     protected void info(String msg) {
         getLogger().info(msg);
     }

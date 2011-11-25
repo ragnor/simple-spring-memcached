@@ -264,7 +264,7 @@ public class AnnotationDataBuilder {
             throw new InvalidParameterException(String.format("No KeyProvider annotation found method [%s]", targetMethod.getName()));
         }
 
-        data.setKeysIndex(founds.values());
+        data.setKeyIndexes(founds.values());
     }
 
     static void populateClassName(final AnnotationData data, final Annotation annotation,

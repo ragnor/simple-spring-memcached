@@ -54,24 +54,23 @@ public class UpdateCounterInCacheAdvice extends CounterInCacheBase {
         // For Update*Cache, an AfterReturning aspect is fine. We will only
         // apply our caching after the underlying method completes successfully, and we will have
         // the same access to the method params.
+        String cacheKey = null;
         UpdateCounterInCache annotation;
-        String cacheKey;
         try {
             Method methodToCache = getMethodToCache(jp);
             annotation = methodToCache.getAnnotation(UpdateCounterInCache.class);
             AnnotationData annotationData = AnnotationDataBuilder
                     .buildAnnotationData(annotation, UpdateCounterInCache.class, methodToCache);
-            String[] objectsIds = getObjectIds(annotationData.getKeysIndex(), jp, methodToCache);
-            cacheKey = buildCacheKey(objectsIds, annotationData);
+            cacheKey = getCacheKey(annotationData, jp, methodToCache);
 
-            Object dataObject = annotationData.isReturnDataIndex() ? retVal : getIndexObject(annotationData.getDataIndex(), jp,
-                    methodToCache);
+            Object dataObject = getUpdateData(annotationData, methodToCache, jp, retVal);
             if (checkData(dataObject, jp)) {
                 long value = ((Number) dataObject).longValue();
                 set(cacheKey, annotation.expiration(), value, transcoder);
             }
         } catch (Exception ex) {
-            getLogger().warn(String.format("Updating counter in cache via %s aborted due to an error.", jp.toShortString()), ex);
+            getLogger().warn(String.format("Updating counter [%s] in cache via %s aborted due to an error.", cacheKey, jp.toShortString()),
+                    ex);
         }
     }
 

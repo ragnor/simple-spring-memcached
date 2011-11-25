@@ -28,8 +28,8 @@ import java.util.List;
 public interface KeyProvider {
 
     /**
-     * From the supplied object, create a (no-whitespace) key by which a value will be stored in Memcached. (Hint: This
-     * value, plus the Namespace value, should be no longer than 250 characters.)
+     * From the supplied object, create a (no-whitespace) part of the key by which a value will be stored in Memcached.
+     * (Hint: This value, plus the Namespace value, plus optional other key should be no longer than 250 characters.)
      * 
      * @param keyObject
      * @return
@@ -43,5 +43,13 @@ public interface KeyProvider {
      * @return
      */
     List<String> generateKeys(List<Object> keyObjects);
+
+    /**
+     * This is the multi-plexed version of <code>generateKey(...)</code>
+     * 
+     * @param keyObjects
+     * @return
+     */
+    String[] generateKeys(Object[] keyObjects);
 
 }

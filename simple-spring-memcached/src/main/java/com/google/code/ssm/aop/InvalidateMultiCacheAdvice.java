@@ -59,7 +59,7 @@ public class InvalidateMultiCacheAdvice extends MultiCacheAdvice {
             coord.setAnnotationData(annotationData);
             if (!annotationData.isReturnKeyIndex()) {
                 // Get the list of objects that will provide the keys to all the cache values.
-                coord.setKeyObjects(getKeyObjects(coord.getAnnotationData().getKeysIndex(), pjp, coord.getMethod(), coord, annotation));
+                coord.setKeyObjects(getKeyObjects(coord.getAnnotationData().getKeyIndexes(), pjp, coord.getMethod(), coord, annotation));
 
                 // Create key->object and object->key mappings.
                 coord.setHolder(convertIdObjectsToKeyMap(coord.getListObjects(), coord.getKeyObjects(), coord.getListIndexInKeys(),
@@ -68,7 +68,7 @@ public class InvalidateMultiCacheAdvice extends MultiCacheAdvice {
                 cacheKeys = coord.getKey2Obj().keySet();
             }
         } catch (Throwable ex) {
-            warn("Caching on " + pjp.toShortString() + " aborted due to an error.", ex);
+            warn(String.format("Caching on method %s aborted due to an error.", pjp.toShortString()), ex);
             return pjp.proceed();
         }
 
@@ -90,7 +90,7 @@ public class InvalidateMultiCacheAdvice extends MultiCacheAdvice {
             }
             delete(cacheKeys);
         } catch (Throwable ex) {
-            warn("Caching on " + pjp.toShortString() + " aborted due to an error.", ex);
+            warn(String.format("Caching on method %s aborted due to an error.", pjp.toShortString()), ex);
         }
         return result;
 
