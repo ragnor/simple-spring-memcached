@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2008-2009 Nelson Carpentier
+ * Copyright (c) 2008-2011 Nelson Carpentier, Jakub Białek
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
  * documentation files (the "Software"), to deal in the Software without restriction, including without limitation the
@@ -31,20 +31,23 @@ import com.google.code.ssm.util.jndi.JNDIChangeListener;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.FactoryBean;
 import org.springframework.jndi.JndiTemplate;
 
 /**
+ * FIXME this class cannot be FactoryBean because reference to this bean is required when jndi change listener is used.
  * 
- * @author Nelson Carpentier, Jakub Białek
+ * @author Nelson Carpentier
+ * @author Jakub Białek
  * 
  */
-public class MemcachedClientFactory implements JNDIChangeListener {
+public class MemcachedClientFactory implements JNDIChangeListener, FactoryBean<CacheClient> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MemcachedClientFactory.class);
 
     private JndiTemplate jndiTemplate = new JndiTemplate();
 
-    private MemcachedConnectionBean bean;
+    private MemcachedConnectionBean connectionConfiguration;
 
     private MemcachedClientWrapper memcachedClientWrapper;
 
@@ -52,60 +55,32 @@ public class MemcachedClientFactory implements JNDIChangeListener {
 
     private CacheClientFactory memcacheClientFactory;
 
-    public void setBean(MemcachedConnectionBean bean) {
-        this.bean = bean;
+    public void setConnectionConfiguration(MemcachedConnectionBean configuration) {
+        this.connectionConfiguration = configuration;
     }
 
     public void setClientFactory(CacheClientFactory memcacheClientFactory) {
         this.memcacheClientFactory = memcacheClientFactory;
     }
 
-    /**
-     * Only one memcached client is created.
-     * 
-     * @return memcached client
-     * @throws IOException
-     * @throws NamingException
-     */
-    public CacheClient createMemcachedClient() throws IOException, NamingException {
-        // this factory creates only one single memcached client and return it if someone invoked this method twice or
-        // more
-        if (memcachedClientWrapper != null) {
-            throw new IllegalStateException("This factory has already created memcached client");
-        }
-
-        if (this.bean == null) {
-            throw new RuntimeException("The MemcachedConnectionBean must be defined!");
-        }
-
-        Object ips = null;
-        List<InetSocketAddress> addrs = null;
-        try {
-            if (bean.getJndiKey() != null && (ips = jndiTemplate.lookup(bean.getJndiKey())) != null) {
-                LOGGER.info("IPs from JNDI will be used to connect to memcached servers. IPs: " + ips);
-                currentAddrs = (String) ips;
-                addrs = getAddresses((String) ips);
-            } else {
-                addrs = getAddrsFromProperty();
-            }
-        } catch (NamingException ex) {
-            LOGGER.warn("Name of the JNDI key with memcached IPs is set but no value is bound to this key: " + bean.getJndiKey(), ex);
-            addrs = getAddrsFromProperty();
-        }
-        memcachedClientWrapper = new MemcachedClientWrapper(createClient(addrs));
-
-        return memcachedClientWrapper;
+    @Override
+    public CacheClient getObject() throws Exception {
+        return createMemcachedClient();
     }
 
-    private List<InetSocketAddress> getAddrsFromProperty() {
-        LOGGER.warn("JNDI doesn't contain IPs of memcached servers. Fallback IPs from xml will be used: " + this.bean.getNodeList());
-        currentAddrs = this.bean.getNodeList();
-        return getAddresses(this.bean.getNodeList());
+    @Override
+    public Class<?> getObjectType() {
+        return CacheClient.class;
+    }
+
+    @Override
+    public boolean isSingleton() {
+        return true;
     }
 
     @Override
     public void handleNotification(String jndiKey, Object newValue) {
-        if (!jndiKey.equals(bean.getJndiKey())) {
+        if (!jndiKey.equals(connectionConfiguration.getJndiKey())) {
             return;
         }
 
@@ -124,6 +99,52 @@ public class MemcachedClientFactory implements JNDIChangeListener {
         } catch (IOException e) {
             LOGGER.error("Cannot change memcached client to new one with IPs " + newValue, e);
         }
+    }
+
+    /**
+     * Only one memcached client is created.
+     * 
+     * @return memcached client
+     * @throws IOException
+     * @throws NamingException
+     */
+    protected CacheClient createMemcachedClient() throws IOException, NamingException {
+        // this factory creates only one single memcached client and return it if someone invoked this method twice or
+        // more
+        if (memcachedClientWrapper != null) {
+            throw new IllegalStateException("This factory has already created memcached client");
+        }
+
+        if (this.connectionConfiguration == null) {
+            throw new RuntimeException("The MemcachedConnectionBean must be defined!");
+        }
+
+        Object ips = null;
+        List<InetSocketAddress> addrs = null;
+        try {
+            if (connectionConfiguration.getJndiKey() != null && (ips = jndiTemplate.lookup(connectionConfiguration.getJndiKey())) != null) {
+                LOGGER.info("IPs from JNDI will be used to connect to memcached servers. IPs: " + ips);
+                currentAddrs = (String) ips;
+                addrs = getAddresses((String) ips);
+            } else {
+                addrs = getAddrsFromProperty();
+            }
+        } catch (NamingException ex) {
+            LOGGER.warn(
+                    "Name of the JNDI key with memcached IPs is set but no value is bound to this key: "
+                            + connectionConfiguration.getJndiKey(), ex);
+            addrs = getAddrsFromProperty();
+        }
+        memcachedClientWrapper = new MemcachedClientWrapper(createClient(addrs));
+
+        return memcachedClientWrapper;
+    }
+
+    private List<InetSocketAddress> getAddrsFromProperty() {
+        LOGGER.warn("JNDI doesn't contain IPs of memcached servers. Fallback IPs from xml will be used: "
+                + this.connectionConfiguration.getNodeList());
+        currentAddrs = this.connectionConfiguration.getNodeList();
+        return getAddresses(this.connectionConfiguration.getNodeList());
     }
 
     /**
@@ -161,7 +182,7 @@ public class MemcachedClientFactory implements JNDIChangeListener {
     }
 
     private CacheClient createClient(List<InetSocketAddress> addrs) throws IOException {
-        return memcacheClientFactory.create(addrs, bean);
+        return memcacheClientFactory.create(addrs, connectionConfiguration);
     }
 
 }

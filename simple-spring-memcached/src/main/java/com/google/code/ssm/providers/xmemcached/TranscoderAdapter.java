@@ -17,8 +17,9 @@
 
 package com.google.code.ssm.providers.xmemcached;
 
-import com.google.code.ssm.providers.CachedObject;
 import com.google.code.ssm.providers.CacheTranscoder;
+import com.google.code.ssm.providers.CachedObject;
+
 import net.rubyeye.xmemcached.transcoders.CachedData;
 import net.rubyeye.xmemcached.transcoders.Transcoder;
 
@@ -29,11 +30,11 @@ import net.rubyeye.xmemcached.transcoders.Transcoder;
  * 
  * @param <T>
  */
-public class TranscoderAdapter<T> implements Transcoder<T> {
+class TranscoderAdapter<T> implements Transcoder<T> {
 
     private CacheTranscoder<T> transcoder;
 
-    public TranscoderAdapter(CacheTranscoder<T> transcoder) {
+    TranscoderAdapter(CacheTranscoder<T> transcoder) {
         this.transcoder = transcoder;
     }
 

@@ -30,6 +30,7 @@ import java.lang.annotation.ElementType;
  * method is used.
  * 
  * @author Nelson Carpentier
+ * @author Jakub Białek
  * 
  */
 @Retention(RetentionPolicy.RUNTIME)
@@ -41,6 +42,7 @@ public @interface ParameterValueKeyProvider {
      * in cache key.
      * 
      * @return
+     * @since 2.0.0
      */
     int order() default 0;
 

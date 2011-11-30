@@ -34,7 +34,8 @@ import com.google.code.ssm.exceptions.InvalidAnnotationException;
 
 /**
  * 
- * @author Nelson Carpentier, Jakub Białek
+ * @author Nelson Carpentier
+ * @author Jakub Białek
  */
 @Aspect
 public class InvalidateMultiCacheAdvice extends MultiCacheAdvice {
@@ -49,23 +50,14 @@ public class InvalidateMultiCacheAdvice extends MultiCacheAdvice {
         // This is injected caching. If anything goes wrong in the caching, LOG
         // the crap outta it, but do not let it surface up past the AOP injection itself.
         Collection<String> cacheKeys = null;
-        final AnnotationData annotationData;
+        final AnnotationData data;
         final Method methodToCache;
-        final MultiCacheCoordinator coord = new MultiCacheCoordinator();
         try {
             methodToCache = getMethodToCache(pjp);
             final InvalidateMultiCache annotation = methodToCache.getAnnotation(InvalidateMultiCache.class);
-            annotationData = AnnotationDataBuilder.buildAnnotationData(annotation, InvalidateMultiCache.class, methodToCache);
-            coord.setAnnotationData(annotationData);
-            if (!annotationData.isReturnKeyIndex()) {
-                // Get the list of objects that will provide the keys to all the cache values.
-                coord.setKeyObjects(getKeyObjects(coord.getAnnotationData().getKeyIndexes(), pjp, coord.getMethod(), coord, annotation));
-
-                // Create key->object and object->key mappings.
-                coord.setHolder(convertIdObjectsToKeyMap(coord.getListObjects(), coord.getKeyObjects(), coord.getListIndexInKeys(),
-                        coord.getAnnotationData()));
-
-                cacheKeys = coord.getKey2Obj().keySet();
+            data = AnnotationDataBuilder.buildAnnotationData(annotation, InvalidateMultiCache.class, methodToCache);
+            if (!data.isReturnKeyIndex()) {
+                cacheKeys = cacheKeyBuilder.getCacheKeys(data, pjp.getArgs(), methodToCache.toString());
             }
         } catch (Throwable ex) {
             warn(String.format("Caching on method %s aborted due to an error.", pjp.toShortString()), ex);
@@ -78,7 +70,7 @@ public class InvalidateMultiCacheAdvice extends MultiCacheAdvice {
         // the crap outta it, but do not let it surface up past the AOP injection itself.
         try {
             // If we have a -1 key index, then build the cacheKeys now.
-            if (annotationData.isReturnKeyIndex()) {
+            if (data.isReturnKeyIndex()) {
                 if (!verifyTypeIsList(result.getClass())) {
                     throw new InvalidAnnotationException(String.format("The return type is not a [%s]. "
                             + "The method [%s] does not fulfill the requirements.", List.class.getName(), methodToCache.toString()));
@@ -86,7 +78,7 @@ public class InvalidateMultiCacheAdvice extends MultiCacheAdvice {
 
                 @SuppressWarnings("unchecked")
                 final List<Object> keyObjects = (List<Object>) result;
-                cacheKeys = getCacheKeys(keyObjects, annotationData);
+                cacheKeys = cacheKeyBuilder.getCacheKeys(keyObjects, data.getNamespace());
             }
             delete(cacheKeys);
         } catch (Throwable ex) {

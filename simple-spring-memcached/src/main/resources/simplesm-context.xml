@@ -12,14 +12,6 @@
 
 	<context:component-scan base-package="com.google.code.ssm" />
 
-	<bean id="memcachedClientFactory" class="com.google.code.ssm.config.MemcachedClientFactory">
-		<property name="bean" ref="memcachedConnectionBean" />
-		<property name="clientFactory" ref="clientFactory" />
-	</bean>
-
-	<bean id="memcachedClient" factory-bean="memcachedClientFactory"
-		factory-method="createMemcachedClient" destroy-method="shutdown" />
-
 	<bean id="readThroughSingleCache" class="com.google.code.ssm.aop.ReadThroughSingleCacheAdvice">
 		<property name="cache" ref="memcachedClient" />
 	</bean>

@@ -17,8 +17,6 @@
 
 package com.google.code.ssm.aop;
 
-import java.lang.reflect.Method;
-import java.util.Collection;
 import java.util.List;
 
 /**
@@ -30,30 +28,14 @@ import java.util.List;
  */
 public interface CacheKeyBuilder {
 
-    public String getCacheKey(final Collection<Integer> keyIndexes, final Object[] args, final String namespace, final Method method)
-            throws Exception;
+    public String getCacheKey(final AnnotationData data, final Object[] args, final String methodDesc) throws Exception;
 
-    public String getCacheKey(final Object[] keyObjects, final String namespace);
-
-    /**
-     * Builds cache key from one object id.
-     * 
-     * @param objectId
-     * @param data
-     * @return
-     */
     public String getCacheKey(final Object keyObject, final String namespace);
 
-    
     public List<String> getCacheKeys(final List<Object> keyObjects, final String namespace) throws Exception;
 
-    /**
-     * Builds cache key from one object id.
-     * 
-     * @param objectId
-     * @param data
-     * @return
-     */
-    public String getAssignCacheKey(final String objectId, final String namespace);
+    public List<String> getCacheKeys(final AnnotationData data, final Object[] args, final String methodDesc);
+
+    public String getAssignCacheKey(final AnnotationData data);
 
 }

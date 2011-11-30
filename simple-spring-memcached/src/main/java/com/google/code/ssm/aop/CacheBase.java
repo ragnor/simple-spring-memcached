@@ -34,8 +34,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import com.google.code.ssm.api.ReadThroughMultiCache;
 import com.google.code.ssm.api.format.UseJson;
 import com.google.code.ssm.exceptions.InvalidAnnotationException;
-import com.google.code.ssm.impl.NoClass;
-import com.google.code.ssm.impl.PertinentNegativeNull;
 import com.google.code.ssm.providers.CacheClient;
 import com.google.code.ssm.providers.CacheException;
 import com.google.code.ssm.providers.CacheTranscoder;
@@ -44,22 +42,19 @@ import com.google.code.ssm.util.Utils;
 
 /**
  * 
- * @author Nelson Carpentier, Jakub Białek
+ * @author Nelson Carpentier
+ * @author Jakub Białek
  * 
  */
 public abstract class CacheBase {
-
-    protected static final String SEPARATOR = ":";
-
-    protected static final String ID_SEPARATOR = "/";
-
-    protected CacheClient cache;
 
     @Autowired
     protected CacheKeyBuilder cacheKeyBuilder;
 
     @Autowired
-    protected JsonTranscoders jsonTranscoders;
+    private JsonTranscoders jsonTranscoders;
+
+    private CacheClient cache;
 
     public void setCache(CacheClient cache) {
         this.cache = cache;
@@ -68,7 +63,7 @@ public abstract class CacheBase {
     public void setCacheKeyBuilder(CacheKeyBuilder cacheKeyBuilder) {
         this.cacheKeyBuilder = cacheKeyBuilder;
     }
-    
+
     protected Method getMethodToCache(final JoinPoint jp) throws NoSuchMethodException {
         final Signature sig = jp.getSignature();
         if (!(sig instanceof MethodSignature)) {
@@ -82,13 +77,9 @@ public abstract class CacheBase {
     }
 
     @SuppressWarnings("unchecked")
-    protected <T> T getUpdateData(final AnnotationData annotationData, final Method method, final JoinPoint jp, final Object returnValue)
+    protected <T> T getUpdateData(final AnnotationData data, final Method method, final JoinPoint jp, final Object returnValue)
             throws Exception {
-        return annotationData.isReturnDataIndex() ? (T) returnValue : (T) getIndexObject(annotationData.getDataIndex(), jp, method);
-    }
-
-    protected String getCacheKey(final AnnotationData annotationData, final JoinPoint jp, final Method method) throws Exception {
-        return cacheKeyBuilder.getCacheKey(annotationData.getKeyIndexes(), jp.getArgs(), annotationData.getNamespace(), method);
+        return data.isReturnDataIndex() ? (T) returnValue : (T) Utils.getMethodArg(data.getDataIndex(), jp.getArgs(), method.toString());
     }
 
     protected Object getSubmission(Object o) {
@@ -97,22 +88,6 @@ public abstract class CacheBase {
 
     protected Object getResult(Object result) {
         return (result instanceof PertinentNegativeNull) ? null : result;
-    }
-    
-    protected String getAssignCacheKey(final AnnotationData data) {
-        return cacheKeyBuilder.getAssignCacheKey(data.getAssignedKey(), data.getNamespace());
-    }
-
-    protected Object getIndexObject(final int index, final JoinPoint jp, final Method methodToCache) throws Exception {
-        return Utils.getMethodArg(index, jp.getArgs(), methodToCache);
-    }
-
-    protected Object validateReturnValueAsKeyObject(final Object returnValue, final Method methodToCache) throws Exception {
-        if (returnValue == null) {
-            throw new InvalidParameterException(String.format(
-                    "The result of the method [%s] is null, which will not give an appropriate cache key.", methodToCache.toString()));
-        }
-        return returnValue;
     }
 
     protected void verifyReturnTypeIsList(final Method method, final Class<?> annotationClass) {
@@ -133,10 +108,6 @@ public abstract class CacheBase {
             throw new InvalidParameterException(String.format("Annotation [%s] is defined on void method  [%s]", annotationClass,
                     method.getName()));
         }
-    }
-
-    protected List<String> getCacheKeys(final List<Object> keyObjects, final AnnotationData annotationData) throws Exception {
-        return cacheKeyBuilder.getCacheKeys(keyObjects, annotationData.getNamespace());
     }
 
     @SuppressWarnings("unchecked")
@@ -224,10 +195,6 @@ public abstract class CacheBase {
         return cache.decr(key, by, def);
     }
 
-    protected long incr(String key, int by) throws TimeoutException, CacheException {
-        return cache.incr(key, by);
-    }
-
     protected long incr(String key, int by, long def) throws TimeoutException, CacheException {
         return cache.incr(key, by, def);
     }
@@ -257,22 +224,6 @@ public abstract class CacheBase {
         return cache.getBulk(keys);
     }
 
-    protected Class<?> getParameterJsonClass(Method method, int index) {
-        UseJson useJsonAnnotation = method.getAnnotation(UseJson.class);
-        if (useJsonAnnotation == null) {
-            return null;
-        }
-
-        if (useJsonAnnotation.value() != NoClass.class) {
-            return useJsonAnnotation.value();
-        }
-
-        if (index < 0) {
-            throw new IllegalArgumentException("Parameter index is below 0");
-        }
-
-        return method.getParameterTypes()[index];
-    }
 
     protected Class<?> getReturnJsonClass(Method method) {
         UseJson useJsonAnnotation = method.getAnnotation(UseJson.class);
@@ -287,11 +238,11 @@ public abstract class CacheBase {
         return method.getReturnType();
     }
 
-    protected Class<?> getDataJsonClass(Method method, AnnotationData annotationData) {
-        if (annotationData.isReturnDataIndex()) {
+    protected Class<?> getDataJsonClass(Method method, AnnotationData data) {
+        if (data.isReturnDataIndex()) {
             return getReturnJsonClass(method);
         } else {
-            return getParameterJsonClass(method, annotationData.getDataIndex());
+            return getParameterJsonClass(method, data.getDataIndex());
         }
     }
 
@@ -308,4 +259,22 @@ public abstract class CacheBase {
     }
 
     protected abstract Logger getLogger();
+    
+    private Class<?> getParameterJsonClass(Method method, int index) {
+        UseJson useJsonAnnotation = method.getAnnotation(UseJson.class);
+        if (useJsonAnnotation == null) {
+            return null;
+        }
+
+        if (useJsonAnnotation.value() != NoClass.class) {
+            return useJsonAnnotation.value();
+        }
+
+        if (index < 0) {
+            throw new IllegalArgumentException("Parameter index is below 0");
+        }
+
+        return method.getParameterTypes()[index];
+    }
+
 }

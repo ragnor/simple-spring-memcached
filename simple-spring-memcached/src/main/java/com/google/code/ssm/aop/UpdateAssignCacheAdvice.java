@@ -31,7 +31,8 @@ import org.slf4j.LoggerFactory;
 
 /**
  * 
- * @author Nelson Carpentier, Jakub Białek
+ * @author Nelson Carpentier
+ * @author Jakub Białek
  * 
  */
 @Aspect
@@ -50,20 +51,19 @@ public class UpdateAssignCacheAdvice extends CacheBase {
         try {
             final Method methodToCache = getMethodToCache(jp);
             final UpdateAssignCache annotation = methodToCache.getAnnotation(UpdateAssignCache.class);
-            final AnnotationData annotationData = AnnotationDataBuilder.buildAnnotationData(annotation, UpdateAssignCache.class,
-                    methodToCache);
+            final AnnotationData data = AnnotationDataBuilder.buildAnnotationData(annotation, UpdateAssignCache.class, methodToCache);
 
-            cacheKey = getAssignCacheKey(annotationData);
+            cacheKey = cacheKeyBuilder.getAssignCacheKey(data);
 
-            final Object dataObject = this.<Object> getUpdateData(annotationData, methodToCache, jp, retVal);
-            final Class<?> jsonClass = getDataJsonClass(methodToCache, annotationData);
+            final Object dataObject = this.<Object> getUpdateData(data, methodToCache, jp, retVal);
+            final Class<?> jsonClass = getDataJsonClass(methodToCache, data);
             final Object submission = getSubmission(dataObject);
-            set(cacheKey, annotationData.getExpiration(), submission, jsonClass);
+            set(cacheKey, data.getExpiration(), submission, jsonClass);
         } catch (Exception ex) {
             warn(String.format("Caching on method %s and key [%s] aborted due to an error.", jp.toShortString(), cacheKey), ex);
         }
     }
-    
+
     @Override
     protected Logger getLogger() {
         return LOG;

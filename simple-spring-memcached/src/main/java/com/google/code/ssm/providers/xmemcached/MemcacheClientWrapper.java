@@ -28,11 +28,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeoutException;
 
-import com.google.code.ssm.providers.CachedObject;
-import com.google.code.ssm.providers.CachedObjectImpl;
-import com.google.code.ssm.providers.CacheClient;
+import com.google.code.ssm.providers.AbstractMemcacheClientWrapper;
 import com.google.code.ssm.providers.CacheException;
 import com.google.code.ssm.providers.CacheTranscoder;
+import com.google.code.ssm.providers.CachedObject;
+import com.google.code.ssm.providers.CachedObjectImpl;
+
 import net.rubyeye.xmemcached.MemcachedClient;
 import net.rubyeye.xmemcached.exception.MemcachedException;
 import net.rubyeye.xmemcached.transcoders.CachedData;
@@ -47,15 +48,15 @@ import org.slf4j.LoggerFactory;
  * @since 2.0.0
  * 
  */
-public class MemcacheClientWrapper implements CacheClient {
+class MemcacheClientWrapper extends AbstractMemcacheClientWrapper {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MemcacheClientWrapper.class);
 
+    private Map<CacheTranscoder<?>, Object> adapters = new HashMap<CacheTranscoder<?>, Object>();
+    
     private MemcachedClient memcachedClient;
 
-    private Map<CacheTranscoder<?>, Transcoder<?>> adapters = new HashMap<CacheTranscoder<?>, Transcoder<?>>();
-
-    public MemcacheClientWrapper(MemcachedClient memcachedClient) {
+    MemcacheClientWrapper(MemcachedClient memcachedClient) {
         this.memcachedClient = memcachedClient;
     }
 
@@ -278,7 +279,7 @@ public class MemcacheClientWrapper implements CacheClient {
     }
 
     @SuppressWarnings("unchecked")
-    private <T> Transcoder<T> getTranscoder(CacheTranscoder<T> transcoder) {
+    protected <T> Transcoder<T> getTranscoder(CacheTranscoder<T> transcoder) {
         Transcoder<T> transcoderAdapter = (Transcoder<T>) adapters.get(transcoder);
         if (transcoderAdapter == null) {
             transcoderAdapter = new TranscoderAdapter<T>(transcoder);
@@ -287,7 +288,7 @@ public class MemcacheClientWrapper implements CacheClient {
 
         return transcoderAdapter;
     }
-
+    
     private static class TranscoderWrapper implements CacheTranscoder<Object> {
 
         private Transcoder<Object> transcoder;

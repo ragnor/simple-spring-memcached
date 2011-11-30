@@ -62,7 +62,7 @@ public class MemcachedClientFactoryTest {
         bean.setConsistentHashing(false);
         bean.setNodeList("127.0.0.1:11211");
         MemcachedClientFactory factory = new MemcachedClientFactory();
-        factory.setBean(bean);
+        factory.setConnectionConfiguration(bean);
         CacheClientFactory clientFactory = getClientFactoryMock(bean);
         factory.setClientFactory(clientFactory);
 
@@ -72,7 +72,7 @@ public class MemcachedClientFactoryTest {
         EasyMock.verify(clientFactory);
 
         factory = new MemcachedClientFactory();
-        factory.setBean(bean);
+        factory.setConnectionConfiguration(bean);
         bean.setConsistentHashing(true);
         clientFactory = getClientFactoryMock(bean);
 
@@ -88,7 +88,7 @@ public class MemcachedClientFactoryTest {
         String jndiKey = "memcached/ips";
         bean.setJndiKey(jndiKey);
         factory = new MemcachedClientFactory();
-        factory.setBean(bean);
+        factory.setConnectionConfiguration(bean);
         clientFactory = getClientFactoryMock(bean);
         factory.setClientFactory(clientFactory);
 
@@ -114,7 +114,7 @@ public class MemcachedClientFactoryTest {
         String jndiKey = "memcached/ips";
         bean.setJndiKey(jndiKey);
         final MemcachedClientFactory factory = new MemcachedClientFactory();
-        factory.setBean(bean);
+        factory.setConnectionConfiguration(bean);
         String newValue = "128.0.0.1:11211";
         CacheClientFactory clientFactory = getClientFactoryMock(bean);
         factory.setClientFactory(clientFactory);

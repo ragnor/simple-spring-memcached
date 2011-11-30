@@ -21,8 +21,14 @@ package com.google.code.ssm.api;
 import java.lang.annotation.*;
 
 /**
+ * In SSM, you are able to identify 'key objects'. These are the objects that SSM will rely upon to generate a
+ * (non-namespaced) part of the key for referring to values within the cache. This annotation indicates method that will
+ * be used to generate a part of unique key. Annotated method has to confirm to the required signature: no-arg, with an
+ * output of type {@link String}. If there is no conforming {@link CacheKeyMethod}, then the basic
+ * {@link Object#toString()} method will be used.
  * 
  * @author Nelson Carpentier
+ * @since 1.0.0
  * 
  */
 @Retention(RetentionPolicy.RUNTIME)

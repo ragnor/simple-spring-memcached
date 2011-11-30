@@ -31,7 +31,7 @@ import org.springframework.beans.factory.annotation.Autowired;
  * @since 2.0.0
  * 
  */
-public class JsonTranscodersConfigurer {
+public class JsonTranscodersConfigurer { // NO_UCD
 
     @Autowired
     private JsonTranscoders jsonTranscoders;

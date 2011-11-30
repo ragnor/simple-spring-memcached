@@ -34,7 +34,7 @@ import org.slf4j.LoggerFactory;
  * @since 2.0.0
  * 
  */
-public class ReconnectListener implements MemcachedClientStateListener {
+class ReconnectListener implements MemcachedClientStateListener {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ReconnectListener.class);
 
@@ -45,7 +45,7 @@ public class ReconnectListener implements MemcachedClientStateListener {
      */
     private int maxAwayTime;
 
-    public ReconnectListener(int maxAwayTime) {
+    ReconnectListener(int maxAwayTime) {
         this.maxAwayTime = maxAwayTime;
     }
 

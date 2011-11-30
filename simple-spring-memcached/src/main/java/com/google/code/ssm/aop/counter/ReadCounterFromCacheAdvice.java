@@ -60,9 +60,8 @@ public class ReadCounterFromCacheAdvice extends CounterInCacheBase {
             Method methodToCache = getMethodToCache(pjp);
             verifyMethodSignature(methodToCache);
             annotation = methodToCache.getAnnotation(ReadCounterFromCache.class);
-            AnnotationData annotationData = AnnotationDataBuilder
-                    .buildAnnotationData(annotation, ReadCounterFromCache.class, methodToCache);
-            cacheKey = getCacheKey(annotationData, pjp, methodToCache);
+            AnnotationData data = AnnotationDataBuilder.buildAnnotationData(annotation, ReadCounterFromCache.class, methodToCache);
+            cacheKey = cacheKeyBuilder.getCacheKey(data, pjp.getArgs(), methodToCache.toString());
             Long result = get(cacheKey, transcoder);
 
             if (result != null) {

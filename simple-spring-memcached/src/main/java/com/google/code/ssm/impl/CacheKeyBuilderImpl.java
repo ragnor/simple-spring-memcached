@@ -17,15 +17,14 @@
 
 package com.google.code.ssm.impl;
 
-import java.lang.reflect.Method;
 import java.security.InvalidParameterException;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.google.code.ssm.aop.AnnotationData;
 import com.google.code.ssm.aop.CacheKeyBuilder;
 import com.google.code.ssm.api.KeyProvider;
 import com.google.code.ssm.util.Utils;
@@ -37,46 +36,38 @@ import com.google.code.ssm.util.Utils;
  * 
  */
 @Service("cacheKeyBuilder")
-public class CacheKeyBuilderImpl implements CacheKeyBuilder {
+public class CacheKeyBuilderImpl implements CacheKeyBuilder { // NO_UCD
 
     private static final String SEPARATOR = ":";
 
     private static final String ID_SEPARATOR = "/";
 
     @Autowired
-    protected KeyProvider defaultKeyProvider;
+    private KeyProvider defaultKeyProvider;
 
     public void setDefaultKeyProvider(KeyProvider defaultKeyProvider) {
         this.defaultKeyProvider = defaultKeyProvider;
     }
 
-    public String getCacheKey(final Collection<Integer> keyIndexes, final Object[] args, final String namespace, final Method method)
-            throws Exception {
-        final Object[] keysObjects = Utils.getMethodArgs(keyIndexes, args, method);
-        final String[] objectsIds = defaultKeyProvider.generateKeys(keysObjects);
-        return getCacheKey(objectsIds, namespace);
-    }
-
-    public String getCacheKey(final Object[] keyObjects, final String namespace) {
-        if (keyObjects == null || keyObjects.length < 1) {
-            throw new InvalidParameterException("Ids for objects in the cache must be at least 1 character long.");
-        }
-
-        final String[] objectIds = defaultKeyProvider.generateKeys(keyObjects);
-        return buildCacheKey(objectIds, namespace);
+    @Override
+    public String getCacheKey(final AnnotationData data, final Object[] args, final String methodDesc) throws Exception {
+        final Object[] keysObjects = Utils.getMethodArgs(data.getKeyIndexes(), args, methodDesc);
+        return getCacheKey(keysObjects, data.getNamespace());
     }
 
     /**
-     * Builds cache key from one object id.
+     * Builds cache key from one key object.
      * 
-     * @param objectId
-     * @param data
+     * @param keyObject
+     * @param namespace
      * @return
      */
+    @Override
     public String getCacheKey(final Object keyObject, final String namespace) {
         return namespace + SEPARATOR + defaultKeyProvider.generateKey(keyObject);
     }
 
+    @Override
     public List<String> getCacheKeys(final List<Object> keyObjects, final String namespace) throws Exception {
         final List<String> results = new ArrayList<String>();
         for (final Object object : keyObjects) {
@@ -87,18 +78,43 @@ public class CacheKeyBuilderImpl implements CacheKeyBuilder {
         return results;
     }
 
-    /**
-     * Builds cache key from one object id.
-     * 
-     * @param objectId
-     * @param data
-     * @return
-     */
-    public String getAssignCacheKey(final String objectId, final String namespace) {
-        if (objectId == null || objectId.length() < 1) {
+    @Override
+    public List<String> getCacheKeys(final AnnotationData data, final Object[] args, final String methodDesc) {
+        @SuppressWarnings("unchecked")
+        final List<Object> listObjects = (List<Object>) args[data.getListIndexInMethodArgs()];
+        final List<String> cacheKeys = new ArrayList<String>(listObjects.size());
+        final Object[] keyObjects = Utils.getMethodArgs(data.getKeyIndexes(), args, methodDesc);
+
+        Object[] keys = new Object[keyObjects.length];
+        System.arraycopy(keyObjects, 0, keys, 0, keys.length);
+
+        for (final Object obj : listObjects) {
+            if (obj == null) {
+                throw new InvalidParameterException("One of the passed in key objects is null");
+            }
+
+            keys[data.getListIndexInKeys()] = obj;
+            cacheKeys.add(getCacheKey(keys, data.getNamespace()));
+        }
+
+        return cacheKeys;
+    }
+
+    @Override
+    public String getAssignCacheKey(final AnnotationData data) {
+        if (data == null || data.getAssignedKey() == null || data.getAssignedKey().length() < 1) {
             throw new InvalidParameterException("Ids for objects in the cache must be at least 1 character long.");
         }
-        return namespace + SEPARATOR + objectId;
+        return data.getNamespace() + SEPARATOR + data.getAssignedKey();
+    }
+
+    private String getCacheKey(final Object[] keyObjects, final String namespace) {
+        if (keyObjects == null || keyObjects.length < 1) {
+            throw new InvalidParameterException("Ids for objects in the cache must be at least 1 character long.");
+        }
+
+        final String[] objectIds = defaultKeyProvider.generateKeys(keyObjects);
+        return buildCacheKey(objectIds, namespace);
     }
 
     /**

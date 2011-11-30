@@ -31,7 +31,8 @@ import com.google.code.ssm.api.ReadThroughSingleCache;
 
 /**
  * 
- * @author Nelson Carpentier, Jakub Białek
+ * @author Nelson Carpentier
+ * @author Jakub Białek
  * 
  */
 @Aspect
@@ -53,10 +54,9 @@ public class ReadThroughSingleCacheAdvice extends CacheBase {
             final Method methodToCache = getMethodToCache(pjp);
             annotation = methodToCache.getAnnotation(ReadThroughSingleCache.class);
             verifyReturnTypeIsNoVoid(methodToCache, ReadThroughSingleCache.class);
-            final AnnotationData annotationData = AnnotationDataBuilder.buildAnnotationData(annotation, ReadThroughSingleCache.class,
-                    methodToCache);
+            final AnnotationData data = AnnotationDataBuilder.buildAnnotationData(annotation, ReadThroughSingleCache.class, methodToCache);
 
-            cacheKey = getCacheKey(annotationData, pjp, methodToCache);
+            cacheKey = cacheKeyBuilder.getCacheKey(data, pjp.getArgs(), methodToCache.toString());
 
             jsonClass = getReturnJsonClass(methodToCache);
 

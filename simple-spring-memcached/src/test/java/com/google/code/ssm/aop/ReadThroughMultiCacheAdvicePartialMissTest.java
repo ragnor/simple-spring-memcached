@@ -38,7 +38,6 @@ import org.junit.runners.Parameterized.Parameters;
 import com.google.code.ssm.api.ParameterValueKeyProvider;
 import com.google.code.ssm.api.ReadThroughMultiCache;
 import com.google.code.ssm.api.ReadThroughMultiCacheOption;
-import com.google.code.ssm.impl.PertinentNegativeNull;
 import com.google.code.ssm.test.Point;
 
 /**

@@ -21,9 +21,9 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
+import com.google.code.ssm.providers.CacheTranscoder;
 import com.google.code.ssm.providers.CachedObject;
 import com.google.code.ssm.providers.CachedObjectImpl;
-import com.google.code.ssm.providers.CacheTranscoder;
 
 import org.codehaus.jackson.map.ObjectMapper;
 import org.slf4j.Logger;
@@ -39,7 +39,7 @@ import org.slf4j.LoggerFactory;
  * @param <T>
  *            the type of class to transcode
  */
-public class JsonTranscoder<T> implements CacheTranscoder<T> {
+public class JsonTranscoder<T> implements CacheTranscoder<T> { // NO_UCD
 
     private static final Logger LOGGER = LoggerFactory.getLogger(JsonTranscoder.class);
 

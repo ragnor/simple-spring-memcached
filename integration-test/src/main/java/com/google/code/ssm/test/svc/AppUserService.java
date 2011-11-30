@@ -104,8 +104,6 @@ public interface AppUserService {
      *            the portal user ID
      * @param applicationId
      *            the application ID
-     * @param permissions
-     *            granted permissions
      * @param favourite
      *            is application marked as favourite
      */

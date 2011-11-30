@@ -31,7 +31,8 @@ import com.google.code.ssm.api.InvalidateSingleCache;
 
 /**
  * 
- * @author Nelson Carpentier, Jakub Białek
+ * @author Nelson Carpentier
+ * @author Jakub Białek
  * 
  */
 @Aspect
@@ -47,14 +48,14 @@ public class InvalidateSingleCacheAdvice extends CacheBase {
         // This is injected caching. If anything goes wrong in the caching, LOG
         // the crap outta it, but do not let it surface up past the AOP injection itself.
         String cacheKey = null;
-        final AnnotationData annotationData;
+        final AnnotationData data;
         final Method methodToCache;
         try {
             methodToCache = getMethodToCache(pjp);
             final InvalidateSingleCache annotation = methodToCache.getAnnotation(InvalidateSingleCache.class);
-            annotationData = AnnotationDataBuilder.buildAnnotationData(annotation, InvalidateSingleCache.class, methodToCache);
-            if (!annotationData.isReturnKeyIndex()) {
-                cacheKey = getCacheKey(annotationData, pjp, methodToCache);
+            data = AnnotationDataBuilder.buildAnnotationData(annotation, InvalidateSingleCache.class, methodToCache);
+            if (!data.isReturnKeyIndex()) {
+                cacheKey = cacheKeyBuilder.getCacheKey(data, pjp.getArgs(), methodToCache.toString());
             }
         } catch (Throwable ex) {
             warn(String.format("Caching on method %s and key [%s] aborted due to an error.", pjp.toShortString(), cacheKey), ex);
@@ -66,9 +67,9 @@ public class InvalidateSingleCacheAdvice extends CacheBase {
         // This is injected caching. If anything goes wrong in the caching, LOG
         // the crap outta it, but do not let it surface up past the AOP injection itself.
         try {
-            if (annotationData.isReturnKeyIndex()) {
+            if (data.isReturnKeyIndex()) {
                 verifyReturnTypeIsNoVoid(methodToCache, InvalidateSingleCache.class);
-                cacheKey = cacheKeyBuilder.getCacheKey(result, annotationData.getNamespace());
+                cacheKey = cacheKeyBuilder.getCacheKey(result, data.getNamespace());
             }
 
             delete(cacheKey);

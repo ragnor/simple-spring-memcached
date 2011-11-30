@@ -31,7 +31,7 @@ import org.springframework.stereotype.Component;
  * 
  */
 @Component("jsonObjectMapper")
-public class JsonObjectMapper extends ObjectMapper {
+public class JsonObjectMapper extends ObjectMapper { // NO_UCD
 
     public JsonObjectMapper() {
         setSerializationConfig(getSerializationConfig().without( //

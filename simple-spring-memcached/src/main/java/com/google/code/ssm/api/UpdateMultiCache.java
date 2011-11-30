@@ -25,7 +25,8 @@ import java.lang.annotation.Target;
 
 /**
  * 
- * @author Nelson Carpentier, Jakub Białek
+ * @author Nelson Carpentier
+ * @author Jakub Białek
  * @since 1.0.0
  * 
  */

@@ -20,7 +20,8 @@ package com.google.code.ssm.config;
 
 /**
  * 
- * @author Nelson Carpentier, Jakub Białek
+ * @author Nelson Carpentier
+ * @author Jakub Białek
  * 
  */
 public class MemcachedConnectionBean {

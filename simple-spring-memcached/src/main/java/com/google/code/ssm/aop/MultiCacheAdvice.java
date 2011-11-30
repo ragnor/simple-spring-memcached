@@ -17,22 +17,17 @@
 
 package com.google.code.ssm.aop;
 
-import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
-import java.security.InvalidParameterException;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.aspectj.lang.JoinPoint;
-
-import com.google.code.ssm.exceptions.InvalidAnnotationException;
-import com.google.code.ssm.impl.PertinentNegativeNull;
+import com.google.code.ssm.api.ParameterValueKeyProvider;
 import com.google.code.ssm.util.Utils;
 
 /**
@@ -41,21 +36,21 @@ import com.google.code.ssm.util.Utils;
  * @since 2.0.0
  * 
  */
-public abstract class MultiCacheAdvice extends CacheBase {
+abstract class MultiCacheAdvice extends CacheBase {
 
-    static final Integer[] INTEGER_ARRAY = new Integer[0];
-
-    MapHolder convertIdObjectsToKeyMap(final List<Object> idObjects, final Object[] keys, final int listIndex, final AnnotationData data)
-            throws Exception {
+    MapHolder createObjectIdCacheKeyMapping(final AnnotationData data, final Object[] args, final Method methodToCache) throws Exception {
         final MapHolder holder = new MapHolder();
+        List<String> cacheKeys = cacheKeyBuilder.getCacheKeys(data, args, methodToCache.toString());
 
-        for (final Object obj : idObjects) {
-            if (obj == null) {
-                throw new InvalidParameterException("One of the passed in key objects is null");
-            }
+        @SuppressWarnings("unchecked")
+        List<Object> listObjects = (List<Object>) Utils.getMethodArg(data.getListIndexInMethodArgs(), args, methodToCache.toString());
 
-            keys[listIndex] = obj;
-            String cacheKey = cacheKeyBuilder.getCacheKey(keys, data.getNamespace());
+        Iterator<Object> listObjectsIter = listObjects.iterator();
+        Iterator<String> cacheKeysIter = cacheKeys.iterator();
+
+        while (listObjectsIter.hasNext()) {
+            Object obj = listObjectsIter.next();
+            String cacheKey = cacheKeysIter.next();
             if (holder.getObj2Key().get(obj) == null) {
                 holder.getObj2Key().put(obj, cacheKey);
             }
@@ -65,35 +60,6 @@ public abstract class MultiCacheAdvice extends CacheBase {
         }
 
         return holder;
-    }
-
-    @SuppressWarnings("unchecked")
-    Object[] getKeyObjects(final Collection<Integer> keysIndex, final JoinPoint jp, final Method method, MultiCacheCoordinator coord,
-            Annotation annotation) throws Exception {
-        Object[] results = Utils.getMethodArgs(keysIndex, jp.getArgs(), method);
-        Integer[] keyIndexArray = keysIndex.toArray(INTEGER_ARRAY);
-
-        boolean listOccured = false;
-        for (int i = 0; i < results.length; i++) {
-            if (verifyTypeIsList(results[i].getClass())) {
-                if (listOccured) {
-                    throw new InvalidAnnotationException(
-                            "There are more than one parameter annotated by @ParameterValueKeyProvider that are list in method "
-                                    + method.toString());
-                }
-                listOccured = true;
-                coord.setListIndexInKeys(i);
-                coord.setListIndexInMethodArgs(keyIndexArray[i]);
-                coord.setListObjects((List<Object>) results[i]);
-            }
-        }
-
-        if (listOccured) {
-            return results;
-        }
-
-        throw new InvalidAnnotationException(String.format("The parameter object found at dataIndex [%s] is not a [%s]. "
-                + "[%s] does not fulfill the requirements.", annotation.getClass().getName(), List.class.getName(), method.toString()));
     }
 
     protected void addNullValues(List<Object> missObjects, MultiCacheCoordinator coord, Class<?> jsonClass) {
@@ -109,8 +75,8 @@ public abstract class MultiCacheAdvice extends CacheBase {
     }
 
     static class MapHolder {
-        final Map<String, Object> key2Obj = new LinkedHashMap<String, Object>();
-        final Map<Object, String> obj2Key = new LinkedHashMap<Object, String>();
+        final private Map<String, Object> key2Obj = new LinkedHashMap<String, Object>();
+        final private Map<Object, String> obj2Key = new LinkedHashMap<Object, String>();
 
         public Map<String, Object> getKey2Obj() {
             return key2Obj;
@@ -122,20 +88,24 @@ public abstract class MultiCacheAdvice extends CacheBase {
     }
 
     static class MultiCacheCoordinator {
-        private Method method;
-        private AnnotationData annotationData;
-        private Object[] keyObjects = new Object[0];
-        private int listIndexInKeys = -1;
-        private int listIndexInMethodArgs = -1;
-        private List<Object> listObjects = new ArrayList<Object>();
+        private final Method method;
+        private final AnnotationData data;
         private Map<String, Object> key2Obj = new LinkedHashMap<String, Object>();
         private Map<Object, String> obj2Key = new LinkedHashMap<Object, String>();
         private Map<String, Object> key2Result = new HashMap<String, Object>();
-        private List<Object> missObjects = new ArrayList<Object>();
+        private List<Object> listKeyObjects = new ArrayList<Object>();
+        // list is not the best collection to store missed objects because remove operation is used in some cases,
+        // set cannot be used because order of insertion is important and object can appear more than once
+        private List<Object> missedObjects = new ArrayList<Object>();
         private boolean addNullsToCache;
         private boolean generateKeysFromResult;
         private boolean skipNullsInResult;
-
+       
+        MultiCacheCoordinator(Method method, AnnotationData data) {
+            this.method = method;
+            this.data = data;
+        }
+        
         public Method getMethod() {
             return method;
         }
@@ -156,32 +126,8 @@ public abstract class MultiCacheAdvice extends CacheBase {
             return generateKeysFromResult;
         }
 
-        public void setListIndexInKeys(int listIndexInKeys) {
-            this.listIndexInKeys = listIndexInKeys;
-        }
-
-        public int getListIndexInKeys() {
-            return listIndexInKeys;
-        }
-
-        public void setMethod(Method method) {
-            this.method = method;
-        }
-
         public AnnotationData getAnnotationData() {
-            return annotationData;
-        }
-
-        public void setAnnotationData(AnnotationData annotationData) {
-            this.annotationData = annotationData;
-        }
-
-        public Object[] getKeyObjects() {
-            return keyObjects;
-        }
-
-        public void setKeyObjects(Object[] keyObjects) {
-            this.keyObjects = keyObjects;
+            return data;
         }
 
         public void setHolder(MapHolder holder) {
@@ -201,6 +147,14 @@ public abstract class MultiCacheAdvice extends CacheBase {
             return key2Result;
         }
 
+        public List<Object> getListKeyObjects() {
+            return listKeyObjects;
+        }
+
+        public void setListKeyObjects(List<Object> listKeyObjects) {
+            this.listKeyObjects = listKeyObjects;
+        }
+
         public void setInitialKey2Result(Map<String, Object> key2Result) {
             if (key2Result == null) {
                 throw new RuntimeException("There was an error retrieving cache values.");
@@ -213,12 +167,12 @@ public abstract class MultiCacheAdvice extends CacheBase {
                     missObjectSet.add(key2Obj.get(key));
                 }
             }
-            this.missObjects.addAll(missObjectSet);
+            this.missedObjects.addAll(missObjectSet);
         }
 
         public List<Object> generateResultList() {
             final List<Object> results = new ArrayList<Object>();
-            for (Object keyObject : listObjects) {
+            for (Object keyObject : listKeyObjects) {
                 final String cacheKey = obj2Key.get(keyObject);
                 final Object keyResult = key2Result.get(cacheKey);
                 if (keyResult == null) {
@@ -236,7 +190,7 @@ public abstract class MultiCacheAdvice extends CacheBase {
 
         public List<Object> generatePartialResultList() {
             final List<Object> results = new ArrayList<Object>();
-            for (Object keyObject : listObjects) {
+            for (Object keyObject : listKeyObjects) {
                 final String cacheKey = obj2Key.get(keyObject);
                 final Object keyResult = key2Result.get(cacheKey);
                 if (keyResult != null && (!isSkipNullsInResult() || !(keyResult instanceof PertinentNegativeNull))) {
@@ -247,29 +201,20 @@ public abstract class MultiCacheAdvice extends CacheBase {
             return results;
         }
 
-        protected Object getResult(Object result) {
-            return (result instanceof PertinentNegativeNull) ? null : result;
-        }
-        
-        public List<Object> getMissObjects() {
-            return missObjects;
+        public List<Object> getMissedObjects() {
+            return missedObjects;
         }
 
+        /**
+         * Alters value of method's argument of type {@link List} annotated with {@link ParameterValueKeyProvider}. As a
+         * new value of annotated list argument list of missed objects will be used.
+         * 
+         * @param args
+         * @return
+         */
         public Object[] modifyArgumentList(final Object[] args) {
-            args[listIndexInMethodArgs] = this.missObjects;
+            args[data.getListIndexInMethodArgs()] = this.missedObjects;
             return args;
-        }
-
-        public void setListObjects(List<Object> listObjects) {
-            this.listObjects = listObjects;
-        }
-
-        public List<Object> getListObjects() {
-            return listObjects;
-        }
-
-        public void setListIndexInMethodArgs(int listIndexInMethodArgs) {
-            this.listIndexInMethodArgs = listIndexInMethodArgs;
         }
 
         public void setSkipNullsInResult(boolean skipNullsInResult) {
@@ -279,6 +224,11 @@ public abstract class MultiCacheAdvice extends CacheBase {
         public boolean isSkipNullsInResult() {
             return skipNullsInResult;
         }
+        
+        private Object getResult(Object result) {
+            return (result instanceof PertinentNegativeNull) ? null : result;
+        }
+
     }
 
 }

@@ -26,11 +26,6 @@ import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
-import com.google.code.ssm.providers.CachedObject;
-import com.google.code.ssm.providers.CachedObjectImpl;
-import com.google.code.ssm.providers.CacheClient;
-import com.google.code.ssm.providers.CacheException;
-import com.google.code.ssm.providers.CacheTranscoder;
 import net.spy.memcached.CachedData;
 import net.spy.memcached.MemcachedClientIF;
 import net.spy.memcached.OperationTimeoutException;
@@ -39,21 +34,27 @@ import net.spy.memcached.transcoders.Transcoder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.code.ssm.providers.AbstractMemcacheClientWrapper;
+import com.google.code.ssm.providers.CacheException;
+import com.google.code.ssm.providers.CacheTranscoder;
+import com.google.code.ssm.providers.CachedObject;
+import com.google.code.ssm.providers.CachedObjectImpl;
+
 /**
  * 
  * @author Jakub Białek
  * @since 2.0.0
  * 
  */
-public class MemcacheClientWrapper implements CacheClient {
+class MemcacheClientWrapper extends AbstractMemcacheClientWrapper {
 
     private final static Logger LOGGER = LoggerFactory.getLogger(MemcacheClientWrapper.class);
 
-    private Map<CacheTranscoder<?>, Transcoder<?>> adapters = new HashMap<CacheTranscoder<?>, Transcoder<?>>();
-
+    private Map<CacheTranscoder<?>, Object> adapters = new HashMap<CacheTranscoder<?>, Object>();
+    
     private MemcachedClientIF memcachedClient;
 
-    public MemcacheClientWrapper(MemcachedClientIF memcachedClient) {
+    MemcacheClientWrapper(MemcachedClientIF memcachedClient) {
         this.memcachedClient = memcachedClient;
     }
 
@@ -125,17 +126,6 @@ public class MemcacheClientWrapper implements CacheClient {
             throw new CacheException(e);
         } catch (ExecutionException e) {
             throw new CacheException(e);
-        }
-    }
-
-    @Override
-    public void delete(Collection<String> keys) throws TimeoutException, CacheException {
-        if (keys != null && keys.size() > 0) {
-            for (final String key : keys) {
-                if (key != null) {
-                    delete(key);
-                }
-            }
         }
     }
 
@@ -313,14 +303,8 @@ public class MemcacheClientWrapper implements CacheClient {
         return new TranscoderWrapper(memcachedClient.getTranscoder());
     }
 
-    private void cancel(Future<?> f) {
-        if (f != null) {
-            f.cancel(true);
-        }
-    }
-
     @SuppressWarnings("unchecked")
-    private <T> Transcoder<T> getTranscoder(CacheTranscoder<T> transcoder) {
+    protected <T> Transcoder<T> getTranscoder(CacheTranscoder<T> transcoder) {
         Transcoder<T> transcoderAdapter = (Transcoder<T>) adapters.get(transcoder);
         if (transcoderAdapter == null) {
             transcoderAdapter = new TranscoderAdapter<T>(transcoder);
@@ -328,6 +312,12 @@ public class MemcacheClientWrapper implements CacheClient {
         }
 
         return transcoderAdapter;
+    }
+    
+    private void cancel(Future<?> f) {
+        if (f != null) {
+            f.cancel(true);
+        }
     }
 
     private boolean translateException(RuntimeException e) {

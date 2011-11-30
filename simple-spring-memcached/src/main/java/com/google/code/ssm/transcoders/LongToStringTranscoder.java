@@ -19,9 +19,9 @@ package com.google.code.ssm.transcoders;
 
 import java.io.UnsupportedEncodingException;
 
+import com.google.code.ssm.providers.CacheTranscoder;
 import com.google.code.ssm.providers.CachedObject;
 import com.google.code.ssm.providers.CachedObjectImpl;
-import com.google.code.ssm.providers.CacheTranscoder;
 
 /**
  * 

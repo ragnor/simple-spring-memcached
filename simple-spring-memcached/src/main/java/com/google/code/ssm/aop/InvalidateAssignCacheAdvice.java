@@ -31,7 +31,8 @@ import com.google.code.ssm.api.InvalidateAssignCache;
 
 /**
  * 
- * @author Nelson Carpentier, Jakub Białek
+ * @author Nelson Carpentier
+ * @author Jakub Białek
  * 
  */
 @Aspect
@@ -52,10 +53,9 @@ public class InvalidateAssignCacheAdvice extends CacheBase {
         try {
             final Method methodToCache = getMethodToCache(pjp);
             final InvalidateAssignCache annotation = methodToCache.getAnnotation(InvalidateAssignCache.class);
-            final AnnotationData annotationData = AnnotationDataBuilder.buildAnnotationData(annotation, InvalidateAssignCache.class,
-                    methodToCache);
+            final AnnotationData data = AnnotationDataBuilder.buildAnnotationData(annotation, InvalidateAssignCache.class, methodToCache);
 
-            cacheKey = getAssignCacheKey(annotationData);
+            cacheKey = cacheKeyBuilder.getAssignCacheKey(data);
 
             delete(cacheKey);
         } catch (Throwable ex) {

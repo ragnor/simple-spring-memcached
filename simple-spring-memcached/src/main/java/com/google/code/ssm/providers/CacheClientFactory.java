@@ -23,6 +23,7 @@ import java.util.List;
 
 import com.google.code.ssm.config.MemcachedConnectionBean;
 
+
 /**
  * 
  * @author Jakub Białek

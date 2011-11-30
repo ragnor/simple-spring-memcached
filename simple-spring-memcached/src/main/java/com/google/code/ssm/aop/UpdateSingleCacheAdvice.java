@@ -51,15 +51,14 @@ public class UpdateSingleCacheAdvice extends CacheBase {
         try {
             final Method methodToCache = getMethodToCache(jp);
             final UpdateSingleCache annotation = methodToCache.getAnnotation(UpdateSingleCache.class);
-            final AnnotationData annotationData = AnnotationDataBuilder.buildAnnotationData(annotation, UpdateSingleCache.class,
-                    methodToCache);
+            final AnnotationData data = AnnotationDataBuilder.buildAnnotationData(annotation, UpdateSingleCache.class, methodToCache);
 
-            cacheKey = getCacheKey(annotationData, jp, methodToCache);
+            cacheKey = cacheKeyBuilder.getCacheKey(data, jp.getArgs(), methodToCache.toString());
 
-            final Object dataObject = this.<Object> getUpdateData(annotationData, methodToCache, jp, retVal);
-            final Class<?> jsonClass = getDataJsonClass(methodToCache, annotationData);
+            final Object dataObject = this.<Object> getUpdateData(data, methodToCache, jp, retVal);
+            final Class<?> jsonClass = getDataJsonClass(methodToCache, data);
             final Object submission = getSubmission(dataObject);
-            set(cacheKey, annotationData.getExpiration(), submission, jsonClass);
+            set(cacheKey, data.getExpiration(), submission, jsonClass);
         } catch (Exception ex) {
             warn(String.format("Caching on method %s and key [%s] aborted due to an error.", jp.toShortString(), cacheKey), ex);
         }

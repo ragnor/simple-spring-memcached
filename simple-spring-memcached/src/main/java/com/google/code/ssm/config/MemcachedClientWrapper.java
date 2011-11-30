@@ -22,12 +22,15 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.concurrent.TimeoutException;
 
-import com.google.code.ssm.providers.CacheClient;
-import com.google.code.ssm.providers.CacheException;
-import com.google.code.ssm.providers.CacheTranscoder;
+import javax.annotation.PreDestroy;
+
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.code.ssm.providers.CacheClient;
+import com.google.code.ssm.providers.CacheException;
+import com.google.code.ssm.providers.CacheTranscoder;
 
 /**
  * 
@@ -35,13 +38,13 @@ import org.slf4j.LoggerFactory;
  * @since 2.0.0
  * 
  */
-public class MemcachedClientWrapper implements CacheClient {
+class MemcachedClientWrapper implements CacheClient {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MemcachedClientWrapper.class);
 
     private volatile CacheClient memcachedClient;
 
-    public MemcachedClientWrapper(CacheClient memcachedClient) {
+    MemcachedClientWrapper(CacheClient memcachedClient) {
         this.memcachedClient = memcachedClient;
     }
 
@@ -53,18 +56,6 @@ public class MemcachedClientWrapper implements CacheClient {
     @Override
     public <T> boolean add(String key, int exp, T value, CacheTranscoder<T> transcoder) throws TimeoutException, CacheException {
         return memcachedClient.add(key, exp, value, transcoder);
-    }
-
-    public void changeMemcachedClient(CacheClient newMemcachedClient) {
-        if (newMemcachedClient != null) {
-            LOGGER.info("Replacing the memcached client");
-            CacheClient oldMemcachedClient = memcachedClient;
-            memcachedClient = newMemcachedClient;
-            LOGGER.info("Memcached client replaced");
-            LOGGER.info("Closing old memcached client");
-            oldMemcachedClient.shutdown();
-            LOGGER.info("Old memcached client closed");
-        }
     }
 
     @Override
@@ -153,8 +144,21 @@ public class MemcachedClientWrapper implements CacheClient {
     }
 
     @Override
+    @PreDestroy
     public void shutdown() {
         memcachedClient.shutdown();
     }
 
+    void changeMemcachedClient(CacheClient newMemcachedClient) {
+        if (newMemcachedClient != null) {
+            LOGGER.info("Replacing the memcached client");
+            CacheClient oldMemcachedClient = memcachedClient;
+            memcachedClient = newMemcachedClient;
+            LOGGER.info("Memcached client replaced");
+            LOGGER.info("Closing old memcached client");
+            oldMemcachedClient.shutdown();
+            LOGGER.info("Old memcached client closed");
+        }
+    }
+    
 }

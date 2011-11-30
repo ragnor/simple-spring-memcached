@@ -22,7 +22,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import com.google.code.ssm.impl.NoClass;
+import com.google.code.ssm.aop.NoClass;
 
 /**
  * 

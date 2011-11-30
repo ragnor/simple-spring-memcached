@@ -1,4 +1,4 @@
-package com.google.code.ssm;
+package com.google.code.ssm.impl;
 
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
@@ -9,7 +9,7 @@ import org.apache.commons.lang.RandomStringUtils;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import com.google.code.ssm.impl.CacheKeyBuilderImpl;
+import com.google.code.ssm.aop.AnnotationData;
 
 public class CacheKeyBuilderImplTest {
     
@@ -23,8 +23,11 @@ public class CacheKeyBuilderImplTest {
 
     @Test
     public void getAssignCacheKey() {
+        AnnotationData data = new AnnotationData();
         try {
-            cacheKeyBuilder.getAssignCacheKey((String) null, (String) null);
+            data.setAssignedKey(null);
+            data.setNamespace(null);
+            cacheKeyBuilder.getAssignCacheKey(data);
             fail("Expected exception.");
         } catch (InvalidParameterException ex) {
             assertTrue(ex.getMessage().indexOf("at least 1 character") != -1);
@@ -32,7 +35,8 @@ public class CacheKeyBuilderImplTest {
         }
 
         try {
-            cacheKeyBuilder.getAssignCacheKey("", (String) null);
+            data.setAssignedKey("");
+            cacheKeyBuilder.getAssignCacheKey(data);
             fail("Expected exception.");
         } catch (InvalidParameterException ex) {
             assertTrue(ex.getMessage().indexOf("at least 1 character") != -1);
@@ -42,11 +46,12 @@ public class CacheKeyBuilderImplTest {
         final String objectId = RandomStringUtils.randomAlphanumeric(20);
         final String namespace = RandomStringUtils.randomAlphanumeric(12);
 
-        final String result = cacheKeyBuilder.getAssignCacheKey(objectId, namespace);
+        data.setAssignedKey(objectId);
+        data.setNamespace(namespace);
+        final String result = cacheKeyBuilder.getAssignCacheKey(data);
 
         assertTrue(result.indexOf(objectId) != -1);
         assertTrue(result.indexOf(namespace) != -1);
     }
-
     
 }

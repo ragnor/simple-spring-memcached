@@ -36,10 +36,12 @@ import org.slf4j.LoggerFactory;
 import com.google.code.ssm.api.UpdateMultiCache;
 import com.google.code.ssm.api.UpdateMultiCacheOption;
 import com.google.code.ssm.exceptions.InvalidAnnotationException;
+import com.google.code.ssm.util.Utils;
 
 /**
  * 
- * @author Nelson Carpentier, Jakub Białek
+ * @author Nelson Carpentier
+ * @author Jakub Białek
  * 
  */
 @Aspect
@@ -58,34 +60,31 @@ public class UpdateMultiCacheAdvice extends MultiCacheAdvice {
         try {
             final Method methodToCache = getMethodToCache(jp);
             final UpdateMultiCache annotation = methodToCache.getAnnotation(UpdateMultiCache.class);
-            final AnnotationData annotationData = AnnotationDataBuilder.buildAnnotationData(annotation, UpdateMultiCache.class,
-                    methodToCache);
-            final List<Object> dataList = this.<List<Object>> getUpdateData(annotationData, methodToCache, jp, retVal);
-            final Class<?> jsonClass = getDataJsonClass(methodToCache, annotationData);
-            final MultiCacheCoordinator coord = new MultiCacheCoordinator();
-            coord.setAnnotationData(annotationData);
+            final AnnotationData data = AnnotationDataBuilder.buildAnnotationData(annotation, UpdateMultiCache.class, methodToCache);
+            final List<Object> dataList = this.<List<Object>> getUpdateData(data, methodToCache, jp, retVal);
+            final Class<?> jsonClass = getDataJsonClass(methodToCache, data);
+            final MultiCacheCoordinator coord = new MultiCacheCoordinator(methodToCache, data);
             coord.setAddNullsToCache(annotation.option().addNullsToCache());
 
             final List<String> cacheKeys;
-            if (annotationData.isReturnKeyIndex()) {
+            if (data.isReturnKeyIndex()) {
                 @SuppressWarnings("unchecked")
                 final List<Object> keyObjects = (List<Object>) retVal;
-                coord.setHolder(convertIdObjectsToKeyMap(keyObjects, annotationData));
-                cacheKeys = getCacheKeys(keyObjects, annotationData);
+                coord.setHolder(convertIdObjectsToKeyMap(keyObjects, data));
+                cacheKeys = cacheKeyBuilder.getCacheKeys(keyObjects, data.getNamespace());
             } else {
-                // Get the list of objects that will provide the keys to all the cache values.
-                coord.setKeyObjects(getKeyObjects(coord.getAnnotationData().getKeyIndexes(), jp, coord.getMethod(), coord, annotation));
-
                 // Create key->object and object->key mappings.
-                coord.setHolder(convertIdObjectsToKeyMap(coord.getListObjects(), coord.getKeyObjects(), coord.getListIndexInKeys(),
-                        coord.getAnnotationData()));
+                coord.setHolder(createObjectIdCacheKeyMapping(coord.getAnnotationData(), jp.getArgs(), coord.getMethod()));
+                @SuppressWarnings("unchecked")
+                List<Object> listKeyObjects = (List<Object>) Utils.getMethodArg(data.getListIndexInMethodArgs(), jp.getArgs(),
+                        methodToCache.toString());
+                coord.setListKeyObjects(listKeyObjects);
                 // keySet is sorted
                 cacheKeys = new ArrayList<String>(coord.getKey2Obj().keySet());
             }
-            
-            
+
             if (!annotation.option().addNullsToCache()) {
-                updateCache(cacheKeys, dataList, methodToCache, annotationData, jsonClass);
+                updateCache(cacheKeys, dataList, methodToCache, data, jsonClass);
             } else {
                 Map<String, Object> key2Result = new HashMap<String, Object>();
                 for (String cacheKey : cacheKeys) {
@@ -124,8 +123,8 @@ public class UpdateMultiCacheAdvice extends MultiCacheAdvice {
         return holder;
     }
 
-    void updateCache(final List<String> cacheKeys, final List<Object> returnList, final Method methodToCache,
-            final AnnotationData annotationData, Class<?> jsonClass) {
+    void updateCache(final List<String> cacheKeys, final List<Object> returnList, final Method methodToCache, final AnnotationData data,
+            Class<?> jsonClass) {
         if (returnList.size() != cacheKeys.size()) {
             throw new InvalidAnnotationException(String.format(
                     "The key generation objects, and the resulting objects do not match in size for [%s].", methodToCache.toString()));
@@ -133,35 +132,35 @@ public class UpdateMultiCacheAdvice extends MultiCacheAdvice {
 
         Iterator<Object> returnListIter = returnList.iterator();
         Iterator<String> cacheKeyIter = cacheKeys.iterator();
-        while(returnListIter.hasNext()) {
+        while (returnListIter.hasNext()) {
             final Object result = returnListIter.next();
             final String cacheKey = cacheKeyIter.next();
             final Object cacheObject = getSubmission(result);
-            setSilently(cacheKey, annotationData.getExpiration(), cacheObject, jsonClass);
+            setSilently(cacheKey, data.getExpiration(), cacheObject, jsonClass);
         }
     }
 
-    private void updateCacheWithMissed(List<Object> dataUpdateContents, final MultiCacheCoordinator coord, final UpdateMultiCacheOption option, final Class<?> jsonClass) throws Exception {
+    private void updateCacheWithMissed(List<Object> dataUpdateContents, final MultiCacheCoordinator coord,
+            final UpdateMultiCacheOption option, final Class<?> jsonClass) throws Exception {
         if (dataUpdateContents == null) {
             dataUpdateContents = new ArrayList<Object>();
         } else if (!dataUpdateContents.isEmpty()) {
-            List<String> cacheKeys = getCacheKeys(dataUpdateContents, coord.getAnnotationData());
+            List<String> cacheKeys = cacheKeyBuilder.getCacheKeys(dataUpdateContents, coord.getAnnotationData().getNamespace());
             String cacheKey;
-            
+
             Iterator<String> iter = cacheKeys.iterator();
             for (Object resultObject : dataUpdateContents) {
                 cacheKey = iter.next();
                 setSilently(cacheKey, coord.getAnnotationData().getExpiration(), resultObject, jsonClass);
-                coord.getMissObjects().remove(coord.getKey2Obj().get(cacheKey));
+                coord.getMissedObjects().remove(coord.getKey2Obj().get(cacheKey));
             }
         }
 
         if (option.overwriteNoNulls()) {
-            setNullValues(coord.getMissObjects(), coord, jsonClass);
+            setNullValues(coord.getMissedObjects(), coord, jsonClass);
         } else {
-            addNullValues(coord.getMissObjects(), coord, jsonClass);
+            addNullValues(coord.getMissedObjects(), coord, jsonClass);
         }
-        
     }
 
 }

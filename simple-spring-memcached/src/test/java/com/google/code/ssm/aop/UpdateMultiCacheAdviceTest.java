@@ -35,8 +35,8 @@ import com.google.code.ssm.api.ParameterValueKeyProvider;
 import com.google.code.ssm.api.UpdateMultiCache;
 import com.google.code.ssm.exceptions.InvalidAnnotationException;
 import com.google.code.ssm.impl.CacheKeyBuilderImpl;
+import com.google.code.ssm.impl.CacheKeyMethodStoreImpl;
 import com.google.code.ssm.impl.DefaultKeyProvider;
-import com.google.code.ssm.impl.PertinentNegativeNull;
 import com.google.code.ssm.providers.CacheClient;
 
 /**
@@ -51,8 +51,10 @@ public class UpdateMultiCacheAdviceTest {
     @BeforeClass
     public static void beforeClass() {
         cut = new UpdateMultiCacheAdvice();
+        DefaultKeyProvider keyProvider = new DefaultKeyProvider();
+        keyProvider.setMethodStore(new CacheKeyMethodStoreImpl());
         CacheKeyBuilderImpl cacheKeyBuilder = new CacheKeyBuilderImpl();
-        cacheKeyBuilder.setDefaultKeyProvider(new DefaultKeyProvider());
+        cacheKeyBuilder.setDefaultKeyProvider(keyProvider);
         cut.setCacheKeyBuilder(cacheKeyBuilder);
     }
 
@@ -67,7 +69,7 @@ public class UpdateMultiCacheAdviceTest {
         final String namespace = RandomStringUtils.randomAlphabetic(20);
         final AnnotationData annotationData = new AnnotationData();
         annotationData.setNamespace(namespace);
-        final List<String> results = cut.getCacheKeys(sources, annotationData);
+        final List<String> results = cut.cacheKeyBuilder.getCacheKeys(sources, annotationData.getNamespace());
 
         assertEquals(size, results.size());
         for (int ix = 0; ix < size; ix++) {
@@ -80,7 +82,7 @@ public class UpdateMultiCacheAdviceTest {
 
     @Test
     public void testUpdateCache() throws Exception {
-        final Method method = AnnotationTest.class.getMethod("cacheMe01", String.class);
+        final Method method = AnnotationTest.class.getMethod("cacheMe01", List.class);
         final UpdateMultiCache annotation = method.getAnnotation(UpdateMultiCache.class);
         final AnnotationData data = AnnotationDataBuilder.buildAnnotationData(annotation, UpdateMultiCache.class, method);
 
@@ -119,7 +121,7 @@ public class UpdateMultiCacheAdviceTest {
     static class AnnotationTest {
 
         @UpdateMultiCache(namespace = "Bubba", expiration = 300)
-        public void cacheMe01(@ParameterDataUpdateContent @ParameterValueKeyProvider final String nada) {
+        public void cacheMe01(@ParameterDataUpdateContent @ParameterValueKeyProvider final List<String> nada) {
         }
 
         public String cacheMe02() {

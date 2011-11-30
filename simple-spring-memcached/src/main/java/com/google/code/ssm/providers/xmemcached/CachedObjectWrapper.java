@@ -18,6 +18,7 @@
 package com.google.code.ssm.providers.xmemcached;
 
 import com.google.code.ssm.providers.CachedObject;
+
 import net.rubyeye.xmemcached.transcoders.CachedData;
 
 /**
@@ -26,11 +27,11 @@ import net.rubyeye.xmemcached.transcoders.CachedData;
  * @since 2.0.0
  * 
  */
-public class CachedObjectWrapper implements CachedObject {
+class CachedObjectWrapper implements CachedObject {
 
     private final CachedData cachedData;
 
-    public CachedObjectWrapper(CachedData cachedData) {
+    CachedObjectWrapper(CachedData cachedData) {
         this.cachedData = cachedData;
     }
 

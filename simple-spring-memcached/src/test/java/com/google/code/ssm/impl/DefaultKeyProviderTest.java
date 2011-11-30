@@ -22,8 +22,6 @@ import com.google.code.ssm.exceptions.InvalidAnnotationException;
 import com.google.code.ssm.api.CacheKeyMethod;
 
 import java.lang.reflect.Method;
-import java.util.List;
-import java.util.ArrayList;
 import java.security.InvalidParameterException;
 
 import org.junit.BeforeClass;
@@ -115,13 +113,13 @@ public class DefaultKeyProviderTest {
     @Test
     public void testMultiplexExceptions() {
         try {
-            cut.generateKeys((List<Object>)null);
+            cut.generateKeys(null);
             fail("Expected exception");
         } catch (InvalidParameterException ex) {
         }
 
         try {
-            cut.generateKeys(new ArrayList<Object>());
+            cut.generateKeys(new Object[0]);
             fail("Expected exception");
         } catch (InvalidParameterException ex) {
         }
@@ -130,17 +128,17 @@ public class DefaultKeyProviderTest {
 
     @Test
     public void testMultiplex() {
-        final List<Object> src = new ArrayList<Object>();
-        final List<String> expectedResults = new ArrayList<String>();
+        final Object[] src = new Object[4];
+        final String[] expectedResults = new String[4];
         final String data = "abcdefghijklmnopqrstuvwxyz";
         for (int ix = 0; ix < 4; ix++) {
             final String val = data.substring(0, 5 + ix);
-            src.add(new KeyObject(val));
-            expectedResults.add(val);
+            src[ix] = new KeyObject(val);
+            expectedResults[ix] = val;
         }
 
-        final List<String> results = cut.generateKeys(src);
-        assertEquals(expectedResults, results);
+        final String [] results = cut.generateKeys(src);
+        assertArrayEquals(expectedResults, results);
     }
 
     private static class KeyObject {

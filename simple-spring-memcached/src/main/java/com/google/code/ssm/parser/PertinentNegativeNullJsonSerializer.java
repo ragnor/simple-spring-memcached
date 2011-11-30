@@ -19,7 +19,7 @@ package com.google.code.ssm.parser;
 
 import java.io.IOException;
 
-import com.google.code.ssm.impl.PertinentNegativeNull;
+import com.google.code.ssm.aop.PertinentNegativeNull;
 
 import org.codehaus.jackson.JsonGenerator;
 import org.codehaus.jackson.JsonProcessingException;
@@ -34,7 +34,7 @@ import org.codehaus.jackson.map.SerializerProvider;
  * @since 2.0.0
  * 
  */
-public class PertinentNegativeNullJsonSerializer extends JsonSerializer<PertinentNegativeNull> {
+public class PertinentNegativeNullJsonSerializer extends JsonSerializer<PertinentNegativeNull> { // NO_UCD
 
     @Override
     public void serialize(PertinentNegativeNull value, JsonGenerator jgen, SerializerProvider provider) throws IOException,

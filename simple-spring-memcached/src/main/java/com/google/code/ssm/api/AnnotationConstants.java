@@ -27,6 +27,4 @@ public interface AnnotationConstants {
 
     public static final String DEFAULT_STRING = "[unassigned]";
 
-    public static final String DEFAULT_KEY_PROVIDER_BEAN_NAME = "defaultKeyProvider";
-
 }

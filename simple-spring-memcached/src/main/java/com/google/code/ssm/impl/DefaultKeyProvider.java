@@ -20,8 +20,6 @@ package com.google.code.ssm.impl;
 
 import java.lang.reflect.Method;
 import java.security.InvalidParameterException;
-import java.util.ArrayList;
-import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -32,14 +30,14 @@ import com.google.code.ssm.api.KeyProvider;
 /**
  * 
  * @author Nelson Carpentier
+ * @author Jakub Białek
  * 
  */
 @Service("defaultKeyProvider")
-public class DefaultKeyProvider implements KeyProvider {
+public class DefaultKeyProvider implements KeyProvider { // NO_UCD
 
-    // FIXME
     @Autowired
-    private CacheKeyMethodStore methodStore = new CacheKeyMethodStoreImpl();
+    private CacheKeyMethodStore methodStore;
 
     public void setMethodStore(CacheKeyMethodStore methodStore) {
         this.methodStore = methodStore;
@@ -55,17 +53,6 @@ public class DefaultKeyProvider implements KeyProvider {
         } catch (Exception ex) {
             throw new RuntimeException(ex);
         }
-    }
-
-    public List<String> generateKeys(final List<Object> keyObjects) {
-        if (keyObjects == null || keyObjects.size() < 1) {
-            throw new InvalidParameterException("The key objects must be defined.");
-        }
-        final List<String> results = new ArrayList<String>(keyObjects.size());
-        for (final Object keyObject : keyObjects) {
-            results.add(generateKey(keyObject));
-        }
-        return results;
     }
 
     public String[] generateKeys(final Object[] keyObjects) {

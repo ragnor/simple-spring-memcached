@@ -18,11 +18,11 @@
 
 package com.google.code.ssm.api;
 
-import java.util.List;
 
 /**
  * 
  * @author Nelson Carpentier
+ * @author Jakub Białek
  * 
  */
 public interface KeyProvider {
@@ -35,14 +35,6 @@ public interface KeyProvider {
      * @return
      */
     String generateKey(Object keyObject);
-
-    /**
-     * This is the multi-plexed version of <code>generateKey(...)</code>
-     * 
-     * @param keyObjects
-     * @return
-     */
-    List<String> generateKeys(List<Object> keyObjects);
 
     /**
      * This is the multi-plexed version of <code>generateKey(...)</code>

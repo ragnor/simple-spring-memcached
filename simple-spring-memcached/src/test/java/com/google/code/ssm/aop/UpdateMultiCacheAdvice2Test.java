@@ -40,7 +40,6 @@ import com.google.code.ssm.api.ReturnDataUpdateContent;
 import com.google.code.ssm.api.ReturnValueKeyProvider;
 import com.google.code.ssm.api.UpdateMultiCache;
 import com.google.code.ssm.api.UpdateMultiCacheOption;
-import com.google.code.ssm.impl.PertinentNegativeNull;
 import com.google.code.ssm.test.Point;
 
 /**

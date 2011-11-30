@@ -32,7 +32,7 @@ import org.springframework.jndi.JndiTemplate;
  * @since 2.0.0
  * 
  */
-public class JNDIChangeNotifier {
+public class JNDIChangeNotifier { // NO_UCD
 
     private static final Logger LOGGER = LoggerFactory.getLogger(JNDIChangeNotifier.class);
 

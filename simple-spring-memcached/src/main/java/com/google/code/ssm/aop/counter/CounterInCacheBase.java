@@ -26,7 +26,7 @@ import com.google.code.ssm.aop.CacheBase;
  * @since 2.0.0
  * 
  */
-public abstract class CounterInCacheBase extends CacheBase {
+abstract class CounterInCacheBase extends CacheBase {
 
     protected boolean checkData(Object data, JoinPoint pjp) {
         if (!isTypeSupported(data)) {

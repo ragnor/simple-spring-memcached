@@ -30,30 +30,48 @@ import java.util.Iterator;
  */
 public class Utils {
 
-    public static Object getMethodArg(final int index, final Object[] args, final Method method) throws Exception {
+    public static Object getMethodArg(final int index, final Object[] args, final String methodDesc) {
         if (index < 0) {
             throw new InvalidParameterException(String.format("An index of %s is invalid", index));
         }
         if (args.length <= index) {
             throw new InvalidParameterException(String.format("An index of %s is too big for the number of arguments in [%s]", index,
-                    method.toString()));
+                    methodDesc));
         }
         final Object indexObject = args[index];
         if (indexObject == null) {
-            throw new InvalidParameterException(String.format("The argument passed into [%s] at index %s is null.", method.toString(),
-                    index));
+            throw new InvalidParameterException(String.format("The argument passed into [%s] at index %s is null.", methodDesc, index));
         }
         return indexObject;
     }
 
-    public static Object[] getMethodArgs(final Collection<Integer> indexes, Object[] args, final Method method) throws Exception {
-        Object[] results = new Object[indexes.size()];
+    public static Object[] getMethodArgs(final Collection<Integer> indexes, Object[] args, final String methodDesc) {
+        Object[] selectedArgs = new Object[indexes.size()];
         Iterator<Integer> iter = indexes.iterator();
         for (int i = 0; i < indexes.size(); i++) {
-            results[i] = getMethodArg(iter.next(), args, method);
+            selectedArgs[i] = getMethodArg(iter.next(), args, methodDesc);
         }
 
-        return results;
+        return selectedArgs;
+    }
+
+    public static Class<?>[] getMethodParameterTypes(final Collection<Integer> indexes, final Method method) {
+        Class<?>[] selectedParameterTypes = new Class<?>[indexes.size()];
+        Class<?>[] methodParameterTypes = method.getParameterTypes();
+
+        int i = 0;
+        for (Integer index : indexes) {
+            if (index < 0) {
+                throw new InvalidParameterException(String.format("An index of %s is invalid", index));
+            }
+            if (methodParameterTypes.length <= index) {
+                throw new InvalidParameterException(String.format("An index of %s is too big for the number of arguments in [%s]", index,
+                        method.toString()));
+            }
+            selectedParameterTypes[i++] = methodParameterTypes[index];
+        }
+
+        return selectedParameterTypes;
     }
 
 }

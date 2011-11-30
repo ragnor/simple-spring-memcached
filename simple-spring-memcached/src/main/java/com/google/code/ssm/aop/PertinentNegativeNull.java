@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2010-2011 Jakub Białek
+ * Copyright (c) 2008-2009 Nelson Carpentier
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
  * documentation files (the "Software"), to deal in the Software without restriction, including without limitation the
@@ -13,24 +13,42 @@
  * WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
  * COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ * 
  */
 
-package com.google.code.ssm.impl;
+package com.google.code.ssm.aop;
+
+import java.io.*;
+
+import com.google.code.ssm.parser.PertinentNegativeNullJsonSerializer;
+
+import org.codehaus.jackson.map.annotate.JsonSerialize;
 
 /**
  * 
- * Marker class used with annotations to indicate "no class". This is a silly but necessary work-around -- annotations
- * can not take nulls as either default or explicit values. Hence for class values we must explicitly use a bogus
- * placeholder to denote equivalent of "no class" (for which 'null' is usually the natural choice).
- * 
- * @author Jakub Białek
- * @since 2.0.0
+ * @author Nelson Carpentier
  * 
  */
-public final class NoClass {
+@JsonSerialize(using = PertinentNegativeNullJsonSerializer.class)
+public final class PertinentNegativeNull implements Externalizable {
 
-    private NoClass() {
+    public static final PertinentNegativeNull NULL = new PertinentNegativeNull();
 
+    public void writeExternal(ObjectOutput out) throws IOException {
+    }
+
+    public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
+    }
+
+    public int hashCode() {
+        return 1;
+    }
+
+    public boolean equals(final Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        return (obj instanceof PertinentNegativeNull);
     }
 
 }

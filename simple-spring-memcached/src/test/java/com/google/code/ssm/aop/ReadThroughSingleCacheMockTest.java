@@ -23,11 +23,6 @@ import static org.easymock.EasyMock.replay;
 import static org.easymock.EasyMock.reset;
 import static org.easymock.EasyMock.verify;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-
-import java.lang.reflect.Method;
-import java.security.InvalidParameterException;
 
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.reflect.MethodSignature;
@@ -80,44 +75,6 @@ public class ReadThroughSingleCacheMockTest {
         verify(pjp);
         verify(cache);
         verify(sig);
-    }
-
-    @Test
-    public void testKeyObject() throws Exception {
-        final String answer = "bubba";
-        final Object[] args = new Object[] { null, answer, "blue" };
-        expect(pjp.getArgs()).andReturn(args).times(4);
-
-        final Method method = AOPTargetClass1.class.getDeclaredMethod("doIt", String.class, String.class, String.class);
-
-        replayAll();
-
-        try {
-            cut.getIndexObject(3, pjp, method);
-            fail("Expected Exception");
-        } catch (InvalidParameterException ex) {
-            assertTrue(ex.getMessage().indexOf("too big") != -1);
-            System.out.println(ex.getMessage());
-        }
-        try {
-            cut.getIndexObject(4, pjp, method);
-            fail("Expected Exception");
-        } catch (InvalidParameterException ex) {
-            assertTrue(ex.getMessage().indexOf("too big") != -1);
-            System.out.println(ex.getMessage());
-        }
-
-        try {
-            cut.getIndexObject(0, pjp, method);
-            fail("Expected Exception");
-        } catch (InvalidParameterException ex) {
-            assertTrue(ex.getMessage().indexOf("null") != -1);
-            System.out.println(ex.getMessage());
-        }
-
-        assertEquals(answer, cut.getIndexObject(1, pjp, method));
-
-        verifyAll();
     }
 
     /*@Test
@@ -233,14 +190,6 @@ public class ReadThroughSingleCacheMockTest {
     // verifyAll();
     // assertNull(result);
     // }
-
-    public static class AOPTargetClass1 {
-
-        public String doIt(final String s1, final String s2, final String s3) {
-            return null;
-        }
-
-    }
 
     public static class AOPTargetClass2 {
 

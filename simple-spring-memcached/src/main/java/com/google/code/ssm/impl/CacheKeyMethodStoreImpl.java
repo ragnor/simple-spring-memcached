@@ -34,9 +34,9 @@ import com.google.code.ssm.exceptions.InvalidAnnotationException;
  * 
  */
 @Service("methodStore")
-public class CacheKeyMethodStoreImpl implements CacheKeyMethodStore {
+public class CacheKeyMethodStoreImpl implements CacheKeyMethodStore { // NO_UCD
 
-    final Map<Class<?>, Method> map = new ConcurrentHashMap<Class<?>, Method>();
+    final private Map<Class<?>, Method> map = new ConcurrentHashMap<Class<?>, Method>();
 
     public Method getKeyMethod(final Class<?> keyClass) throws NoSuchMethodException {
         final Method storedMethod = find(keyClass);
@@ -73,11 +73,11 @@ public class CacheKeyMethodStoreImpl implements CacheKeyMethodStore {
         return targetMethod;
     }
 
-    protected void add(final Class<?> key, final Method value) {
+    private void add(final Class<?> key, final Method value) {
         map.put(key, value);
     }
 
-    protected Method find(final Class<?> key) {
+    private Method find(final Class<?> key) {
         return map.get(key);
     }
 

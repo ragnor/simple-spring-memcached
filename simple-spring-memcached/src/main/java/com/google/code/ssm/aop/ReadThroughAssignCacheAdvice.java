@@ -31,7 +31,8 @@ import com.google.code.ssm.api.ReadThroughAssignCache;
 
 /**
  * 
- * @author Nelson Carpentier, Jakub Białek
+ * @author Nelson Carpentier
+ * @author Jakub Białek
  * 
  */
 @Aspect
@@ -46,7 +47,7 @@ public class ReadThroughAssignCacheAdvice extends CacheBase {
     public Object cacheSingleAssign(final ProceedingJoinPoint pjp) throws Throwable {
         // This is injected caching. If anything goes wrong in the caching, LOG
         // the crap outta it, but do not let it surface up past the AOP injection itself.
-        final AnnotationData annotationData;
+        final AnnotationData data;
         String cacheKey = null;
         Class<?> jsonClass = null;
         try {
@@ -54,8 +55,10 @@ public class ReadThroughAssignCacheAdvice extends CacheBase {
             verifyReturnTypeIsNoVoid(methodToCache, ReadThroughAssignCache.class);
             final ReadThroughAssignCache annotation = methodToCache.getAnnotation(ReadThroughAssignCache.class);
             jsonClass = getReturnJsonClass(methodToCache);
-            annotationData = AnnotationDataBuilder.buildAnnotationData(annotation, ReadThroughAssignCache.class, methodToCache);
-            cacheKey = getAssignCacheKey(annotationData);
+            data = AnnotationDataBuilder.buildAnnotationData(annotation, ReadThroughAssignCache.class, methodToCache);
+
+            cacheKey = cacheKeyBuilder.getAssignCacheKey(data);
+
             final Object result = get(cacheKey, jsonClass);
             if (result != null) {
                 getLogger().debug("Cache hit.");
@@ -72,7 +75,7 @@ public class ReadThroughAssignCacheAdvice extends CacheBase {
         // the crap outta it, but do not let it surface up past the AOP injection itself.
         try {
             final Object submission = getSubmission(result);
-            set(cacheKey, annotationData.getExpiration(), submission, jsonClass);
+            set(cacheKey, data.getExpiration(), submission, jsonClass);
         } catch (Throwable ex) {
             warn(String.format("Caching on method %s and key [%s] aborted due to an error.", pjp.toShortString(), cacheKey), ex);
         }

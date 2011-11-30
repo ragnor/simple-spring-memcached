@@ -25,6 +25,7 @@ import java.lang.reflect.Method;
 import java.security.InvalidParameterException;
 import java.util.Comparator;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.SortedMap;
 import java.util.TreeMap;
@@ -47,12 +48,14 @@ import com.google.code.ssm.api.counter.DecrementCounterInCache;
 import com.google.code.ssm.api.counter.IncrementCounterInCache;
 import com.google.code.ssm.api.counter.ReadCounterFromCache;
 import com.google.code.ssm.api.counter.UpdateCounterInCache;
-
+import com.google.code.ssm.exceptions.InvalidAnnotationException;
+import com.google.code.ssm.util.Utils;
 import com.google.common.collect.ImmutableSet;
 
 /**
  * 
- * @author Nelson Carpentier, Jakub Białek
+ * @author Nelson Carpentier
+ * @author Jakub Białek
  * 
  */
 public class AnnotationDataBuilder {
@@ -68,10 +71,11 @@ public class AnnotationDataBuilder {
      * private static final Set<Class<? extends Annotation>> SINGLES = ImmutableSet.of( // ReadThroughSingleCache.class,
      * // UpdateSingleCache.class, // InvalidateSingleCache.class, // ReadCounterFromCache.class, //
      * UpdateCounterInCache.class);
-     * 
-     * private static final Set<Class<? extends Annotation>> MULTIS = ImmutableSet.of( // ReadThroughMultiCache.class,
-     * // UpdateMultiCache.class, // InvalidateMultiCache.class);
      */
+    private static final Set<Class<? extends Annotation>> MULTIS = ImmutableSet.of( //
+            ReadThroughMultiCache.class, //
+            UpdateMultiCache.class, //
+            InvalidateMultiCache.class);
 
     private static final Set<Class<? extends Annotation>> READS = ImmutableSet.of( //
             ReadThroughAssignCache.class, //
@@ -100,7 +104,7 @@ public class AnnotationDataBuilder {
         populateClassName(data, annotation, expectedAnnotationClass);
 
         try {
-            populateKeyIndexAndBeanName(data, expectedAnnotationClass, targetMethod);
+            populateKeyIndexes(data, expectedAnnotationClass, targetMethod);
 
             populateDataIndexFromAnnotations(data, expectedAnnotationClass, targetMethod);
 
@@ -109,6 +113,8 @@ public class AnnotationDataBuilder {
             populateNamespace(data, annotation, expectedAnnotationClass, targetMethod.getName());
 
             populateAssignedKey(data, annotation, expectedAnnotationClass, targetMethod.getName());
+
+            populateListKeyIndex(data, expectedAnnotationClass, targetMethod);
 
         } catch (NoSuchMethodException ex) {
             throw new RuntimeException("Problem assembling Annotation information.", ex);
@@ -206,7 +212,7 @@ public class AnnotationDataBuilder {
         data.setDataIndex(foundIndex);
     }
 
-    static void populateKeyIndexAndBeanName(final AnnotationData data, final Class<? extends Annotation> expectedAnnotationClass,
+    static void populateKeyIndexes(final AnnotationData data, final Class<? extends Annotation> expectedAnnotationClass,
             final Method targetMethod) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException {
 
         if (ASSIGNS.contains(expectedAnnotationClass)) {
@@ -279,6 +285,38 @@ public class AnnotationDataBuilder {
                     expectedAnnotationClass.getName(), clazz.getName()));
         }
         data.setClassName(clazz.getName());
+    }
+
+    static void populateListKeyIndex(AnnotationData data, Class<? extends Annotation> expectedAnnotationClass, Method targetMethod) {
+        if (data.getKeyIndexes().isEmpty() || !MULTIS.contains(expectedAnnotationClass)) {
+            return;
+        }
+
+        Class<?>[] keyMethodParamTypes = Utils.getMethodParameterTypes(data.getKeyIndexes(), targetMethod);
+        Integer[] keyIndexArray = data.getKeyIndexes().toArray(new Integer[data.getKeyIndexes().size()]);
+
+        boolean listOccured = false;
+        for (int i = 0; i < keyMethodParamTypes.length; i++) {
+            if (verifyTypeIsList(keyMethodParamTypes[i])) {
+                if (listOccured) {
+                    throw new InvalidAnnotationException(
+                            "There are more than one method's parameter annotated by @ParameterValueKeyProvider that is list "
+                                    + targetMethod.toString());
+                }
+                listOccured = true;
+                data.setListIndexInKeys(i);
+                data.setListIndexInMethodArgs(keyIndexArray[i]);
+            }
+        }
+
+        if (!listOccured) {
+            throw new InvalidAnnotationException(String.format("No one parameter objects found at dataIndexes [%s] is not a [%s]. "
+                    + "[%s] does not fulfill the requirements.", data.getKeyIndexes(), List.class.getName(), targetMethod.toString()));
+        }
+    }
+
+    private static boolean verifyTypeIsList(final Class<?> clazz) {
+        return List.class.isAssignableFrom(clazz);
     }
 
     private static class ParameterValueKeyProviderComparator implements Comparator<ParameterValueKeyProvider>, Serializable {

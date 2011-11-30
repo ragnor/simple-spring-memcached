@@ -19,22 +19,26 @@
 package com.google.code.ssm.aop;
 
 import java.util.Collection;
+import java.util.Collections;
 
 /**
  * 
- * @author Nelson Carpentier, Jakub Białek
+ * @author Nelson Carpentier
+ * @author Jakub Białek
  * 
  */
 public class AnnotationData {
 
-    public static final int DEFAULT_INTEGER = Integer.MIN_VALUE;
+    static final int DEFAULT_INTEGER = Integer.MIN_VALUE;
 
     private static final int RETURN_INDEX = -1;
 
     private String namespace = "";
     private boolean isReturnKeyIndex;
-    private Collection<Integer> keyIndexes;
+    private Collection<Integer> keyIndexes = Collections.emptyList();
     private int dataIndex = DEFAULT_INTEGER;
+    private int listIndexInKeys = DEFAULT_INTEGER;
+    private int listIndexInMethodArgs = DEFAULT_INTEGER;
     private int expiration = 0;
     private String className = "";
     private String assignedKey = "";
@@ -66,13 +70,29 @@ public class AnnotationData {
     public boolean isReturnDataIndex() {
         return dataIndex == RETURN_INDEX;
     }
-    
+
     public void setReturnDataIndex(boolean isReturnDataIndex) {
         if (isReturnDataIndex) {
             dataIndex = RETURN_INDEX;
         } else {
             dataIndex = DEFAULT_INTEGER;
         }
+    }
+
+    public int getListIndexInKeys() {
+        return listIndexInKeys;
+    }
+
+    public void setListIndexInKeys(int listIndexInKeys) {
+        this.listIndexInKeys = listIndexInKeys;
+    }
+
+    public int getListIndexInMethodArgs() {
+        return listIndexInMethodArgs;
+    }
+
+    public void setListIndexInMethodArgs(int listIndexInMethodArgs) {
+        this.listIndexInMethodArgs = listIndexInMethodArgs;
     }
 
     public int getExpiration() {
@@ -106,4 +126,5 @@ public class AnnotationData {
     public Collection<Integer> getKeyIndexes() {
         return keyIndexes;
     }
+
 }

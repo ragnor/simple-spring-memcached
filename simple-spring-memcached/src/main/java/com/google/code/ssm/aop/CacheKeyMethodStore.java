@@ -25,7 +25,8 @@ import com.google.code.ssm.api.CacheKeyMethod;
 /**
  * Stores methods used to calculate part of the cache key for given class.
  * 
- * @author Nelson Carpentier, Jakub Białek
+ * @author Nelson Carpentier
+ * @author Jakub Białek
  * 
  */
 public interface CacheKeyMethodStore {
