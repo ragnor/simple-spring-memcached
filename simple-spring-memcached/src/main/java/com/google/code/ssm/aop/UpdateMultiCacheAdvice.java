@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2008-2011 Nelson Carpentier, Jakub Białek
+ * Copyright (c) 2008-2012 Nelson Carpentier, Jakub Białek
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
  * documentation files (the "Software"), to deal in the Software without restriction, including without limitation the
@@ -33,9 +33,11 @@ import org.aspectj.lang.annotation.Pointcut;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.code.ssm.aop.support.AnnotationData;
+import com.google.code.ssm.aop.support.AnnotationDataBuilder;
+import com.google.code.ssm.aop.support.InvalidAnnotationException;
 import com.google.code.ssm.api.UpdateMultiCache;
 import com.google.code.ssm.api.UpdateMultiCacheOption;
-import com.google.code.ssm.exceptions.InvalidAnnotationException;
 import com.google.code.ssm.util.Utils;
 
 /**
@@ -124,7 +126,7 @@ public class UpdateMultiCacheAdvice extends MultiCacheAdvice {
     }
 
     void updateCache(final List<String> cacheKeys, final List<Object> returnList, final Method methodToCache, final AnnotationData data,
-            Class<?> jsonClass) {
+            final Class<?> jsonClass) {
         if (returnList.size() != cacheKeys.size()) {
             throw new InvalidAnnotationException(String.format(
                     "The key generation objects, and the resulting objects do not match in size for [%s].", methodToCache.toString()));
@@ -136,22 +138,21 @@ public class UpdateMultiCacheAdvice extends MultiCacheAdvice {
             final Object result = returnListIter.next();
             final String cacheKey = cacheKeyIter.next();
             final Object cacheObject = getSubmission(result);
-            setSilently(cacheKey, data.getExpiration(), cacheObject, jsonClass);
+            getCache(data).setSilently(cacheKey, data.getExpiration(), cacheObject, jsonClass);
         }
     }
 
-    private void updateCacheWithMissed(List<Object> dataUpdateContents, final MultiCacheCoordinator coord,
+    private void updateCacheWithMissed(final List<Object> dataUpdateContents, final MultiCacheCoordinator coord,
             final UpdateMultiCacheOption option, final Class<?> jsonClass) throws Exception {
-        if (dataUpdateContents == null) {
-            dataUpdateContents = new ArrayList<Object>();
-        } else if (!dataUpdateContents.isEmpty()) {
+        if (!dataUpdateContents.isEmpty()) {
             List<String> cacheKeys = cacheKeyBuilder.getCacheKeys(dataUpdateContents, coord.getAnnotationData().getNamespace());
             String cacheKey;
 
             Iterator<String> iter = cacheKeys.iterator();
             for (Object resultObject : dataUpdateContents) {
                 cacheKey = iter.next();
-                setSilently(cacheKey, coord.getAnnotationData().getExpiration(), resultObject, jsonClass);
+                getCache(coord.getAnnotationData()).setSilently(cacheKey, coord.getAnnotationData().getExpiration(), resultObject,
+                        jsonClass);
                 coord.getMissedObjects().remove(coord.getKey2Obj().get(cacheKey));
             }
         }

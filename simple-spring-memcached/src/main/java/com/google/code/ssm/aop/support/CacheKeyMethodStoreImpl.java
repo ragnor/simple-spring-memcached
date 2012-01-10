@@ -16,28 +16,24 @@
  * 
  */
 
-package com.google.code.ssm.impl;
+package com.google.code.ssm.aop.support;
 
-import java.lang.reflect.*;
-import java.util.*;
-import java.util.concurrent.*;
+import java.lang.reflect.Method;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
-import org.springframework.stereotype.Service;
-
-import com.google.code.ssm.aop.CacheKeyMethodStore;
 import com.google.code.ssm.api.CacheKeyMethod;
-import com.google.code.ssm.exceptions.InvalidAnnotationException;
 
 /**
  * 
  * @author Nelson Carpentier
  * 
  */
-@Service("methodStore")
 public class CacheKeyMethodStoreImpl implements CacheKeyMethodStore { // NO_UCD
 
     final private Map<Class<?>, Method> map = new ConcurrentHashMap<Class<?>, Method>();
 
+    @Override
     public Method getKeyMethod(final Class<?> keyClass) throws NoSuchMethodException {
         final Method storedMethod = find(keyClass);
         if (storedMethod != null) {
@@ -46,20 +42,12 @@ public class CacheKeyMethodStoreImpl implements CacheKeyMethodStore { // NO_UCD
         final Method[] methods = keyClass.getDeclaredMethods();
         Method targetMethod = null;
         for (final Method method : methods) {
-            if (method != null && method.getAnnotation(CacheKeyMethod.class) != null) {
-                if (method.getParameterTypes().length > 0) {
-                    throw new InvalidAnnotationException(String.format("Method [%s] must have 0 arguments to be annotated with [%s]",
-                            method.toString(), CacheKeyMethod.class.getName()));
-                }
-                if (!String.class.equals(method.getReturnType())) {
-                    throw new InvalidAnnotationException(String.format("Method [%s] must return a String to be annotated with [%s]",
-                            method.toString(), CacheKeyMethod.class.getName()));
-                }
-                if (targetMethod != null) {
-                    throw new InvalidAnnotationException(String.format(
-                            "Class [%s] should have only one method annotated with [%s]. See [%s] and [%s]", keyClass.getName(),
-                            CacheKeyMethod.class.getName(), targetMethod.getName(), method.getName()));
-                }
+            boolean isCacheKeyMethod = isCacheKeyMethod(method);
+            if (isCacheKeyMethod && (targetMethod != null)) {
+                throw new InvalidAnnotationException(String.format(
+                        "Class [%s] should have only one method annotated with [%s]. See [%s] and [%s]", keyClass.getName(),
+                        CacheKeyMethod.class.getName(), targetMethod.getName(), method.getName()));
+            } else if (isCacheKeyMethod) {
                 targetMethod = method;
             }
         }
@@ -71,6 +59,23 @@ public class CacheKeyMethodStoreImpl implements CacheKeyMethodStore { // NO_UCD
         add(keyClass, targetMethod);
 
         return targetMethod;
+    }
+
+    private boolean isCacheKeyMethod(final Method method) {
+        if (method != null && method.getAnnotation(CacheKeyMethod.class) != null) {
+            if (method.getParameterTypes().length > 0) {
+                throw new InvalidAnnotationException(String.format("Method [%s] must have 0 arguments to be annotated with [%s]",
+                        method.toString(), CacheKeyMethod.class.getName()));
+            }
+            if (!String.class.equals(method.getReturnType())) {
+                throw new InvalidAnnotationException(String.format("Method [%s] must return a String to be annotated with [%s]",
+                        method.toString(), CacheKeyMethod.class.getName()));
+            }
+
+            return true;
+        }
+
+        return false;
     }
 
     private void add(final Class<?> key, final Method value) {

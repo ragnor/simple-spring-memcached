@@ -34,10 +34,9 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import com.google.code.ssm.aop.support.AnnotationData;
+import com.google.code.ssm.aop.support.PertinentNegativeNull;
 import com.google.code.ssm.api.ReadThroughMultiCache;
-import com.google.code.ssm.impl.CacheKeyBuilderImpl;
-import com.google.code.ssm.impl.CacheKeyMethodStoreImpl;
-import com.google.code.ssm.impl.DefaultKeyProvider;
 
 /**
  * 
@@ -51,12 +50,6 @@ public class ReadThroughMultiCacheTest {
     @BeforeClass
     public static void beforeClass() {
         cut = new ReadThroughMultiCacheAdvice();
-        DefaultKeyProvider keyProvider = new DefaultKeyProvider();
-        keyProvider.setMethodStore(new CacheKeyMethodStoreImpl());
-        CacheKeyBuilderImpl cacheKeyBuilder = new CacheKeyBuilderImpl();
-        cacheKeyBuilder.setDefaultKeyProvider(keyProvider);
-
-        cut.setCacheKeyBuilder(cacheKeyBuilder);
     }
 
     @Before

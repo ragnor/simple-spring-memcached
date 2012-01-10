@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2010-2011 Jakub Białek
+ * Copyright (c) 2010-2012 Jakub Białek
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
  * documentation files (the "Software"), to deal in the Software without restriction, including without limitation the
@@ -21,8 +21,6 @@ import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.util.List;
 
-import com.google.code.ssm.config.MemcachedConnectionBean;
-
 
 /**
  * 
@@ -32,6 +30,16 @@ import com.google.code.ssm.config.MemcachedConnectionBean;
  */
 public interface CacheClientFactory {
 
-    CacheClient create(List<InetSocketAddress> addrs, MemcachedConnectionBean connectionBean) throws IOException;
+    /**
+     * Creates cache client.
+     * 
+     * @param addrs
+     *            addresses of cache servers
+     * @param configuration
+     *            the settings of new created cache clients
+     * @return cache client
+     * @throws IOException
+     */
+    CacheClient create(List<InetSocketAddress> addrs, CacheConfiguration configuration) throws IOException;
 
 }

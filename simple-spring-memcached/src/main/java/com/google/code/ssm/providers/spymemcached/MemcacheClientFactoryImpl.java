@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2010-2011 Jakub Białek
+ * Copyright (c) 2010-2012 Jakub Białek
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
  * documentation files (the "Software"), to deal in the Software without restriction, including without limitation the
@@ -21,16 +21,16 @@ import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.util.List;
 
-import com.google.code.ssm.config.MemcachedConnectionBean;
-import com.google.code.ssm.providers.CacheClient;
-import com.google.code.ssm.providers.CacheClientFactory;
-
 import net.spy.memcached.ConnectionFactory;
 import net.spy.memcached.ConnectionFactoryBuilder;
-import net.spy.memcached.FailureMode;
-import net.spy.memcached.KetamaConnectionFactory;
-import net.spy.memcached.MemcachedClient;
+import net.spy.memcached.ConnectionFactoryBuilder.Locator;
 import net.spy.memcached.ConnectionFactoryBuilder.Protocol;
+import net.spy.memcached.HashAlgorithm;
+import net.spy.memcached.MemcachedClient;
+
+import com.google.code.ssm.providers.CacheClient;
+import com.google.code.ssm.providers.CacheClientFactory;
+import com.google.code.ssm.providers.CacheConfiguration;
 
 /**
  * 
@@ -43,14 +43,73 @@ public class MemcacheClientFactoryImpl implements CacheClientFactory {
     private ConnectionFactory connectionFactory;
 
     @Override
-    public CacheClient create(List<InetSocketAddress> addrs, MemcachedConnectionBean connectionBean) throws IOException {
+    public CacheClient create(final List<InetSocketAddress> addrs, final CacheConfiguration conf) throws IOException {
+        // currently its works because this factory creates clients with the same connection settings, only memcached
+        // addresses can be changed
         if (connectionFactory == null) {
-            connectionFactory = connectionBean.isConsistentHashing() ? new KetamaConnectionFactory() : new ConnectionFactoryBuilder()
-                    .setFailureMode(FailureMode.Cancel).setOpTimeout(connectionBean.getOperationTimeout()).setOpQueueMaxBlockTime(500)
-                    .setMaxReconnectDelay(5000).setProtocol(connectionBean.isUseBinaryProtocol() ? Protocol.BINARY : Protocol.TEXT).build();
+            ConnectionFactoryBuilder builder = new ConnectionFactoryBuilder();
+
+            if (conf.isConsistentHashing()) {
+                builder.setHashAlg(HashAlgorithm.KETAMA_HASH);
+                builder.setLocatorType(Locator.CONSISTENT);
+            }
+
+            builder.setProtocol(conf.isUseBinaryProtocol() ? Protocol.BINARY : Protocol.TEXT);
+            if (conf.getOperationTimeout() != null) {
+                builder.setOpTimeout(conf.getOperationTimeout());
+            }
+
+            if (conf instanceof SpymemcachedConfiguration) {
+                setProviderSpecificSettings(builder, (SpymemcachedConfiguration) conf);
+            }
+
+            connectionFactory = builder.build();
         }
 
         return new MemcacheClientWrapper(new MemcachedClient(connectionFactory, addrs));
+    }
+
+    private void setProviderSpecificSettings(final ConnectionFactoryBuilder builder, final SpymemcachedConfiguration conf) {
+        if (conf.getDaemon() != null) {
+            builder.setDaemon(conf.getDaemon());
+        }
+
+        if (conf.getFailureMode() != null) {
+            builder.setFailureMode(conf.getFailureMode());
+        }
+
+        if (conf.getHashAlg() != null) {
+            builder.setHashAlg(conf.getHashAlg());
+        }
+
+        if (conf.getLocatorType() != null) {
+            builder.setLocatorType(conf.getLocatorType());
+        }
+
+        if (conf.getMaxReconnectDelay() != null) {
+            builder.setMaxReconnectDelay(conf.getMaxReconnectDelay());
+        }
+
+        if (conf.getOpQueueMaxBlockTime() != null) {
+            builder.setOpQueueMaxBlockTime(conf.getOpQueueMaxBlockTime());
+        }
+
+        if (conf.getReadBufferSize() != null) {
+            builder.setReadBufferSize(conf.getReadBufferSize());
+        }
+
+        if (conf.getShouldOptimize() != null) {
+            builder.setShouldOptimize(conf.getShouldOptimize());
+        }
+
+        if (conf.getTimeoutExceptionThreshold() != null) {
+            builder.setTimeoutExceptionThreshold(conf.getTimeoutExceptionThreshold());
+        }
+
+        if (conf.getUseNagleAlgorithm() != null) {
+            builder.setUseNagleAlgorithm(conf.getUseNagleAlgorithm());
+        }
+
     }
 
 }

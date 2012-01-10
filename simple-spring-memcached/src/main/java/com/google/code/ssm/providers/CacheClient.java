@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2010-2011 Jakub Białek
+ * Copyright (c) 2010-2012 Jakub Białek
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
  * documentation files (the "Software"), to deal in the Software without restriction, including without limitation the
@@ -30,14 +30,14 @@ import java.util.concurrent.TimeoutException;
  */
 public interface CacheClient {
 
-    boolean add(String key, int exp, Object value) throws TimeoutException, CacheException;
+    boolean add(final String key, final int exp, final Object value) throws TimeoutException, CacheException;
 
     <T> boolean add(final String key, final int exp, final T value, final CacheTranscoder<T> transcoder) throws TimeoutException,
             CacheException;
 
-    long decr(String key, int by) throws TimeoutException, CacheException;
+    long decr(final String key, final int by) throws TimeoutException, CacheException;
 
-    long decr(String key, int by, long def) throws TimeoutException, CacheException;
+    long decr(final String key, final int by, final long def) throws TimeoutException, CacheException;
 
     /**
      * Deletes value under given key.
@@ -48,7 +48,7 @@ public interface CacheClient {
      * @throws TimeoutException
      * @throws CacheException
      */
-    boolean delete(String key) throws TimeoutException, CacheException;
+    boolean delete(final String key) throws TimeoutException, CacheException;
 
     /**
      * Deletes values under given keys.
@@ -57,7 +57,7 @@ public interface CacheClient {
      * @throws TimeoutException
      * @throws CacheException
      */
-    void delete(Collection<String> keys) throws TimeoutException, CacheException;
+    void delete(final Collection<String> keys) throws TimeoutException, CacheException;
 
     /**
      * Flushes all data.
@@ -67,8 +67,30 @@ public interface CacheClient {
      */
     void flush() throws TimeoutException, CacheException;
 
+    /**
+     * Get value by key.
+     * 
+     * @param <T>
+     * @param key
+     *            the key
+     * @return value associated with given key or null
+     * @throws TimeoutException
+     * @throws CacheException
+     */
     Object get(final String key) throws TimeoutException, CacheException;
 
+    /**
+     * Get value by key.
+     * 
+     * @param <T>
+     * @param key
+     *            the key
+     * @param transcoder
+     *            the transcoder to use
+     * @return value associated with given key or null
+     * @throws TimeoutException
+     * @throws CacheException
+     */
     <T> T get(final String key, final CacheTranscoder<T> transcoder) throws TimeoutException, CacheException;
 
     /**
@@ -85,18 +107,18 @@ public interface CacheClient {
      * @throws TimeoutException
      * @throws CacheException
      */
-    <T> T get(String key, CacheTranscoder<T> transcoder, final long timeout) throws TimeoutException, CacheException;
+    <T> T get(final String key, final CacheTranscoder<T> transcoder, final long timeout) throws TimeoutException, CacheException;
 
     /**
-     * Gets available memcached servers.
+     * Gets available cache servers.
      * 
-     * @return collection of memcached servers
+     * @return collection of cache servers
      */
     Collection<SocketAddress> getAvailableServers();
 
-    Map<String, Object> getBulk(Collection<String> keys) throws TimeoutException, CacheException;
+    Map<String, Object> getBulk(final Collection<String> keys) throws TimeoutException, CacheException;
 
-    <T> Map<String, T> getBulk(Collection<String> keys, CacheTranscoder<T> transcoder) throws TimeoutException, CacheException;
+    <T> Map<String, T> getBulk(final Collection<String> keys, final CacheTranscoder<T> transcoder) throws TimeoutException, CacheException;
 
     /**
      * Gets default transcoder.
@@ -105,13 +127,13 @@ public interface CacheClient {
      */
     CacheTranscoder<?> getTranscoder();
 
-    long incr(String key, int by) throws TimeoutException, CacheException;
+    long incr(final String key, final int by) throws TimeoutException, CacheException;
 
-    long incr(String key, int by, long def) throws TimeoutException, CacheException;
+    long incr(final String key, final int by, final long def) throws TimeoutException, CacheException;
 
-    long incr(String key, int by, long def, int exp) throws TimeoutException, CacheException;
+    long incr(final String key, final int by, final long def, final int exp) throws TimeoutException, CacheException;
 
-    boolean set(String key, int exp, Object value) throws TimeoutException, CacheException;
+    boolean set(final String key, final int exp, final Object value) throws TimeoutException, CacheException;
 
     /**
      * Store key-value item to memcached.

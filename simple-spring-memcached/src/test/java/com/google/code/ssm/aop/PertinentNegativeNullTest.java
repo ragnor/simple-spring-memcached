@@ -21,6 +21,8 @@ import static org.junit.Assert.*;
 
 import org.junit.Test;
 
+import com.google.code.ssm.aop.support.PertinentNegativeNull;
+
 
 /**
  * 

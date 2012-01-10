@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011 Jakub Białek
+ * Copyright (c) 2012 Jakub Białek
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
  * documentation files (the "Software"), to deal in the Software without restriction, including without limitation the
@@ -28,22 +28,22 @@ import com.google.code.ssm.aop.CacheBase;
  */
 abstract class CounterInCacheBase extends CacheBase {
 
-    protected boolean checkData(Object data, JoinPoint pjp) {
+    protected boolean checkData(final Object data, final JoinPoint pjp) {
         if (!isTypeSupported(data)) {
             getLogger().warn("Caching on {} aborted due to incorrect return type. Should be int, long, Integer or Long is {}",
-                    new Object[] { pjp.toShortString(), data == null ? null : data.getClass() });
+                    new Object[] { pjp.toShortString(), (data == null) ? null : data.getClass() });
             return false;
         }
 
         return true;
     }
 
-    protected boolean isTypeSupported(Object result) {
-        return result instanceof Long || result instanceof Integer;
+    protected boolean isReturnTypeSupported(final Class<?> clazz) {
+        return int.class.equals(clazz) || Integer.class.equals(clazz) || long.class.equals(clazz) || Long.class.equals(clazz);
     }
 
-    protected boolean isReturnTypeSupported(Class<?> clazz) {
-        return int.class.equals(clazz) || Integer.class.equals(clazz) || long.class.equals(clazz) || Long.class.equals(clazz);
+    private boolean isTypeSupported(final Object result) {
+        return result instanceof Long || result instanceof Integer;
     }
 
 }

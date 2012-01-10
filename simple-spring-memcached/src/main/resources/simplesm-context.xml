@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<beans xmlns="http://www.springframework.org/schema/beans"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:context="http://www.springframework.org/schema/context"
 	xsi:schemaLocation="
 		   http://www.springframework.org/schema/beans
            http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
@@ -12,49 +12,19 @@
 
 	<context:component-scan base-package="com.google.code.ssm" />
 
-	<bean id="readThroughSingleCache" class="com.google.code.ssm.aop.ReadThroughSingleCacheAdvice">
-		<property name="cache" ref="memcachedClient" />
-	</bean>
-	<bean id="readThroughMultiCache" class="com.google.code.ssm.aop.ReadThroughMultiCacheAdvice">
-		<property name="cache" ref="memcachedClient" />
-	</bean>
-	<bean id="readThroughAssignCache" class="com.google.code.ssm.aop.ReadThroughAssignCacheAdvice">
-		<property name="cache" ref="memcachedClient" />
-	</bean>
-	<bean id="updateSingleCache" class="com.google.code.ssm.aop.UpdateSingleCacheAdvice">
-		<property name="cache" ref="memcachedClient" />
-	</bean>
-	<bean id="updateMultiCache" class="com.google.code.ssm.aop.UpdateMultiCacheAdvice">
-		<property name="cache" ref="memcachedClient" />
-	</bean>
-	<bean id="updateAssignCache" class="com.google.code.ssm.aop.UpdateAssignCacheAdvice">
-		<property name="cache" ref="memcachedClient" />
-	</bean>
-	<bean id="invalidateSingleCache" class="com.google.code.ssm.aop.InvalidateSingleCacheAdvice">
-		<property name="cache" ref="memcachedClient" />
-	</bean>
-	<bean id="invalidateMultiCache" class="com.google.code.ssm.aop.InvalidateMultiCacheAdvice">
-		<property name="cache" ref="memcachedClient" />
-	</bean>
-	<bean id="invalidateAssignCache" class="com.google.code.ssm.aop.InvalidateAssignCacheAdvice">
-		<property name="cache" ref="memcachedClient" />
-	</bean>
+	<bean id="readThroughSingleCache" class="com.google.code.ssm.aop.ReadThroughSingleCacheAdvice" />
+	<bean id="readThroughMultiCache" class="com.google.code.ssm.aop.ReadThroughMultiCacheAdvice" />
+	<bean id="readThroughAssignCache" class="com.google.code.ssm.aop.ReadThroughAssignCacheAdvice" />
+	<bean id="updateSingleCache" class="com.google.code.ssm.aop.UpdateSingleCacheAdvice" />
+	<bean id="updateMultiCache" class="com.google.code.ssm.aop.UpdateMultiCacheAdvice" />
+	<bean id="updateAssignCache" class="com.google.code.ssm.aop.UpdateAssignCacheAdvice" />
+	<bean id="invalidateSingleCache" class="com.google.code.ssm.aop.InvalidateSingleCacheAdvice" />
+	<bean id="invalidateMultiCache" class="com.google.code.ssm.aop.InvalidateMultiCacheAdvice" />
+	<bean id="invalidateAssignCache" class="com.google.code.ssm.aop.InvalidateAssignCacheAdvice" />
 
-	<bean id="incrementCounterInCache"
-		class="com.google.code.ssm.aop.counter.IncrementCounterInCacheAdvice">
-		<property name="cache" ref="memcachedClient" />
-	</bean>
-	<bean id="decrementCounterInCache"
-		class="com.google.code.ssm.aop.counter.DecrementCounterInCacheAdvice">
-		<property name="cache" ref="memcachedClient" />
-	</bean>
-	<bean id="readCounterFromCache"
-		class="com.google.code.ssm.aop.counter.ReadCounterFromCacheAdvice">
-		<property name="cache" ref="memcachedClient" />
-	</bean>
-	<bean id="updateCounterInCache"
-		class="com.google.code.ssm.aop.counter.UpdateCounterInCacheAdvice">
-		<property name="cache" ref="memcachedClient" />
-	</bean>
+	<bean id="incrementCounterInCache" class="com.google.code.ssm.aop.counter.IncrementCounterInCacheAdvice" />
+	<bean id="decrementCounterInCache" class="com.google.code.ssm.aop.counter.DecrementCounterInCacheAdvice" />
+	<bean id="readCounterFromCache" class="com.google.code.ssm.aop.counter.ReadCounterFromCacheAdvice" />
+	<bean id="updateCounterInCache" class="com.google.code.ssm.aop.counter.UpdateCounterInCacheAdvice" />
 
 </beans>

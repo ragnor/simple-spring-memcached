@@ -23,6 +23,7 @@ import static org.junit.Assert.fail;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.apache.commons.lang.RandomStringUtils;
@@ -30,14 +31,15 @@ import org.easymock.EasyMock;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import com.google.code.ssm.Cache;
+import com.google.code.ssm.aop.support.AnnotationData;
+import com.google.code.ssm.aop.support.AnnotationDataBuilder;
+import com.google.code.ssm.aop.support.InvalidAnnotationException;
+import com.google.code.ssm.aop.support.PertinentNegativeNull;
+import com.google.code.ssm.api.AnnotationConstants;
 import com.google.code.ssm.api.ParameterDataUpdateContent;
 import com.google.code.ssm.api.ParameterValueKeyProvider;
 import com.google.code.ssm.api.UpdateMultiCache;
-import com.google.code.ssm.exceptions.InvalidAnnotationException;
-import com.google.code.ssm.impl.CacheKeyBuilderImpl;
-import com.google.code.ssm.impl.CacheKeyMethodStoreImpl;
-import com.google.code.ssm.impl.DefaultKeyProvider;
-import com.google.code.ssm.providers.CacheClient;
 
 /**
  * 
@@ -51,11 +53,6 @@ public class UpdateMultiCacheAdviceTest {
     @BeforeClass
     public static void beforeClass() {
         cut = new UpdateMultiCacheAdvice();
-        DefaultKeyProvider keyProvider = new DefaultKeyProvider();
-        keyProvider.setMethodStore(new CacheKeyMethodStoreImpl());
-        CacheKeyBuilderImpl cacheKeyBuilder = new CacheKeyBuilderImpl();
-        cacheKeyBuilder.setDefaultKeyProvider(keyProvider);
-        cut.setCacheKeyBuilder(cacheKeyBuilder);
     }
 
     @Test
@@ -98,24 +95,26 @@ public class UpdateMultiCacheAdviceTest {
             assertTrue(ex.getMessage().contains("do not match in size"));
         }
 
-        final CacheClient cache = EasyMock.createMock(CacheClient.class);
-        cut.setCache(cache);
-
+        final Cache cache = EasyMock.createMock(Cache.class);
+        EasyMock.expect(cache.getName()).andReturn(AnnotationConstants.DEFAULT_CACHE_NAME);
+        EasyMock.expect(cache.getAliases()).andReturn(Collections.<String> emptyList()).anyTimes();
         for (final String key : keys) {
             final String value = "ValueFor-" + key;
             objs.add(value);
-            EasyMock.expect(cache.set(key, data.getExpiration(), value)).andReturn(true);
+            cache.setSilently(key, data.getExpiration(), value, null);
+            EasyMock.expectLastCall();
         }
         keys.add("BigFatNull");
         objs.add(null);
-        EasyMock.expect(cache.set(keys.get(2), data.getExpiration(), new PertinentNegativeNull())).andReturn(true);
+        cache.setSilently(keys.get(2), data.getExpiration(), new PertinentNegativeNull(), null);
+        EasyMock.expectLastCall();
 
         EasyMock.replay(cache);
 
+        cut.addCache(cache);
         cut.updateCache(keys, objs, method, data, null);
 
         EasyMock.verify(cache);
-
     }
 
     static class AnnotationTest {

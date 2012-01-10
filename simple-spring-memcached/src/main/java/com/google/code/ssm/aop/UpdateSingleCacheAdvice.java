@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2008-2009 Nelson Carpentier
+ * Copyright (c) 2008-2012 Nelson Carpentier, Jakub Białek
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
  * documentation files (the "Software"), to deal in the Software without restriction, including without limitation the
@@ -18,8 +18,6 @@
 
 package com.google.code.ssm.aop;
 
-import java.lang.reflect.Method;
-
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.AfterReturning;
 import org.aspectj.lang.annotation.Aspect;
@@ -27,16 +25,23 @@ import org.aspectj.lang.annotation.Pointcut;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.code.ssm.aop.support.AnnotationData;
 import com.google.code.ssm.api.UpdateSingleCache;
 
 /**
  * 
  * @author Nelson Carpentier
+ * @author Jakub Białek
  * 
  */
 @Aspect
-public class UpdateSingleCacheAdvice extends CacheBase {
+public class UpdateSingleCacheAdvice extends SingleUpdateCacheAdvice<UpdateSingleCache> {
+
     private static final Logger LOG = LoggerFactory.getLogger(UpdateSingleCacheAdvice.class);
+
+    public UpdateSingleCacheAdvice() {
+        super(UpdateSingleCache.class);
+    }
 
     @Pointcut("@annotation(com.google.code.ssm.api.UpdateSingleCache)")
     public void updateSingle() {
@@ -44,29 +49,17 @@ public class UpdateSingleCacheAdvice extends CacheBase {
 
     @AfterReturning(pointcut = "updateSingle()", returning = "retVal")
     public void cacheUpdateSingle(final JoinPoint jp, final Object retVal) throws Throwable {
-        // For Update*Cache, an AfterReturning aspect is fine. We will only
-        // apply our caching after the underlying method completes successfully, and we will have
-        // the same access to the method params.
-        String cacheKey = null;
-        try {
-            final Method methodToCache = getMethodToCache(jp);
-            final UpdateSingleCache annotation = methodToCache.getAnnotation(UpdateSingleCache.class);
-            final AnnotationData data = AnnotationDataBuilder.buildAnnotationData(annotation, UpdateSingleCache.class, methodToCache);
-
-            cacheKey = cacheKeyBuilder.getCacheKey(data, jp.getArgs(), methodToCache.toString());
-
-            final Object dataObject = this.<Object> getUpdateData(data, methodToCache, jp, retVal);
-            final Class<?> jsonClass = getDataJsonClass(methodToCache, data);
-            final Object submission = getSubmission(dataObject);
-            set(cacheKey, data.getExpiration(), submission, jsonClass);
-        } catch (Exception ex) {
-            warn(String.format("Caching on method %s and key [%s] aborted due to an error.", jp.toShortString(), cacheKey), ex);
-        }
+        update(jp, retVal);
     }
 
     @Override
     protected Logger getLogger() {
         return LOG;
+    }
+
+    @Override
+    protected String getCacheKey(final AnnotationData data, final Object[] args, final String methodDesc) throws Exception {
+        return cacheKeyBuilder.getCacheKey(data, args, methodDesc);
     }
 
 }

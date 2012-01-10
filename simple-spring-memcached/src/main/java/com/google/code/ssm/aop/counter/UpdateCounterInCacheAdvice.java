@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2010-2011 Jakub Białek
+ * Copyright (c) 2010-2012 Jakub Białek
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
  * documentation files (the "Software"), to deal in the Software without restriction, including without limitation the
@@ -19,18 +19,16 @@ package com.google.code.ssm.aop.counter;
 
 import java.lang.reflect.Method;
 
-import com.google.code.ssm.aop.AnnotationData;
-import com.google.code.ssm.aop.AnnotationDataBuilder;
-import com.google.code.ssm.api.counter.UpdateCounterInCache;
-import com.google.code.ssm.providers.CacheTranscoder;
-import com.google.code.ssm.transcoders.LongToStringTranscoder;
-
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.AfterReturning;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.code.ssm.aop.support.AnnotationData;
+import com.google.code.ssm.aop.support.AnnotationDataBuilder;
+import com.google.code.ssm.api.counter.UpdateCounterInCache;
 
 /**
  * 
@@ -42,8 +40,6 @@ import org.slf4j.LoggerFactory;
 public class UpdateCounterInCacheAdvice extends CounterInCacheBase {
 
     private static final Logger LOG = LoggerFactory.getLogger(UpdateCounterInCacheAdvice.class);
-
-    private final CacheTranscoder<Long> transcoder = new LongToStringTranscoder();
 
     @Pointcut("@annotation(com.google.code.ssm.api.counter.UpdateCounterInCache)")
     public void updateCounter() {
@@ -65,7 +61,7 @@ public class UpdateCounterInCacheAdvice extends CounterInCacheBase {
             Object dataObject = getUpdateData(data, methodToCache, jp, retVal);
             if (checkData(dataObject, jp)) {
                 long value = ((Number) dataObject).longValue();
-                set(cacheKey, annotation.expiration(), value, transcoder);
+                getCache(data).set(cacheKey, annotation.expiration(), value, Long.class);
             }
         } catch (Exception ex) {
             getLogger().warn(String.format("Updating counter [%s] in cache via %s aborted due to an error.", cacheKey, jp.toShortString()),

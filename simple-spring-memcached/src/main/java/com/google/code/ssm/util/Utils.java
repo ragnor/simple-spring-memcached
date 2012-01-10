@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011 Jakub Białek
+ * Copyright (c) 2012 Jakub Białek
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
  * documentation files (the "Software"), to deal in the Software without restriction, including without limitation the
@@ -45,7 +45,7 @@ public class Utils {
         return indexObject;
     }
 
-    public static Object[] getMethodArgs(final Collection<Integer> indexes, Object[] args, final String methodDesc) {
+    public static Object[] getMethodArgs(final Collection<Integer> indexes, final Object[] args, final String methodDesc) {
         Object[] selectedArgs = new Object[indexes.size()];
         Iterator<Integer> iter = indexes.iterator();
         for (int i = 0; i < indexes.size(); i++) {

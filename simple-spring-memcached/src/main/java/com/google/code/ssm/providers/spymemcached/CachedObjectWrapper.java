@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2010-2011 Jakub Białek
+ * Copyright (c) 2010-2012 Jakub Białek
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
  * documentation files (the "Software"), to deal in the Software without restriction, including without limitation the
@@ -17,9 +17,9 @@
 
 package com.google.code.ssm.providers.spymemcached;
 
-import com.google.code.ssm.providers.CachedObject;
-
 import net.spy.memcached.CachedData;
+
+import com.google.code.ssm.providers.CachedObject;
 
 /**
  * 
@@ -31,7 +31,7 @@ class CachedObjectWrapper implements CachedObject {
 
     private final CachedData cachedData;
 
-    CachedObjectWrapper(CachedData cachedData) {
+    CachedObjectWrapper(final CachedData cachedData) {
         this.cachedData = cachedData;
     }
 

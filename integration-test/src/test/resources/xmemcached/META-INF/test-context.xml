@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<beans xmlns="http://www.springframework.org/schema/beans"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:aop="http://www.springframework.org/schema/aop"
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:aop="http://www.springframework.org/schema/aop"
 	xsi:schemaLocation="
 		   http://www.springframework.org/schema/beans
            http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
@@ -9,16 +9,41 @@
 
 	<aop:aspectj-autoproxy />
 
-	<bean name="memcachedClient" class="com.google.code.ssm.config.MemcachedClientFactory">
-		<property name="clientFactory">
-			<bean id="clientFactory"
-				class="com.google.code.ssm.providers.xmemcached.MemcacheClientFactoryImpl" />
+	<bean name="defaultMemcachedClient" class="com.google.code.ssm.CacheFactory">
+		<property name="cacheClientFactory">
+			<bean class="com.google.code.ssm.providers.xmemcached.MemcacheClientFactoryImpl" />
 		</property>
-		<property name="connectionConfiguration">
-			<bean id="memcachedConnectionBean" class="com.google.code.ssm.config.MemcachedConnectionBean">
-				<property name="consistentHashing" value="true" />
-				<property name="nodeList" value="127.0.0.1:11211" />
+		<property name="addressProvider">
+			<bean class="com.google.code.ssm.config.DefaultAddressProvider">
+				<property name="address" value="127.0.0.1:11211" />
 			</bean>
+		</property>
+		<property name="configuration">
+			<bean class="com.google.code.ssm.providers.CacheConfiguration">
+				<property name="consistentHashing" value="true" />
+			</bean>
+		</property>
+	</bean>
+
+	<bean name="memcachedClient1" class="com.google.code.ssm.CacheFactory">
+		<property name="cacheClientFactory">
+			<bean class="com.google.code.ssm.providers.xmemcached.MemcacheClientFactoryImpl" />
+		</property>
+		<property name="addressProvider">
+			<bean class="com.google.code.ssm.config.DefaultAddressProvider">
+				<property name="address" value="127.0.0.1:11212" />
+			</bean>
+		</property>
+		<property name="configuration">
+			<bean class="com.google.code.ssm.providers.CacheConfiguration">
+				<property name="consistentHashing" value="true" />
+			</bean>
+		</property>
+		<property name="cacheName" value="cache1"/>
+		<property name="cacheAliases">
+			<list>
+				<value>cache1Alias</value>
+			</list>
 		</property>
 	</bean>
 

@@ -1,4 +1,4 @@
-/* Copyright (c) 2011 Jakub Białek
+/* Copyright (c) 2012 Jakub Białek
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
  * documentation files (the "Software"), to deal in the Software without restriction, including without limitation the
@@ -22,24 +22,22 @@ import static org.mockito.Matchers.anyLong;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.only;
 import static org.mockito.Mockito.verify;
 
 import java.util.Arrays;
 import java.util.Collection;
-
-import com.google.code.ssm.api.ParameterDataUpdateContent;
-import com.google.code.ssm.api.ParameterValueKeyProvider;
-import com.google.code.ssm.api.ReturnDataUpdateContent;
-import com.google.code.ssm.api.counter.UpdateCounterInCache;
-import com.google.code.ssm.providers.CacheTranscoder;
-import com.google.code.ssm.test.Point;
 
 import org.hamcrest.CoreMatchers;
 import org.junit.Assume;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runners.Parameterized.Parameters;
+
+import com.google.code.ssm.api.ParameterDataUpdateContent;
+import com.google.code.ssm.api.ParameterValueKeyProvider;
+import com.google.code.ssm.api.ReturnDataUpdateContent;
+import com.google.code.ssm.api.counter.UpdateCounterInCache;
+import com.google.code.ssm.test.Point;
 
 /**
  * 
@@ -75,12 +73,12 @@ public class UpdateCounterInCacheAdviceTest extends AbstractCounterTest<UpdateCo
 
     private static final int EXPIRATION = 80;
 
-    private Object reternValue;
+    private final Object reternValue;
 
-    private Object expectedValue;
+    private final Object expectedValue;
 
-    public UpdateCounterInCacheAdviceTest(boolean isValid, String methodName, Class<?>[] paramTypes, Object[] params, Object returnValue,
-            Object expectedValue, String cacheKey) {
+    public UpdateCounterInCacheAdviceTest(final boolean isValid, final String methodName, final Class<?>[] paramTypes,
+            final Object[] params, final Object returnValue, final Object expectedValue, final String cacheKey) {
         super(isValid, methodName, paramTypes, params, cacheKey);
         this.reternValue = returnValue;
         this.expectedValue = expectedValue;
@@ -92,24 +90,22 @@ public class UpdateCounterInCacheAdviceTest extends AbstractCounterTest<UpdateCo
     }
 
     @Test
-    @SuppressWarnings("unchecked")
     public void validUpdateCounterInCache() throws Throwable {
         Assume.assumeTrue(isValid);
 
         advice.cacheCounterInCache(pjp, reternValue);
 
-        verify(client, only()).set(eq(cacheKey), eq(EXPIRATION), eq(((Number) expectedValue).longValue()), any(CacheTranscoder.class));
+        verify(cache).set(eq(cacheKey), eq(EXPIRATION), eq(((Number) expectedValue).longValue()), any(Class.class));
         verify(pjp, never()).proceed();
     }
 
     @Test
-    @SuppressWarnings("unchecked")
     public void invalidUpdateCounterInCache() throws Throwable {
         Assume.assumeThat(isValid, CoreMatchers.is(false));
 
         advice.cacheCounterInCache(pjp, reternValue);
 
-        verify(client, never()).set(anyString(), anyInt(), anyLong(), any(CacheTranscoder.class));
+        verify(cache, never()).set(anyString(), anyInt(), anyLong(), any(Class.class));
         verify(pjp, never()).proceed();
     }
 
@@ -123,104 +119,104 @@ public class UpdateCounterInCacheAdviceTest extends AbstractCounterTest<UpdateCo
 
         @ReturnDataUpdateContent
         @UpdateCounterInCache(namespace = NS, expiration = EXPIRATION)
-        public int updateCounter1(@ParameterValueKeyProvider int id1) {
+        public int updateCounter1(@ParameterValueKeyProvider final int id1) {
             return 1;
         }
 
         @ReturnDataUpdateContent
         @UpdateCounterInCache(namespace = NS, expiration = EXPIRATION)
-        public Integer updateCounter2(@ParameterValueKeyProvider int id1) {
+        public Integer updateCounter2(@ParameterValueKeyProvider final int id1) {
             return new Integer(2);
         }
 
         @ReturnDataUpdateContent
         @UpdateCounterInCache(namespace = NS, expiration = EXPIRATION)
-        public long updateCounter3(@ParameterValueKeyProvider int id1) {
+        public long updateCounter3(@ParameterValueKeyProvider final int id1) {
             return 1L;
         }
 
         @ReturnDataUpdateContent
         @UpdateCounterInCache(namespace = NS, expiration = EXPIRATION)
-        public Long updateCounter4(@ParameterValueKeyProvider int id1) {
+        public Long updateCounter4(@ParameterValueKeyProvider final int id1) {
             return new Long(1L);
         }
 
         @ReturnDataUpdateContent
         @UpdateCounterInCache(namespace = NS, expiration = EXPIRATION)
-        public int updateCounter5(@ParameterValueKeyProvider(order = 1) int id1, @ParameterValueKeyProvider(order = 5) int id2) {
+        public int updateCounter5(@ParameterValueKeyProvider(order = 1) final int id1, @ParameterValueKeyProvider(order = 5) final int id2) {
             return 1;
         }
 
         @UpdateCounterInCache(namespace = NS, expiration = EXPIRATION)
-        public void updateCounter6(@ParameterValueKeyProvider String id1, @ParameterDataUpdateContent int value) {
+        public void updateCounter6(@ParameterValueKeyProvider final String id1, @ParameterDataUpdateContent final int value) {
 
         }
 
         @UpdateCounterInCache(namespace = NS, expiration = EXPIRATION)
-        public void updateCounter7(@ParameterValueKeyProvider String id, @ParameterDataUpdateContent Integer value) {
+        public void updateCounter7(@ParameterValueKeyProvider final String id, @ParameterDataUpdateContent final Integer value) {
 
         }
 
         @UpdateCounterInCache(namespace = NS, expiration = EXPIRATION)
-        public void updateCounter8(@ParameterValueKeyProvider Point p, @ParameterDataUpdateContent long value) {
+        public void updateCounter8(@ParameterValueKeyProvider final Point p, @ParameterDataUpdateContent final long value) {
 
         }
 
         @UpdateCounterInCache(namespace = NS, expiration = EXPIRATION)
-        public void updateCounter9(@ParameterValueKeyProvider(order = 2) Long id1, @ParameterValueKeyProvider(order = 1) String id2,
-                @ParameterDataUpdateContent Long value) {
+        public void updateCounter9(@ParameterValueKeyProvider(order = 2) final Long id1,
+                @ParameterValueKeyProvider(order = 1) final String id2, @ParameterDataUpdateContent final Long value) {
 
         }
 
         // @ReturnDataUpdateContent is more important than @ParameterDataUpdateContent
         @ReturnDataUpdateContent
         @UpdateCounterInCache(namespace = NS, expiration = EXPIRATION)
-        public Integer updateCounter10(@ParameterDataUpdateContent @ParameterValueKeyProvider int id1) {
+        public Integer updateCounter10(@ParameterDataUpdateContent @ParameterValueKeyProvider final int id1) {
             return new Integer(10);
         }
 
         @UpdateCounterInCache(namespace = NS, expiration = EXPIRATION)
-        public void updateCounter11(@ParameterDataUpdateContent @ParameterValueKeyProvider int id1,
-                @ParameterValueKeyProvider(order = 5) int id2) {
+        public void updateCounter11(@ParameterDataUpdateContent @ParameterValueKeyProvider final int id1,
+                @ParameterValueKeyProvider(order = 5) final int id2) {
 
         }
 
         // no return
         @ReturnDataUpdateContent
         @UpdateCounterInCache(namespace = NS, expiration = EXPIRATION)
-        public void updateCounter20(@ParameterValueKeyProvider int id1) {
+        public void updateCounter20(@ParameterValueKeyProvider final int id1) {
 
         }
 
         // wrong return type
         @ReturnDataUpdateContent
         @UpdateCounterInCache(namespace = NS, expiration = EXPIRATION)
-        public String updateCounter21(@ParameterValueKeyProvider int id1) {
+        public String updateCounter21(@ParameterValueKeyProvider final int id1) {
             return "xyz";
         }
 
         // no @ParameterValueKeyProvider
         @ReturnDataUpdateContent
         @UpdateCounterInCache(namespace = NS, expiration = EXPIRATION)
-        public int updateCounter22(int id1) {
+        public int updateCounter22(final int id1) {
             return 1;
         }
 
         // no @ReturnDataUpdateContent or @ParameterDataUpdateContent
         @UpdateCounterInCache(namespace = NS, expiration = EXPIRATION)
-        public void updateCounter23(@ParameterValueKeyProvider int id1) {
+        public void updateCounter23(@ParameterValueKeyProvider final int id1) {
 
         }
 
         // no wrong update type
         @UpdateCounterInCache(namespace = NS, expiration = EXPIRATION)
-        public void updateCounter24(@ParameterDataUpdateContent @ParameterValueKeyProvider Object o) {
+        public void updateCounter24(@ParameterDataUpdateContent @ParameterValueKeyProvider final Object o) {
 
         }
 
         // no wrong update type
         @UpdateCounterInCache(namespace = NS, expiration = EXPIRATION)
-        public void updateCounter25(@ParameterDataUpdateContent @ParameterValueKeyProvider String s) {
+        public void updateCounter25(@ParameterDataUpdateContent @ParameterValueKeyProvider final String s) {
 
         }
 

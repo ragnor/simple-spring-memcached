@@ -1,4 +1,4 @@
-/* Copyright (c) 2011 Jakub Białek
+/* Copyright (c) 2012 Jakub Białek
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
  * documentation files (the "Software"), to deal in the Software without restriction, including without limitation the
@@ -29,17 +29,16 @@ import static org.mockito.Mockito.when;
 import java.util.Arrays;
 import java.util.Collection;
 
-import com.google.code.ssm.api.ParameterValueKeyProvider;
-import com.google.code.ssm.api.ReturnValueKeyProvider;
-import com.google.code.ssm.api.counter.ReadCounterFromCache;
-import com.google.code.ssm.providers.CacheTranscoder;
-import com.google.code.ssm.test.Point;
-
 import org.hamcrest.CoreMatchers;
 import org.junit.Assume;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runners.Parameterized.Parameters;
+
+import com.google.code.ssm.api.ParameterValueKeyProvider;
+import com.google.code.ssm.api.ReturnValueKeyProvider;
+import com.google.code.ssm.api.counter.ReadCounterFromCache;
+import com.google.code.ssm.test.Point;
 
 /**
  * 
@@ -70,10 +69,10 @@ public class ReadCounterFromCacheAdviceTest extends AbstractCounterTest<ReadCoun
 
     private static final int EXPIRATION = 100;
 
-    private Object expectedValue;
+    private final Object expectedValue;
 
-    public ReadCounterFromCacheAdviceTest(boolean isValid, String methodName, Class<?>[] paramTypes, Object[] params, Object expectedValue,
-            String cacheKey) {
+    public ReadCounterFromCacheAdviceTest(final boolean isValid, final String methodName, final Class<?>[] paramTypes,
+            final Object[] params, final Object expectedValue, final String cacheKey) {
         super(isValid, methodName, paramTypes, params, cacheKey);
         this.expectedValue = expectedValue;
     }
@@ -92,8 +91,8 @@ public class ReadCounterFromCacheAdviceTest extends AbstractCounterTest<ReadCoun
 
         assertEquals(expectedValue, advice.readCounter(pjp));
 
-        verify(client).get(eq(cacheKey), any(CacheTranscoder.class));
-        verify(client).incr(eq(cacheKey), eq(0), eq(((Number) expectedValue).longValue()), eq(EXPIRATION));
+        verify(cache).get(eq(cacheKey), any(Class.class));
+        verify(cache).incr(eq(cacheKey), eq(0), eq(((Number) expectedValue).longValue()), eq(EXPIRATION));
         verify(pjp).proceed();
     }
 
@@ -104,12 +103,12 @@ public class ReadCounterFromCacheAdviceTest extends AbstractCounterTest<ReadCoun
 
         Long value = 100L;
 
-        when(client.get(eq(cacheKey), any(CacheTranscoder.class))).thenReturn(value);
+        when(cache.get(eq(cacheKey), any(Class.class))).thenReturn(value);
 
         assertEquals(value.intValue(), ((Number) advice.readCounter(pjp)).intValue());
 
-        verify(client).get(eq(cacheKey), any(CacheTranscoder.class));
-        verify(client, never()).incr(anyString(), anyInt(), anyLong(), anyInt());
+        verify(cache).get(eq(cacheKey), any(Class.class));
+        verify(cache, never()).incr(anyString(), anyInt(), anyLong(), anyInt());
         verify(pjp, never()).proceed();
     }
 
@@ -122,8 +121,8 @@ public class ReadCounterFromCacheAdviceTest extends AbstractCounterTest<ReadCoun
 
         assertEquals(expectedValue, advice.readCounter(pjp));
 
-        verify(client, never()).get(anyString(), any(CacheTranscoder.class));
-        verify(client, never()).incr(anyString(), anyInt(), anyLong(), anyInt());
+        verify(cache, never()).get(anyString(), any(Class.class));
+        verify(cache, never()).incr(anyString(), anyInt(), anyLong(), anyInt());
         verify(pjp).proceed();
     }
 
@@ -136,72 +135,71 @@ public class ReadCounterFromCacheAdviceTest extends AbstractCounterTest<ReadCoun
     private static class TestService {
 
         @ReadCounterFromCache(namespace = NS, expiration = EXPIRATION)
-        public Integer readCounter1(@ParameterValueKeyProvider int id) {
+        public Integer readCounter1(@ParameterValueKeyProvider final int id) {
             return 10;
         }
 
         @ReadCounterFromCache(namespace = NS, expiration = EXPIRATION)
-        public Long readCounter2(@ParameterValueKeyProvider int id) {
+        public Long readCounter2(@ParameterValueKeyProvider final int id) {
             return 11L;
         }
 
         @ReadCounterFromCache(namespace = NS, expiration = EXPIRATION)
-        public long readCounter3(@ParameterValueKeyProvider int id) {
+        public long readCounter3(@ParameterValueKeyProvider final int id) {
             return 12L;
         }
 
         @ReadCounterFromCache(namespace = NS, expiration = EXPIRATION)
-        public int readCounter4(@ParameterValueKeyProvider int id) {
+        public int readCounter4(@ParameterValueKeyProvider final int id) {
             return 13;
         }
 
         @ReadCounterFromCache(namespace = NS, expiration = EXPIRATION)
-        public int readCounter5(@ParameterValueKeyProvider(order = 0) int id, @ParameterValueKeyProvider(order = 1) String id2) {
+        public int readCounter5(@ParameterValueKeyProvider(order = 0) final int id, @ParameterValueKeyProvider(order = 1) final String id2) {
             return 14;
         }
 
         @ReadCounterFromCache(namespace = NS, expiration = EXPIRATION)
-        public int readCounter6(@ParameterValueKeyProvider(order = 3) int id, @ParameterValueKeyProvider(order = 1) String id2,
-                @ParameterValueKeyProvider(order = 2) Point p, String sth) {
+        public int readCounter6(@ParameterValueKeyProvider(order = 3) final int id, @ParameterValueKeyProvider(order = 1) final String id2,
+                @ParameterValueKeyProvider(order = 2) final Point p, final String sth) {
             return 6;
         }
 
         // wrong return type
         @ReadCounterFromCache(namespace = NS, expiration = EXPIRATION)
-        public String readCounter20(@ParameterValueKeyProvider int id) {
+        public String readCounter20(@ParameterValueKeyProvider final int id) {
             return null;
         }
 
         // wrong return type
         @ReadCounterFromCache(namespace = NS, expiration = EXPIRATION)
-        public Object readCounter21(@ParameterValueKeyProvider int id) {
+        public Object readCounter21(@ParameterValueKeyProvider final int id) {
             return null;
         }
 
         // no @ParameterValueKeyProvider
         @ReadCounterFromCache(namespace = NS, expiration = EXPIRATION)
-        public int readCounter22(int id) {
+        public int readCounter22(final int id) {
             return 13;
         }
 
         // the same order in both @ParameterValueKeyProvider
         @ReadCounterFromCache(namespace = NS, expiration = EXPIRATION)
-        public int readCounter23(@ParameterValueKeyProvider(order = 0) int id, @ParameterValueKeyProvider(order = 0) int id2) {
+        public int readCounter23(@ParameterValueKeyProvider(order = 0) final int id, @ParameterValueKeyProvider(order = 0) final int id2) {
             return 14;
         }
 
         // wrong void return type
         @ReadCounterFromCache(namespace = NS, expiration = EXPIRATION)
-        public void readCounter24(@ParameterValueKeyProvider int id) {
+        public void readCounter24(@ParameterValueKeyProvider final int id) {
 
         }
-        
+
         @ReturnValueKeyProvider
         @ReadCounterFromCache(namespace = NS, expiration = EXPIRATION)
-        public Integer readCounter25(int id) {
+        public Integer readCounter25(final int id) {
             return 25;
         }
-
 
     }
 

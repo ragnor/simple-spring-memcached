@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2010-2011 Jakub Białek
+ * Copyright (c) 2010-2012 Jakub Białek
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
  * documentation files (the "Software"), to deal in the Software without restriction, including without limitation the
@@ -26,8 +26,8 @@ import org.aspectj.lang.annotation.Pointcut;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.code.ssm.aop.AnnotationData;
-import com.google.code.ssm.aop.AnnotationDataBuilder;
+import com.google.code.ssm.aop.support.AnnotationData;
+import com.google.code.ssm.aop.support.AnnotationDataBuilder;
 import com.google.code.ssm.api.counter.DecrementCounterInCache;
 
 /**
@@ -57,7 +57,7 @@ public class DecrementCounterInCacheAdvice extends CounterInCacheBase {
             annotation = methodToCache.getAnnotation(DecrementCounterInCache.class);
             AnnotationData data = AnnotationDataBuilder.buildAnnotationData(annotation, DecrementCounterInCache.class, methodToCache);
             cacheKey = cacheKeyBuilder.getCacheKey(data, jp.getArgs(), methodToCache.toString());
-            decr(cacheKey, 1);
+            getCache(data).decr(cacheKey, 1);
         } catch (Throwable ex) {
             getLogger().warn(String.format("Decrementing counter [%s] via %s aborted due to an error.", cacheKey, jp.toShortString()), ex);
         }

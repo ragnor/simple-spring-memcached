@@ -15,10 +15,10 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package com.google.code.ssm.impl;
+package com.google.code.ssm.aop.support;
 
 import static org.junit.Assert.*;
-import com.google.code.ssm.exceptions.InvalidAnnotationException;
+import com.google.code.ssm.aop.support.DefaultKeyProvider;
 import com.google.code.ssm.api.CacheKeyMethod;
 
 import java.lang.reflect.Method;
@@ -38,7 +38,6 @@ public class DefaultKeyProviderTest {
     @BeforeClass
     public static void beforeClass() {
         cut = new DefaultKeyProvider();
-        cut.setMethodStore(new CacheKeyMethodStoreImpl());
     }
 
     @Test

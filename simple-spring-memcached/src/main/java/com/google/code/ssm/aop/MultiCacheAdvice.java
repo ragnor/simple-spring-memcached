@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011 Jakub Białek
+ * Copyright (c) 2012 Jakub Białek
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
  * documentation files (the "Software"), to deal in the Software without restriction, including without limitation the
@@ -27,6 +27,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import com.google.code.ssm.aop.support.AnnotationData;
+import com.google.code.ssm.aop.support.PertinentNegativeNull;
 import com.google.code.ssm.api.ParameterValueKeyProvider;
 import com.google.code.ssm.util.Utils;
 
@@ -62,15 +64,17 @@ abstract class MultiCacheAdvice extends CacheBase {
         return holder;
     }
 
-    protected void addNullValues(List<Object> missObjects, MultiCacheCoordinator coord, Class<?> jsonClass) {
+    protected void addNullValues(final List<Object> missObjects, final MultiCacheCoordinator coord, final Class<?> jsonClass) {
         for (Object keyObject : missObjects) {
-            addSilently(coord.getObj2Key().get(keyObject), coord.getAnnotationData().getExpiration(), PertinentNegativeNull.NULL, jsonClass);
+            getCache(coord.getAnnotationData()).addSilently(coord.getObj2Key().get(keyObject), coord.getAnnotationData().getExpiration(),
+                    PertinentNegativeNull.NULL, jsonClass);
         }
     }
 
-    protected void setNullValues(List<Object> missObjects, MultiCacheCoordinator coord, Class<?> jsonClass) {
+    protected void setNullValues(final List<Object> missObjects, final MultiCacheCoordinator coord, final Class<?> jsonClass) {
         for (Object keyObject : missObjects) {
-            setSilently(coord.getObj2Key().get(keyObject), coord.getAnnotationData().getExpiration(), PertinentNegativeNull.NULL, jsonClass);
+            getCache(coord.getAnnotationData()).setSilently(coord.getObj2Key().get(keyObject), coord.getAnnotationData().getExpiration(),
+                    PertinentNegativeNull.NULL, jsonClass);
         }
     }
 
@@ -90,22 +94,22 @@ abstract class MultiCacheAdvice extends CacheBase {
     static class MultiCacheCoordinator {
         private final Method method;
         private final AnnotationData data;
-        private Map<String, Object> key2Obj = new LinkedHashMap<String, Object>();
-        private Map<Object, String> obj2Key = new LinkedHashMap<Object, String>();
-        private Map<String, Object> key2Result = new HashMap<String, Object>();
+        private final Map<String, Object> key2Obj = new LinkedHashMap<String, Object>();
+        private final Map<Object, String> obj2Key = new LinkedHashMap<Object, String>();
+        private final Map<String, Object> key2Result = new HashMap<String, Object>();
         private List<Object> listKeyObjects = new ArrayList<Object>();
         // list is not the best collection to store missed objects because remove operation is used in some cases,
         // set cannot be used because order of insertion is important and object can appear more than once
-        private List<Object> missedObjects = new ArrayList<Object>();
+        private final List<Object> missedObjects = new ArrayList<Object>();
         private boolean addNullsToCache;
         private boolean generateKeysFromResult;
         private boolean skipNullsInResult;
-       
-        MultiCacheCoordinator(Method method, AnnotationData data) {
+
+        MultiCacheCoordinator(final Method method, final AnnotationData data) {
             this.method = method;
             this.data = data;
         }
-        
+
         public Method getMethod() {
             return method;
         }
@@ -114,11 +118,11 @@ abstract class MultiCacheAdvice extends CacheBase {
             return addNullsToCache;
         }
 
-        public void setAddNullsToCache(boolean addNullsToCache) {
+        public void setAddNullsToCache(final boolean addNullsToCache) {
             this.addNullsToCache = addNullsToCache;
         }
 
-        public void setGenerateKeysFromResult(boolean generateKeysFromResult) {
+        public void setGenerateKeysFromResult(final boolean generateKeysFromResult) {
             this.generateKeysFromResult = generateKeysFromResult;
         }
 
@@ -130,7 +134,7 @@ abstract class MultiCacheAdvice extends CacheBase {
             return data;
         }
 
-        public void setHolder(MapHolder holder) {
+        public void setHolder(final MapHolder holder) {
             key2Obj.putAll(holder.getKey2Obj());
             obj2Key.putAll(holder.getObj2Key());
         }
@@ -151,11 +155,11 @@ abstract class MultiCacheAdvice extends CacheBase {
             return listKeyObjects;
         }
 
-        public void setListKeyObjects(List<Object> listKeyObjects) {
+        public void setListKeyObjects(final List<Object> listKeyObjects) {
             this.listKeyObjects = listKeyObjects;
         }
 
-        public void setInitialKey2Result(Map<String, Object> key2Result) {
+        public void setInitialKey2Result(final Map<String, Object> key2Result) {
             if (key2Result == null) {
                 throw new RuntimeException("There was an error retrieving cache values.");
             }
@@ -217,15 +221,15 @@ abstract class MultiCacheAdvice extends CacheBase {
             return args;
         }
 
-        public void setSkipNullsInResult(boolean skipNullsInResult) {
+        public void setSkipNullsInResult(final boolean skipNullsInResult) {
             this.skipNullsInResult = skipNullsInResult;
         }
 
         public boolean isSkipNullsInResult() {
             return skipNullsInResult;
         }
-        
-        private Object getResult(Object result) {
+
+        private Object getResult(final Object result) {
             return (result instanceof PertinentNegativeNull) ? null : result;
         }
 

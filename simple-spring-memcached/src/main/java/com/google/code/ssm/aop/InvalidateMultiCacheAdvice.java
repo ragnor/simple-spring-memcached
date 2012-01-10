@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2008-2011 Nelson Carpentier, Jakub Białek
+ * Copyright (c) 2008-2012 Nelson Carpentier, Jakub Białek
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
  * documentation files (the "Software"), to deal in the Software without restriction, including without limitation the
@@ -29,8 +29,10 @@ import org.aspectj.lang.annotation.Pointcut;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.code.ssm.aop.support.AnnotationData;
+import com.google.code.ssm.aop.support.AnnotationDataBuilder;
+import com.google.code.ssm.aop.support.InvalidAnnotationException;
 import com.google.code.ssm.api.InvalidateMultiCache;
-import com.google.code.ssm.exceptions.InvalidAnnotationException;
 
 /**
  * 
@@ -80,7 +82,7 @@ public class InvalidateMultiCacheAdvice extends MultiCacheAdvice {
                 final List<Object> keyObjects = (List<Object>) result;
                 cacheKeys = cacheKeyBuilder.getCacheKeys(keyObjects, data.getNamespace());
             }
-            delete(cacheKeys);
+            getCache(data).delete(cacheKeys);
         } catch (Throwable ex) {
             warn(String.format("Caching on method %s aborted due to an error.", pjp.toShortString()), ex);
         }

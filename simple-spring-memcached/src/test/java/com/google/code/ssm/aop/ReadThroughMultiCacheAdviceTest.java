@@ -1,4 +1,4 @@
-/* Copyright (c) 2011 Jakub Białek
+/* Copyright (c) 2012 Jakub Białek
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
  * documentation files (the "Software"), to deal in the Software without restriction, including without limitation the
@@ -84,12 +84,12 @@ public class ReadThroughMultiCacheAdviceTest extends AbstractCacheTest<ReadThrou
 
     private static final int EXPIRATION = 321;
 
-    private List<?> expectedValue;
+    private final List<?> expectedValue;
 
-    private String[] cacheKeys;
+    private final String[] cacheKeys;
 
-    public ReadThroughMultiCacheAdviceTest(boolean isValid, String methodName, Class<?>[] paramTypes, Object[] params,
-            List<?> expectedValue, String[] cacheKeys) {
+    public ReadThroughMultiCacheAdviceTest(final boolean isValid, final String methodName, final Class<?>[] paramTypes,
+            final Object[] params, final List<?> expectedValue, final String[] cacheKeys) {
         super(isValid, methodName, paramTypes, params, null);
         this.expectedValue = expectedValue;
         this.cacheKeys = cacheKeys;
@@ -101,6 +101,7 @@ public class ReadThroughMultiCacheAdviceTest extends AbstractCacheTest<ReadThrou
     }
 
     @Test
+    @SuppressWarnings("unchecked")
     public void validCacheAllMiss() throws Throwable {
         Assume.assumeTrue(isValid);
 
@@ -108,14 +109,15 @@ public class ReadThroughMultiCacheAdviceTest extends AbstractCacheTest<ReadThrou
 
         assertEquals(expectedValue, advice.cacheMulti(pjp));
 
-        verify(client).getBulk(eq(new HashSet<String>(Arrays.asList(cacheKeys))));
+        verify(cache).getBulk(eq(new HashSet<String>(Arrays.asList(cacheKeys))), any(Class.class));
         for (int i = 0; i < cacheKeys.length; i++) {
-            verify(client).set(eq(cacheKeys[i]), eq(EXPIRATION), eq(expectedValue.get(i)));
+            verify(cache).setSilently(eq(cacheKeys[i]), eq(EXPIRATION), eq(expectedValue.get(i)), any(Class.class));
         }
         verify(pjp).proceed(params);
     }
 
     @Test
+    @SuppressWarnings("unchecked")
     public void validCacheHit() throws Throwable {
         Assume.assumeTrue(isValid);
         Map<String, Object> map = new HashMap<String, Object>();
@@ -123,12 +125,12 @@ public class ReadThroughMultiCacheAdviceTest extends AbstractCacheTest<ReadThrou
             map.put(cacheKeys[i], expectedValue.get(i));
         }
 
-        when(client.getBulk(eq(new HashSet<String>(Arrays.asList(cacheKeys))))).thenReturn(map);
+        when(cache.getBulk(eq(new HashSet<String>(Arrays.asList(cacheKeys))), any(Class.class))).thenReturn(map);
 
         assertEquals(expectedValue, advice.cacheMulti(pjp));
 
-        verify(client).getBulk(eq(new HashSet<String>(Arrays.asList(cacheKeys))));
-        verify(client, never()).set(anyString(), anyInt(), any());
+        verify(cache).getBulk(eq(new HashSet<String>(Arrays.asList(cacheKeys))), any(Class.class));
+        verify(cache, never()).setSilently(anyString(), anyInt(), any(), any(Class.class));
         verify(pjp, never()).proceed(params);
     }
 
@@ -141,8 +143,8 @@ public class ReadThroughMultiCacheAdviceTest extends AbstractCacheTest<ReadThrou
 
         assertEquals(expectedValue, advice.cacheMulti(pjp));
 
-        verify(client, never()).getBulk(any(Collection.class));
-        verify(client, never()).set(anyString(), anyInt(), any());
+        verify(cache, never()).getBulk(any(Collection.class), any(Class.class));
+        verify(cache, never()).set(anyString(), anyInt(), any(), any(Class.class));
         verify(pjp).proceed();
     }
 
@@ -160,55 +162,56 @@ public class ReadThroughMultiCacheAdviceTest extends AbstractCacheTest<ReadThrou
     private static class TestService {
 
         @ReadThroughMultiCache(namespace = NS, expiration = EXPIRATION)
-        public List<Integer> method1(@ParameterValueKeyProvider List<Integer> id1) {
+        public List<Integer> method1(@ParameterValueKeyProvider final List<Integer> id1) {
             return Collections.<Integer> emptyList();
         }
 
         @ReadThroughMultiCache(namespace = NS, expiration = EXPIRATION)
-        public List<Integer> method2(@ParameterValueKeyProvider(order = 2) String id1,
-                @ParameterValueKeyProvider(order = 1) List<Integer> id2) {
+        public List<Integer> method2(@ParameterValueKeyProvider(order = 2) final String id1,
+                @ParameterValueKeyProvider(order = 1) final List<Integer> id2) {
             return Collections.<Integer> emptyList();
         }
 
         @ReadThroughMultiCache(namespace = NS, expiration = EXPIRATION)
-        public List<Integer> method3(@ParameterValueKeyProvider(order = 1) List<Point> id1, @ParameterValueKeyProvider(order = 2) Point id2) {
+        public List<Integer> method3(@ParameterValueKeyProvider(order = 1) final List<Point> id1,
+                @ParameterValueKeyProvider(order = 2) final Point id2) {
             return Collections.<Integer> emptyList();
         }
 
         @ReadThroughMultiCache(namespace = NS, expiration = EXPIRATION)
-        public List<Integer> method4(int id, @ParameterValueKeyProvider(order = 2) String id1,
-                @ParameterValueKeyProvider(order = 1) List<Integer> id2) {
+        public List<Integer> method4(final int id, @ParameterValueKeyProvider(order = 2) final String id1,
+                @ParameterValueKeyProvider(order = 1) final List<Integer> id2) {
             return Collections.<Integer> emptyList();
         }
 
         // no @ParameterValueKeyProvider
         @ReadThroughMultiCache(namespace = NS, expiration = EXPIRATION)
-        public List<Integer> method50(List<Integer> id1) {
+        public List<Integer> method50(final List<Integer> id1) {
             return Collections.<Integer> emptyList();
         }
 
         // void return type
         @ReadThroughMultiCache(namespace = NS, expiration = EXPIRATION)
-        public void method51(@ParameterValueKeyProvider List<Integer> id1) {
+        public void method51(@ParameterValueKeyProvider final List<Integer> id1) {
 
         }
 
         // return type is not List
         @ReadThroughMultiCache(namespace = NS, expiration = EXPIRATION)
-        public String method52(@ParameterValueKeyProvider List<Integer> id1) {
+        public String method52(@ParameterValueKeyProvider final List<Integer> id1) {
             return null;
         }
 
         // no List parameter
         @ReadThroughMultiCache(namespace = NS, expiration = EXPIRATION)
-        public List<Integer> method53(@ParameterValueKeyProvider int id1) {
+        public List<Integer> method53(@ParameterValueKeyProvider final int id1) {
             return Collections.<Integer> emptyList();
         }
-        
+
         // ReturnValueKeyProvider is not supported by ReadThroughMultiCache
         @ReturnValueKeyProvider
         @ReadThroughMultiCache(namespace = NS, expiration = EXPIRATION)
-        public List<Integer> method54(List<Integer> id1) {
+        public List<Integer> method54(final List<Integer> id1) {
             return Collections.<Integer> emptyList();
         }
 

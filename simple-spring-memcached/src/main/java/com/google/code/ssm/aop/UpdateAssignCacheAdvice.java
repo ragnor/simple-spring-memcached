@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2008-2011 Nelson Carpentier, Jakub Białek
+ * Copyright (c) 2008-2012 Nelson Carpentier, Jakub Białek
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
  * documentation files (the "Software"), to deal in the Software without restriction, including without limitation the
@@ -18,16 +18,15 @@
 
 package com.google.code.ssm.aop;
 
-import java.lang.reflect.Method;
-
-import com.google.code.ssm.api.UpdateAssignCache;
-
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.AfterReturning;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.code.ssm.aop.support.AnnotationData;
+import com.google.code.ssm.api.UpdateAssignCache;
 
 /**
  * 
@@ -36,8 +35,12 @@ import org.slf4j.LoggerFactory;
  * 
  */
 @Aspect
-public class UpdateAssignCacheAdvice extends CacheBase {
+public class UpdateAssignCacheAdvice extends SingleUpdateCacheAdvice<UpdateAssignCache> {
     private static final Logger LOG = LoggerFactory.getLogger(UpdateAssignCacheAdvice.class);
+
+    public UpdateAssignCacheAdvice() {
+        super(UpdateAssignCache.class);
+    }
 
     @Pointcut("@annotation(com.google.code.ssm.api.UpdateAssignCache)")
     public void updateAssign() {
@@ -45,23 +48,12 @@ public class UpdateAssignCacheAdvice extends CacheBase {
 
     @AfterReturning(pointcut = "updateAssign()", returning = "retVal")
     public void cacheUpdateAssign(final JoinPoint jp, final Object retVal) throws Throwable {
-        // This is injected caching. If anything goes wrong in the caching, LOG
-        // the crap outta it, but do not let it surface up past the AOP injection itself.
-        String cacheKey = null;
-        try {
-            final Method methodToCache = getMethodToCache(jp);
-            final UpdateAssignCache annotation = methodToCache.getAnnotation(UpdateAssignCache.class);
-            final AnnotationData data = AnnotationDataBuilder.buildAnnotationData(annotation, UpdateAssignCache.class, methodToCache);
+        update(jp, retVal);
+    }
 
-            cacheKey = cacheKeyBuilder.getAssignCacheKey(data);
-
-            final Object dataObject = this.<Object> getUpdateData(data, methodToCache, jp, retVal);
-            final Class<?> jsonClass = getDataJsonClass(methodToCache, data);
-            final Object submission = getSubmission(dataObject);
-            set(cacheKey, data.getExpiration(), submission, jsonClass);
-        } catch (Exception ex) {
-            warn(String.format("Caching on method %s and key [%s] aborted due to an error.", jp.toShortString(), cacheKey), ex);
-        }
+    @Override
+    protected String getCacheKey(final AnnotationData data, final Object[] args, final String methodDesc) throws Exception {
+        return cacheKeyBuilder.getAssignCacheKey(data);
     }
 
     @Override

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2008-2009 Nelson Carpentier
+ * Copyright (c) 2008-2012 Nelson Carpentier, Jakub Białek
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
  * documentation files (the "Software"), to deal in the Software without restriction, including without limitation the
@@ -16,16 +16,11 @@
  * 
  */
 
-package com.google.code.ssm.impl;
+package com.google.code.ssm.aop.support;
 
 import java.lang.reflect.Method;
 import java.security.InvalidParameterException;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
-import com.google.code.ssm.aop.CacheKeyMethodStore;
-import com.google.code.ssm.api.KeyProvider;
 
 /**
  * 
@@ -33,16 +28,19 @@ import com.google.code.ssm.api.KeyProvider;
  * @author Jakub Białek
  * 
  */
-@Service("defaultKeyProvider")
 public class DefaultKeyProvider implements KeyProvider { // NO_UCD
 
-    @Autowired
-    private CacheKeyMethodStore methodStore;
+    private CacheKeyMethodStore methodStore = new CacheKeyMethodStoreImpl();
 
-    public void setMethodStore(CacheKeyMethodStore methodStore) {
+    public void setMethodStore(final CacheKeyMethodStore methodStore) {
         this.methodStore = methodStore;
     }
 
+    public CacheKeyMethodStore getMethodStore() {
+        return this.methodStore;
+    }
+
+    @Override
     public String generateKey(final Object keyObject) {
         if (keyObject == null) {
             throw new InvalidParameterException("keyObject must be defined");
@@ -55,6 +53,7 @@ public class DefaultKeyProvider implements KeyProvider { // NO_UCD
         }
     }
 
+    @Override
     public String[] generateKeys(final Object[] keyObjects) {
         if (keyObjects == null || keyObjects.length < 1) {
             throw new InvalidParameterException("The key objects must be defined.");

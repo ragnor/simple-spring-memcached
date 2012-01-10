@@ -1,4 +1,4 @@
-/* Copyright (c) 2011 Jakub Białek
+/* Copyright (c) 2012 Jakub Białek
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
  * documentation files (the "Software"), to deal in the Software without restriction, including without limitation the
@@ -70,12 +70,12 @@ public class UpdateSingleCacheAdviceTest extends AbstractCacheTest<UpdateSingleC
 
     private static final int EXPIRATION = 222;
 
-    private Object returnValue;
+    private final Object returnValue;
 
-    private Object expectedValue;
+    private final Object expectedValue;
 
-    public UpdateSingleCacheAdviceTest(boolean isValid, String methodName, Class<?>[] paramTypes, Object[] params, Object returnValue,
-            Object expectedValue, String cacheKey) {
+    public UpdateSingleCacheAdviceTest(final boolean isValid, final String methodName, final Class<?>[] paramTypes, final Object[] params,
+            final Object returnValue, final Object expectedValue, final String cacheKey) {
         super(isValid, methodName, paramTypes, params, cacheKey);
         this.expectedValue = expectedValue;
         this.returnValue = returnValue;
@@ -92,7 +92,7 @@ public class UpdateSingleCacheAdviceTest extends AbstractCacheTest<UpdateSingleC
 
         advice.cacheUpdateSingle(pjp, returnValue);
 
-        verify(client).set(eq(cacheKey), eq(EXPIRATION), eq(expectedValue));
+        verify(cache).set(eq(cacheKey), eq(EXPIRATION), eq(expectedValue), any(Class.class));
     }
 
     @Test
@@ -101,7 +101,7 @@ public class UpdateSingleCacheAdviceTest extends AbstractCacheTest<UpdateSingleC
 
         advice.cacheUpdateSingle(pjp, returnValue);
 
-        verify(client, never()).set(anyString(), anyInt(), any());
+        verify(cache, never()).set(anyString(), anyInt(), any(), any(Class.class));
     }
 
     @Override
@@ -119,41 +119,41 @@ public class UpdateSingleCacheAdviceTest extends AbstractCacheTest<UpdateSingleC
 
         @ReturnDataUpdateContent
         @UpdateSingleCache(namespace = NS, expiration = EXPIRATION)
-        public int method1(@ParameterValueKeyProvider int id1) {
+        public int method1(@ParameterValueKeyProvider final int id1) {
             return 1;
         }
 
         @ReturnDataUpdateContent
         @UpdateSingleCache(namespace = NS, expiration = EXPIRATION)
-        public String method2(@ParameterValueKeyProvider int id1) {
+        public String method2(@ParameterValueKeyProvider final int id1) {
             return "2";
         }
 
         @ReturnDataUpdateContent
         @UpdateSingleCache(namespace = NS, expiration = EXPIRATION)
-        public int method3(@ParameterValueKeyProvider(order = 1) int id1, @ParameterValueKeyProvider(order = 2) int id2) {
+        public int method3(@ParameterValueKeyProvider(order = 1) final int id1, @ParameterValueKeyProvider(order = 2) final int id2) {
             return 3;
         }
 
         @UpdateSingleCache(namespace = NS, expiration = EXPIRATION)
-        public int method4(@ParameterDataUpdateContent String s, @ParameterValueKeyProvider int id1) {
+        public int method4(@ParameterDataUpdateContent final String s, @ParameterValueKeyProvider final int id1) {
             return 4;
         }
 
         @UpdateSingleCache(namespace = NS, expiration = EXPIRATION)
-        public int method5(@ParameterDataUpdateContent @ParameterValueKeyProvider int id1) {
+        public int method5(@ParameterDataUpdateContent @ParameterValueKeyProvider final int id1) {
             return 5;
         }
 
         @ReturnDataUpdateContent
         @UpdateSingleCache(namespace = NS, expiration = EXPIRATION)
-        public String method6(@ParameterValueKeyProvider(order = 2) int id1, @ParameterValueKeyProvider(order = 1) Point p) {
+        public String method6(@ParameterValueKeyProvider(order = 2) final int id1, @ParameterValueKeyProvider(order = 1) final Point p) {
             return "6";
         }
 
         @UpdateSingleCache(namespace = NS, expiration = EXPIRATION)
-        public String method7(@ParameterValueKeyProvider(order = 2) int id1, @ParameterValueKeyProvider(order = 1) String s,
-                @ParameterDataUpdateContent Point p) {
+        public String method7(@ParameterValueKeyProvider(order = 2) final int id1, @ParameterValueKeyProvider(order = 1) final String s,
+                @ParameterDataUpdateContent final Point p) {
             return "7";
         }
 
@@ -161,27 +161,27 @@ public class UpdateSingleCacheAdviceTest extends AbstractCacheTest<UpdateSingleC
         // in such case @ReturnDataUpdateContent takes precedence
         @ReturnDataUpdateContent
         @UpdateSingleCache(namespace = NS, expiration = EXPIRATION)
-        public int method8(@ParameterDataUpdateContent @ParameterValueKeyProvider int id1) {
+        public int method8(@ParameterDataUpdateContent @ParameterValueKeyProvider final int id1) {
             return 8;
         }
 
         // no @ParameterValueKeyProvider
         @ReturnDataUpdateContent
         @UpdateSingleCache(namespace = NS, expiration = EXPIRATION)
-        public int method50(int id1) {
+        public int method50(final int id1) {
             return 50;
         }
 
         // no @ParameterDataUpdateContent or @ReturnDataUpdateContent
         @UpdateSingleCache(namespace = NS, expiration = EXPIRATION)
-        public int method51(@ParameterValueKeyProvider int id1) {
+        public int method51(@ParameterValueKeyProvider final int id1) {
             return 51;
         }
 
         // @ReturnDataUpdateContent but void return type
         @ReturnDataUpdateContent
         @UpdateSingleCache(namespace = NS, expiration = EXPIRATION)
-        public void method52(@ParameterValueKeyProvider int id1) {
+        public void method52(@ParameterValueKeyProvider final int id1) {
 
         }
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2008-2011 Nelson Carpentier, Jakub Białek
+ * Copyright (c) 2008-2012 Nelson Carpentier, Jakub Białek
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
  * documentation files (the "Software"), to deal in the Software without restriction, including without limitation the
@@ -20,24 +20,26 @@ package com.google.code.ssm.aop;
 
 import java.lang.reflect.Method;
 import java.security.InvalidParameterException;
-import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.TimeoutException;
 
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.Signature;
 import org.aspectj.lang.reflect.MethodSignature;
 import org.slf4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.InitializingBean;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
 
+import com.google.code.ssm.Cache;
+import com.google.code.ssm.aop.support.AnnotationData;
+import com.google.code.ssm.aop.support.CacheKeyBuilder;
+import com.google.code.ssm.aop.support.CacheKeyBuilderImpl;
+import com.google.code.ssm.aop.support.InvalidAnnotationException;
+import com.google.code.ssm.aop.support.PertinentNegativeNull;
 import com.google.code.ssm.api.ReadThroughMultiCache;
 import com.google.code.ssm.api.format.UseJson;
-import com.google.code.ssm.exceptions.InvalidAnnotationException;
-import com.google.code.ssm.providers.CacheClient;
-import com.google.code.ssm.providers.CacheException;
-import com.google.code.ssm.providers.CacheTranscoder;
-import com.google.code.ssm.transcoders.JsonTranscoders;
 import com.google.code.ssm.util.Utils;
 
 /**
@@ -46,22 +48,42 @@ import com.google.code.ssm.util.Utils;
  * @author Jakub Białek
  * 
  */
-public abstract class CacheBase {
+public abstract class CacheBase implements ApplicationContextAware, InitializingBean {
 
-    @Autowired
-    protected CacheKeyBuilder cacheKeyBuilder;
+    protected CacheKeyBuilder cacheKeyBuilder = new CacheKeyBuilderImpl();
 
-    @Autowired
-    private JsonTranscoders jsonTranscoders;
+    // mapping cache zone <-> cache
+    private final Map<String, Cache> caches = new HashMap<String, Cache>();
 
-    private CacheClient cache;
+    private ApplicationContext context;
 
-    public void setCache(CacheClient cache) {
-        this.cache = cache;
+    @Override
+    public void afterPropertiesSet() throws Exception {
+        for (Cache cache : context.getBeansOfType(Cache.class).values()) {
+            addCache(cache);
+        }
     }
 
-    public void setCacheKeyBuilder(CacheKeyBuilder cacheKeyBuilder) {
+    @Override
+    public void setApplicationContext(final ApplicationContext applicationContext) {
+        this.context = applicationContext;
+    }
+
+    public void setCacheKeyBuilder(final CacheKeyBuilder cacheKeyBuilder) {
         this.cacheKeyBuilder = cacheKeyBuilder;
+    }
+
+    public CacheKeyBuilder getCacheKeyBuilder() {
+        return this.cacheKeyBuilder;
+    }
+
+    protected Cache getCache(final AnnotationData data) {
+        Cache cache = caches.get(data.getCacheName());
+        if (cache == null) {
+            throw new UndefinedCacheException(data.getCacheName());
+        }
+
+        return cache;
     }
 
     protected Method getMethodToCache(final JoinPoint jp) throws NoSuchMethodException {
@@ -69,6 +91,7 @@ public abstract class CacheBase {
         if (!(sig instanceof MethodSignature)) {
             throw new InvalidAnnotationException("This annotation is only valid on a method.");
         }
+
         final MethodSignature msig = (MethodSignature) sig;
         final Object target = jp.getTarget();
         // cannot use msig.getMethod() because it can return the method where annotation was declared i.e. method in
@@ -82,11 +105,11 @@ public abstract class CacheBase {
         return data.isReturnDataIndex() ? (T) returnValue : (T) Utils.getMethodArg(data.getDataIndex(), jp.getArgs(), method.toString());
     }
 
-    protected Object getSubmission(Object o) {
-        return o == null ? PertinentNegativeNull.NULL : o;
+    protected Object getSubmission(final Object o) {
+        return (o == null) ? PertinentNegativeNull.NULL : o;
     }
 
-    protected Object getResult(Object result) {
+    protected Object getResult(final Object result) {
         return (result instanceof PertinentNegativeNull) ? null : result;
     }
 
@@ -110,135 +133,20 @@ public abstract class CacheBase {
         }
     }
 
-    @SuppressWarnings("unchecked")
-    protected <T> T get(String cacheKey, Class<T> clazz) throws TimeoutException, CacheException {
-        if (clazz != null) {
-            CacheTranscoder<?> transcoder = jsonTranscoders.getTranscoder(clazz);
-            if (transcoder != null) {
-                return (T) get(cacheKey, transcoder);
-            } else {
-                warn("There's no json transcoder for class " + clazz.getName() + ", standard transcoder will be used for key " + cacheKey);
-            }
-        }
-
-        return (T) cache.get(cacheKey);
-    }
-
-    protected <T> T get(String cacheKey, CacheTranscoder<T> transcoder) throws TimeoutException, CacheException {
-        return cache.get(cacheKey, transcoder);
-    }
-
-    @SuppressWarnings("unchecked")
-    protected <T> void set(String cacheKey, int expiration, Object value, Class<?> clazz) throws TimeoutException, CacheException {
-        if (clazz != null) {
-            CacheTranscoder<?> transcoder = jsonTranscoders.getTranscoder(clazz);
-            if (transcoder != null) {
-                set(cacheKey, expiration, (T) value, (CacheTranscoder<T>) transcoder);
-                return;
-            } else {
-                warn("There's no json transcoder for class " + clazz.getName() + ", standard transcoder will be used for key " + cacheKey);
-            }
-        }
-
-        cache.set(cacheKey, expiration, value);
-    }
-
-    protected <T> void set(String cacheKey, int expiration, T value, CacheTranscoder<T> transcoder) throws TimeoutException, CacheException {
-        cache.set(cacheKey, expiration, value, transcoder);
-        if (getLogger().isInfoEnabled()) {
-            info("Set [json] under key: " + cacheKey + ", object: " + value + ", json: " + (value != null ? value.getClass() : null));
-        }
-    }
-
-    protected <T> void setSilently(String cacheKey, int expiration, Object value, Class<T> clazz) {
-        try {
-            set(cacheKey, expiration, value, clazz);
-        } catch (TimeoutException e) {
-            warn("Cannot set on key " + cacheKey, e);
-        } catch (CacheException e) {
-            warn("Cannot set on key " + cacheKey, e);
-        }
-    }
-
-    protected <T> void add(String cacheKey, int expiration, Object value, Class<T> clazz) throws TimeoutException, CacheException {
-        if (clazz != null) {
-            CacheTranscoder<?> transcoder = jsonTranscoders.getTranscoder(clazz);
-            if (transcoder != null) {
-                cache.add(cacheKey, expiration, value, jsonTranscoders.getTranscoder(clazz));
-                if (getLogger().isInfoEnabled()) {
-                    info("Add nullValue under key: " + cacheKey + ", json: " + clazz);
-                }
-                return;
-            } else {
-                warn("There's no json transcoder for class " + clazz.getName() + ", standard transcoder will be used for key " + cacheKey);
-            }
-        }
-
-        cache.add(cacheKey, expiration, value);
-    }
-
-    protected <T> void addSilently(String cacheKey, int expiration, Object value, Class<?> clazz) {
-        try {
-            add(cacheKey, expiration, value, clazz);
-        } catch (TimeoutException e) {
-            warn("Cannot add to key " + cacheKey, e);
-        } catch (CacheException e) {
-            warn("Cannot add to key " + cacheKey, e);
-        }
-    }
-
-    protected long decr(String key, int by) throws TimeoutException, CacheException {
-        return cache.decr(key, by);
-    }
-
-    protected long decr(String key, int by, long def) throws TimeoutException, CacheException {
-        return cache.decr(key, by, def);
-    }
-
-    protected long incr(String key, int by, long def) throws TimeoutException, CacheException {
-        return cache.incr(key, by, def);
-    }
-
-    protected long incr(String key, int by, long def, int exp) throws TimeoutException, CacheException {
-        return cache.incr(key, by, def, exp);
-    }
-
-    protected void delete(String key) throws TimeoutException, CacheException {
-        cache.delete(key);
-    }
-
-    protected void delete(Collection<String> keys) throws TimeoutException, CacheException {
-        cache.delete(keys);
-    }
-
-    protected Map<String, Object> getBulk(Collection<String> keys, Class<?> clazz) throws TimeoutException, CacheException {
-        if (clazz != null) {
-            CacheTranscoder<?> transcoder = jsonTranscoders.getTranscoder(clazz);
-            if (transcoder != null) {
-                return cache.getBulk(keys, jsonTranscoders.getTranscoder(clazz));
-            } else {
-                warn("There's no json transcoder for class " + clazz.getName() + ", standard transcoder will be used for keys " + keys);
-            }
-        }
-
-        return cache.getBulk(keys);
-    }
-
-
-    protected Class<?> getReturnJsonClass(Method method) {
+    protected Class<?> getReturnJsonClass(final Method method) {
         UseJson useJsonAnnotation = method.getAnnotation(UseJson.class);
         if (useJsonAnnotation == null) {
             return null;
         }
 
-        if (useJsonAnnotation.value() != NoClass.class) {
+        if (!NoClass.class.equals(useJsonAnnotation.value())) {
             return useJsonAnnotation.value();
         }
 
         return method.getReturnType();
     }
 
-    protected Class<?> getDataJsonClass(Method method, AnnotationData data) {
+    protected Class<?> getDataJsonClass(final Method method, final AnnotationData data) {
         if (data.isReturnDataIndex()) {
             return getReturnJsonClass(method);
         } else {
@@ -246,27 +154,38 @@ public abstract class CacheBase {
         }
     }
 
-    protected void info(String msg) {
-        getLogger().info(msg);
-    }
-
-    protected void warn(String msg) {
-        getLogger().warn(msg);
-    }
-
-    protected void warn(String msg, Throwable t) {
+    protected void warn(final String msg, final Throwable t) {
         getLogger().warn(msg, t);
     }
 
     protected abstract Logger getLogger();
-    
-    private Class<?> getParameterJsonClass(Method method, int index) {
+
+    protected void addCache(final Cache cache) {
+        if (caches.put(cache.getName(), cache) != null) {
+            String errorMsg = "There are two or more caches with the same name '" + cache.getName() + "'";
+            getLogger().error(errorMsg);
+            throw new IllegalStateException(errorMsg);
+        }
+
+        for (String alias : cache.getAliases()) {
+            if (caches.containsKey(alias)) {
+                String errorMsg = String.format("The cache with name '%s' uses alias '%s' already defined by cache with name '%s'",
+                        cache.getName(), alias, caches.get(alias).getName());
+                getLogger().error(errorMsg);
+                throw new IllegalStateException(errorMsg);
+            } else {
+                caches.put(alias, cache);
+            }
+        }
+    }
+
+    private Class<?> getParameterJsonClass(final Method method, final int index) {
         UseJson useJsonAnnotation = method.getAnnotation(UseJson.class);
         if (useJsonAnnotation == null) {
             return null;
         }
 
-        if (useJsonAnnotation.value() != NoClass.class) {
+        if (NoClass.class.equals(useJsonAnnotation.value())) {
             return useJsonAnnotation.value();
         }
 

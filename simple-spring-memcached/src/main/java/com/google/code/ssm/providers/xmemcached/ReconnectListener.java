@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2010-2011 Jakub Białek
+ * Copyright (c) 2010-2012 Jakub Białek
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
  * documentation files (the "Software"), to deal in the Software without restriction, including without limitation the
@@ -38,14 +38,14 @@ class ReconnectListener implements MemcachedClientStateListener {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ReconnectListener.class);
 
-    private Map<InetSocketAddress, Long> removedServers = new HashMap<InetSocketAddress, Long>();
+    private final Map<InetSocketAddress, Long> removedServers = new HashMap<InetSocketAddress, Long>();
 
     /**
      * Max time in seconds while memcached server can be absent and won't be flushed
      */
-    private int maxAwayTime;
+    private final int maxAwayTime;
 
-    ReconnectListener(int maxAwayTime) {
+    ReconnectListener(final int maxAwayTime) {
         this.maxAwayTime = maxAwayTime;
     }
 
@@ -79,22 +79,22 @@ class ReconnectListener implements MemcachedClientStateListener {
     }
 
     @Override
-    public void onDisconnected(MemcachedClient memcachedClient, InetSocketAddress inetSocketAddress) {
+    public void onDisconnected(final MemcachedClient memcachedClient, final InetSocketAddress inetSocketAddress) {
         removedServers.put(inetSocketAddress, System.currentTimeMillis());
     }
 
     @Override
-    public void onException(MemcachedClient memcachedClient, Throwable throwable) {
+    public void onException(final MemcachedClient memcachedClient, final Throwable throwable) {
 
     }
 
     @Override
-    public void onShutDown(MemcachedClient memcachedClient) {
+    public void onShutDown(final MemcachedClient memcachedClient) {
 
     }
 
     @Override
-    public void onStarted(MemcachedClient memcachedClient) {
+    public void onStarted(final MemcachedClient memcachedClient) {
 
     }
 

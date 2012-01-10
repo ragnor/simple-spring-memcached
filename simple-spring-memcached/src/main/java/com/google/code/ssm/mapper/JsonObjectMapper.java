@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2010-2011 Jakub Białek
+ * Copyright (c) 2010-2012 Jakub Białek
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
  * documentation files (the "Software"), to deal in the Software without restriction, including without limitation the
@@ -20,7 +20,6 @@ package com.google.code.ssm.mapper;
 import org.codehaus.jackson.map.DeserializationConfig;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.map.SerializationConfig;
-import org.springframework.stereotype.Component;
 
 /**
  * 
@@ -30,7 +29,6 @@ import org.springframework.stereotype.Component;
  * @since 2.0.0
  * 
  */
-@Component("jsonObjectMapper")
 public class JsonObjectMapper extends ObjectMapper { // NO_UCD
 
     public JsonObjectMapper() {

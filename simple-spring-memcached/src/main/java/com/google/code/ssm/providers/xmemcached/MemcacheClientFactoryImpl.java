@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2010-2011 Jakub Białek
+ * Copyright (c) 2010-2012 Jakub Białek
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
  * documentation files (the "Software"), to deal in the Software without restriction, including without limitation the
@@ -20,16 +20,18 @@ package com.google.code.ssm.providers.xmemcached;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.util.List;
-
-import com.google.code.ssm.config.MemcachedConnectionBean;
-import com.google.code.ssm.providers.CacheClient;
-import com.google.code.ssm.providers.CacheClientFactory;
+import java.util.Map;
 
 import net.rubyeye.xmemcached.MemcachedClient;
 import net.rubyeye.xmemcached.MemcachedClientBuilder;
 import net.rubyeye.xmemcached.XMemcachedClientBuilder;
 import net.rubyeye.xmemcached.command.BinaryCommandFactory;
 import net.rubyeye.xmemcached.impl.KetamaMemcachedSessionLocator;
+
+import com.google.code.ssm.providers.CacheClient;
+import com.google.code.ssm.providers.CacheClientFactory;
+import com.google.code.ssm.providers.CacheConfiguration;
+import com.google.code.yanf4j.core.SocketOption;
 
 /**
  * 
@@ -40,26 +42,85 @@ import net.rubyeye.xmemcached.impl.KetamaMemcachedSessionLocator;
 public class MemcacheClientFactoryImpl implements CacheClientFactory {
 
     @Override
-    public CacheClient create(List<InetSocketAddress> addrs, MemcachedConnectionBean connectionBean) throws IOException {
+    public CacheClient create(final List<InetSocketAddress> addrs, final CacheConfiguration conf) throws IOException {
         MemcachedClientBuilder builder = new XMemcachedClientBuilder(addrs);
-        builder.setConnectionPoolSize(1);
 
-        if (connectionBean.isConsistentHashing()) {
+        if (conf.isConsistentHashing()) {
             builder.setSessionLocator(new KetamaMemcachedSessionLocator());
         }
 
-        if (connectionBean.isUseBinaryProtocol()) {
+        if (conf.isUseBinaryProtocol()) {
             builder.setCommandFactory(new BinaryCommandFactory());
         }
 
-        MemcachedClient client = builder.build();
-        client.setOpTimeout(connectionBean.getOperationTimeout());
+        if (conf instanceof XMemcachedConfiguration) {
+            setProviderBuilderSpecificSettings(builder, (XMemcachedConfiguration) conf);
+        }
 
-        if (connectionBean.getMaxAwayTime() != null) {
-            client.addStateListener(new ReconnectListener(connectionBean.getMaxAwayTime()));
+        MemcachedClient client = builder.build();
+        if (conf.getOperationTimeout() != null) {
+            client.setOpTimeout(conf.getOperationTimeout());
+        }
+
+        if (conf instanceof XMemcachedConfiguration) {
+            setProviderClientSpecificSettings(client, (XMemcachedConfiguration) conf);
         }
 
         return new MemcacheClientWrapper(client);
     }
 
+    private void setProviderBuilderSpecificSettings(final MemcachedClientBuilder builder, final XMemcachedConfiguration conf) {
+        if (conf.getConnectionPoolSize() != null) {
+            builder.setConnectionPoolSize(conf.getConnectionPoolSize());
+        }
+
+        if (conf.getConfiguration() != null) {
+            builder.setConfiguration(conf.getConfiguration());
+        }
+
+        if (conf.getFailureMode() != null) {
+            builder.setFailureMode(conf.getFailureMode());
+        }
+
+        if (conf.getSocketOptions() != null) {
+            for (Map.Entry<SocketOption<?>, Object> entry : conf.getSocketOptions().entrySet()) {
+                builder.setSocketOption(entry.getKey(), entry.getValue());
+            }
+        }
+    }
+
+    private void setProviderClientSpecificSettings(final MemcachedClient client, final XMemcachedConfiguration conf) {
+        if (conf.getMaxAwayTime() != null) {
+            client.addStateListener(new ReconnectListener(conf.getMaxAwayTime()));
+        }
+
+        if (conf.getEnableHeartBeat() != null) {
+            client.setEnableHeartBeat(conf.getEnableHeartBeat());
+        }
+
+        if (conf.getHealSessionInterval() != null) {
+            client.setHealSessionInterval(conf.getHealSessionInterval());
+        }
+
+        if (conf.getMergeFactor() != null) {
+            client.setMergeFactor(conf.getMergeFactor());
+        }
+
+        if (conf.getOptimizeGet() != null) {
+            client.setOptimizeGet(conf.getOptimizeGet());
+        }
+
+        if (conf.getOptimizeMergeBuffer() != null) {
+            client.setOptimizeMergeBuffer(conf.getOptimizeMergeBuffer());
+        }
+
+        if (conf.getPrimitiveAsString() != null) {
+            client.setPrimitiveAsString(conf.getPrimitiveAsString());
+        }
+
+        if (conf.getSanitizeKeys() != null) {
+            client.setSanitizeKeys(conf.getSanitizeKeys());
+        }
+
+    }
 }

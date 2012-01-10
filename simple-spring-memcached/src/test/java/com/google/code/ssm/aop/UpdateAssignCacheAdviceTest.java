@@ -1,4 +1,4 @@
-/* Copyright (c) 2011 Jakub Białek
+/* Copyright (c) 2012 Jakub Białek
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
  * documentation files (the "Software"), to deal in the Software without restriction, including without limitation the
@@ -64,10 +64,10 @@ public class UpdateAssignCacheAdviceTest extends AbstractCacheTest<UpdateAssignC
 
     private static final int EXPIRATION = 222;
 
-    private Object expectedValue;
+    private final Object expectedValue;
 
-    public UpdateAssignCacheAdviceTest(boolean isValid, String methodName, Class<?>[] paramTypes, Object[] params, Object expectedValue,
-            String cacheKey) {
+    public UpdateAssignCacheAdviceTest(final boolean isValid, final String methodName, final Class<?>[] paramTypes, final Object[] params,
+            final Object expectedValue, final String cacheKey) {
         super(isValid, methodName, paramTypes, params, cacheKey);
         this.expectedValue = expectedValue;
     }
@@ -85,7 +85,7 @@ public class UpdateAssignCacheAdviceTest extends AbstractCacheTest<UpdateAssignC
 
         advice.cacheUpdateAssign(pjp, expectedValue);
 
-        verify(client).set(eq(cacheKey), eq(EXPIRATION), eq(expectedValue));
+        verify(cache).set(eq(cacheKey), eq(EXPIRATION), eq(expectedValue), any(Class.class));
     }
 
     @Test
@@ -96,7 +96,7 @@ public class UpdateAssignCacheAdviceTest extends AbstractCacheTest<UpdateAssignC
 
         advice.cacheUpdateAssign(pjp, expectedValue);
 
-        verify(client, never()).set(anyString(), anyInt(), any());
+        verify(cache, never()).set(anyString(), anyInt(), any(), any(Class.class));
     }
 
     @Override
@@ -114,42 +114,42 @@ public class UpdateAssignCacheAdviceTest extends AbstractCacheTest<UpdateAssignC
 
         @ReturnDataUpdateContent
         @UpdateAssignCache(namespace = NS, assignedKey = "1", expiration = EXPIRATION)
-        public int method1(int id1) {
+        public int method1(final int id1) {
             return 1;
         }
 
         @ReturnDataUpdateContent
         @UpdateAssignCache(namespace = NS, assignedKey = "2", expiration = EXPIRATION)
-        public String method2(@ParameterValueKeyProvider int id1) {
+        public String method2(@ParameterValueKeyProvider final int id1) {
             return "2";
         }
 
         @ReturnDataUpdateContent
         @UpdateAssignCache(namespace = NS, assignedKey = "3", expiration = EXPIRATION)
-        public int method3(@ParameterValueKeyProvider(order = 1) int id1, @ParameterValueKeyProvider(order = 2) int id2) {
+        public int method3(@ParameterValueKeyProvider(order = 1) final int id1, @ParameterValueKeyProvider(order = 2) final int id2) {
             return 3;
         }
 
         @UpdateAssignCache(namespace = NS, assignedKey = "4", expiration = EXPIRATION)
-        public int method4(@ParameterDataUpdateContent String s, @ParameterValueKeyProvider int id1) {
+        public int method4(@ParameterDataUpdateContent final String s, @ParameterValueKeyProvider final int id1) {
             return 4;
         }
 
         @UpdateAssignCache(namespace = NS, assignedKey = "5", expiration = EXPIRATION)
-        public int method5(@ParameterDataUpdateContent int id1) {
+        public int method5(@ParameterDataUpdateContent final int id1) {
             return 5;
         }
 
         // no @ParameterDataUpdateContent or @ReturnDataUpdateContent
         @UpdateAssignCache(namespace = NS, assignedKey = "51", expiration = EXPIRATION)
-        public int method51(@ParameterValueKeyProvider int id1) {
+        public int method51(@ParameterValueKeyProvider final int id1) {
             return 51;
         }
 
         // @ReturnDataUpdateContent but void return type
         @ReturnDataUpdateContent
         @UpdateAssignCache(namespace = NS, assignedKey = "52", expiration = EXPIRATION)
-        public void method52(@ParameterValueKeyProvider int id1) {
+        public void method52(@ParameterValueKeyProvider final int id1) {
 
         }
 

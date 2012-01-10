@@ -24,6 +24,7 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.security.InvalidParameterException;
 
+import com.google.code.ssm.aop.support.AnnotationDataBuilder;
 import com.google.code.ssm.api.ReadThroughAssignCache;
 
 import org.junit.Test;

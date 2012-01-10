@@ -1,4 +1,4 @@
-/* Copyright (c) 2011 Jakub Białek
+/* Copyright (c) 2012 Jakub Białek
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
  * documentation files (the "Software"), to deal in the Software without restriction, including without limitation the
@@ -28,15 +28,15 @@ import static org.mockito.Mockito.when;
 import java.util.Arrays;
 import java.util.Collection;
 
-import com.google.code.ssm.api.ParameterValueKeyProvider;
-import com.google.code.ssm.api.ReadThroughSingleCache;
-import com.google.code.ssm.api.ReturnValueKeyProvider;
-
 import org.hamcrest.CoreMatchers;
 import org.junit.Assume;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runners.Parameterized.Parameters;
+
+import com.google.code.ssm.api.ParameterValueKeyProvider;
+import com.google.code.ssm.api.ReadThroughSingleCache;
+import com.google.code.ssm.api.ReturnValueKeyProvider;
 
 /**
  * 
@@ -62,9 +62,10 @@ public class ReadThroughSingleCacheAdviceTest extends AbstractCacheTest<ReadThro
 
     private static final int EXPIRATION = 110;
 
-    private Object expectedValue;
+    private final Object expectedValue;
 
-    public ReadThroughSingleCacheAdviceTest(boolean isValid, String methodName, Class<?>[] paramTypes, Object[] params, Object expectedValue) {
+    public ReadThroughSingleCacheAdviceTest(final boolean isValid, final String methodName, final Class<?>[] paramTypes,
+            final Object[] params, final Object expectedValue) {
         super(isValid, methodName, paramTypes, params, null);
         this.expectedValue = expectedValue;
     }
@@ -75,6 +76,7 @@ public class ReadThroughSingleCacheAdviceTest extends AbstractCacheTest<ReadThro
     }
 
     @Test
+    @SuppressWarnings("unchecked")
     public void validCacheMiss() throws Throwable {
         Assume.assumeTrue(isValid);
 
@@ -82,25 +84,27 @@ public class ReadThroughSingleCacheAdviceTest extends AbstractCacheTest<ReadThro
 
         assertEquals(expectedValue, advice.cacheGetSingle(pjp));
 
-        verify(client).get(eq(cacheKey));
-        verify(client).set(eq(cacheKey), eq(EXPIRATION), eq(expectedValue));
+        verify(cache).get(eq(cacheKey), any(Class.class));
+        verify(cache).set(eq(cacheKey), eq(EXPIRATION), eq(expectedValue), any(Class.class));
         verify(pjp).proceed();
     }
 
     @Test
+    @SuppressWarnings("unchecked")
     public void validCacheHit() throws Throwable {
         Assume.assumeTrue(isValid);
 
-        when(client.get(eq(cacheKey))).thenReturn(expectedValue);
+        when(cache.get(eq(cacheKey), any(Class.class))).thenReturn(expectedValue);
 
         assertEquals(expectedValue, advice.cacheGetSingle(pjp));
 
-        verify(client).get(eq(cacheKey));
-        verify(client, never()).set(anyString(), anyInt(), any());
+        verify(cache).get(eq(cacheKey), any(Class.class));
+        verify(cache, never()).set(anyString(), anyInt(), any(), any(Class.class));
         verify(pjp, never()).proceed();
     }
 
     @Test
+    @SuppressWarnings("unchecked")
     public void invalid() throws Throwable {
         Assume.assumeThat(isValid, CoreMatchers.is(false));
 
@@ -108,8 +112,8 @@ public class ReadThroughSingleCacheAdviceTest extends AbstractCacheTest<ReadThro
 
         assertEquals(expectedValue, advice.cacheGetSingle(pjp));
 
-        verify(client, never()).get(anyString());
-        verify(client, never()).set(anyString(), anyInt(), any());
+        verify(cache, never()).get(anyString(), any(Class.class));
+        verify(cache, never()).set(anyString(), anyInt(), any(), any(Class.class));
         verify(pjp).proceed();
     }
 
@@ -127,36 +131,36 @@ public class ReadThroughSingleCacheAdviceTest extends AbstractCacheTest<ReadThro
     private static class TestService {
 
         @ReadThroughSingleCache(namespace = NS, expiration = EXPIRATION)
-        public int method1(@ParameterValueKeyProvider int id1) {
+        public int method1(@ParameterValueKeyProvider final int id1) {
             return 1;
         }
 
         @ReadThroughSingleCache(namespace = NS, expiration = EXPIRATION)
-        public String method2(@ParameterValueKeyProvider int id1) {
+        public String method2(@ParameterValueKeyProvider final int id1) {
             return "2";
         }
 
         @ReadThroughSingleCache(namespace = NS, expiration = EXPIRATION)
-        public int method3(@ParameterValueKeyProvider(order = 1) int id1, @ParameterValueKeyProvider(order = 2) int id2) {
+        public int method3(@ParameterValueKeyProvider(order = 1) final int id1, @ParameterValueKeyProvider(order = 2) final int id2) {
             return 3;
         }
 
         // no @ParameterValueKeyProvider
         @ReadThroughSingleCache(namespace = NS, expiration = EXPIRATION)
-        public int method50(int id1) {
+        public int method50(final int id1) {
             return 50;
         }
 
         // void method
         @ReadThroughSingleCache(namespace = NS, expiration = EXPIRATION)
-        public void method51(@ParameterValueKeyProvider int id1) {
+        public void method51(@ParameterValueKeyProvider final int id1) {
 
         }
-        
+
         // ReturnValueKeyProvider is not supported by ReadThroughSingleCache
         @ReturnValueKeyProvider
         @ReadThroughSingleCache(namespace = NS, expiration = EXPIRATION)
-        public int method52(int id1) {
+        public int method52(final int id1) {
             return 1;
         }
 

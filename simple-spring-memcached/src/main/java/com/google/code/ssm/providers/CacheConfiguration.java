@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2008-2011 Nelson Carpentier, Jakub Białek
+ * Copyright (c) 2008-2012 Nelson Carpentier, Jakub Białek
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
  * documentation files (the "Software"), to deal in the Software without restriction, including without limitation the
@@ -16,7 +16,7 @@
  * 
  */
 
-package com.google.code.ssm.config;
+package com.google.code.ssm.providers;
 
 /**
  * 
@@ -24,27 +24,13 @@ package com.google.code.ssm.config;
  * @author Jakub Białek
  * 
  */
-public class MemcachedConnectionBean {
-
-    private String nodeList;
-
-    private String jndiKey;
+public class CacheConfiguration {
 
     private boolean consistentHashing;
 
     private boolean useBinaryProtocol;
 
-    private int operationTimeout = 500;
-
-    private Integer maxAwayTime;
-
-    public String getNodeList() {
-        return nodeList;
-    }
-
-    public void setNodeList(final String nodeList) {
-        this.nodeList = nodeList;
-    }
+    private Integer operationTimeout;
 
     public boolean isConsistentHashing() {
         return consistentHashing;
@@ -54,15 +40,7 @@ public class MemcachedConnectionBean {
         this.consistentHashing = consistentHashing;
     }
 
-    public void setJndiKey(String jndiKey) {
-        this.jndiKey = jndiKey;
-    }
-
-    public String getJndiKey() {
-        return jndiKey;
-    }
-
-    public void setUseBinaryProtocol(boolean useBinaryProtocol) {
+    public void setUseBinaryProtocol(final boolean useBinaryProtocol) {
         this.useBinaryProtocol = useBinaryProtocol;
     }
 
@@ -70,20 +48,12 @@ public class MemcachedConnectionBean {
         return useBinaryProtocol;
     }
 
-    public void setOperationTimeout(int operationTimeout) {
+    public void setOperationTimeout(final Integer operationTimeout) {
         this.operationTimeout = operationTimeout;
     }
 
-    public int getOperationTimeout() {
+    public Integer getOperationTimeout() {
         return operationTimeout;
-    }
-
-    public void setMaxAwayTime(Integer maxAwayTime) {
-        this.maxAwayTime = maxAwayTime;
-    }
-
-    public Integer getMaxAwayTime() {
-        return maxAwayTime;
     }
 
 }

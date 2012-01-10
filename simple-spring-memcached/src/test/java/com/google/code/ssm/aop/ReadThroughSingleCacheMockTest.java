@@ -24,15 +24,16 @@ import static org.easymock.EasyMock.reset;
 import static org.easymock.EasyMock.verify;
 import static org.junit.Assert.assertEquals;
 
+import java.util.Collections;
+
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.reflect.MethodSignature;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import com.google.code.ssm.Cache;
 import com.google.code.ssm.api.CacheKeyMethod;
-import com.google.code.ssm.impl.CacheKeyBuilderImpl;
-import com.google.code.ssm.providers.CacheClient;
 
 /**
  * 
@@ -43,7 +44,7 @@ public class ReadThroughSingleCacheMockTest {
 
     private static ReadThroughSingleCacheAdvice cut;
     private static ProceedingJoinPoint pjp;
-    private static CacheClient cache;
+    private static Cache cache;
     private static MethodSignature sig;
 
     @BeforeClass
@@ -51,11 +52,8 @@ public class ReadThroughSingleCacheMockTest {
         cut = new ReadThroughSingleCacheAdvice();
 
         pjp = createMock(ProceedingJoinPoint.class);
-        cache = createMock(CacheClient.class);
+        cache = createMock(Cache.class);
         sig = createMock(MethodSignature.class);
-
-        cut.setCache(cache);
-        cut.setCacheKeyBuilder(new CacheKeyBuilderImpl());
     }
 
     @Before
@@ -77,21 +75,19 @@ public class ReadThroughSingleCacheMockTest {
         verify(sig);
     }
 
-    /*@Test
-    public void testGetObjectId() throws Exception {
-        final Method methodToCache = AOPTargetClass2.class.getDeclaredMethod("cacheThis", AOPKeyClass.class);
-        expect(pjp.getArgs()).andReturn(new Object[] { new AOPKeyClass() });
-
-        replayAll();
-
-        @SuppressWarnings("deprecation")
-        final String result = cut.getObjectId(0, pjp, methodToCache);
-
-        verifyAll();
-
-        assertEquals(AOPKeyClass.result, result);
-    }
-*/
+    /*
+     * @Test public void testGetObjectId() throws Exception { final Method methodToCache =
+     * AOPTargetClass2.class.getDeclaredMethod("cacheThis", AOPKeyClass.class); expect(pjp.getArgs()).andReturn(new
+     * Object[] { new AOPKeyClass() });
+     * 
+     * replayAll();
+     * 
+     * @SuppressWarnings("deprecation") final String result = cut.getObjectId(0, pjp, methodToCache);
+     * 
+     * verifyAll();
+     * 
+     * assertEquals(AOPKeyClass.result, result); }
+     */
     // @Test
     // public void testTopLevelCacheIndividualCacheHit() throws Throwable {
     // final String methodName = "cacheThis";
@@ -138,8 +134,12 @@ public class ReadThroughSingleCacheMockTest {
         final String targetResult = "A VALUE FROM THE TARGET OBJECT";
         expect(pjp.proceed()).andReturn(targetResult);
 
+        expect(cache.getName()).andReturn("cache-0");
+        expect(cache.getAliases()).andReturn(Collections.<String> emptyList()).anyTimes();
+
         replayAll();
 
+        cut.addCache(cache);
         final String result = (String) cut.cacheGetSingle(pjp);
 
         verifyAll();

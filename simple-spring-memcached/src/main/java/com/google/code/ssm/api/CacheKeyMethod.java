@@ -18,7 +18,10 @@
 
 package com.google.code.ssm.api;
 
-import java.lang.annotation.*;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
 /**
  * In SSM, you are able to identify 'key objects'. These are the objects that SSM will rely upon to generate a

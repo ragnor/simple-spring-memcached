@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2010-2011 Jakub Białek
+ * Copyright (c) 2010-2012 Jakub Białek
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
  * documentation files (the "Software"), to deal in the Software without restriction, including without limitation the
@@ -21,13 +21,14 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
-import com.google.code.ssm.providers.CacheTranscoder;
-import com.google.code.ssm.providers.CachedObject;
-import com.google.code.ssm.providers.CachedObjectImpl;
-
 import org.codehaus.jackson.map.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.util.Assert;
+
+import com.google.code.ssm.providers.CacheTranscoder;
+import com.google.code.ssm.providers.CachedObject;
+import com.google.code.ssm.providers.CachedObjectImpl;
 
 /**
  * 
@@ -45,24 +46,29 @@ public class JsonTranscoder<T> implements CacheTranscoder<T> { // NO_UCD
 
     private static final int JSON_SERIALIZED = 8; // json format
 
-    private CacheTranscoder<? super T> defaultTranscoder;
+    private final CacheTranscoder<? super T> defaultTranscoder;
 
-    private ObjectMapper mapper;
+    private final ObjectMapper mapper;
 
-    private Class<T> clazz;
+    private final Class<T> clazz;
 
-    public JsonTranscoder(Class<T> clazz, ObjectMapper mapper, CacheTranscoder<? super T> defaultTranscoder) {
+    public JsonTranscoder(final Class<T> clazz, final ObjectMapper mapper, final CacheTranscoder<? super T> defaultTranscoder) {
+        Assert.notNull(clazz, "'clazz' is required and cannot be null");
+        Assert.notNull(mapper, "'mapper' is required and cannot be null");
+        Assert.notNull(clazz, "'defaultTranscoder' is required and cannot be null");
+
         this.clazz = clazz;
         this.mapper = mapper;
         this.defaultTranscoder = defaultTranscoder;
     }
 
-    public boolean asyncDecode(CachedObject data) {
+    public boolean asyncDecode(final CachedObject data) {
         return false;
     }
 
+    @Override
     @SuppressWarnings("unchecked")
-    public T decode(CachedObject data) {
+    public T decode(final CachedObject data) {
         if ((data.getFlags() & JSON_SERIALIZED) == 0) {
             return (T) defaultTranscoder.decode(data);
         }
@@ -84,7 +90,8 @@ public class JsonTranscoder<T> implements CacheTranscoder<T> { // NO_UCD
         }
     }
 
-    public CachedObject encode(T o) {
+    @Override
+    public CachedObject encode(final T o) {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
 
         try {

@@ -28,10 +28,10 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.slf4j.Logger;
 
+import com.google.code.ssm.aop.support.CacheKeyBuilderImpl;
+import com.google.code.ssm.aop.support.InvalidAnnotationException;
 import com.google.code.ssm.api.CacheKeyMethod;
 import com.google.code.ssm.api.ReadThroughMultiCache;
-import com.google.code.ssm.exceptions.InvalidAnnotationException;
-import com.google.code.ssm.impl.CacheKeyBuilderImpl;
 
 /**
  * 

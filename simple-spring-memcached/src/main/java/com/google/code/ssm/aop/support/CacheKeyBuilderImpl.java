@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011 Jakub Białek
+ * Copyright (c) 2012 Jakub Białek
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
  * documentation files (the "Software"), to deal in the Software without restriction, including without limitation the
@@ -15,18 +15,12 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package com.google.code.ssm.impl;
+package com.google.code.ssm.aop.support;
 
 import java.security.InvalidParameterException;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
-import com.google.code.ssm.aop.AnnotationData;
-import com.google.code.ssm.aop.CacheKeyBuilder;
-import com.google.code.ssm.api.KeyProvider;
 import com.google.code.ssm.util.Utils;
 
 /**
@@ -35,18 +29,20 @@ import com.google.code.ssm.util.Utils;
  * @since 2.0.0
  * 
  */
-@Service("cacheKeyBuilder")
 public class CacheKeyBuilderImpl implements CacheKeyBuilder { // NO_UCD
 
     private static final String SEPARATOR = ":";
 
     private static final String ID_SEPARATOR = "/";
 
-    @Autowired
-    private KeyProvider defaultKeyProvider;
+    private KeyProvider defaultKeyProvider = new DefaultKeyProvider();
 
-    public void setDefaultKeyProvider(KeyProvider defaultKeyProvider) {
+    public void setDefaultKeyProvider(final KeyProvider defaultKeyProvider) {
         this.defaultKeyProvider = defaultKeyProvider;
+    }
+
+    public KeyProvider getDefaultKeyProvider() {
+        return this.defaultKeyProvider;
     }
 
     @Override
@@ -142,7 +138,7 @@ public class CacheKeyBuilderImpl implements CacheKeyBuilder { // NO_UCD
         return cacheKey.toString();
     }
 
-    private void checkKeyPart(String keyPart) {
+    private void checkKeyPart(final String keyPart) {
         if (keyPart == null || keyPart.length() < 1) {
             throw new InvalidParameterException("Ids for objects in the cache must be at least 1 character long.");
         }

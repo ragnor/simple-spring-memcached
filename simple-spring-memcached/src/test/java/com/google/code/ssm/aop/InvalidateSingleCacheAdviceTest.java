@@ -1,4 +1,4 @@
-/* Copyright (c) 2011 Jakub Białek
+/* Copyright (c) 2012 Jakub Białek
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
  * documentation files (the "Software"), to deal in the Software without restriction, including without limitation the
@@ -83,7 +83,7 @@ public class InvalidateSingleCacheAdviceTest extends AbstractCacheTest<Invalidat
 
         assertEquals(expectedValue, advice.cacheInvalidateSingle(pjp));
 
-        verify(client).delete(cacheKey);
+        verify(cache).delete(cacheKey);
         verify(pjp).proceed();
     }
 
@@ -96,7 +96,7 @@ public class InvalidateSingleCacheAdviceTest extends AbstractCacheTest<Invalidat
         assertEquals(expectedValue, advice.cacheInvalidateSingle(pjp));
 
         verify(pjp).proceed();
-        verify(client, never()).delete(anyString());
+        verify(cache, never()).delete(anyString());
     }
 
     @Override

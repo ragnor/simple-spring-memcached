@@ -1,4 +1,4 @@
-/* Copyright (c) 2011 Jakub Białek
+/* Copyright (c) 2012 Jakub Białek
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
  * documentation files (the "Software"), to deal in the Software without restriction, including without limitation the
@@ -34,6 +34,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runners.Parameterized.Parameters;
 
+import com.google.code.ssm.aop.support.PertinentNegativeNull;
 import com.google.code.ssm.api.ParameterDataUpdateContent;
 import com.google.code.ssm.api.ParameterValueKeyProvider;
 import com.google.code.ssm.api.ReturnDataUpdateContent;
@@ -140,14 +141,14 @@ public class UpdateMultiCacheAdvice2Test extends AbstractCacheTest<UpdateMultiCa
 
     private static final int EXPIRATION = 345;
 
-    private List<?> expectedValue;
+    private final List<?> expectedValue;
 
-    private Object returnValue;
+    private final Object returnValue;
 
-    private String[] cacheKeys;
+    private final String[] cacheKeys;
 
-    public UpdateMultiCacheAdvice2Test(boolean isValid, String methodName, Class<?>[] paramTypes, Object[] params, List<?> expectedValue,
-            Object returnValue, String[] cacheKeys) {
+    public UpdateMultiCacheAdvice2Test(final boolean isValid, final String methodName, final Class<?>[] paramTypes, final Object[] params,
+            final List<?> expectedValue, final Object returnValue, final String[] cacheKeys) {
         super(isValid, methodName, paramTypes, params, null);
         this.returnValue = returnValue;
         this.expectedValue = expectedValue;
@@ -160,6 +161,7 @@ public class UpdateMultiCacheAdvice2Test extends AbstractCacheTest<UpdateMultiCa
     }
 
     @Test
+    @SuppressWarnings("unchecked")
     public void valid() throws Throwable {
         Assume.assumeTrue(isValid);
 
@@ -167,24 +169,26 @@ public class UpdateMultiCacheAdvice2Test extends AbstractCacheTest<UpdateMultiCa
 
         for (int i = 0; i < cacheKeys.length; i++) {
             if (advice.getMethodToCache(pjp).getAnnotation(UpdateMultiCache.class).option().overwriteNoNulls()) {
-                verify(client).set(eq(cacheKeys[i]), eq(EXPIRATION), eq(expectedValue.get(i)));
+                verify(cache).setSilently(eq(cacheKeys[i]), eq(EXPIRATION), eq(expectedValue.get(i)), any(Class.class));
             } else if (advice.getMethodToCache(pjp).getAnnotation(UpdateMultiCache.class).option().addNullsToCache()
                     && expectedValue.get(i) instanceof PertinentNegativeNull) {
-                verify(client).add(eq(cacheKeys[i]), eq(EXPIRATION), eq(expectedValue.get(i)));
+                verify(cache).addSilently(eq(cacheKeys[i]), eq(EXPIRATION), eq(expectedValue.get(i)), any(Class.class));
             } else {
-                verify(client).set(eq(cacheKeys[i]), eq(EXPIRATION), eq(expectedValue.get(i)));
+                verify(cache).setSilently(eq(cacheKeys[i]), eq(EXPIRATION), eq(expectedValue.get(i)), any(Class.class));
             }
 
         }
     }
 
     @Test
+    @SuppressWarnings("unchecked")
     public void invalid() throws Throwable {
         Assume.assumeThat(isValid, CoreMatchers.is(false));
 
         advice.cacheUpdateMulti(pjp, expectedValue);
 
-        verify(client, never()).set(anyString(), anyInt(), any());
+        verify(cache, never()).setSilently(anyString(), anyInt(), any(), any(Class.class));
+        verify(cache, never()).set(anyString(), anyInt(), any(), any(Class.class));
     }
 
     @Override
@@ -202,53 +206,53 @@ public class UpdateMultiCacheAdvice2Test extends AbstractCacheTest<UpdateMultiCa
 
         @ReturnDataUpdateContent
         @UpdateMultiCache(namespace = NS, expiration = EXPIRATION)
-        public List<Integer> method1(@ParameterValueKeyProvider List<Integer> ids) {
+        public List<Integer> method1(@ParameterValueKeyProvider final List<Integer> ids) {
             return Collections.<Integer> emptyList();
         }
 
         @ReturnDataUpdateContent
         @UpdateMultiCache(namespace = NS, expiration = EXPIRATION)
-        public List<String> method2(@ParameterValueKeyProvider List<Point> ids) {
+        public List<String> method2(@ParameterValueKeyProvider final List<Point> ids) {
             return Collections.<String> emptyList();
         }
 
         @ReturnDataUpdateContent
         @UpdateMultiCache(namespace = NS, expiration = EXPIRATION)
-        public List<String> method3(@ParameterValueKeyProvider(order = 2) List<Integer> ids,
-                @ParameterValueKeyProvider(order = 1) String value) {
+        public List<String> method3(@ParameterValueKeyProvider(order = 2) final List<Integer> ids,
+                @ParameterValueKeyProvider(order = 1) final String value) {
             return Collections.<String> emptyList();
         }
 
         @ReturnDataUpdateContent
         @UpdateMultiCache(namespace = NS, expiration = EXPIRATION)
-        public List<Point> method4(@ParameterValueKeyProvider List<Integer> ids) {
+        public List<Point> method4(@ParameterValueKeyProvider final List<Integer> ids) {
             return Collections.<Point> emptyList();
         }
 
         @UpdateMultiCache(namespace = NS, expiration = EXPIRATION)
-        public void method5(@ParameterDataUpdateContent List<String> contents, @ParameterValueKeyProvider List<String> ids) {
+        public void method5(@ParameterDataUpdateContent final List<String> contents, @ParameterValueKeyProvider final List<String> ids) {
 
         }
 
         @UpdateMultiCache(namespace = NS, expiration = EXPIRATION)
-        public void method6(@ParameterDataUpdateContent List<String> contents, @ParameterValueKeyProvider(order = 2) List<String> ids,
-                @ParameterValueKeyProvider(order = 1) String value) {
+        public void method6(@ParameterDataUpdateContent final List<String> contents,
+                @ParameterValueKeyProvider(order = 2) final List<String> ids, @ParameterValueKeyProvider(order = 1) final String value) {
 
         }
 
         @UpdateMultiCache(namespace = NS, expiration = EXPIRATION)
-        public int method7(@ParameterDataUpdateContent @ParameterValueKeyProvider List<String> contents) {
+        public int method7(@ParameterDataUpdateContent @ParameterValueKeyProvider final List<String> contents) {
             return 7;
         }
 
         @UpdateMultiCache(namespace = NS, expiration = EXPIRATION)
-        public int method8(@ParameterDataUpdateContent @ParameterValueKeyProvider List<Point> contents) {
+        public int method8(@ParameterDataUpdateContent @ParameterValueKeyProvider final List<Point> contents) {
             return 8;
         }
 
         @UpdateMultiCache(namespace = NS, expiration = EXPIRATION)
-        public int method9(@ParameterDataUpdateContent @ParameterValueKeyProvider(order = 1) List<String> contents,
-                @ParameterValueKeyProvider(order = 2) String value) {
+        public int method9(@ParameterDataUpdateContent @ParameterValueKeyProvider(order = 1) final List<String> contents,
+                @ParameterValueKeyProvider(order = 2) final String value) {
             return 9;
         }
 
@@ -256,7 +260,7 @@ public class UpdateMultiCacheAdvice2Test extends AbstractCacheTest<UpdateMultiCa
         // in such case @ReturnDataUpdateContent takes precedence
         @ReturnDataUpdateContent
         @UpdateMultiCache(namespace = NS, expiration = EXPIRATION)
-        public List<String> method10(@ParameterDataUpdateContent @ParameterValueKeyProvider List<Integer> ids) {
+        public List<String> method10(@ParameterDataUpdateContent @ParameterValueKeyProvider final List<Integer> ids) {
             return Collections.<String> emptyList();
         }
 
@@ -265,7 +269,7 @@ public class UpdateMultiCacheAdvice2Test extends AbstractCacheTest<UpdateMultiCa
         @ReturnValueKeyProvider
         @ReturnDataUpdateContent
         @UpdateMultiCache(namespace = NS, expiration = EXPIRATION)
-        public List<String> method11(@ParameterDataUpdateContent List<Integer> ids) {
+        public List<String> method11(@ParameterDataUpdateContent final List<Integer> ids) {
             return Collections.<String> emptyList();
         }
 
@@ -278,59 +282,60 @@ public class UpdateMultiCacheAdvice2Test extends AbstractCacheTest<UpdateMultiCa
 
         @ReturnDataUpdateContent
         @UpdateMultiCache(namespace = NS, expiration = EXPIRATION, option = @UpdateMultiCacheOption(addNullsToCache = true))
-        public List<Point> method13(@ParameterValueKeyProvider List<String> ids) {
+        public List<Point> method13(@ParameterValueKeyProvider final List<String> ids) {
             return Collections.<Point> emptyList();
         }
 
         @ReturnDataUpdateContent
         @UpdateMultiCache(namespace = NS, expiration = EXPIRATION, option = @UpdateMultiCacheOption(addNullsToCache = true, overwriteNoNulls = true))
-        public List<Point> method14(@ParameterValueKeyProvider List<String> ids) {
+        public List<Point> method14(@ParameterValueKeyProvider final List<String> ids) {
             return Collections.<Point> emptyList();
         }
 
         // no @ParameterValueKeyProvider
         @ReturnDataUpdateContent
         @UpdateMultiCache(namespace = NS, expiration = EXPIRATION)
-        public List<String> method50(List<String> ids) {
+        public List<String> method50(final List<String> ids) {
             return Collections.<String> emptyList();
         }
 
         // no @ParameterDataUpdateContent or @ReturnDataUpdateContent
         @UpdateMultiCache(namespace = NS, expiration = EXPIRATION)
-        public List<String> method51(@ParameterValueKeyProvider List<String> ids) {
+        public List<String> method51(@ParameterValueKeyProvider final List<String> ids) {
             return Collections.<String> emptyList();
         }
 
         // @ReturnDataUpdateContent but void return type
         @ReturnDataUpdateContent
         @UpdateMultiCache(namespace = NS, expiration = EXPIRATION)
-        public void method52(@ParameterValueKeyProvider List<String> ids) {
+        public void method52(@ParameterValueKeyProvider final List<String> ids) {
 
         }
 
         // @ReturnDataUpdateContent but return type is not List
         @ReturnDataUpdateContent
         @UpdateMultiCache(namespace = NS, expiration = EXPIRATION)
-        public String method53(@ParameterValueKeyProvider List<String> ids) {
+        public String method53(@ParameterValueKeyProvider final List<String> ids) {
             return null;
         }
 
         // no list method parameter annotated with @ParameterValueKeyProvider
         @ReturnDataUpdateContent
         @UpdateMultiCache(namespace = NS, expiration = EXPIRATION)
-        public List<String> method54(@ParameterValueKeyProvider String id) {
+        public List<String> method54(@ParameterValueKeyProvider final String id) {
             return Collections.<String> emptyList();
         }
 
         // @ParameterDataUpdateContent but annotated method parameter is not List
         @UpdateMultiCache(namespace = NS, expiration = EXPIRATION)
-        public void method55(@ParameterValueKeyProvider List<String> ids, @ParameterDataUpdateContent String content) {
+        public void method55(@ParameterValueKeyProvider final List<String> ids, @ParameterDataUpdateContent final String content) {
 
         }
 
         // no list method parameter annotated with @ParameterValueKeyProvider
         @UpdateMultiCache(namespace = NS, expiration = EXPIRATION)
-        public void method56(List<String> ids, @ParameterDataUpdateContent List<String> contents, @ParameterValueKeyProvider String id) {
+        public void method56(final List<String> ids, @ParameterDataUpdateContent final List<String> contents,
+                @ParameterValueKeyProvider final String id) {
 
         }
 

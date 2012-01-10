@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2010-2011 Jakub Białek
+ * Copyright (c) 2010-2012 Jakub Białek
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
  * documentation files (the "Software"), to deal in the Software without restriction, including without limitation the
@@ -17,11 +17,11 @@
 
 package com.google.code.ssm.providers.xmemcached;
 
-import com.google.code.ssm.providers.CacheTranscoder;
-import com.google.code.ssm.providers.CachedObject;
-
 import net.rubyeye.xmemcached.transcoders.CachedData;
 import net.rubyeye.xmemcached.transcoders.Transcoder;
+
+import com.google.code.ssm.providers.CacheTranscoder;
+import com.google.code.ssm.providers.CachedObject;
 
 /**
  * 
@@ -32,19 +32,19 @@ import net.rubyeye.xmemcached.transcoders.Transcoder;
  */
 class TranscoderAdapter<T> implements Transcoder<T> {
 
-    private CacheTranscoder<T> transcoder;
+    private final CacheTranscoder<T> transcoder;
 
-    TranscoderAdapter(CacheTranscoder<T> transcoder) {
+    TranscoderAdapter(final CacheTranscoder<T> transcoder) {
         this.transcoder = transcoder;
     }
 
     @Override
-    public T decode(CachedData d) {
-        return (T) transcoder.decode(new CachedObjectWrapper(d));
+    public T decode(final CachedData d) {
+        return transcoder.decode(new CachedObjectWrapper(d));
     }
 
     @Override
-    public CachedData encode(T o) {
+    public CachedData encode(final T o) {
         CachedObject cachedObject = transcoder.encode(o);
         return new CachedData(cachedObject.getFlags(), cachedObject.getData());
     }
@@ -60,17 +60,17 @@ class TranscoderAdapter<T> implements Transcoder<T> {
     }
 
     @Override
-    public void setCompressionThreshold(int to) {
+    public void setCompressionThreshold(final int to) {
 
     }
 
     @Override
-    public void setPackZeros(boolean packZeros) {
+    public void setPackZeros(final boolean packZeros) {
         throw new UnsupportedOperationException("TranscoderAdapter doesn't support pack zeros");
     }
 
     @Override
-    public void setPrimitiveAsString(boolean primitiveAsString) {
+    public void setPrimitiveAsString(final boolean primitiveAsString) {
 
     }
 

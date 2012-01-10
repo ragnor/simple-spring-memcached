@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2010-2011 Jakub Białek
+ * Copyright (c) 2010-2012 Jakub Białek
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
  * documentation files (the "Software"), to deal in the Software without restriction, including without limitation the
@@ -19,18 +19,16 @@ package com.google.code.ssm.aop.counter;
 
 import java.lang.reflect.Method;
 
-import com.google.code.ssm.aop.AnnotationData;
-import com.google.code.ssm.aop.AnnotationDataBuilder;
-import com.google.code.ssm.api.counter.ReadCounterFromCache;
-import com.google.code.ssm.providers.CacheTranscoder;
-import com.google.code.ssm.transcoders.LongToStringTranscoder;
-
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.code.ssm.aop.support.AnnotationData;
+import com.google.code.ssm.aop.support.AnnotationDataBuilder;
+import com.google.code.ssm.api.counter.ReadCounterFromCache;
 
 /**
  * 
@@ -43,8 +41,6 @@ public class ReadCounterFromCacheAdvice extends CounterInCacheBase {
 
     private static final Logger LOG = LoggerFactory.getLogger(ReadCounterFromCacheAdvice.class);
 
-    private final CacheTranscoder<Long> transcoder = new LongToStringTranscoder();
-
     @Pointcut("@annotation(com.google.code.ssm.api.counter.ReadCounterFromCache)")
     public void readSingleCounter() {
     }
@@ -56,13 +52,14 @@ public class ReadCounterFromCacheAdvice extends CounterInCacheBase {
         // It will be invoked only if underlying method completes successfully.
         String cacheKey = null;
         ReadCounterFromCache annotation;
+        AnnotationData data;
         try {
             Method methodToCache = getMethodToCache(pjp);
             verifyMethodSignature(methodToCache);
             annotation = methodToCache.getAnnotation(ReadCounterFromCache.class);
-            AnnotationData data = AnnotationDataBuilder.buildAnnotationData(annotation, ReadCounterFromCache.class, methodToCache);
+            data = AnnotationDataBuilder.buildAnnotationData(annotation, ReadCounterFromCache.class, methodToCache);
             cacheKey = cacheKeyBuilder.getCacheKey(data, pjp.getArgs(), methodToCache.toString());
-            Long result = get(cacheKey, transcoder);
+            Long result = getCache(data).get(cacheKey, Long.class);
 
             if (result != null) {
                 getLogger().debug("Cache hit.");
@@ -82,7 +79,7 @@ public class ReadCounterFromCacheAdvice extends CounterInCacheBase {
             if (checkData(result, pjp)) {
                 long value = ((Number) result).longValue();
                 // tricky way to update counter
-                incr(cacheKey, 0, value, annotation.expiration());
+                getCache(data).incr(cacheKey, 0, value, annotation.expiration());
             }
         } catch (Throwable ex) {
             getLogger()
@@ -91,13 +88,13 @@ public class ReadCounterFromCacheAdvice extends CounterInCacheBase {
         return result;
     }
 
-    protected void verifyMethodSignature(Method methodToCache) {
+    protected void verifyMethodSignature(final Method methodToCache) {
         if (!isReturnTypeSupported(methodToCache.getReturnType())) {
             throw new RuntimeException(String.format("Wrong method return type %s", methodToCache.toString()));
         }
     }
 
-    protected Number convertResult(Method method, long result) {
+    protected Number convertResult(final Method method, final long result) {
         if (method.getReturnType().equals(int.class) || method.getReturnType().equals(Integer.class)) {
             return (int) result;
         } else {

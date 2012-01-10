@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2010-2011 Jakub Białek
+ * Copyright (c) 2010-2012 Jakub Białek
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
  * documentation files (the "Software"), to deal in the Software without restriction, including without limitation the
@@ -19,16 +19,16 @@ package com.google.code.ssm.aop.counter;
 
 import java.lang.reflect.Method;
 
-import com.google.code.ssm.aop.AnnotationData;
-import com.google.code.ssm.aop.AnnotationDataBuilder;
-import com.google.code.ssm.api.counter.IncrementCounterInCache;
-
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.AfterReturning;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.code.ssm.aop.support.AnnotationData;
+import com.google.code.ssm.aop.support.AnnotationDataBuilder;
+import com.google.code.ssm.api.counter.IncrementCounterInCache;
 
 /**
  * 
@@ -56,7 +56,7 @@ public class IncrementCounterInCacheAdvice extends CounterInCacheBase {
             annotation = methodToCache.getAnnotation(IncrementCounterInCache.class);
             AnnotationData data = AnnotationDataBuilder.buildAnnotationData(annotation, IncrementCounterInCache.class, methodToCache);
             cacheKey = cacheKeyBuilder.getCacheKey(data, jp.getArgs(), methodToCache.toString());
-            incr(cacheKey, 1, 1);
+            getCache(data).incr(cacheKey, 1, 1);
         } catch (Throwable ex) {
             getLogger().warn(String.format("Incrementing counter [%s] via %s aborted due to an error.", cacheKey, jp.toShortString()), ex);
         }

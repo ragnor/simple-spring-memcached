@@ -1,4 +1,4 @@
-/* Copyright (c) 2011 Jakub Białek
+/* Copyright (c) 2012 Jakub Białek
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
  * documentation files (the "Software"), to deal in the Software without restriction, including without limitation the
@@ -25,10 +25,8 @@ import org.junit.runners.Parameterized;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
-import com.google.code.ssm.impl.CacheKeyBuilderImpl;
-import com.google.code.ssm.impl.CacheKeyMethodStoreImpl;
-import com.google.code.ssm.impl.DefaultKeyProvider;
-import com.google.code.ssm.providers.CacheClient;
+import com.google.code.ssm.Cache;
+import com.google.code.ssm.api.AnnotationConstants;
 
 /**
  * 
@@ -39,7 +37,7 @@ import com.google.code.ssm.providers.CacheClient;
 public abstract class AbstractCacheTest<T extends CacheBase> {
 
     @Mock
-    protected CacheClient client;
+    protected Cache cache;
 
     @Mock
     protected ProceedingJoinPoint pjp;
@@ -59,7 +57,8 @@ public abstract class AbstractCacheTest<T extends CacheBase> {
 
     protected String cacheKey;
 
-    protected AbstractCacheTest(boolean isValid, String methodName, Class<?>[] paramTypes, Object[] params, String cacheKey) {
+    protected AbstractCacheTest(final boolean isValid, final String methodName, final Class<?>[] paramTypes, final Object[] params,
+            final String cacheKey) {
         this.isValid = isValid;
         this.methodName = methodName;
         this.paramTypes = paramTypes;
@@ -67,15 +66,11 @@ public abstract class AbstractCacheTest<T extends CacheBase> {
         this.cacheKey = cacheKey;
     }
 
-    public void setUp(Object testService) {
+    public void setUp(final Object testService) {
         MockitoAnnotations.initMocks(this);
+        when(cache.getName()).thenReturn(AnnotationConstants.DEFAULT_CACHE_NAME);
         advice = createAdvice();
-        advice.setCache(client);
-        DefaultKeyProvider keyProvider = new DefaultKeyProvider();
-        keyProvider.setMethodStore(new CacheKeyMethodStoreImpl());
-        CacheKeyBuilderImpl cacheKeyBuilder = new CacheKeyBuilderImpl();
-        cacheKeyBuilder.setDefaultKeyProvider(keyProvider);
-        advice.setCacheKeyBuilder(cacheKeyBuilder);
+        advice.addCache(cache);
 
         when(signature.getName()).thenReturn(methodName);
         when(signature.getParameterTypes()).thenReturn(paramTypes);
@@ -92,7 +87,7 @@ public abstract class AbstractCacheTest<T extends CacheBase> {
 
     }
 
-    protected String getKey(String namespace, Object... params) {
+    protected String getKey(final String namespace, final Object... params) {
         StringBuilder sb = new StringBuilder(namespace);
         sb.append(':');
         for (Object param : params) {

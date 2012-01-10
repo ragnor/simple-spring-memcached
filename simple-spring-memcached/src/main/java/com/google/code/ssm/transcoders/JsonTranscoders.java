@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2010-2011 Jakub Białek
+ * Copyright (c) 2010-2012 Jakub Białek
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
  * documentation files (the "Software"), to deal in the Software without restriction, including without limitation the
@@ -22,8 +22,6 @@ import java.util.Map;
 
 import com.google.code.ssm.providers.CacheTranscoder;
 
-import org.springframework.stereotype.Component;
-
 /**
  * 
  * Groups several transcoders.
@@ -32,17 +30,16 @@ import org.springframework.stereotype.Component;
  * @since 2.0.0
  * 
  */
-@Component
 public class JsonTranscoders {
 
-    private Map<Class<?>, CacheTranscoder<?>> transcoders = new HashMap<Class<?>, CacheTranscoder<?>>();
+    private final Map<Class<?>, CacheTranscoder<?>> transcoders = new HashMap<Class<?>, CacheTranscoder<?>>();
 
     public Map<Class<?>, CacheTranscoder<?>> getTranscoders() {
         return transcoders;
     }
 
     @SuppressWarnings("unchecked")
-    public CacheTranscoder<Object> getTranscoder(Class<?> clazz) {
+    public CacheTranscoder<Object> getTranscoder(final Class<?> clazz) {
         return (CacheTranscoder<Object>) transcoders.get(clazz);
     }
 

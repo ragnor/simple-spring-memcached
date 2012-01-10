@@ -1,4 +1,4 @@
-package com.google.code.ssm.impl;
+package com.google.code.ssm.aop.support;
 
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
@@ -9,7 +9,9 @@ import org.apache.commons.lang.RandomStringUtils;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import com.google.code.ssm.aop.AnnotationData;
+import com.google.code.ssm.aop.support.AnnotationData;
+import com.google.code.ssm.aop.support.CacheKeyBuilderImpl;
+
 
 public class CacheKeyBuilderImplTest {
     

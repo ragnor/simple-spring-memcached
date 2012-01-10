@@ -1,4 +1,4 @@
-/* Copyright (c) 2011 Jakub Białek
+/* Copyright (c) 2012 Jakub Białek
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
  * documentation files (the "Software"), to deal in the Software without restriction, including without limitation the
@@ -59,10 +59,10 @@ public class ReadThroughAssignCacheAdviceTest extends AbstractCacheTest<ReadThro
 
     private static final int EXPIRATION = 220;
 
-    private Object expectedValue;
+    private final Object expectedValue;
 
-    public ReadThroughAssignCacheAdviceTest(boolean isValid, String methodName, Class<?>[] paramTypes, Object[] params,
-            Object expectedValue, String cacheKey) {
+    public ReadThroughAssignCacheAdviceTest(final boolean isValid, final String methodName, final Class<?>[] paramTypes,
+            final Object[] params, final Object expectedValue, final String cacheKey) {
         super(isValid, methodName, paramTypes, params, cacheKey);
         this.expectedValue = expectedValue;
     }
@@ -73,6 +73,7 @@ public class ReadThroughAssignCacheAdviceTest extends AbstractCacheTest<ReadThro
     }
 
     @Test
+    @SuppressWarnings("unchecked")
     public void validCacheMiss() throws Throwable {
         Assume.assumeTrue(isValid);
 
@@ -80,25 +81,27 @@ public class ReadThroughAssignCacheAdviceTest extends AbstractCacheTest<ReadThro
 
         assertEquals(expectedValue, advice.cacheSingleAssign(pjp));
 
-        verify(client).get(eq(cacheKey));
-        verify(client).set(eq(cacheKey), eq(EXPIRATION), eq(expectedValue));
+        verify(cache).get(eq(cacheKey), any(Class.class));
+        verify(cache).set(eq(cacheKey), eq(EXPIRATION), eq(expectedValue), any(Class.class));
         verify(pjp).proceed();
     }
 
     @Test
+    @SuppressWarnings("unchecked")
     public void validCacheHit() throws Throwable {
         Assume.assumeTrue(isValid);
 
-        when(client.get(eq(cacheKey))).thenReturn(expectedValue);
+        when(cache.get(eq(cacheKey), any(Class.class))).thenReturn(expectedValue);
 
         assertEquals(expectedValue, advice.cacheSingleAssign(pjp));
 
-        verify(client).get(eq(cacheKey));
-        verify(client, never()).set(anyString(), anyInt(), any());
+        verify(cache).get(eq(cacheKey), any(Class.class));
+        verify(cache, never()).set(anyString(), anyInt(), any(), any(Class.class));
         verify(pjp, never()).proceed();
     }
 
     @Test
+    @SuppressWarnings("unchecked")
     public void invalid() throws Throwable {
         Assume.assumeThat(isValid, CoreMatchers.is(false));
 
@@ -106,8 +109,8 @@ public class ReadThroughAssignCacheAdviceTest extends AbstractCacheTest<ReadThro
 
         assertEquals(expectedValue, advice.cacheSingleAssign(pjp));
 
-        verify(client, never()).get(anyString());
-        verify(client, never()).set(anyString(), anyInt(), any());
+        verify(cache, never()).get(anyString(), any(Class.class));
+        verify(cache, never()).set(anyString(), anyInt(), any(), any(Class.class));
         verify(pjp).proceed();
     }
 
@@ -125,23 +128,23 @@ public class ReadThroughAssignCacheAdviceTest extends AbstractCacheTest<ReadThro
     private static class TestService {
 
         @ReadThroughAssignCache(namespace = NS, assignedKey = "1", expiration = EXPIRATION)
-        public int method1(int id1) {
+        public int method1(final int id1) {
             return 1;
         }
 
         @ReadThroughAssignCache(namespace = NS, assignedKey = "2", expiration = EXPIRATION)
-        public String method2(@ParameterValueKeyProvider int id1) {
+        public String method2(@ParameterValueKeyProvider final int id1) {
             return "2";
         }
 
         @ReadThroughAssignCache(namespace = NS, assignedKey = "3", expiration = EXPIRATION)
-        public int method3(@ParameterValueKeyProvider(order = 1) int id1, @ParameterValueKeyProvider(order = 2) int id2) {
+        public int method3(@ParameterValueKeyProvider(order = 1) final int id1, @ParameterValueKeyProvider(order = 2) final int id2) {
             return 3;
         }
 
         // void method
         @ReadThroughAssignCache(namespace = NS, assignedKey = "51", expiration = EXPIRATION)
-        public void method51(@ParameterValueKeyProvider int id1) {
+        public void method51(@ParameterValueKeyProvider final int id1) {
 
         }
 

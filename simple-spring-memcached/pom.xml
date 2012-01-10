@@ -54,6 +54,14 @@
 			<artifactId>aspectjweaver</artifactId>
 		</dependency>
 		<dependency>
+			<groupId>org.codehaus.jackson</groupId>
+			<artifactId>jackson-mapper-asl</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-api</artifactId>
+		</dependency>
+		<dependency>
 			<groupId>spy</groupId>
 			<artifactId>spymemcached</artifactId>
 			<optional>true</optional>
@@ -62,15 +70,7 @@
 			<groupId>com.googlecode.xmemcached</groupId>
 			<artifactId>xmemcached</artifactId>
 			<optional>true</optional>
-		</dependency>
-		<dependency>
-			<groupId>org.codehaus.jackson</groupId>
-			<artifactId>jackson-jaxrs</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.slf4j</groupId>
-			<artifactId>slf4j-api</artifactId>
-		</dependency>
+		</dependency>		
 
 		<dependency>
 			<groupId>org.slf4j</groupId>

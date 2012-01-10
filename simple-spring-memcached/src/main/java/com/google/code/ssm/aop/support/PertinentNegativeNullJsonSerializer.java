@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2008-2009 Nelson Carpentier
+ * Copyright (c) 2010-2012 Jakub Białek
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
  * documentation files (the "Software"), to deal in the Software without restriction, including without limitation the
@@ -13,35 +13,34 @@
  * WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
  * COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
- * 
  */
 
-package com.google.code.ssm.api;
+package com.google.code.ssm.aop.support;
+
+import java.io.IOException;
+
+import org.codehaus.jackson.JsonGenerator;
+import org.codehaus.jackson.JsonProcessingException;
+import org.codehaus.jackson.map.JsonSerializer;
+import org.codehaus.jackson.map.SerializerProvider;
 
 
 /**
  * 
- * @author Nelson Carpentier
+ * JSON serializer for {@link PertinentNegativeNull} class. Serialize object to [null].
+ * 
  * @author Jakub Białek
+ * @since 2.0.0
  * 
  */
-public interface KeyProvider {
+public class PertinentNegativeNullJsonSerializer extends JsonSerializer<PertinentNegativeNull> { // NO_UCD
 
-    /**
-     * From the supplied object, create a (no-whitespace) part of the key by which a value will be stored in Memcached.
-     * (Hint: This value, plus the Namespace value, plus optional other key should be no longer than 250 characters.)
-     * 
-     * @param keyObject
-     * @return
-     */
-    String generateKey(Object keyObject);
-
-    /**
-     * This is the multi-plexed version of <code>generateKey(...)</code>
-     * 
-     * @param keyObjects
-     * @return
-     */
-    String[] generateKeys(Object[] keyObjects);
+    @Override
+    public void serialize(final PertinentNegativeNull value, final JsonGenerator jgen, final SerializerProvider provider)
+            throws IOException, JsonProcessingException {
+        jgen.writeStartArray();
+        jgen.writeNull();
+        jgen.writeEndArray();
+    }
 
 }

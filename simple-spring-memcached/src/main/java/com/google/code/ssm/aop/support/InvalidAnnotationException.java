@@ -13,37 +13,22 @@
  * WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
  * COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ * 
  */
 
-package com.google.code.ssm.config;
-
-import static org.junit.Assert.*;
-
-import org.apache.commons.lang.*;
-import org.apache.commons.lang.math.*;
-import org.junit.Test;
-
+package com.google.code.ssm.aop.support;
 
 /**
  * 
  * @author Nelson Carpentier
  * 
  */
-public class MemcachedConnectionBeanTest {
+public class InvalidAnnotationException extends RuntimeException {
 
-    @Test
-    public void testInAndOut() {
-        final boolean consistent = RandomUtils.nextBoolean();
-        final String addresses = RandomStringUtils.randomAlphanumeric(12);
-        final String jndiKey = RandomStringUtils.randomAlphanumeric(12);
+    private static final long serialVersionUID = 1L;
 
-        final MemcachedConnectionBean bean = new MemcachedConnectionBean();
-        bean.setConsistentHashing(consistent);
-        bean.setNodeList(addresses);
-        bean.setJndiKey(jndiKey);
-
-        assertEquals(consistent, bean.isConsistentHashing());
-        assertEquals(addresses, bean.getNodeList());
-        assertEquals(jndiKey, bean.getJndiKey());
+    public InvalidAnnotationException(final String message) {
+        super(message);
     }
+
 }

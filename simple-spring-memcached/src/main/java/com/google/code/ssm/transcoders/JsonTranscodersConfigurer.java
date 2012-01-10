@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2010-2011 Jakub Białek
+ * Copyright (c) 2010-2012 Jakub Białek
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
  * documentation files (the "Software"), to deal in the Software without restriction, including without limitation the
@@ -21,8 +21,6 @@ import java.util.Map;
 
 import com.google.code.ssm.providers.CacheTranscoder;
 
-import org.springframework.beans.factory.annotation.Autowired;
-
 /**
  * 
  * Supports adding new transcoders.
@@ -33,10 +31,9 @@ import org.springframework.beans.factory.annotation.Autowired;
  */
 public class JsonTranscodersConfigurer { // NO_UCD
 
-    @Autowired
-    private JsonTranscoders jsonTranscoders;
+    private final JsonTranscoders jsonTranscoders = new JsonTranscoders();
 
-    public void setTranscoders(Map<Class<?>, CacheTranscoder<?>> transcoders) {
+    public void setTranscoders(final Map<Class<?>, CacheTranscoder<?>> transcoders) {
         jsonTranscoders.getTranscoders().putAll(transcoders);
     }
 

@@ -1,4 +1,4 @@
-/* Copyright (c) 2011 Jakub Białek
+/* Copyright (c) 2012 Jakub Białek
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
  * documentation files (the "Software"), to deal in the Software without restriction, including without limitation the
@@ -17,6 +17,7 @@
 package com.google.code.ssm.aop;
 
 import static org.junit.Assert.assertEquals;
+import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -35,6 +36,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runners.Parameterized.Parameters;
 
+import com.google.code.ssm.aop.support.PertinentNegativeNull;
 import com.google.code.ssm.api.ParameterValueKeyProvider;
 import com.google.code.ssm.api.ReadThroughMultiCache;
 import com.google.code.ssm.api.ReadThroughMultiCacheOption;
@@ -91,21 +93,21 @@ public class ReadThroughMultiCacheAdvicePartialMissTest extends AbstractCacheTes
 
     private static final int EXPIRATION = 321;
 
-    private List<?> expectedValue;
+    private final List<?> expectedValue;
 
-    private String[] cacheKeys;
+    private final String[] cacheKeys;
 
-    private Object[] missParams;
+    private final Object[] missParams;
 
-    private Map<String, Object> cacheHits;
+    private final Map<String, Object> cacheHits;
 
-    private int[] missedIndex;
+    private final int[] missedIndex;
 
-    private boolean allowNullsInResults;
+    private final boolean allowNullsInResults;
 
-    public ReadThroughMultiCacheAdvicePartialMissTest(boolean allowNullsInResults, String methodName, Class<?>[] paramTypes,
-            Object[] params, List<?> expectedValue, String[] cacheKeys, Object[] missParams, Map<String, Object> cacheHits,
-            int[] missedIndex) {
+    public ReadThroughMultiCacheAdvicePartialMissTest(final boolean allowNullsInResults, final String methodName,
+            final Class<?>[] paramTypes, final Object[] params, final List<?> expectedValue, final String[] cacheKeys,
+            final Object[] missParams, final Map<String, Object> cacheHits, final int[] missedIndex) {
         super(true, methodName, paramTypes, params, null);
         this.expectedValue = expectedValue;
         this.cacheKeys = cacheKeys;
@@ -121,18 +123,18 @@ public class ReadThroughMultiCacheAdvicePartialMissTest extends AbstractCacheTes
     }
 
     @Test
+    @SuppressWarnings("unchecked")
     public void validCachePartialMiss() throws Throwable {
         Assume.assumeTrue(isValid);
 
         List<Object> missValues = new ArrayList<Object>();
-        for (int i = 0; i < missedIndex.length; i++) {
-            missValues.add(expectedValue.get(missedIndex[i]));
+        for (int element : missedIndex) {
+            missValues.add(expectedValue.get(element));
         }
 
-        when(client.getBulk(eq(new HashSet<String>(Arrays.asList(cacheKeys))))).thenReturn(cacheHits);
+        when(cache.getBulk(eq(new HashSet<String>(Arrays.asList(cacheKeys))), any(Class.class))).thenReturn(cacheHits);
         when(pjp.proceed(missParams)).thenReturn(missValues);
 
-        @SuppressWarnings("unchecked")
         List<Object> result = (List<Object>) expectedValue;
         if (!allowNullsInResults) {
             result = new ArrayList<Object>();
@@ -144,9 +146,9 @@ public class ReadThroughMultiCacheAdvicePartialMissTest extends AbstractCacheTes
         }
         assertEquals(result, advice.cacheMulti(pjp));
 
-        verify(client).getBulk(eq(new HashSet<String>(Arrays.asList(cacheKeys))));
-        for (int i = 0; i < missedIndex.length; i++) {
-            verify(client).set(eq(cacheKeys[missedIndex[i]]), eq(EXPIRATION), eq(expectedValue.get(missedIndex[i])));
+        verify(cache).getBulk(eq(new HashSet<String>(Arrays.asList(cacheKeys))), any(Class.class));
+        for (int element : missedIndex) {
+            verify(cache).setSilently(eq(cacheKeys[element]), eq(EXPIRATION), eq(expectedValue.get(element)), any(Class.class));
         }
         verify(pjp).proceed(params);
     }
@@ -161,7 +163,8 @@ public class ReadThroughMultiCacheAdvicePartialMissTest extends AbstractCacheTes
         return NS;
     }
 
-    protected static Map<String, Object> of(String k1, Object v1, String k2, Object v2, String k3, Object v3, String k4, Object v4) {
+    protected static Map<String, Object> of(final String k1, final Object v1, final String k2, final Object v2, final String k3,
+            final Object v3, final String k4, final Object v4) {
         Map<String, Object> map = new HashMap<String, Object>();
         map.put(k1, v1);
         map.put(k2, v2);
@@ -175,41 +178,42 @@ public class ReadThroughMultiCacheAdvicePartialMissTest extends AbstractCacheTes
     private static class TestService {
 
         @ReadThroughMultiCache(namespace = NS, expiration = EXPIRATION)
-        public List<Integer> method1(@ParameterValueKeyProvider List<Integer> id1) {
+        public List<Integer> method1(@ParameterValueKeyProvider final List<Integer> id1) {
             return Collections.<Integer> emptyList();
         }
 
         @ReadThroughMultiCache(namespace = NS, expiration = EXPIRATION)
-        public List<Integer> method2(@ParameterValueKeyProvider(order = 2) String id1,
-                @ParameterValueKeyProvider(order = 1) List<Integer> id2) {
+        public List<Integer> method2(@ParameterValueKeyProvider(order = 2) final String id1,
+                @ParameterValueKeyProvider(order = 1) final List<Integer> id2) {
             return Collections.<Integer> emptyList();
         }
 
         @ReadThroughMultiCache(namespace = NS, expiration = EXPIRATION)
-        public List<Integer> method3(@ParameterValueKeyProvider(order = 1) List<Point> id1, @ParameterValueKeyProvider(order = 2) Point id2) {
+        public List<Integer> method3(@ParameterValueKeyProvider(order = 1) final List<Point> id1,
+                @ParameterValueKeyProvider(order = 2) final Point id2) {
             return Collections.<Integer> emptyList();
         }
 
         @ReadThroughMultiCache(namespace = NS, expiration = EXPIRATION)
-        public List<Integer> method4(int id, @ParameterValueKeyProvider(order = 2) String id1,
-                @ParameterValueKeyProvider(order = 1) List<Integer> id2) {
+        public List<Integer> method4(final int id, @ParameterValueKeyProvider(order = 2) final String id1,
+                @ParameterValueKeyProvider(order = 1) final List<Integer> id2) {
             return Collections.<Integer> emptyList();
         }
 
         @ReadThroughMultiCache(namespace = NS, expiration = EXPIRATION, option = @ReadThroughMultiCacheOption(addNullsToCache = true))
-        public List<Integer> method5(@ParameterValueKeyProvider(order = 2) String id1,
-                @ParameterValueKeyProvider(order = 1) List<Integer> id2) {
+        public List<Integer> method5(@ParameterValueKeyProvider(order = 2) final String id1,
+                @ParameterValueKeyProvider(order = 1) final List<Integer> id2) {
             return Collections.<Integer> emptyList();
         }
 
         @ReadThroughMultiCache(namespace = NS, expiration = EXPIRATION, option = @ReadThroughMultiCacheOption(skipNullsInResult = true))
-        public List<Integer> method6(@ParameterValueKeyProvider(order = 2) String id1,
-                @ParameterValueKeyProvider(order = 1) List<Integer> id2) {
+        public List<Integer> method6(@ParameterValueKeyProvider(order = 2) final String id1,
+                @ParameterValueKeyProvider(order = 1) final List<Integer> id2) {
             return Collections.<Integer> emptyList();
         }
 
         @ReadThroughMultiCache(namespace = NS, expiration = EXPIRATION, option = @ReadThroughMultiCacheOption(addNullsToCache = true, generateKeysFromResult = true))
-        public List<Point> method7(@ParameterValueKeyProvider(order = 1) List<String> id2) {
+        public List<Point> method7(@ParameterValueKeyProvider(order = 1) final List<String> id2) {
             return Collections.<Point> emptyList();
         }
 

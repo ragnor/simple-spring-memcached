@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2010-2011 Jakub Białek
+ * Copyright (c) 2010-2012 Jakub Białek
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
  * documentation files (the "Software"), to deal in the Software without restriction, including without limitation the
@@ -26,7 +26,7 @@ import com.google.code.ssm.providers.CachedObjectImpl;
 /**
  * 
  * Converts Long to simple String (byte) representation. Should by used in set operation to correct initialize counter
- * value. Only encoding is supported.
+ * value.
  * 
  * 
  * @author Jakub Białek
@@ -36,7 +36,7 @@ import com.google.code.ssm.providers.CachedObjectImpl;
 public class LongToStringTranscoder implements CacheTranscoder<Long> {
 
     @Override
-    public Long decode(CachedObject data) {
+    public Long decode(final CachedObject data) {
         byte[] value = data.getData();
         if (value == null || value.length == 0) {
             return null;
@@ -52,7 +52,7 @@ public class LongToStringTranscoder implements CacheTranscoder<Long> {
     }
 
     @Override
-    public CachedObject encode(Long o) {
+    public CachedObject encode(final Long o) {
         try {
             return new CachedObjectImpl(0, String.valueOf(o).getBytes("UTF-8"));
         } catch (UnsupportedEncodingException e) {

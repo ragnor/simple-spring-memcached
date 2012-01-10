@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2008-2011 Nelson Carpentier, Jakub Białek
+ * Copyright (c) 2008-2012 Nelson Carpentier, Jakub Białek
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
  * documentation files (the "Software"), to deal in the Software without restriction, including without limitation the
@@ -16,7 +16,7 @@
  * 
  */
 
-package com.google.code.ssm.aop;
+package com.google.code.ssm.aop.support;
 
 import java.io.Serializable;
 import java.lang.annotation.Annotation;
@@ -31,6 +31,7 @@ import java.util.SortedMap;
 import java.util.TreeMap;
 
 import com.google.code.ssm.api.AnnotationConstants;
+import com.google.code.ssm.api.CacheName;
 import com.google.code.ssm.api.InvalidateAssignCache;
 import com.google.code.ssm.api.InvalidateMultiCache;
 import com.google.code.ssm.api.InvalidateSingleCache;
@@ -48,7 +49,6 @@ import com.google.code.ssm.api.counter.DecrementCounterInCache;
 import com.google.code.ssm.api.counter.IncrementCounterInCache;
 import com.google.code.ssm.api.counter.ReadCounterFromCache;
 import com.google.code.ssm.api.counter.UpdateCounterInCache;
-import com.google.code.ssm.exceptions.InvalidAnnotationException;
 import com.google.code.ssm.util.Utils;
 import com.google.common.collect.ImmutableSet;
 
@@ -104,6 +104,8 @@ public class AnnotationDataBuilder {
         populateClassName(data, annotation, expectedAnnotationClass);
 
         try {
+            populateCacheName(data, targetMethod);
+
             populateKeyIndexes(data, expectedAnnotationClass, targetMethod);
 
             populateDataIndexFromAnnotations(data, expectedAnnotationClass, targetMethod);
@@ -125,6 +127,20 @@ public class AnnotationDataBuilder {
         }
 
         return data;
+    }
+
+    static void populateCacheName(final AnnotationData data, final Method targetMethod) {
+        // get annotation on cached method
+        CacheName cache = targetMethod.getAnnotation(CacheName.class);
+        if (cache == null) {
+            // if annotation on cached method doesn't exist try to get annotation on class
+            cache = targetMethod.getDeclaringClass().getAnnotation(CacheName.class);
+        }
+
+        if (cache != null) {
+            // set cache zone name only if annotation is present otherwise default value will be used
+            data.setCacheName(cache.value());
+        }
     }
 
     static void populateAssignedKey(final AnnotationData data, final Annotation annotation,
@@ -188,18 +204,12 @@ public class AnnotationDataBuilder {
 
         if (paramAnnotationArrays != null && paramAnnotationArrays.length > 0) {
             for (int ix = 0; ix < paramAnnotationArrays.length; ix++) {
-                final Annotation[] paramAnnotations = paramAnnotationArrays[ix];
-                if (paramAnnotations != null && paramAnnotations.length > 0) {
-                    for (int jx = 0; jx < paramAnnotations.length; jx++) {
-                        final Annotation paramAnnotation = paramAnnotations[jx];
-                        if (ParameterDataUpdateContent.class.equals(paramAnnotation.annotationType())) {
-                            if (foundIndex >= 0) {
-                                throw new InvalidParameterException(String.format("Multiple annotations of type [%s] found on method [%s]",
-                                        ParameterDataUpdateContent.class.getName(), targetMethod.getName()));
-                            }
-                            foundIndex = ix;
-                        }
+                if (getAnnotation(ParameterDataUpdateContent.class, paramAnnotationArrays[ix]) != null) {
+                    if (foundIndex >= 0) {
+                        throw new InvalidParameterException(String.format("Multiple annotations of type [%s] found on method [%s]",
+                                ParameterDataUpdateContent.class.getName(), targetMethod.getName()));
                     }
+                    foundIndex = ix;
                 }
             }
         }
@@ -230,38 +240,27 @@ public class AnnotationDataBuilder {
         }
 
         final Annotation[][] paramAnnotationArrays = targetMethod.getParameterAnnotations();
-        int foundIndex = Integer.MIN_VALUE;
-        ParameterValueKeyProvider foundAnnotation = null;
         SortedMap<ParameterValueKeyProvider, Integer> founds = new TreeMap<ParameterValueKeyProvider, Integer>(COMPARATOR);
         Set<Integer> order = new HashSet<Integer>();
 
         if (paramAnnotationArrays != null && paramAnnotationArrays.length > 0) {
             for (int ix = 0; ix < paramAnnotationArrays.length; ix++) {
-                final Annotation[] paramAnnotations = paramAnnotationArrays[ix];
-                if (paramAnnotations != null && paramAnnotations.length > 0) {
-                    for (int jx = 0; jx < paramAnnotations.length; jx++) {
-                        final Annotation paramAnnotation = paramAnnotations[jx];
-                        if (ParameterValueKeyProvider.class.equals(paramAnnotation.annotationType())) {
-                            foundAnnotation = (ParameterValueKeyProvider) paramAnnotation;
-                            foundIndex = ix;
-                            // throw if order below 0
-                            if (foundAnnotation.order() < 0) {
-                                throw new InvalidParameterException(
-                                        String.format(
-                                                "No valid order [%d] defined in annotation [%s] on method [%s], only no negative integers are allowed.",
-                                                foundAnnotation.order(), ParameterValueKeyProvider.class.getName(), targetMethod.getName()));
-                            }
-                            // throw exception if there are two annotations with the same value of order
-                            if (!order.add(foundAnnotation.order())) {
-                                throw new InvalidParameterException(String.format(
-                                        "No valid order defined in annotation [%s] on method [%s]. "
-                                                + "There are two annotations with the same order.",
-                                        ParameterValueKeyProvider.class.getName(), targetMethod.getName()));
-                            }
-
-                            founds.put(foundAnnotation, foundIndex);
-                        }
+                ParameterValueKeyProvider foundAnnotation = getAnnotation(ParameterValueKeyProvider.class, paramAnnotationArrays[ix]);
+                if (foundAnnotation != null) {
+                    // throw if order below 0
+                    if (foundAnnotation.order() < 0) {
+                        throw new InvalidParameterException(String.format(
+                                "No valid order [%d] defined in annotation [%s] on method [%s], only no negative integers are allowed.",
+                                foundAnnotation.order(), ParameterValueKeyProvider.class.getName(), targetMethod.getName()));
                     }
+                    // throw exception if there are two annotations with the same value of order
+                    if (!order.add(foundAnnotation.order())) {
+                        throw new InvalidParameterException(String.format("No valid order defined in annotation [%s] on method [%s]. "
+                                + "There are two annotations with the same order.", ParameterValueKeyProvider.class.getName(),
+                                targetMethod.getName()));
+                    }
+
+                    founds.put(foundAnnotation, ix);
                 }
             }
         }
@@ -287,7 +286,8 @@ public class AnnotationDataBuilder {
         data.setClassName(clazz.getName());
     }
 
-    static void populateListKeyIndex(AnnotationData data, Class<? extends Annotation> expectedAnnotationClass, Method targetMethod) {
+    static void populateListKeyIndex(final AnnotationData data, final Class<? extends Annotation> expectedAnnotationClass,
+            final Method targetMethod) {
         if (data.getKeyIndexes().isEmpty() || !MULTIS.contains(expectedAnnotationClass)) {
             return;
         }
@@ -315,6 +315,19 @@ public class AnnotationDataBuilder {
         }
     }
 
+    @SuppressWarnings("unchecked")
+    private static <T extends Annotation> T getAnnotation(final Class<T> annotationClass, final Annotation[] annotations) {
+        if (annotations != null && annotations.length > 0) {
+            for (final Annotation annotation : annotations) {
+                if (annotationClass.equals(annotation.annotationType())) {
+                    return (T) annotation;
+                }
+            }
+        }
+
+        return null;
+    }
+
     private static boolean verifyTypeIsList(final Class<?> clazz) {
         return List.class.isAssignableFrom(clazz);
     }
@@ -324,7 +337,7 @@ public class AnnotationDataBuilder {
         private static final long serialVersionUID = 2791887056140560908L;
 
         @Override
-        public int compare(ParameterValueKeyProvider o1, ParameterValueKeyProvider o2) {
+        public int compare(final ParameterValueKeyProvider o1, final ParameterValueKeyProvider o2) {
             return o1.order() - o2.order();
         }
 
