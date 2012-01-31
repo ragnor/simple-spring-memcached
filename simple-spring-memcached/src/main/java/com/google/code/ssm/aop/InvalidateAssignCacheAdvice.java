@@ -38,7 +38,8 @@ import com.google.code.ssm.api.InvalidateAssignCache;
  * 
  */
 @Aspect
-public class InvalidateAssignCacheAdvice extends CacheBase {
+public class InvalidateAssignCacheAdvice extends CacheAdvice {
+
     private static final Logger LOG = LoggerFactory.getLogger(InvalidateAssignCacheAdvice.class);
 
     @Pointcut("@annotation(com.google.code.ssm.api.InvalidateAssignCache)")
@@ -53,15 +54,16 @@ public class InvalidateAssignCacheAdvice extends CacheBase {
         // the crap outta it, but do not let it surface up past the AOP injection itself.
         String cacheKey = null;
         try {
-            final Method methodToCache = getMethodToCache(pjp);
+            final Method methodToCache = getCacheBase().getMethodToCache(pjp);
             final InvalidateAssignCache annotation = methodToCache.getAnnotation(InvalidateAssignCache.class);
             final AnnotationData data = AnnotationDataBuilder.buildAnnotationData(annotation, InvalidateAssignCache.class, methodToCache);
 
-            cacheKey = cacheKeyBuilder.getAssignCacheKey(data);
+            cacheKey = getCacheBase().getCacheKeyBuilder().getAssignCacheKey(data);
 
-            getCache(data).delete(cacheKey);
+            getCacheBase().getCache(data).delete(cacheKey);
         } catch (Throwable ex) {
-            warn(String.format("Caching on method %s and key [%s] aborted due to an error.", pjp.toShortString(), cacheKey), ex);
+            getLogger()
+                    .warn(String.format("Caching on method %s and key [%s] aborted due to an error.", pjp.toShortString(), cacheKey), ex);
         }
         return result;
     }

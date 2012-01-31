@@ -54,12 +54,12 @@ public class ReadCounterFromCacheAdvice extends CounterInCacheBase {
         ReadCounterFromCache annotation;
         AnnotationData data;
         try {
-            Method methodToCache = getMethodToCache(pjp);
+            Method methodToCache = getCacheBase().getMethodToCache(pjp);
             verifyMethodSignature(methodToCache);
             annotation = methodToCache.getAnnotation(ReadCounterFromCache.class);
             data = AnnotationDataBuilder.buildAnnotationData(annotation, ReadCounterFromCache.class, methodToCache);
-            cacheKey = cacheKeyBuilder.getCacheKey(data, pjp.getArgs(), methodToCache.toString());
-            Long result = getCache(data).get(cacheKey, Long.class);
+            cacheKey = getCacheBase().getCacheKeyBuilder().getCacheKey(data, pjp.getArgs(), methodToCache.toString());
+            Long result = getCacheBase().getCache(data).get(cacheKey, Long.class);
 
             if (result != null) {
                 getLogger().debug("Cache hit.");
@@ -79,7 +79,7 @@ public class ReadCounterFromCacheAdvice extends CounterInCacheBase {
             if (checkData(result, pjp)) {
                 long value = ((Number) result).longValue();
                 // tricky way to update counter
-                getCache(data).incr(cacheKey, 0, value, annotation.expiration());
+                getCacheBase().getCache(data).incr(cacheKey, 0, value, annotation.expiration());
             }
         } catch (Throwable ex) {
             getLogger()

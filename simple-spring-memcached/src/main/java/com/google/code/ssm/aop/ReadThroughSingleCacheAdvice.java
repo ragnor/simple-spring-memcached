@@ -36,6 +36,7 @@ import com.google.code.ssm.api.ReadThroughSingleCache;
  */
 @Aspect
 public class ReadThroughSingleCacheAdvice extends SingleReadCacheAdvice<ReadThroughSingleCache> {
+
     private static final Logger LOG = LoggerFactory.getLogger(ReadThroughSingleCacheAdvice.class);
 
     public ReadThroughSingleCacheAdvice() {
@@ -53,7 +54,7 @@ public class ReadThroughSingleCacheAdvice extends SingleReadCacheAdvice<ReadThro
 
     @Override
     protected String getCacheKey(final AnnotationData data, final Object[] args, final String methodDesc) throws Exception {
-        return cacheKeyBuilder.getCacheKey(data, args, methodDesc);
+        return getCacheBase().getCacheKeyBuilder().getCacheKey(data, args, methodDesc);
     }
 
     @Override

@@ -40,7 +40,8 @@ import com.google.code.ssm.api.InvalidateMultiCache;
  * @author Jakub Białek
  */
 @Aspect
-public class InvalidateMultiCacheAdvice extends MultiCacheAdvice {
+public class InvalidateMultiCacheAdvice extends CacheAdvice {
+
     private static final Logger LOG = LoggerFactory.getLogger(InvalidateMultiCacheAdvice.class);
 
     @Pointcut("@annotation(com.google.code.ssm.api.InvalidateMultiCache)")
@@ -55,14 +56,14 @@ public class InvalidateMultiCacheAdvice extends MultiCacheAdvice {
         final AnnotationData data;
         final Method methodToCache;
         try {
-            methodToCache = getMethodToCache(pjp);
+            methodToCache = getCacheBase().getMethodToCache(pjp);
             final InvalidateMultiCache annotation = methodToCache.getAnnotation(InvalidateMultiCache.class);
             data = AnnotationDataBuilder.buildAnnotationData(annotation, InvalidateMultiCache.class, methodToCache);
             if (!data.isReturnKeyIndex()) {
-                cacheKeys = cacheKeyBuilder.getCacheKeys(data, pjp.getArgs(), methodToCache.toString());
+                cacheKeys = getCacheBase().getCacheKeyBuilder().getCacheKeys(data, pjp.getArgs(), methodToCache.toString());
             }
         } catch (Throwable ex) {
-            warn(String.format("Caching on method %s aborted due to an error.", pjp.toShortString()), ex);
+            getLogger().warn(String.format("Caching on method %s aborted due to an error.", pjp.toShortString()), ex);
             return pjp.proceed();
         }
 
@@ -73,18 +74,18 @@ public class InvalidateMultiCacheAdvice extends MultiCacheAdvice {
         try {
             // If we have a -1 key index, then build the cacheKeys now.
             if (data.isReturnKeyIndex()) {
-                if (!verifyTypeIsList(result.getClass())) {
+                if (!getCacheBase().verifyTypeIsList(result.getClass())) {
                     throw new InvalidAnnotationException(String.format("The return type is not a [%s]. "
                             + "The method [%s] does not fulfill the requirements.", List.class.getName(), methodToCache.toString()));
                 }
 
                 @SuppressWarnings("unchecked")
                 final List<Object> keyObjects = (List<Object>) result;
-                cacheKeys = cacheKeyBuilder.getCacheKeys(keyObjects, data.getNamespace());
+                cacheKeys = getCacheBase().getCacheKeyBuilder().getCacheKeys(keyObjects, data.getNamespace());
             }
-            getCache(data).delete(cacheKeys);
+            getCacheBase().getCache(data).delete(cacheKeys);
         } catch (Throwable ex) {
-            warn(String.format("Caching on method %s aborted due to an error.", pjp.toShortString()), ex);
+            getLogger().warn(String.format("Caching on method %s aborted due to an error.", pjp.toShortString()), ex);
         }
         return result;
 

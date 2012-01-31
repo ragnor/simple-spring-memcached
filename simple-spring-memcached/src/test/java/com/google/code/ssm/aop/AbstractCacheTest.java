@@ -34,7 +34,7 @@ import com.google.code.ssm.api.AnnotationConstants;
  * 
  */
 @RunWith(Parameterized.class)
-public abstract class AbstractCacheTest<T extends CacheBase> {
+public abstract class AbstractCacheTest<T extends CacheAdvice> {
 
     @Mock
     protected Cache cache;
@@ -70,7 +70,9 @@ public abstract class AbstractCacheTest<T extends CacheBase> {
         MockitoAnnotations.initMocks(this);
         when(cache.getName()).thenReturn(AnnotationConstants.DEFAULT_CACHE_NAME);
         advice = createAdvice();
-        advice.addCache(cache);
+        CacheBase cacheBase = new CacheBase();
+        cacheBase.addCache(cache);
+        advice.setCacheBase(cacheBase);
 
         when(signature.getName()).thenReturn(methodName);
         when(signature.getParameterTypes()).thenReturn(paramTypes);

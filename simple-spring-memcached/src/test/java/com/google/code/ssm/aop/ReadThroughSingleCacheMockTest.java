@@ -50,6 +50,7 @@ public class ReadThroughSingleCacheMockTest {
     @BeforeClass
     public static void beforeClass() {
         cut = new ReadThroughSingleCacheAdvice();
+        cut.setCacheBase(new CacheBase());
 
         pjp = createMock(ProceedingJoinPoint.class);
         cache = createMock(Cache.class);
@@ -139,7 +140,7 @@ public class ReadThroughSingleCacheMockTest {
 
         replayAll();
 
-        cut.addCache(cache);
+        cut.getCacheBase().addCache(cache);
         final String result = (String) cut.cacheGetSingle(pjp);
 
         verifyAll();

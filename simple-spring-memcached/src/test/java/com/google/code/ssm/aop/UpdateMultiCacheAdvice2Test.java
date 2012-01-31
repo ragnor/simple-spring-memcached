@@ -168,9 +168,9 @@ public class UpdateMultiCacheAdvice2Test extends AbstractCacheTest<UpdateMultiCa
         advice.cacheUpdateMulti(pjp, returnValue);
 
         for (int i = 0; i < cacheKeys.length; i++) {
-            if (advice.getMethodToCache(pjp).getAnnotation(UpdateMultiCache.class).option().overwriteNoNulls()) {
+            if (advice.getCacheBase().getMethodToCache(pjp).getAnnotation(UpdateMultiCache.class).option().overwriteNoNulls()) {
                 verify(cache).setSilently(eq(cacheKeys[i]), eq(EXPIRATION), eq(expectedValue.get(i)), any(Class.class));
-            } else if (advice.getMethodToCache(pjp).getAnnotation(UpdateMultiCache.class).option().addNullsToCache()
+            } else if (advice.getCacheBase().getMethodToCache(pjp).getAnnotation(UpdateMultiCache.class).option().addNullsToCache()
                     && expectedValue.get(i) instanceof PertinentNegativeNull) {
                 verify(cache).addSilently(eq(cacheKeys[i]), eq(EXPIRATION), eq(expectedValue.get(i)), any(Class.class));
             } else {

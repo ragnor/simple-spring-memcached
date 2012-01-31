@@ -38,7 +38,8 @@ import com.google.code.ssm.api.InvalidateSingleCache;
  * 
  */
 @Aspect
-public class InvalidateSingleCacheAdvice extends CacheBase {
+public class InvalidateSingleCacheAdvice extends CacheAdvice {
+
     private static final Logger LOG = LoggerFactory.getLogger(InvalidateSingleCacheAdvice.class);
 
     @Pointcut("@annotation(com.google.code.ssm.api.InvalidateSingleCache)")
@@ -53,14 +54,15 @@ public class InvalidateSingleCacheAdvice extends CacheBase {
         final AnnotationData data;
         final Method methodToCache;
         try {
-            methodToCache = getMethodToCache(pjp);
+            methodToCache = getCacheBase().getMethodToCache(pjp);
             final InvalidateSingleCache annotation = methodToCache.getAnnotation(InvalidateSingleCache.class);
             data = AnnotationDataBuilder.buildAnnotationData(annotation, InvalidateSingleCache.class, methodToCache);
             if (!data.isReturnKeyIndex()) {
-                cacheKey = cacheKeyBuilder.getCacheKey(data, pjp.getArgs(), methodToCache.toString());
+                cacheKey = getCacheBase().getCacheKeyBuilder().getCacheKey(data, pjp.getArgs(), methodToCache.toString());
             }
         } catch (Throwable ex) {
-            warn(String.format("Caching on method %s and key [%s] aborted due to an error.", pjp.toShortString(), cacheKey), ex);
+            getLogger()
+                    .warn(String.format("Caching on method %s and key [%s] aborted due to an error.", pjp.toShortString(), cacheKey), ex);
             return pjp.proceed();
         }
 
@@ -70,13 +72,14 @@ public class InvalidateSingleCacheAdvice extends CacheBase {
         // the crap outta it, but do not let it surface up past the AOP injection itself.
         try {
             if (data.isReturnKeyIndex()) {
-                verifyReturnTypeIsNoVoid(methodToCache, InvalidateSingleCache.class);
-                cacheKey = cacheKeyBuilder.getCacheKey(result, data.getNamespace());
+                getCacheBase().verifyReturnTypeIsNoVoid(methodToCache, InvalidateSingleCache.class);
+                cacheKey = getCacheBase().getCacheKeyBuilder().getCacheKey(result, data.getNamespace());
             }
 
-            getCache(data).delete(cacheKey);
+            getCacheBase().getCache(data).delete(cacheKey);
         } catch (Throwable ex) {
-            warn(String.format("Caching on method %s and key [%s] aborted due to an error.", pjp.toShortString(), cacheKey), ex);
+            getLogger()
+                    .warn(String.format("Caching on method %s and key [%s] aborted due to an error.", pjp.toShortString(), cacheKey), ex);
         }
         return result;
     }

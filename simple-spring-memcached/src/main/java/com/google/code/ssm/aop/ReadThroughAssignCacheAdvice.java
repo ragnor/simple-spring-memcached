@@ -36,6 +36,7 @@ import com.google.code.ssm.api.ReadThroughAssignCache;
  */
 @Aspect
 public class ReadThroughAssignCacheAdvice extends SingleReadCacheAdvice<ReadThroughAssignCache> {
+
     private static final Logger LOG = LoggerFactory.getLogger(ReadThroughAssignCacheAdvice.class);
 
     public ReadThroughAssignCacheAdvice() {
@@ -53,7 +54,7 @@ public class ReadThroughAssignCacheAdvice extends SingleReadCacheAdvice<ReadThro
 
     @Override
     protected String getCacheKey(final AnnotationData data, final Object[] args, final String methodDesc) {
-        return cacheKeyBuilder.getAssignCacheKey(data);
+        return getCacheBase().getCacheKeyBuilder().getAssignCacheKey(data);
     }
 
     @Override

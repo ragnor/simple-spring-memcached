@@ -52,11 +52,11 @@ public class IncrementCounterInCacheAdvice extends CounterInCacheBase {
         String cacheKey = null;
         IncrementCounterInCache annotation;
         try {
-            Method methodToCache = getMethodToCache(jp);
+            Method methodToCache = getCacheBase().getMethodToCache(jp);
             annotation = methodToCache.getAnnotation(IncrementCounterInCache.class);
             AnnotationData data = AnnotationDataBuilder.buildAnnotationData(annotation, IncrementCounterInCache.class, methodToCache);
-            cacheKey = cacheKeyBuilder.getCacheKey(data, jp.getArgs(), methodToCache.toString());
-            getCache(data).incr(cacheKey, 1, 1);
+            cacheKey = getCacheBase().getCacheKeyBuilder().getCacheKey(data, jp.getArgs(), methodToCache.toString());
+            getCacheBase().getCache(data).incr(cacheKey, 1, 1);
         } catch (Throwable ex) {
             getLogger().warn(String.format("Incrementing counter [%s] via %s aborted due to an error.", cacheKey, jp.toShortString()), ex);
         }

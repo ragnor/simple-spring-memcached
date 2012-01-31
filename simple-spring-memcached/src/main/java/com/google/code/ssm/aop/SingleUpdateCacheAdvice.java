@@ -33,7 +33,7 @@ import com.google.code.ssm.aop.support.AnnotationDataBuilder;
  * @since 2.0.0
  * 
  */
-abstract class SingleUpdateCacheAdvice<T extends Annotation> extends CacheBase {
+abstract class SingleUpdateCacheAdvice<T extends Annotation> extends CacheAdvice {
 
     private final Class<T> annotationClass;
 
@@ -47,18 +47,18 @@ abstract class SingleUpdateCacheAdvice<T extends Annotation> extends CacheBase {
         // the same access to the method params.
         String cacheKey = null;
         try {
-            final Method methodToCache = getMethodToCache(jp);
+            final Method methodToCache = getCacheBase().getMethodToCache(jp);
             final T annotation = methodToCache.getAnnotation(annotationClass);
             final AnnotationData data = AnnotationDataBuilder.buildAnnotationData(annotation, annotationClass, methodToCache);
 
             cacheKey = getCacheKey(data, jp.getArgs(), methodToCache.toString());
 
-            final Object dataObject = this.<Object> getUpdateData(data, methodToCache, jp, retVal);
-            final Class<?> jsonClass = getDataJsonClass(methodToCache, data);
-            final Object submission = getSubmission(dataObject);
-            getCache(data).set(cacheKey, data.getExpiration(), submission, jsonClass);
+            final Object dataObject = getCacheBase().<Object> getUpdateData(data, methodToCache, jp, retVal);
+            final Class<?> jsonClass = getCacheBase().getDataJsonClass(methodToCache, data);
+            final Object submission = getCacheBase().getSubmission(dataObject);
+            getCacheBase().getCache(data).set(cacheKey, data.getExpiration(), submission, jsonClass);
         } catch (Exception ex) {
-            warn(String.format("Caching on method %s and key [%s] aborted due to an error.", jp.toShortString(), cacheKey), ex);
+            getLogger().warn(String.format("Caching on method %s and key [%s] aborted due to an error.", jp.toShortString(), cacheKey), ex);
         }
     }
 

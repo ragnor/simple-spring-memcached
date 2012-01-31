@@ -59,7 +59,7 @@ public class UpdateSingleCacheAdvice extends SingleUpdateCacheAdvice<UpdateSingl
 
     @Override
     protected String getCacheKey(final AnnotationData data, final Object[] args, final String methodDesc) throws Exception {
-        return cacheKeyBuilder.getCacheKey(data, args, methodDesc);
+        return getCacheBase().getCacheKeyBuilder().getCacheKey(data, args, methodDesc);
     }
 
 }

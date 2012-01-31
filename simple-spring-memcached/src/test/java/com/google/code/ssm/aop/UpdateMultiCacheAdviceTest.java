@@ -53,6 +53,7 @@ public class UpdateMultiCacheAdviceTest {
     @BeforeClass
     public static void beforeClass() {
         cut = new UpdateMultiCacheAdvice();
+        cut.setCacheBase(new CacheBase());
     }
 
     @Test
@@ -66,7 +67,7 @@ public class UpdateMultiCacheAdviceTest {
         final String namespace = RandomStringUtils.randomAlphabetic(20);
         final AnnotationData annotationData = new AnnotationData();
         annotationData.setNamespace(namespace);
-        final List<String> results = cut.cacheKeyBuilder.getCacheKeys(sources, annotationData.getNamespace());
+        final List<String> results = cut.getCacheBase().getCacheKeyBuilder().getCacheKeys(sources, annotationData.getNamespace());
 
         assertEquals(size, results.size());
         for (int ix = 0; ix < size; ix++) {
@@ -111,7 +112,7 @@ public class UpdateMultiCacheAdviceTest {
 
         EasyMock.replay(cache);
 
-        cut.addCache(cache);
+        cut.getCacheBase().addCache(cache);
         cut.updateCache(keys, objs, method, data, null);
 
         EasyMock.verify(cache);

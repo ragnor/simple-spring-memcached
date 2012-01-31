@@ -12,19 +12,47 @@
 
 	<context:component-scan base-package="com.google.code.ssm" />
 
-	<bean id="readThroughSingleCache" class="com.google.code.ssm.aop.ReadThroughSingleCacheAdvice" />
-	<bean id="readThroughMultiCache" class="com.google.code.ssm.aop.ReadThroughMultiCacheAdvice" />
-	<bean id="readThroughAssignCache" class="com.google.code.ssm.aop.ReadThroughAssignCacheAdvice" />
-	<bean id="updateSingleCache" class="com.google.code.ssm.aop.UpdateSingleCacheAdvice" />
-	<bean id="updateMultiCache" class="com.google.code.ssm.aop.UpdateMultiCacheAdvice" />
-	<bean id="updateAssignCache" class="com.google.code.ssm.aop.UpdateAssignCacheAdvice" />
-	<bean id="invalidateSingleCache" class="com.google.code.ssm.aop.InvalidateSingleCacheAdvice" />
-	<bean id="invalidateMultiCache" class="com.google.code.ssm.aop.InvalidateMultiCacheAdvice" />
-	<bean id="invalidateAssignCache" class="com.google.code.ssm.aop.InvalidateAssignCacheAdvice" />
+	<bean id="cacheBase" class="com.google.code.ssm.aop.CacheBase" />
 
-	<bean id="incrementCounterInCache" class="com.google.code.ssm.aop.counter.IncrementCounterInCacheAdvice" />
-	<bean id="decrementCounterInCache" class="com.google.code.ssm.aop.counter.DecrementCounterInCacheAdvice" />
-	<bean id="readCounterFromCache" class="com.google.code.ssm.aop.counter.ReadCounterFromCacheAdvice" />
-	<bean id="updateCounterInCache" class="com.google.code.ssm.aop.counter.UpdateCounterInCacheAdvice" />
+	<bean id="readThroughSingleCache" class="com.google.code.ssm.aop.ReadThroughSingleCacheAdvice">
+		<property name="cacheBase" ref="cacheBase" />
+	</bean>
+	<bean id="readThroughMultiCache" class="com.google.code.ssm.aop.ReadThroughMultiCacheAdvice">
+		<property name="cacheBase" ref="cacheBase" />
+	</bean>
+	<bean id="readThroughAssignCache" class="com.google.code.ssm.aop.ReadThroughAssignCacheAdvice">
+		<property name="cacheBase" ref="cacheBase" />
+	</bean>
+	<bean id="updateSingleCache" class="com.google.code.ssm.aop.UpdateSingleCacheAdvice">
+		<property name="cacheBase" ref="cacheBase" />
+	</bean>
+	<bean id="updateMultiCache" class="com.google.code.ssm.aop.UpdateMultiCacheAdvice">
+		<property name="cacheBase" ref="cacheBase" />
+	</bean>
+	<bean id="updateAssignCache" class="com.google.code.ssm.aop.UpdateAssignCacheAdvice">
+		<property name="cacheBase" ref="cacheBase" />
+	</bean>
+	<bean id="invalidateSingleCache" class="com.google.code.ssm.aop.InvalidateSingleCacheAdvice">
+		<property name="cacheBase" ref="cacheBase" />
+	</bean>
+	<bean id="invalidateMultiCache" class="com.google.code.ssm.aop.InvalidateMultiCacheAdvice">
+		<property name="cacheBase" ref="cacheBase" />
+	</bean>
+	<bean id="invalidateAssignCache" class="com.google.code.ssm.aop.InvalidateAssignCacheAdvice">
+		<property name="cacheBase" ref="cacheBase" />
+	</bean>
+
+	<bean id="incrementCounterInCache" class="com.google.code.ssm.aop.counter.IncrementCounterInCacheAdvice">
+		<property name="cacheBase" ref="cacheBase" />
+	</bean>
+	<bean id="decrementCounterInCache" class="com.google.code.ssm.aop.counter.DecrementCounterInCacheAdvice">
+		<property name="cacheBase" ref="cacheBase" />
+	</bean>
+	<bean id="readCounterFromCache" class="com.google.code.ssm.aop.counter.ReadCounterFromCacheAdvice">
+		<property name="cacheBase" ref="cacheBase" />
+	</bean>
+	<bean id="updateCounterInCache" class="com.google.code.ssm.aop.counter.UpdateCounterInCacheAdvice">
+		<property name="cacheBase" ref="cacheBase" />
+	</bean>
 
 </beans>

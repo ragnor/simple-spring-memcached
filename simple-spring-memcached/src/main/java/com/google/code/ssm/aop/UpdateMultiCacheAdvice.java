@@ -48,6 +48,7 @@ import com.google.code.ssm.util.Utils;
  */
 @Aspect
 public class UpdateMultiCacheAdvice extends MultiCacheAdvice {
+
     private static final Logger LOG = LoggerFactory.getLogger(UpdateMultiCacheAdvice.class);
 
     @Pointcut("@annotation(com.google.code.ssm.api.UpdateMultiCache)")
@@ -60,11 +61,11 @@ public class UpdateMultiCacheAdvice extends MultiCacheAdvice {
         // apply our caching after the underlying method completes successfully, and we will have
         // the same access to the method params.
         try {
-            final Method methodToCache = getMethodToCache(jp);
+            final Method methodToCache = getCacheBase().getMethodToCache(jp);
             final UpdateMultiCache annotation = methodToCache.getAnnotation(UpdateMultiCache.class);
             final AnnotationData data = AnnotationDataBuilder.buildAnnotationData(annotation, UpdateMultiCache.class, methodToCache);
-            final List<Object> dataList = this.<List<Object>> getUpdateData(data, methodToCache, jp, retVal);
-            final Class<?> jsonClass = getDataJsonClass(methodToCache, data);
+            final List<Object> dataList = getCacheBase().<List<Object>> getUpdateData(data, methodToCache, jp, retVal);
+            final Class<?> jsonClass = getCacheBase().getDataJsonClass(methodToCache, data);
             final MultiCacheCoordinator coord = new MultiCacheCoordinator(methodToCache, data);
             coord.setAddNullsToCache(annotation.option().addNullsToCache());
 
@@ -73,7 +74,7 @@ public class UpdateMultiCacheAdvice extends MultiCacheAdvice {
                 @SuppressWarnings("unchecked")
                 final List<Object> keyObjects = (List<Object>) retVal;
                 coord.setHolder(convertIdObjectsToKeyMap(keyObjects, data));
-                cacheKeys = cacheKeyBuilder.getCacheKeys(keyObjects, data.getNamespace());
+                cacheKeys = getCacheBase().getCacheKeyBuilder().getCacheKeys(keyObjects, data.getNamespace());
             } else {
                 // Create key->object and object->key mappings.
                 coord.setHolder(createObjectIdCacheKeyMapping(coord.getAnnotationData(), jp.getArgs(), coord.getMethod()));
@@ -96,13 +97,8 @@ public class UpdateMultiCacheAdvice extends MultiCacheAdvice {
                 updateCacheWithMissed(dataList, coord, annotation.option(), jsonClass);
             }
         } catch (Exception ex) {
-            warn("Updating caching via " + jp.toShortString() + " aborted due to an error.", ex);
+            getLogger().warn("Updating caching via " + jp.toShortString() + " aborted due to an error.", ex);
         }
-    }
-
-    @Override
-    protected Logger getLogger() {
-        return LOG;
     }
 
     MapHolder convertIdObjectsToKeyMap(final List<Object> idObjects, final AnnotationData data) throws Exception {
@@ -113,7 +109,7 @@ public class UpdateMultiCacheAdvice extends MultiCacheAdvice {
                 throw new InvalidParameterException("One of the passed in key objects is null");
             }
 
-            String cacheKey = cacheKeyBuilder.getCacheKey(obj, data.getNamespace());
+            String cacheKey = getCacheBase().getCacheKeyBuilder().getCacheKey(obj, data.getNamespace());
             if (holder.getObj2Key().get(obj) == null) {
                 holder.getObj2Key().put(obj, cacheKey);
             }
@@ -137,22 +133,23 @@ public class UpdateMultiCacheAdvice extends MultiCacheAdvice {
         while (returnListIter.hasNext()) {
             final Object result = returnListIter.next();
             final String cacheKey = cacheKeyIter.next();
-            final Object cacheObject = getSubmission(result);
-            getCache(data).setSilently(cacheKey, data.getExpiration(), cacheObject, jsonClass);
+            final Object cacheObject = getCacheBase().getSubmission(result);
+            getCacheBase().getCache(data).setSilently(cacheKey, data.getExpiration(), cacheObject, jsonClass);
         }
     }
 
     private void updateCacheWithMissed(final List<Object> dataUpdateContents, final MultiCacheCoordinator coord,
             final UpdateMultiCacheOption option, final Class<?> jsonClass) throws Exception {
         if (!dataUpdateContents.isEmpty()) {
-            List<String> cacheKeys = cacheKeyBuilder.getCacheKeys(dataUpdateContents, coord.getAnnotationData().getNamespace());
+            List<String> cacheKeys = getCacheBase().getCacheKeyBuilder().getCacheKeys(dataUpdateContents,
+                    coord.getAnnotationData().getNamespace());
             String cacheKey;
 
             Iterator<String> iter = cacheKeys.iterator();
             for (Object resultObject : dataUpdateContents) {
                 cacheKey = iter.next();
-                getCache(coord.getAnnotationData()).setSilently(cacheKey, coord.getAnnotationData().getExpiration(), resultObject,
-                        jsonClass);
+                getCacheBase().getCache(coord.getAnnotationData()).setSilently(cacheKey, coord.getAnnotationData().getExpiration(),
+                        resultObject, jsonClass);
                 coord.getMissedObjects().remove(coord.getKey2Obj().get(cacheKey));
             }
         }
@@ -162,6 +159,11 @@ public class UpdateMultiCacheAdvice extends MultiCacheAdvice {
         } else {
             addNullValues(coord.getMissedObjects(), coord, jsonClass);
         }
+    }
+
+    @Override
+    protected Logger getLogger() {
+        return LOG;
     }
 
 }

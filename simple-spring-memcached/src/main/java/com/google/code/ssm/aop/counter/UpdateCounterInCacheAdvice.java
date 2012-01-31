@@ -53,15 +53,15 @@ public class UpdateCounterInCacheAdvice extends CounterInCacheBase {
         String cacheKey = null;
         UpdateCounterInCache annotation;
         try {
-            Method methodToCache = getMethodToCache(jp);
+            Method methodToCache = getCacheBase().getMethodToCache(jp);
             annotation = methodToCache.getAnnotation(UpdateCounterInCache.class);
             AnnotationData data = AnnotationDataBuilder.buildAnnotationData(annotation, UpdateCounterInCache.class, methodToCache);
-            cacheKey = cacheKeyBuilder.getCacheKey(data, jp.getArgs(), methodToCache.toString());
+            cacheKey = getCacheBase().getCacheKeyBuilder().getCacheKey(data, jp.getArgs(), methodToCache.toString());
 
-            Object dataObject = getUpdateData(data, methodToCache, jp, retVal);
+            Object dataObject = getCacheBase().getUpdateData(data, methodToCache, jp, retVal);
             if (checkData(dataObject, jp)) {
                 long value = ((Number) dataObject).longValue();
-                getCache(data).set(cacheKey, annotation.expiration(), value, Long.class);
+                getCacheBase().getCache(data).set(cacheKey, annotation.expiration(), value, Long.class);
             }
         } catch (Exception ex) {
             getLogger().warn(String.format("Updating counter [%s] in cache via %s aborted due to an error.", cacheKey, jp.toShortString()),

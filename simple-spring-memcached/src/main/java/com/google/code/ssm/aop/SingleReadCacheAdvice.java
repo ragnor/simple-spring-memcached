@@ -33,7 +33,7 @@ import com.google.code.ssm.aop.support.AnnotationDataBuilder;
  * @since 2.0.0
  * 
  */
-abstract class SingleReadCacheAdvice<T extends Annotation> extends CacheBase {
+abstract class SingleReadCacheAdvice<T extends Annotation> extends CacheAdvice {
 
     private final Class<T> annotationClass;
 
@@ -49,21 +49,22 @@ abstract class SingleReadCacheAdvice<T extends Annotation> extends CacheBase {
         final Class<?> jsonClass;
         String cacheKey = null;
         try {
-            final Method methodToCache = getMethodToCache(pjp);
-            verifyReturnTypeIsNoVoid(methodToCache, annotationClass);
+            final Method methodToCache = getCacheBase().getMethodToCache(pjp);
+            getCacheBase().verifyReturnTypeIsNoVoid(methodToCache, annotationClass);
             annotation = methodToCache.getAnnotation(annotationClass);
-            jsonClass = getReturnJsonClass(methodToCache);
+            jsonClass = getCacheBase().getReturnJsonClass(methodToCache);
             data = AnnotationDataBuilder.buildAnnotationData(annotation, annotationClass, methodToCache);
 
             cacheKey = getCacheKey(data, pjp.getArgs(), methodToCache.toString());
 
-            final Object result = getCache(data).get(cacheKey, jsonClass);
+            final Object result = getCacheBase().getCache(data).get(cacheKey, jsonClass);
             if (result != null) {
                 getLogger().debug("Cache hit.");
-                return getResult(result);
+                return getCacheBase().getResult(result);
             }
         } catch (Throwable ex) {
-            warn(String.format("Caching on method %s and key [%s] aborted due to an error.", pjp.toShortString(), cacheKey), ex);
+            getLogger()
+                    .warn(String.format("Caching on method %s and key [%s] aborted due to an error.", pjp.toShortString(), cacheKey), ex);
             return pjp.proceed();
         }
 
@@ -72,10 +73,11 @@ abstract class SingleReadCacheAdvice<T extends Annotation> extends CacheBase {
         // This is injected caching. If anything goes wrong in the caching, LOG
         // the crap outta it, but do not let it surface up past the AOP injection itself.
         try {
-            final Object submission = getSubmission(result);
-            getCache(data).set(cacheKey, data.getExpiration(), submission, jsonClass);
+            final Object submission = getCacheBase().getSubmission(result);
+            getCacheBase().getCache(data).set(cacheKey, data.getExpiration(), submission, jsonClass);
         } catch (Throwable ex) {
-            warn(String.format("Caching on method %s and key [%s] aborted due to an error.", pjp.toShortString(), cacheKey), ex);
+            getLogger()
+                    .warn(String.format("Caching on method %s and key [%s] aborted due to an error.", pjp.toShortString(), cacheKey), ex);
         }
         return result;
     }

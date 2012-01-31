@@ -28,6 +28,7 @@ import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.Signature;
 import org.aspectj.lang.reflect.MethodSignature;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
@@ -50,7 +51,9 @@ import com.google.code.ssm.util.Utils;
  * @author Jakub Białek
  * 
  */
-public abstract class CacheBase implements ApplicationContextAware, InitializingBean {
+public class CacheBase implements ApplicationContextAware, InitializingBean {
+
+    private static final Logger LOG = LoggerFactory.getLogger(CacheBase.class);
 
     protected CacheKeyBuilder cacheKeyBuilder = new CacheKeyBuilderImpl();
 
@@ -89,7 +92,7 @@ public abstract class CacheBase implements ApplicationContextAware, Initializing
         this.bridgeMethodMappingStore = bridgeMethodMappingStore;
     }
 
-    protected Cache getCache(final AnnotationData data) {
+    public Cache getCache(final AnnotationData data) {
         Cache cache = caches.get(data.getCacheName());
         if (cache == null) {
             throw new UndefinedCacheException(data.getCacheName());
@@ -98,7 +101,7 @@ public abstract class CacheBase implements ApplicationContextAware, Initializing
         return cache;
     }
 
-    protected Method getMethodToCache(final JoinPoint jp) throws NoSuchMethodException {
+    public Method getMethodToCache(final JoinPoint jp) throws NoSuchMethodException {
         final Signature sig = jp.getSignature();
         if (!(sig instanceof MethodSignature)) {
             throw new InvalidAnnotationException("This annotation is only valid on a method.");
@@ -115,7 +118,7 @@ public abstract class CacheBase implements ApplicationContextAware, Initializing
         Method method = findMethodFromTargetGivenNameAndParams(target, name, parameters);
 
         if (method.isBridge()) {
-            if (getLogger().isInfoEnabled()) {
+            if (getLogger().isDebugEnabled()) {
                 getLogger().debug("Method is bridge. Name {}, params: {}", name, parameters);
             }
 
@@ -126,17 +129,8 @@ public abstract class CacheBase implements ApplicationContextAware, Initializing
         return method;
     }
 
-    private Method findMethodFromTargetGivenNameAndParams(final Object target, final String name, final Class<?>[] parameters)
-            throws NoSuchMethodException {
-        Method method = target.getClass().getMethod(name, parameters);
-        if (getLogger().isInfoEnabled()) {
-            getLogger().debug("Method to cache: " + method);
-        }
-        return method;
-    }
-
     @SuppressWarnings("unchecked")
-    protected <T> T getUpdateData(final AnnotationData data, final Method method, final JoinPoint jp, final Object returnValue)
+    public <T> T getUpdateData(final AnnotationData data, final Method method, final JoinPoint jp, final Object returnValue)
             throws Exception {
         return data.isReturnDataIndex() ? (T) returnValue : (T) Utils.getMethodArg(data.getDataIndex(), jp.getArgs(), method.toString());
     }
@@ -190,11 +184,9 @@ public abstract class CacheBase implements ApplicationContextAware, Initializing
         }
     }
 
-    protected void warn(final String msg, final Throwable t) {
-        getLogger().warn(msg, t);
+    protected Logger getLogger() {
+        return LOG;
     }
-
-    protected abstract Logger getLogger();
 
     protected void addCache(final Cache cache) {
         if (caches.put(cache.getName(), cache) != null) {
@@ -230,6 +222,15 @@ public abstract class CacheBase implements ApplicationContextAware, Initializing
         }
 
         return method.getParameterTypes()[index];
+    }
+
+    private Method findMethodFromTargetGivenNameAndParams(final Object target, final String name, final Class<?>[] parameters)
+            throws NoSuchMethodException {
+        Method method = target.getClass().getMethod(name, parameters);
+        if (getLogger().isDebugEnabled()) {
+            getLogger().debug("Method to cache: " + method);
+        }
+        return method;
     }
 
 }

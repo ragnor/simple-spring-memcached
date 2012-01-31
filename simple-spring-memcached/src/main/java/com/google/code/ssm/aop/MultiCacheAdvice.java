@@ -38,11 +38,11 @@ import com.google.code.ssm.util.Utils;
  * @since 2.0.0
  * 
  */
-abstract class MultiCacheAdvice extends CacheBase {
+abstract class MultiCacheAdvice extends CacheAdvice {
 
     MapHolder createObjectIdCacheKeyMapping(final AnnotationData data, final Object[] args, final Method methodToCache) throws Exception {
         final MapHolder holder = new MapHolder();
-        List<String> cacheKeys = cacheKeyBuilder.getCacheKeys(data, args, methodToCache.toString());
+        List<String> cacheKeys = getCacheBase().getCacheKeyBuilder().getCacheKeys(data, args, methodToCache.toString());
 
         @SuppressWarnings("unchecked")
         List<Object> listObjects = (List<Object>) Utils.getMethodArg(data.getListIndexInMethodArgs(), args, methodToCache.toString());
@@ -66,15 +66,15 @@ abstract class MultiCacheAdvice extends CacheBase {
 
     protected void addNullValues(final List<Object> missObjects, final MultiCacheCoordinator coord, final Class<?> jsonClass) {
         for (Object keyObject : missObjects) {
-            getCache(coord.getAnnotationData()).addSilently(coord.getObj2Key().get(keyObject), coord.getAnnotationData().getExpiration(),
-                    PertinentNegativeNull.NULL, jsonClass);
+            getCacheBase().getCache(coord.getAnnotationData()).addSilently(coord.getObj2Key().get(keyObject),
+                    coord.getAnnotationData().getExpiration(), PertinentNegativeNull.NULL, jsonClass);
         }
     }
 
     protected void setNullValues(final List<Object> missObjects, final MultiCacheCoordinator coord, final Class<?> jsonClass) {
         for (Object keyObject : missObjects) {
-            getCache(coord.getAnnotationData()).setSilently(coord.getObj2Key().get(keyObject), coord.getAnnotationData().getExpiration(),
-                    PertinentNegativeNull.NULL, jsonClass);
+            getCacheBase().getCache(coord.getAnnotationData()).setSilently(coord.getObj2Key().get(keyObject),
+                    coord.getAnnotationData().getExpiration(), PertinentNegativeNull.NULL, jsonClass);
         }
     }
 

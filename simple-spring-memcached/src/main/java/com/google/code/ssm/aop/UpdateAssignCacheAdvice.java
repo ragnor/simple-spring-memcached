@@ -36,6 +36,7 @@ import com.google.code.ssm.api.UpdateAssignCache;
  */
 @Aspect
 public class UpdateAssignCacheAdvice extends SingleUpdateCacheAdvice<UpdateAssignCache> {
+
     private static final Logger LOG = LoggerFactory.getLogger(UpdateAssignCacheAdvice.class);
 
     public UpdateAssignCacheAdvice() {
@@ -53,7 +54,7 @@ public class UpdateAssignCacheAdvice extends SingleUpdateCacheAdvice<UpdateAssig
 
     @Override
     protected String getCacheKey(final AnnotationData data, final Object[] args, final String methodDesc) throws Exception {
-        return cacheKeyBuilder.getAssignCacheKey(data);
+        return getCacheBase().getCacheKeyBuilder().getAssignCacheKey(data);
     }
 
     @Override

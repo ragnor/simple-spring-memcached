@@ -50,6 +50,7 @@ public class ReadThroughMultiCacheTest {
     @BeforeClass
     public static void beforeClass() {
         cut = new ReadThroughMultiCacheAdvice();
+        cut.setCacheBase(new CacheBase());
     }
 
     @Before
@@ -67,41 +68,33 @@ public class ReadThroughMultiCacheTest {
         final int length = 10;
         for (int ix = 0; ix < length; ix++) {
             final String object = RandomStringUtils.randomAlphanumeric(2 + ix);
-            final String key = cut.cacheKeyBuilder.getCacheKey(object, data.getNamespace());
+            final String key = cut.getCacheBase().getCacheKeyBuilder().getCacheKey(object, data.getNamespace());
             idObjects.add(object);
             expectedObject2String.put(object, key);
             expectedString2Object.put(key, object);
         }
 
-        /*final List<Object> exceptionObjects = new ArrayList<Object>(idObjects);
-        Object[] objs = new Object[] { exceptionObjects };
-        exceptionObjects.add(null);
-        try {
-            cut.convertIdObjectsToKeyMap(exceptionObjects, objs, 0, data);
-            fail("Expected Exception");
-        } catch (InvalidParameterException ex) {
-        }
-
-        for (int ix = 0; ix < length; ix++) {
-            if (ix % 2 == 0) {
-                idObjects.add(idObjects.get(ix));
-            }
-        }
-        assertTrue(idObjects.size() > length);
-
-        final ReadThroughMultiCacheAdvice.MapHolder holder = cut.convertIdObjectsToKeyMap(idObjects, new Object[] { idObjects }, 0, data);
-
-        assertEquals(length, holder.getKey2Obj().size());
-        assertEquals(length, holder.getObj2Key().size());
-
-        assertEquals(expectedObject2String, holder.getObj2Key());
-        assertEquals(expectedString2Object, holder.getKey2Obj());
-
-        coord.setHolder(holder);
-
-        assertEquals(expectedObject2String, coord.getObj2Key());
-        assertEquals(expectedString2Object, coord.getKey2Obj());
-*/
+        /*
+         * final List<Object> exceptionObjects = new ArrayList<Object>(idObjects); Object[] objs = new Object[] {
+         * exceptionObjects }; exceptionObjects.add(null); try { cut.convertIdObjectsToKeyMap(exceptionObjects, objs, 0,
+         * data); fail("Expected Exception"); } catch (InvalidParameterException ex) { }
+         * 
+         * for (int ix = 0; ix < length; ix++) { if (ix % 2 == 0) { idObjects.add(idObjects.get(ix)); } }
+         * assertTrue(idObjects.size() > length);
+         * 
+         * final ReadThroughMultiCacheAdvice.MapHolder holder = cut.convertIdObjectsToKeyMap(idObjects, new Object[] {
+         * idObjects }, 0, data);
+         * 
+         * assertEquals(length, holder.getKey2Obj().size()); assertEquals(length, holder.getObj2Key().size());
+         * 
+         * assertEquals(expectedObject2String, holder.getObj2Key()); assertEquals(expectedString2Object,
+         * holder.getKey2Obj());
+         * 
+         * coord.setHolder(holder);
+         * 
+         * assertEquals(expectedObject2String, coord.getObj2Key()); assertEquals(expectedString2Object,
+         * coord.getKey2Obj());
+         */
     }
 
     @Test
@@ -115,7 +108,7 @@ public class ReadThroughMultiCacheTest {
         for (int ix = 0; ix < length; ix++) {
 
             final String object = RandomStringUtils.randomAlphanumeric(2 + ix);
-            final String key = cut.cacheKeyBuilder.getCacheKey(object, annotation.getNamespace());
+            final String key = cut.getCacheBase().getCacheKeyBuilder().getCacheKey(object, annotation.getNamespace());
             expectedString2Object.put(key, object);
 
             // There are 3 possible outcomes when fetching by key from memcached:

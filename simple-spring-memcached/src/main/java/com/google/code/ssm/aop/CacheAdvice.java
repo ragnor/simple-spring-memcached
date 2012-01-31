@@ -14,36 +14,28 @@
  * COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
+package com.google.code.ssm.aop;
 
-package com.google.code.ssm.aop.counter;
-
-import org.aspectj.lang.JoinPoint;
-
-import com.google.code.ssm.aop.CacheAdvice;
+import org.slf4j.Logger;
 
 /**
+ * 
  * @author Jakub Białek
  * @since 2.0.0
  * 
  */
-abstract class CounterInCacheBase extends CacheAdvice {
+public abstract class CacheAdvice {
 
-    protected boolean checkData(final Object data, final JoinPoint pjp) {
-        if (!isTypeSupported(data)) {
-            getLogger().warn("Caching on {} aborted due to incorrect return type. Should be int, long, Integer or Long is {}",
-                    new Object[] { pjp.toShortString(), (data == null) ? null : data.getClass() });
-            return false;
-        }
+    private CacheBase cacheBase;
 
-        return true;
+    public CacheBase getCacheBase() {
+        return cacheBase;
     }
 
-    protected boolean isReturnTypeSupported(final Class<?> clazz) {
-        return int.class.equals(clazz) || Integer.class.equals(clazz) || long.class.equals(clazz) || Long.class.equals(clazz);
+    public void setCacheBase(final CacheBase cacheBase) {
+        this.cacheBase = cacheBase;
     }
 
-    private boolean isTypeSupported(final Object result) {
-        return result instanceof Long || result instanceof Integer;
-    }
+    protected abstract Logger getLogger();
 
 }
