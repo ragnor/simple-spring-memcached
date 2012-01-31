@@ -34,6 +34,8 @@ import org.springframework.context.ApplicationContextAware;
 
 import com.google.code.ssm.Cache;
 import com.google.code.ssm.aop.support.AnnotationData;
+import com.google.code.ssm.aop.support.BridgeMethodMappingStore;
+import com.google.code.ssm.aop.support.BridgeMethodMappingStoreImpl;
 import com.google.code.ssm.aop.support.CacheKeyBuilder;
 import com.google.code.ssm.aop.support.CacheKeyBuilderImpl;
 import com.google.code.ssm.aop.support.InvalidAnnotationException;
@@ -51,6 +53,8 @@ import com.google.code.ssm.util.Utils;
 public abstract class CacheBase implements ApplicationContextAware, InitializingBean {
 
     protected CacheKeyBuilder cacheKeyBuilder = new CacheKeyBuilderImpl();
+
+    protected BridgeMethodMappingStore bridgeMethodMappingStore = new BridgeMethodMappingStoreImpl();
 
     // mapping cache zone <-> cache
     private final Map<String, Cache> caches = new HashMap<String, Cache>();
@@ -77,6 +81,14 @@ public abstract class CacheBase implements ApplicationContextAware, Initializing
         return this.cacheKeyBuilder;
     }
 
+    public BridgeMethodMappingStore getBridgeMethodMappingStore() {
+        return bridgeMethodMappingStore;
+    }
+
+    public void setBridgeMethodMappingStore(final BridgeMethodMappingStore bridgeMethodMappingStore) {
+        this.bridgeMethodMappingStore = bridgeMethodMappingStore;
+    }
+
     protected Cache getCache(final AnnotationData data) {
         Cache cache = caches.get(data.getCacheName());
         if (cache == null) {
@@ -94,9 +106,33 @@ public abstract class CacheBase implements ApplicationContextAware, Initializing
 
         final MethodSignature msig = (MethodSignature) sig;
         final Object target = jp.getTarget();
+
         // cannot use msig.getMethod() because it can return the method where annotation was declared i.e. method in
         // interface
-        return target.getClass().getMethod(msig.getName(), msig.getParameterTypes());
+        String name = msig.getName();
+        Class<?>[] parameters = msig.getParameterTypes();
+
+        Method method = findMethodFromTargetGivenNameAndParams(target, name, parameters);
+
+        if (method.isBridge()) {
+            if (getLogger().isInfoEnabled()) {
+                getLogger().debug("Method is bridge. Name {}, params: {}", name, parameters);
+            }
+
+            parameters = bridgeMethodMappingStore.getTargetParamsTypes(target.getClass(), name, parameters);
+            method = findMethodFromTargetGivenNameAndParams(target, name, parameters);
+        }
+
+        return method;
+    }
+
+    private Method findMethodFromTargetGivenNameAndParams(final Object target, final String name, final Class<?>[] parameters)
+            throws NoSuchMethodException {
+        Method method = target.getClass().getMethod(name, parameters);
+        if (getLogger().isInfoEnabled()) {
+            getLogger().debug("Method to cache: " + method);
+        }
+        return method;
     }
 
     @SuppressWarnings("unchecked")

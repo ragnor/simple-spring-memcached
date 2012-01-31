@@ -31,7 +31,7 @@ import com.google.code.ssm.api.CacheKeyMethod;
  */
 public class CacheKeyMethodStoreImpl implements CacheKeyMethodStore { // NO_UCD
 
-    final private Map<Class<?>, Method> map = new ConcurrentHashMap<Class<?>, Method>();
+    private final Map<Class<?>, Method> map = new ConcurrentHashMap<Class<?>, Method>();
 
     @Override
     public Method getKeyMethod(final Class<?> keyClass) throws NoSuchMethodException {
