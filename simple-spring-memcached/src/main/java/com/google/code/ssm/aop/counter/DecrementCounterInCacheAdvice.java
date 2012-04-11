@@ -47,6 +47,10 @@ public class DecrementCounterInCacheAdvice extends CounterInCacheBase {
 
     @AfterReturning("decrementSingleCounter()")
     public void decrementSingle(final JoinPoint jp) throws Throwable {
+        if (isDisabled()) {
+            getLogger().info("Cache disabled");
+            return;
+        }
         // This is injected caching. If anything goes wrong in the caching, LOG
         // the crap outta it, but do not let it surface up past the AOP injection itself.
         // It will be invoked only if underlying method completes successfully.

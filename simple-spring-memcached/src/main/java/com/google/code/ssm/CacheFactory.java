@@ -125,6 +125,11 @@ public class CacheFactory implements AddressChangeListener, FactoryBean<Cache>, 
 
     @Override
     public void changeAddresses(final List<InetSocketAddress> addresses) {
+        if ("true".equals(System.getProperty("ssm.cache.disable"))) {
+            LOGGER.warn("Cache disabled");
+            return;
+        }
+
         try {
             LOGGER.info("Creating new memcached client for new addresses: " + addresses);
             CacheClient memcacheClient = createClient(addresses);
@@ -144,6 +149,12 @@ public class CacheFactory implements AddressChangeListener, FactoryBean<Cache>, 
     protected Cache createCache() throws IOException {
         // this factory creates only one single cache and return it if someone invoked this method twice or
         // more
+
+        if ("true".equals(System.getProperty("ssm.cache.disable"))) {
+            LOGGER.warn("Cache disabled");
+            return null;
+        }
+
         if (cache != null) {
             throw new IllegalStateException("This factory has already created memcached client");
         }

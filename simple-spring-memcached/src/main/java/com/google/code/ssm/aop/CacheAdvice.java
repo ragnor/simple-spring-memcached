@@ -36,6 +36,10 @@ public abstract class CacheAdvice {
         this.cacheBase = cacheBase;
     }
 
+    protected boolean isDisabled() {
+        return "true".equals(System.getProperty("ssm.cache.disable"));
+    }
+
     protected abstract Logger getLogger();
 
 }

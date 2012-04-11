@@ -66,12 +66,12 @@
 
 	<properties>
 		<spring.version>3.0.7.RELEASE</spring.version>
-		<guava.version>11.0.1</guava.version>
+		<guava.version>11.0.2</guava.version>
 		<aspectj.version>1.6.8</aspectj.version>
-		<jackson.version>1.9.3</jackson.version>
+		<jackson.version>1.9.6</jackson.version>
 		<spymemcached.version>2.7.3</spymemcached.version>
 		<xmemcached.version>1.3.5</xmemcached.version>
-		<slf4j.version>1.5.11</slf4j.version>
+		<slf4j.version>1.6.4</slf4j.version>
 
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>

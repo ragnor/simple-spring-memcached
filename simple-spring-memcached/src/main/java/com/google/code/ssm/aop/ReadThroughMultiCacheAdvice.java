@@ -54,6 +54,11 @@ public class ReadThroughMultiCacheAdvice extends MultiCacheAdvice {
     @Around("getMulti()")
     @SuppressWarnings("unchecked")
     public Object cacheMulti(final ProceedingJoinPoint pjp) throws Throwable {
+        if (isDisabled()) {
+            getLogger().info("Cache disabled");
+            return pjp.proceed();
+        }
+
         // This is injected caching. If anything goes wrong in the caching, LOG
         // the crap outta it, but do not let it surface up past the AOP injection itself.
         final ReadThroughMultiCache annotation;

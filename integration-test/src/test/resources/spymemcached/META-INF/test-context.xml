@@ -9,7 +9,7 @@
 
 	<aop:aspectj-autoproxy />
 
-	<bean name="defaultMemcachedClient" class="com.google.code.ssm.config.CacheFactory">
+	<bean name="defaultMemcachedClient" class="com.google.code.ssm.CacheFactory">
 		<property name="cacheClientFactory">
 			<bean class="com.google.code.ssm.providers.spymemcached.MemcacheClientFactoryImpl" />
 		</property>
@@ -25,7 +25,7 @@
 		</property>
 	</bean>
 
-	<bean name="memcachedClient1" class="com.google.code.ssm.config.CacheFactory">
+	<bean name="memcachedClient1" class="com.google.code.ssm.CacheFactory">
 		<property name="cacheClientFactory">
 			<bean class="com.google.code.ssm.providers.spymemcached.MemcacheClientFactoryImpl" />
 		</property>

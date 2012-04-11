@@ -189,6 +189,11 @@ public class CacheBase implements ApplicationContextAware, InitializingBean {
     }
 
     protected void addCache(final Cache cache) {
+        if (cache == null) {
+            getLogger().warn("One of the cache is null");
+            return;
+        }
+
         if (caches.put(cache.getName(), cache) != null) {
             String errorMsg = "There are two or more caches with the same name '" + cache.getName() + "'";
             getLogger().error(errorMsg);

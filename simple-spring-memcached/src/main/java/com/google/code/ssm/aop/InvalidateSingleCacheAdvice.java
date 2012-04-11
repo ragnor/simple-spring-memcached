@@ -48,6 +48,11 @@ public class InvalidateSingleCacheAdvice extends CacheAdvice {
 
     @Around("invalidateSingle()")
     public Object cacheInvalidateSingle(final ProceedingJoinPoint pjp) throws Throwable {
+        if (isDisabled()) {
+            getLogger().info("Cache disabled");
+            return pjp.proceed();
+        }
+
         // This is injected caching. If anything goes wrong in the caching, LOG
         // the crap outta it, but do not let it surface up past the AOP injection itself.
         String cacheKey = null;

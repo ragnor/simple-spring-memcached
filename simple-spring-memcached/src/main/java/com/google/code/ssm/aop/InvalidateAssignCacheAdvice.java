@@ -48,6 +48,11 @@ public class InvalidateAssignCacheAdvice extends CacheAdvice {
 
     @Around("invalidateAssign()")
     public Object cacheInvalidateAssign(final ProceedingJoinPoint pjp) throws Throwable {
+        if (isDisabled()) {
+            getLogger().info("Cache disabled");
+            return pjp.proceed();
+        }
+
         final Object result = pjp.proceed();
 
         // This is injected caching. If anything goes wrong in the caching, LOG

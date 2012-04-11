@@ -39,7 +39,7 @@
 				<property name="consistentHashing" value="true" />
 			</bean>
 		</property>
-		<property name="cacheName" value="cache1"/>
+		<property name="cacheName" value="cache1" />
 		<property name="cacheAliases">
 			<list>
 				<value>cache1Alias</value>

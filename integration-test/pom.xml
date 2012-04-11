@@ -11,6 +11,7 @@
 	<name>integration-test</name>
 	<description>Sample project using simple-spring-memcached</description>
 	<url>http://code.google.com/p/simple-spring-memcached/</url>
+	
 	<dependencies>
 		<dependency>
 			<groupId>com.google.code.simple-spring-memcached</groupId>

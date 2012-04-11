@@ -57,6 +57,11 @@ public class UpdateMultiCacheAdvice extends MultiCacheAdvice {
 
     @AfterReturning(pointcut = "updateMulti()", returning = "retVal")
     public void cacheUpdateMulti(final JoinPoint jp, final Object retVal) throws Throwable {
+        if (isDisabled()) {
+            getLogger().info("Cache disabled");
+            return;
+        }
+
         // For Update*Cache, an AfterReturning aspect is fine. We will only
         // apply our caching after the underlying method completes successfully, and we will have
         // the same access to the method params.

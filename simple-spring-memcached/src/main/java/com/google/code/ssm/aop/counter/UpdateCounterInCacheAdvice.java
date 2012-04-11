@@ -47,6 +47,11 @@ public class UpdateCounterInCacheAdvice extends CounterInCacheBase {
 
     @AfterReturning(pointcut = "updateCounter()", returning = "retVal")
     public void cacheCounterInCache(final JoinPoint jp, final Object retVal) throws Throwable {
+        if (isDisabled()) {
+            getLogger().info("Cache disabled");
+            return;
+        }
+
         // For Update*Cache, an AfterReturning aspect is fine. We will only
         // apply our caching after the underlying method completes successfully, and we will have
         // the same access to the method params.
