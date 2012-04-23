@@ -11,19 +11,18 @@
 	<description>Enables memcached caching in Spring beans via annotations</description>
 	<url>http://code.google.com/p/simple-spring-memcached/</url>
 
-	<!--For the release process, to create the artifact with the bundled spymemcached.jar, -->
-	<!--run this command: "mvn assembly:assembly" -->
-	<!--To create the javadoc.jar: "mvn javadoc:jar" -->
+	<!--For the release process, to create the artifact with all dependencies and docs, -->
+	<!--run this command: "mvn clean site:site assembly:assembly" -->
 	<build>
 		<plugins>
 			<plugin>
-				<artifactId>maven-assembly-plugin</artifactId>
-				<configuration>
-					<descriptorRefs>
-						<descriptorRef>jar-with-dependencies</descriptorRef>
-					</descriptorRefs>
-				</configuration>
-			</plugin>
+        		<artifactId>maven-assembly-plugin</artifactId>
+        		<configuration>
+          			<descriptors>
+            			<descriptor>src/main/assembly/src.xml</descriptor>
+          			</descriptors>
+        		</configuration>
+        	</plugin>        		
 		</plugins>
 	</build>
 
@@ -112,6 +111,29 @@
 		<plugins>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-javadoc-plugin</artifactId>
+				<configuration>
+					<doclet>org.jboss.apiviz.APIviz</doclet>
+					<docletArtifact>
+						<groupId>org.jboss.apiviz</groupId>
+						<artifactId>apiviz</artifactId>
+						<version>${apiviz.version}</version>
+					</docletArtifact>
+					<useStandardDocletOptions>true</useStandardDocletOptions>
+					<charset>UTF-8</charset>
+					<encoding>UTF-8</encoding>
+					<docencoding>UTF-8</docencoding>
+					<breakiterator>true</breakiterator>
+					<version>true</version>
+					<author>true</author>
+					<keywords>true</keywords>
+					<additionalparam>
+						-sourceclasspath ${project.build.outputDirectory}
+					</additionalparam>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-project-info-reports-plugin</artifactId>
 			</plugin>
 			<plugin>
@@ -127,25 +149,6 @@
 					<minimumTokens>100</minimumTokens>
 					<targetJdk>1.6</targetJdk>
 				</configuration>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-javadoc-plugin</artifactId>
-				<configuration>
-					<aggregate>true</aggregate>
-					<quiet>true</quiet>
-				</configuration>
-				<reportSets>
-					<reportSet>
-						<id>html</id>
-						<configuration>
-							<show>private</show>
-						</configuration>
-						<reports>
-							<report>javadoc</report>
-						</reports>
-					</reportSet>
-				</reportSets>
 			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
