@@ -34,7 +34,7 @@ public interface CacheTranscoder<T> {
      *            the cached object to decode
      * @return decoded object
      */
-    T decode(CachedObject data);
+    T decode(final CachedObject data);
 
     /**
      * Encodes object.
@@ -43,6 +43,6 @@ public interface CacheTranscoder<T> {
      *            the object to encode
      * @return encoded object
      */
-    CachedObject encode(T o);
+    CachedObject encode(final T o);
 
 }

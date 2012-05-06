@@ -21,6 +21,7 @@ import net.spy.memcached.ConnectionFactoryBuilder;
 import net.spy.memcached.ConnectionFactoryBuilder.Locator;
 import net.spy.memcached.FailureMode;
 import net.spy.memcached.HashAlgorithm;
+import net.spy.memcached.transcoders.Transcoder;
 
 import com.google.code.ssm.providers.CacheConfiguration;
 
@@ -53,6 +54,8 @@ public class SpymemcachedConfiguration extends CacheConfiguration {
     private Integer timeoutExceptionThreshold;
 
     private Boolean useNagleAlgorithm;
+
+    private Transcoder<Object> defaultTranscoder;
 
     public Boolean getDaemon() {
         return daemon;
@@ -132,6 +135,24 @@ public class SpymemcachedConfiguration extends CacheConfiguration {
 
     public void setUseNagleAlgorithm(final Boolean useNagleAlgorithm) {
         this.useNagleAlgorithm = useNagleAlgorithm;
+    }
+
+    /**
+     * 
+     * @return default transcoder or null if not set
+     * @since 2.1.0
+     */
+    public Transcoder<Object> getDefaultTranscoder() {
+        return defaultTranscoder;
+    }
+
+    /**
+     * 
+     * @param defaultTranscoder
+     * @since 2.1.0
+     */
+    public void setDefaultTranscoder(final Transcoder<Object> defaultTranscoder) {
+        this.defaultTranscoder = defaultTranscoder;
     }
 
 }

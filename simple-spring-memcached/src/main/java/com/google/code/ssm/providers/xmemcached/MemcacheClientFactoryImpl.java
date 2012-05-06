@@ -87,6 +87,10 @@ public class MemcacheClientFactoryImpl implements CacheClientFactory {
                 builder.setSocketOption(entry.getKey(), entry.getValue());
             }
         }
+
+        if (conf.getDefaultTranscoder() != null) {
+            builder.setTranscoder(conf.getDefaultTranscoder());
+        }
     }
 
     private void setProviderClientSpecificSettings(final MemcachedClient client, final XMemcachedConfiguration conf) {

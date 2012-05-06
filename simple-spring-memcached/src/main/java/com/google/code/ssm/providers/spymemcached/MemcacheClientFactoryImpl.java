@@ -110,6 +110,10 @@ public class MemcacheClientFactoryImpl implements CacheClientFactory {
             builder.setUseNagleAlgorithm(conf.getUseNagleAlgorithm());
         }
 
+        if (conf.getDefaultTranscoder() != null) {
+            builder.setTranscoder(conf.getDefaultTranscoder());
+        }
+
     }
 
 }

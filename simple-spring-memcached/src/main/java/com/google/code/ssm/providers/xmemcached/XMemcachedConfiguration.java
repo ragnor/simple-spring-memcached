@@ -21,6 +21,7 @@ import java.util.Map;
 
 import net.rubyeye.xmemcached.MemcachedClient;
 import net.rubyeye.xmemcached.MemcachedClientBuilder;
+import net.rubyeye.xmemcached.transcoders.Transcoder;
 
 import com.google.code.ssm.providers.CacheConfiguration;
 import com.google.code.yanf4j.config.Configuration;
@@ -61,6 +62,8 @@ public class XMemcachedConfiguration extends CacheConfiguration {
     private Boolean primitiveAsString;
 
     private Boolean sanitizeKeys;
+
+    private Transcoder<?> defaultTranscoder;
 
     public void setMaxAwayTime(final Integer maxAwayTime) {
         this.maxAwayTime = maxAwayTime;
@@ -156,6 +159,24 @@ public class XMemcachedConfiguration extends CacheConfiguration {
 
     public void setSanitizeKeys(final Boolean sanitizeKeys) {
         this.sanitizeKeys = sanitizeKeys;
+    }
+
+    /**
+     * 
+     * @return default transcoder or null if not set
+     * @since 2.1.0
+     */
+    public Transcoder<?> getDefaultTranscoder() {
+        return defaultTranscoder;
+    }
+
+    /**
+     * 
+     * @param defaultTranscoder
+     * @since 2.1.0
+     */
+    public void setDefaultTranscoder(final Transcoder<?> defaultTranscoder) {
+        this.defaultTranscoder = defaultTranscoder;
     }
 
 }

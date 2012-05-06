@@ -46,20 +46,16 @@ public class JsonTranscoder<T> implements CacheTranscoder<T> { // NO_UCD
 
     private static final int JSON_SERIALIZED = 8; // json format
 
-    private final CacheTranscoder<? super T> defaultTranscoder;
-
     private final ObjectMapper mapper;
 
     private final Class<T> clazz;
 
-    public JsonTranscoder(final Class<T> clazz, final ObjectMapper mapper, final CacheTranscoder<? super T> defaultTranscoder) {
+    public JsonTranscoder(final Class<T> clazz, final ObjectMapper mapper) {
         Assert.notNull(clazz, "'clazz' is required and cannot be null");
         Assert.notNull(mapper, "'mapper' is required and cannot be null");
-        Assert.notNull(clazz, "'defaultTranscoder' is required and cannot be null");
 
         this.clazz = clazz;
         this.mapper = mapper;
-        this.defaultTranscoder = defaultTranscoder;
     }
 
     public boolean asyncDecode(final CachedObject data) {
@@ -67,10 +63,10 @@ public class JsonTranscoder<T> implements CacheTranscoder<T> { // NO_UCD
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     public T decode(final CachedObject data) {
         if ((data.getFlags() & JSON_SERIALIZED) == 0) {
-            return (T) defaultTranscoder.decode(data);
+            LOGGER.warn("Cannot decode cached data to class {} using json transcoder", clazz.getName());
+            throw new RuntimeException("Cannot decode cached data using json transcoder");
         }
 
         ByteArrayInputStream bais = new ByteArrayInputStream(data.getData());
