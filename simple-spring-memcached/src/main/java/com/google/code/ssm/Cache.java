@@ -42,14 +42,14 @@ public interface Cache {
     /**
      * Gets name of the cache.
      * 
-     * @return
+     * @return the name of cache
      */
     String getName();
 
     /**
      * Gets optional cache's aliases.
      * 
-     * @return
+     * @return the optional aliases of cache
      */
     Collection<String> getAliases();
 
@@ -64,7 +64,6 @@ public interface Cache {
      * 
      * @param key
      *            the key
-     * @return
      * @throws TimeoutException
      * @throws CacheException
      */

@@ -56,7 +56,7 @@ public class CacheKeyBuilderImpl implements CacheKeyBuilder { // NO_UCD
      * 
      * @param keyObject
      * @param namespace
-     * @return
+     * @return cache key (with namespace)
      */
     @Override
     public String getCacheKey(final Object keyObject, final String namespace) {

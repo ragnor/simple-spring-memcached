@@ -44,7 +44,6 @@ public interface CacheClient {
      * 
      * @param key
      *            the key
-     * @return
      * @throws TimeoutException
      * @throws CacheException
      */
@@ -70,7 +69,6 @@ public interface CacheClient {
     /**
      * Get value by key.
      * 
-     * @param <T>
      * @param key
      *            the key
      * @return value associated with given key or null

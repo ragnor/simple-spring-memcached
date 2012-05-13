@@ -31,7 +31,7 @@ public interface KeyProvider {
      * (Hint: This value, plus the Namespace value, plus optional other key should be no longer than 250 characters.)
      * 
      * @param keyObject
-     * @return
+     * @return cache key (without namespace)
      */
     String generateKey(final Object keyObject);
 
@@ -39,7 +39,7 @@ public interface KeyProvider {
      * This is the multi-plexed version of <code>generateKey(...)</code>
      * 
      * @param keyObjects
-     * @return
+     * @return cache keys (without namespace)
      */
     String[] generateKeys(final Object[] keyObjects);
 

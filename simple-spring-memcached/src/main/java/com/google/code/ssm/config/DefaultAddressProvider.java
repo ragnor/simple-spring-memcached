@@ -67,8 +67,8 @@ public class DefaultAddressProvider implements AddressProvider {
      * @param addresses
      *            servers' addresses
      */
-    public void setAddress(final String address) {
-        this.address = address;
+    public void setAddress(final String addresses) {
+        this.address = addresses;
     }
 
     @Override

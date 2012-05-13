@@ -1,5 +1,4 @@
-/*
- * Copyright (c) 2008-2012 Nelson Carpentier, Jakub Białek
+/* Copyright (c) 2010-2012 Jakub Białek
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
  * documentation files (the "Software"), to deal in the Software without restriction, including without limitation the
@@ -13,32 +12,48 @@
  * WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
  * COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
- * 
  */
 
-package com.google.code.ssm.aop.support;
+package com.google.code.ssm.providers.spymemcached;
 
-import java.lang.reflect.Method;
+import static org.junit.Assert.assertEquals;
 
-import com.google.code.ssm.api.CacheKeyMethod;
+import com.google.code.ssm.providers.CachedObject;
+
+import net.spy.memcached.CachedData;
+
+import org.junit.Before;
+import org.junit.Test;
 
 /**
- * Stores methods used to calculate part of the cache key for given class.
  * 
- * @author Nelson Carpentier
  * @author Jakub Białek
  * 
  */
-public interface CacheKeyMethodStore {
+public class CachedObjectWrapperTest {
 
-    /**
-     * Gets method used to calculate cache key on given class.
-     * 
-     * @param keyClass
-     * @return method used to calculate cache key
-     * @throws NoSuchMethodException
-     *             if class doesn't contain method annotated by {@link CacheKeyMethod} or toString() method
-     */
-    public Method getKeyMethod(final Class<?> keyClass) throws NoSuchMethodException;
+    private CachedObjectWrapper cachedObjectWrapper;
+
+    private CachedData cachedData;
+
+    private int flags = 7;
+
+    private byte[] data = new byte[] { 1, 1, 1, 1, 0, 0 };
+
+    @Before
+    public void setUp() {
+        cachedData = new CachedData(flags, data, CachedObject.MAX_SIZE);
+        cachedObjectWrapper = new CachedObjectWrapper(cachedData);
+    }
+
+    @Test
+    public void getData() {
+        assertEquals(data, cachedObjectWrapper.getData());
+    }
+
+    @Test
+    public void getFlags() {
+        assertEquals(flags, cachedObjectWrapper.getFlags());
+    }
 
 }

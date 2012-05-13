@@ -27,7 +27,7 @@ import com.google.code.ssm.api.AnnotationConstants;
 /**
  * 
  * Reads counter value from cache. If counter doesn't exist intercepted method is executed and return value is used to
- * initialize counter. Annotated method must return one of {@link int}, {@link Integer}, {@link long} or {@link Long}.
+ * initialize counter. Annotated method must return one of int, {@link Integer}, long or {@link Long}.
  * 
  * @author Jakub Białek
  * @since 2.0.0
@@ -57,7 +57,7 @@ public @interface ReadCounterFromCache {
      * (Also note: a value of 0 means the given value should never expire. The value is still susceptible to purging by
      * memcached for space and LRU (least recently used) considerations.)
      * 
-     * @return
+     * @return expiration of counter
      */
     int expiration() default 0;
 

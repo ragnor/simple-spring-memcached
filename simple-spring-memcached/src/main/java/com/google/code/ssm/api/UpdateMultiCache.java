@@ -54,14 +54,14 @@ public @interface UpdateMultiCache {
      * (Also note: a value of 0 means the given value should never expire. The value is still susceptible to purging by
      * memcached for space and LRU (least recently used) considerations.)
      * 
-     * @return
+     * @return expiration of cached data
      */
     int expiration() default 0;
 
     /**
      * Additional cache options.
      * 
-     * @return
+     * @return additional options
      * @since 2.0.0
      */
     UpdateMultiCacheOption option() default @UpdateMultiCacheOption();

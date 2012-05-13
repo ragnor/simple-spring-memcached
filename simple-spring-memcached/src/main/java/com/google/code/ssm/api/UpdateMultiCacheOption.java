@@ -39,14 +39,15 @@ public @interface UpdateMultiCacheOption {
      * annotated by {@link ParameterValueKeyProvider} or {@link ReturnValueKeyProvider} but not occurred in
      * {@link ParameterDataUpdateContent} or {@link ReturnDataUpdateContent}. Example: <br/>
      * 
-     * @UpdateMultiCache(namespace = "NS1", expiration = 0, option=@UpdateMultiCacheOption(addNullsToCache = true)) <br/>
-     *                             public List<ApplicationUser> getUsersList(@ParameterValueKeyProvider(order = 1) int
-     *                             applicationId, @ParameterValueKeyProvider(order = 0) List<Integer> userIds) <br/>
+     * &#064;UpdateMultiCache(namespace = "NS1", expiration = 0, option=&#064;UpdateMultiCacheOption(addNullsToCache =
+     * true)) <br/>
+     * public List<ApplicationUser> getUsersList(&#064;ParameterValueKeyProvider(order = 1) int applicationId,
+     * &#064;ParameterValueKeyProvider(order = 0) List<Integer> userIds) <br/>
      * <br/>
-     *                             invocation: getUsersList(1, Arrays.asList(1,2,3,4,5)) will return entities for userId
-     *                             1,3,4 then null values will be added for userId 2 and 5.
+     * invocation: getUsersList(1, Arrays.asList(1,2,3,4,5)) will return entities for userId 1,3,4 then null values will
+     * be added for userId 2 and 5.
      * 
-     * @return
+     * @return true if null values should be add to cache
      */
     boolean addNullsToCache() default false;
 
@@ -55,7 +56,7 @@ public @interface UpdateMultiCacheOption {
      * marked will be set to cache under missed value (set memcached command), otherwise null marked will be added only
      * if current value in cache is null (add memcached command).
      * 
-     * @return
+     * @return true if null value can overwrite no-null in cache
      */
     boolean overwriteNoNulls() default false;
 

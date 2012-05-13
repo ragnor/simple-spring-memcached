@@ -18,7 +18,10 @@
 
 package com.google.code.ssm.api;
 
-import java.lang.annotation.*;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
 /**
  * 
@@ -51,14 +54,14 @@ public @interface ReadThroughMultiCache {
      * (Also note: a value of 0 means the given value should never expire. The value is still susceptible to purging by
      * memcached for space and LRU (least recently used) considerations.)
      * 
-     * @return
+     * @return expiration of cached data
      */
     int expiration() default 0;
 
     /**
      * Additional cache options.
      * 
-     * @return
+     * @return additional options
      * @since 2.0.0
      */
     ReadThroughMultiCacheOption option() default @ReadThroughMultiCacheOption();

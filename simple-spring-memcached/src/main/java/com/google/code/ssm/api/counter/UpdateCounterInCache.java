@@ -30,7 +30,7 @@ import com.google.code.ssm.api.ReturnDataUpdateContent;
  * 
  * Updates counter's with value returned by method if method is annotated with {@link ReturnDataUpdateContent} or with
  * value from method parameter annotated with {@link ParameterDataUpdateContent}. The value used to update counter must
- * be of type {@link int}, {@link Integer}, {@link long} or {@link Long}.
+ * be of type int, {@link Integer}, long or {@link Long}.
  * 
  * @author Jakub Białek
  * @since 2.0.0
@@ -60,7 +60,7 @@ public @interface UpdateCounterInCache {
      * (Also note: a value of 0 means the given value should never expire. The value is still susceptible to purging by
      * memcached for space and LRU (least recently used) considerations.)
      * 
-     * @return
+     * @return expiration of cached data
      */
     int expiration() default 0;
 

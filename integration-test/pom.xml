@@ -59,8 +59,8 @@
 			<dependencies>
 				<dependency>
 					<groupId>com.google.code.simple-spring-memcached</groupId>
-					<artifactId>simple-spring-memcached</artifactId>
-					<version>spymemcached-provider</version>
+					<artifactId>spymemcached-provider</artifactId>
+					<version>${project.parent.version}</version>
 					<type>jar</type>
 				</dependency>
 			</dependencies>

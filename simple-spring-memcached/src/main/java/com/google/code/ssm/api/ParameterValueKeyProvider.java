@@ -18,10 +18,10 @@
 
 package com.google.code.ssm.api;
 
+import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
-import java.lang.annotation.ElementType;
 
 /**
  * 
@@ -41,7 +41,7 @@ public @interface ParameterValueKeyProvider {
      * If more than one parameter in method declaration is annotated then this parameter tells about the order of params
      * in cache key.
      * 
-     * @return
+     * @return order of the parameter in generated cache key
      * @since 2.0.0
      */
     int order() default 0;

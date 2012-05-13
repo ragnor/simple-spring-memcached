@@ -11,22 +11,25 @@ import java.lang.annotation.Target;
  * is generic. Because of type erasure in such case types of method's parameters have to be provided.
  * 
  * <pre>
- *     public interface Generic<K,V> {
- *       void set(K key, V value);
- *       V get(K key);
- *       void put(K key, V value, boolean overwrite);
- *     }
- *       
- *    @BridgeMethodMappings({
- *        @BridgeMethodMapping(methodName="set",erasedParamTypes={Object.class, Object.class}, targetParamTypes={Number.class, String.class}),
- *        @BridgeMethodMapping(methodName="get",erasedParamTypes={Object.class}, targetParamTypes={Number.class}),
- *        @BridgeMethodMapping(methodName="put",erasedParamTypes={Object.class, Object.class, boolean.class}, targetParamTypes={Number.class, String.class, boolean.class})
- *    })
- *    public class SubGeneric implements Generic<Number, String> {     
+ * public interface Generic&lt;K, V&gt; {
+ *     void set(K key, V value);
+ * 
+ *     V get(K key);
+ * 
+ *     void put(K key, V value, boolean overwrite);
+ * }
+ * 
+ * &#064;BridgeMethodMappings({
+ *         &#064;BridgeMethodMapping(methodName = &quot;set&quot;, erasedParamTypes = { Object.class, Object.class }, targetParamTypes = { Number.class,
+ *                 String.class }),
+ *         &#064;BridgeMethodMapping(methodName = &quot;get&quot;, erasedParamTypes = { Object.class }, targetParamTypes = { Number.class }),
+ *         &#064;BridgeMethodMapping(methodName = &quot;put&quot;, erasedParamTypes = { Object.class, Object.class, boolean.class }, targetParamTypes = {
+ *                 Number.class, String.class, boolean.class }) })
+ * public class SubGeneric implements Generic&lt;Number, String&gt; {
  *     public void set(Number key, String value) {
  *     ..... 
  *     }
- *       
+ * 
  *     public String get(Number key) {
  *     .... 
  *     }
@@ -35,9 +38,7 @@ import java.lang.annotation.Target;
  *     .... 
  *     }
  * }
- * 
- * 
- * <pre/>
+ * </pre>
  * 
  * @author Jakub Białek
  * @since 2.0.0
@@ -47,10 +48,22 @@ import java.lang.annotation.Target;
 @Target({ ElementType.ANNOTATION_TYPE })
 public @interface BridgeMethodMapping {
 
+    /**
+     * 
+     * @return the name of the method.
+     */
     String methodName();
 
+    /**
+     * 
+     * @return an array of erased types of method's parameters
+     */
     Class<?>[] erasedParamTypes();
 
+    /**
+     * 
+     * @return an array of target types of method's parameters
+     */
     Class<?>[] targetParamTypes();
 
 }
