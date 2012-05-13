@@ -61,6 +61,8 @@
 	<modules>
 		<module>simple-spring-memcached</module>
 		<module>integration-test</module>
+		<module>xmemcached-provider</module>
+		<module>spymemcached-provider</module>
 	</modules>
 
 	<properties>

@@ -1,27 +1,27 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<groupId>com.google.code.simple-spring-memcached</groupId>
 		<artifactId>simple-spring-memcached-parent</artifactId>
 		<version>2.0.1-SNAPSHOT</version>
 	</parent>
-	<artifactId>integration-test</artifactId>
+
+	<artifactId>spymemcached-provider</artifactId>
 	<packaging>jar</packaging>
-	<name>integration-test</name>
-	<description>Sample project using simple-spring-memcached</description>
+	<name>spymemcached-provider</name>
+	<description>Use spymemcached as a memcached client</description>
 	<url>http://code.google.com/p/simple-spring-memcached/</url>
 
 	<dependencies>
 		<dependency>
 			<groupId>com.google.code.simple-spring-memcached</groupId>
 			<artifactId>simple-spring-memcached</artifactId>
-			<version>${project.parent.version}</version>
-			<type>jar</type>
+			<version>${project.version}</version>
 		</dependency>
 		<dependency>
-			<groupId>commons-lang</groupId>
-			<artifactId>commons-lang</artifactId>
+			<groupId>spy</groupId>
+			<artifactId>spymemcached</artifactId>
 		</dependency>
 
 		<dependency>
@@ -35,59 +35,33 @@
 			<scope>test</scope>
 		</dependency>
 		<dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
+			<groupId>org.easymock</groupId>
+			<artifactId>easymock</artifactId>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-test</artifactId>
+			<groupId>org.mockito</groupId>
+			<artifactId>mockito-core</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>net.vidageek</groupId>
+			<artifactId>mirror</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>commons-lang</groupId>
+			<artifactId>commons-lang</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
 			<scope>test</scope>
 		</dependency>
 	</dependencies>
 
 	<profiles>
-		<profile>
-			<id>spymemcached</id>
-			<build>
-				<testResources>
-					<testResource>
-						<directory>${basedir}/src/test/resources/spymemcached</directory>
-					</testResource>
-				</testResources>
-			</build>
-			<dependencies>
-				<dependency>
-					<groupId>com.google.code.simple-spring-memcached</groupId>
-					<artifactId>simple-spring-memcached</artifactId>
-					<version>spymemcached-provider</version>
-					<type>jar</type>
-				</dependency>
-			</dependencies>
-		</profile>
-
-		<profile>
-			<id>xmemcached</id>
-			<activation>
-				<activeByDefault>true</activeByDefault>
-			</activation>
-			<build>
-				<testResources>
-					<testResource>
-						<directory>${basedir}/src/test/resources/xmemcached</directory>
-					</testResource>
-				</testResources>
-			</build>
-			<dependencies>
-				<dependency>
-					<groupId>com.google.code.simple-spring-memcached</groupId>
-					<artifactId>xmemcached-provider</artifactId>
-					<version>${project.parent.version}</version>
-					<type>jar</type>
-				</dependency>
-			</dependencies>
-		</profile>
-
 		<profile>
 			<id>release-sign-artifacts</id>
 			<activation>
@@ -116,5 +90,4 @@
 			</build>
 		</profile>
 	</profiles>
-
 </project>
