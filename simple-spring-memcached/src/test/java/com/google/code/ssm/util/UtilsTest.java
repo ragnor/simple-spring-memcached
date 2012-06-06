@@ -17,17 +17,16 @@
 
 package com.google.code.ssm.util;
 
+import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.fail;
 
 import java.lang.reflect.Method;
 import java.security.InvalidParameterException;
+import java.util.Arrays;
 
 import org.junit.Test;
-
-import com.google.common.collect.ImmutableList;
 
 /**
  * 
@@ -86,7 +85,7 @@ public class UtilsTest {
         final Method method = AOPTargetClass1.class.getDeclaredMethod("doIt", String.class, String.class, String.class);
 
         try {
-            Utils.getMethodArgs(ImmutableList.of(1, -1), args, method.toString());
+            Utils.getMethodArgs(Arrays.asList(1, -1), args, method.toString());
             fail("Expected Exception");
         } catch (InvalidParameterException ex) {
             assertTrue(ex.getMessage().indexOf("is invalid") != -1);
@@ -94,14 +93,14 @@ public class UtilsTest {
         }
 
         try {
-            Utils.getMethodArgs(ImmutableList.of(2, 3), args, method.toString());
+            Utils.getMethodArgs(Arrays.asList(2, 3), args, method.toString());
             fail("Expected Exception");
         } catch (InvalidParameterException ex) {
             assertTrue(ex.getMessage().indexOf("too big") != -1);
             System.out.println(ex.getMessage());
         }
         try {
-            Utils.getMethodArgs(ImmutableList.of(4, 0), args, method.toString());
+            Utils.getMethodArgs(Arrays.asList(4, 0), args, method.toString());
             fail("Expected Exception");
         } catch (InvalidParameterException ex) {
             assertTrue(ex.getMessage().indexOf("too big") != -1);
@@ -109,14 +108,14 @@ public class UtilsTest {
         }
 
         try {
-            Utils.getMethodArgs(ImmutableList.of(1, 0), args, method.toString());
+            Utils.getMethodArgs(Arrays.asList(1, 0), args, method.toString());
             fail("Expected Exception");
         } catch (InvalidParameterException ex) {
             assertTrue(ex.getMessage().indexOf("null") != -1);
             System.out.println(ex.getMessage());
         }
 
-        assertArrayEquals(answer, Utils.getMethodArgs(ImmutableList.of(2, 1), args, method.toString()));
+        assertArrayEquals(answer, Utils.getMethodArgs(Arrays.asList(2, 1), args, method.toString()));
     }
 
     public static class AOPTargetClass1 {

@@ -49,8 +49,8 @@ import com.google.code.ssm.api.counter.DecrementCounterInCache;
 import com.google.code.ssm.api.counter.IncrementCounterInCache;
 import com.google.code.ssm.api.counter.ReadCounterFromCache;
 import com.google.code.ssm.api.counter.UpdateCounterInCache;
+import com.google.code.ssm.util.ImmutableSet;
 import com.google.code.ssm.util.Utils;
-import com.google.common.collect.ImmutableSet;
 
 /**
  * 

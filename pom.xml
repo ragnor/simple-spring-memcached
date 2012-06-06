@@ -69,7 +69,6 @@
 
 	<properties>
 		<spring.version>3.0.7.RELEASE</spring.version>
-		<guava.version>12.0</guava.version>
 		<aspectj.version>1.6.8</aspectj.version>
 		<jackson.version>1.9.7</jackson.version>
 		<spymemcached.version>2.7.3</spymemcached.version>
@@ -120,11 +119,6 @@
 				<groupId>org.springframework</groupId>
 				<artifactId>spring-context</artifactId>
 				<version>${spring.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>com.google.guava</groupId>
-				<artifactId>guava</artifactId>
-				<version>${guava.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>org.aspectj</groupId>
