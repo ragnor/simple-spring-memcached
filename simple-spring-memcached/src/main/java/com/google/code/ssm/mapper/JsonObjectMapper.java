@@ -17,9 +17,18 @@
 
 package com.google.code.ssm.mapper;
 
-import org.codehaus.jackson.map.DeserializationConfig;
+import java.util.List;
+import java.util.Map;
+
+import org.codehaus.jackson.Version;
+import org.codehaus.jackson.annotate.JsonTypeInfo.As;
+import org.codehaus.jackson.map.JsonDeserializer;
+import org.codehaus.jackson.map.JsonSerializer;
 import org.codehaus.jackson.map.ObjectMapper;
-import org.codehaus.jackson.map.SerializationConfig;
+import org.codehaus.jackson.map.jsontype.TypeResolverBuilder;
+import org.codehaus.jackson.map.module.SimpleModule;
+
+import com.google.code.ssm.json.ClassAliasTypeResolverBuilder;
 
 /**
  * 
@@ -31,15 +40,34 @@ import org.codehaus.jackson.map.SerializationConfig;
  */
 public class JsonObjectMapper extends ObjectMapper { // NO_UCD
 
-    public JsonObjectMapper() {
-        setSerializationConfig(getSerializationConfig().without( //
-                SerializationConfig.Feature.AUTO_DETECT_FIELDS, //
-                SerializationConfig.Feature.AUTO_DETECT_GETTERS, //
-                SerializationConfig.Feature.AUTO_DETECT_IS_GETTERS));
+    private final SimpleModule module = new SimpleModule("ssm", new Version(1, 0, 0, null));
 
-        setDeserializationConfig(getDeserializationConfig().without( //
-                DeserializationConfig.Feature.AUTO_DETECT_FIELDS, //
-                DeserializationConfig.Feature.AUTO_DETECT_SETTERS));
+    public JsonObjectMapper() {
+        registerModule(module);
+
+        TypeResolverBuilder<?> typer = new ClassAliasTypeResolverBuilder(DefaultTyping.NON_FINAL);
+        typer = typer.inclusion(As.PROPERTY);
+        setDefaultTyping(typer);
+    }
+
+    public void setSerializers(final List<JsonSerializer<?>> serializers) {
+        for (JsonSerializer<?> serializer : serializers) {
+            module.addSerializer(serializer);
+        }
+    }
+
+    @SuppressWarnings({ "unchecked", "rawtypes" })
+    public void setSerializers(final Map<Class<?>, JsonSerializer<?>> serializers) {
+        for (Map.Entry<Class<?>, JsonSerializer<?>> entry : serializers.entrySet()) {
+            module.addSerializer((Class) entry.getKey(), entry.getValue());
+        }
+    }
+
+    @SuppressWarnings({ "rawtypes", "unchecked" })
+    public void setDeserializers(final Map<Class<?>, JsonDeserializer<?>> deserializers) {
+        for (Map.Entry<Class<?>, JsonDeserializer<?>> entry : deserializers.entrySet()) {
+            module.addDeserializer((Class) entry.getKey(), entry.getValue());
+        }
     }
 
 }
