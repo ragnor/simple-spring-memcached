@@ -23,7 +23,6 @@ import java.net.InetSocketAddress;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,13 +31,16 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.util.Assert;
 
 import com.google.code.ssm.api.AnnotationConstants;
+import com.google.code.ssm.api.format.SerializationType;
 import com.google.code.ssm.config.AddressChangeListener;
 import com.google.code.ssm.config.AddressChangeNotifier;
 import com.google.code.ssm.config.AddressProvider;
+import com.google.code.ssm.mapper.JsonObjectMapper;
 import com.google.code.ssm.providers.CacheClient;
 import com.google.code.ssm.providers.CacheClientFactory;
 import com.google.code.ssm.providers.CacheConfiguration;
 import com.google.code.ssm.providers.CacheTranscoder;
+import com.google.code.ssm.transcoders.JsonTranscoder;
 
 /**
  * Creates cache using provider factory and connection configuration.
@@ -61,11 +63,15 @@ public class CacheFactory implements AddressChangeListener, FactoryBean<Cache>, 
 
     private Collection<String> cacheAliases = Collections.emptyList();
 
-    private Map<Class<?>, CacheTranscoder<?>> cacheTranscoders = Collections.emptyMap();
-
     private CacheImpl cache;
 
     private AddressChangeNotifier addressChangeNotifier;
+
+    private SerializationType defaultSerializationType = SerializationType.PROVIDER;
+
+    private JsonTranscoder jsonTranscoder = new JsonTranscoder(new JsonObjectMapper());
+
+    private CacheTranscoder<Object> customTranscoder;
 
     @Override
     public void afterPropertiesSet() throws Exception {
@@ -73,10 +79,15 @@ public class CacheFactory implements AddressChangeListener, FactoryBean<Cache>, 
         Assert.notNull(addressProvider, "'addressProvider' is required and cannot be null");
         Assert.notNull(cacheClientFactory, "'cacheClientFactory' is required and cannot be null");
         Assert.notNull(cacheName, "'cacheName' cannot be null");
-        Assert.notNull(cacheTranscoders, "'cacheTranscoders' cannot be null");
+        Assert.notNull(defaultSerializationType, "'defaultSerializationType' cannot be null");
+        Assert.notNull(jsonTranscoder, "'jsonTranscoder' cannot be null");
 
         if (addressChangeNotifier != null) {
             addressChangeNotifier.setAddressChangeListener(this);
+        }
+
+        if (defaultSerializationType == SerializationType.CUSTOM) {
+            Assert.notNull(customTranscoder, "'customTranscoder' cannot be null if default serialization type is set to CUSTOM");
         }
     }
 
@@ -100,12 +111,20 @@ public class CacheFactory implements AddressChangeListener, FactoryBean<Cache>, 
         this.cacheAliases = cacheAliases;
     }
 
-    public void setCacheTranscoders(final Map<Class<?>, CacheTranscoder<?>> transcoders) {
-        this.cacheTranscoders = transcoders;
-    }
-
     public void setAddressChangeNotifier(final AddressChangeNotifier addressChangeNotifier) {
         this.addressChangeNotifier = addressChangeNotifier;
+    }
+
+    public void setDefaultSerializationType(final SerializationType serializationType) {
+        this.defaultSerializationType = serializationType;
+    }
+
+    public void setJsonTranscoder(final JsonTranscoder jsonTranscoder) {
+        this.jsonTranscoder = jsonTranscoder;
+    }
+
+    public void setCustomTranscoder(final CacheTranscoder<Object> transcoder) {
+        this.customTranscoder = transcoder;
     }
 
     @Override
@@ -164,7 +183,7 @@ public class CacheFactory implements AddressChangeListener, FactoryBean<Cache>, 
         }
 
         List<InetSocketAddress> addrs = addressProvider.getAddresses();
-        cache = new CacheImpl(cacheName, cacheAliases, createClient(addrs), cacheTranscoders);
+        cache = new CacheImpl(cacheName, cacheAliases, createClient(addrs), defaultSerializationType, jsonTranscoder, customTranscoder);
 
         return cache;
     }

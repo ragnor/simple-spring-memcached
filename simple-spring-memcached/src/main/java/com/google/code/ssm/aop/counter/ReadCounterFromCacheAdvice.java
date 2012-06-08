@@ -64,7 +64,7 @@ public class ReadCounterFromCacheAdvice extends CounterInCacheBase {
             annotation = methodToCache.getAnnotation(ReadCounterFromCache.class);
             data = AnnotationDataBuilder.buildAnnotationData(annotation, ReadCounterFromCache.class, methodToCache);
             cacheKey = getCacheBase().getCacheKeyBuilder().getCacheKey(data, pjp.getArgs(), methodToCache.toString());
-            Long result = getCacheBase().getCache(data).get(cacheKey, Long.class);
+            Long result = getCacheBase().getCache(data).getCounter(cacheKey);
 
             if (result != null) {
                 getLogger().debug("Cache hit.");

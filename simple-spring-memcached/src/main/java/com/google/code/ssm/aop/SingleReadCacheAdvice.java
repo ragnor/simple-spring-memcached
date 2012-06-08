@@ -25,6 +25,7 @@ import org.aspectj.lang.ProceedingJoinPoint;
 
 import com.google.code.ssm.aop.support.AnnotationData;
 import com.google.code.ssm.aop.support.AnnotationDataBuilder;
+import com.google.code.ssm.api.format.SerializationType;
 
 /**
  * 
@@ -50,18 +51,18 @@ abstract class SingleReadCacheAdvice<T extends Annotation> extends CacheAdvice {
         // the crap outta it, but do not let it surface up past the AOP injection itself.
         final T annotation;
         final AnnotationData data;
-        final Class<?> jsonClass;
+        final SerializationType serializationType;
         String cacheKey = null;
         try {
             final Method methodToCache = getCacheBase().getMethodToCache(pjp);
             getCacheBase().verifyReturnTypeIsNoVoid(methodToCache, annotationClass);
             annotation = methodToCache.getAnnotation(annotationClass);
-            jsonClass = getCacheBase().getReturnJsonClass(methodToCache);
+            serializationType = getCacheBase().getSerializationType(methodToCache);
             data = AnnotationDataBuilder.buildAnnotationData(annotation, annotationClass, methodToCache);
 
             cacheKey = getCacheKey(data, pjp.getArgs(), methodToCache.toString());
 
-            final Object result = getCacheBase().getCache(data).get(cacheKey, jsonClass);
+            final Object result = getCacheBase().getCache(data).get(cacheKey, serializationType);
             if (result != null) {
                 getLogger().debug("Cache hit.");
                 return getCacheBase().getResult(result);
@@ -78,7 +79,7 @@ abstract class SingleReadCacheAdvice<T extends Annotation> extends CacheAdvice {
         // the crap outta it, but do not let it surface up past the AOP injection itself.
         try {
             final Object submission = getCacheBase().getSubmission(result);
-            getCacheBase().getCache(data).set(cacheKey, data.getExpiration(), submission, jsonClass);
+            getCacheBase().getCache(data).set(cacheKey, data.getExpiration(), submission, serializationType);
         } catch (Throwable ex) {
             getLogger()
                     .warn(String.format("Caching on method %s and key [%s] aborted due to an error.", pjp.toShortString(), cacheKey), ex);

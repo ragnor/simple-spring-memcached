@@ -38,6 +38,7 @@ import com.google.code.ssm.aop.support.AnnotationDataBuilder;
 import com.google.code.ssm.aop.support.InvalidAnnotationException;
 import com.google.code.ssm.api.UpdateMultiCache;
 import com.google.code.ssm.api.UpdateMultiCacheOption;
+import com.google.code.ssm.api.format.SerializationType;
 import com.google.code.ssm.util.Utils;
 
 /**
@@ -70,7 +71,7 @@ public class UpdateMultiCacheAdvice extends MultiCacheAdvice {
             final UpdateMultiCache annotation = methodToCache.getAnnotation(UpdateMultiCache.class);
             final AnnotationData data = AnnotationDataBuilder.buildAnnotationData(annotation, UpdateMultiCache.class, methodToCache);
             final List<Object> dataList = getCacheBase().<List<Object>> getUpdateData(data, methodToCache, jp, retVal);
-            final Class<?> jsonClass = getCacheBase().getDataJsonClass(methodToCache, data);
+            final SerializationType serializationType = getCacheBase().getSerializationType(methodToCache);
             final MultiCacheCoordinator coord = new MultiCacheCoordinator(methodToCache, data);
             coord.setAddNullsToCache(annotation.option().addNullsToCache());
 
@@ -92,14 +93,14 @@ public class UpdateMultiCacheAdvice extends MultiCacheAdvice {
             }
 
             if (!annotation.option().addNullsToCache()) {
-                updateCache(cacheKeys, dataList, methodToCache, data, jsonClass);
+                updateCache(cacheKeys, dataList, methodToCache, data, serializationType);
             } else {
                 Map<String, Object> key2Result = new HashMap<String, Object>();
                 for (String cacheKey : cacheKeys) {
                     key2Result.put(cacheKey, null);
                 }
                 coord.setInitialKey2Result(key2Result);
-                updateCacheWithMissed(dataList, coord, annotation.option(), jsonClass);
+                updateCacheWithMissed(dataList, coord, annotation.option(), serializationType);
             }
         } catch (Exception ex) {
             getLogger().warn("Updating caching via " + jp.toShortString() + " aborted due to an error.", ex);
@@ -127,7 +128,7 @@ public class UpdateMultiCacheAdvice extends MultiCacheAdvice {
     }
 
     void updateCache(final List<String> cacheKeys, final List<Object> returnList, final Method methodToCache, final AnnotationData data,
-            final Class<?> jsonClass) {
+            final SerializationType serializationType) {
         if (returnList.size() != cacheKeys.size()) {
             throw new InvalidAnnotationException(String.format(
                     "The key generation objects, and the resulting objects do not match in size for [%s].", methodToCache.toString()));
@@ -139,12 +140,12 @@ public class UpdateMultiCacheAdvice extends MultiCacheAdvice {
             final Object result = returnListIter.next();
             final String cacheKey = cacheKeyIter.next();
             final Object cacheObject = getCacheBase().getSubmission(result);
-            getCacheBase().getCache(data).setSilently(cacheKey, data.getExpiration(), cacheObject, jsonClass);
+            getCacheBase().getCache(data).setSilently(cacheKey, data.getExpiration(), cacheObject, serializationType);
         }
     }
 
     private void updateCacheWithMissed(final List<Object> dataUpdateContents, final MultiCacheCoordinator coord,
-            final UpdateMultiCacheOption option, final Class<?> jsonClass) throws Exception {
+            final UpdateMultiCacheOption option, final SerializationType serializationType) throws Exception {
         if (!dataUpdateContents.isEmpty()) {
             List<String> cacheKeys = getCacheBase().getCacheKeyBuilder().getCacheKeys(dataUpdateContents,
                     coord.getAnnotationData().getNamespace());
@@ -154,15 +155,15 @@ public class UpdateMultiCacheAdvice extends MultiCacheAdvice {
             for (Object resultObject : dataUpdateContents) {
                 cacheKey = iter.next();
                 getCacheBase().getCache(coord.getAnnotationData()).setSilently(cacheKey, coord.getAnnotationData().getExpiration(),
-                        resultObject, jsonClass);
+                        resultObject, serializationType);
                 coord.getMissedObjects().remove(coord.getKey2Obj().get(cacheKey));
             }
         }
 
         if (option.overwriteNoNulls()) {
-            setNullValues(coord.getMissedObjects(), coord, jsonClass);
+            setNullValues(coord.getMissedObjects(), coord, serializationType);
         } else {
-            addNullValues(coord.getMissedObjects(), coord, jsonClass);
+            addNullValues(coord.getMissedObjects(), coord, serializationType);
         }
     }
 

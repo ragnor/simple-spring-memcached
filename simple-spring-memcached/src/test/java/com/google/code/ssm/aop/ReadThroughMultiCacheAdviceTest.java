@@ -42,6 +42,7 @@ import org.junit.runners.Parameterized.Parameters;
 import com.google.code.ssm.api.ParameterValueKeyProvider;
 import com.google.code.ssm.api.ReadThroughMultiCache;
 import com.google.code.ssm.api.ReturnValueKeyProvider;
+import com.google.code.ssm.api.format.SerializationType;
 import com.google.code.ssm.test.Point;
 
 /**
@@ -101,7 +102,6 @@ public class ReadThroughMultiCacheAdviceTest extends AbstractCacheTest<ReadThrou
     }
 
     @Test
-    @SuppressWarnings("unchecked")
     public void validCacheAllMiss() throws Throwable {
         Assume.assumeTrue(isValid);
 
@@ -109,15 +109,14 @@ public class ReadThroughMultiCacheAdviceTest extends AbstractCacheTest<ReadThrou
 
         assertEquals(expectedValue, advice.cacheMulti(pjp));
 
-        verify(cache).getBulk(eq(new HashSet<String>(Arrays.asList(cacheKeys))), any(Class.class));
+        verify(cache).getBulk(eq(new HashSet<String>(Arrays.asList(cacheKeys))), any(SerializationType.class));
         for (int i = 0; i < cacheKeys.length; i++) {
-            verify(cache).setSilently(eq(cacheKeys[i]), eq(EXPIRATION), eq(expectedValue.get(i)), any(Class.class));
+            verify(cache).setSilently(eq(cacheKeys[i]), eq(EXPIRATION), eq(expectedValue.get(i)), any(SerializationType.class));
         }
         verify(pjp).proceed(params);
     }
 
     @Test
-    @SuppressWarnings("unchecked")
     public void validCacheHit() throws Throwable {
         Assume.assumeTrue(isValid);
         Map<String, Object> map = new HashMap<String, Object>();
@@ -125,12 +124,12 @@ public class ReadThroughMultiCacheAdviceTest extends AbstractCacheTest<ReadThrou
             map.put(cacheKeys[i], expectedValue.get(i));
         }
 
-        when(cache.getBulk(eq(new HashSet<String>(Arrays.asList(cacheKeys))), any(Class.class))).thenReturn(map);
+        when(cache.getBulk(eq(new HashSet<String>(Arrays.asList(cacheKeys))), any(SerializationType.class))).thenReturn(map);
 
         assertEquals(expectedValue, advice.cacheMulti(pjp));
 
-        verify(cache).getBulk(eq(new HashSet<String>(Arrays.asList(cacheKeys))), any(Class.class));
-        verify(cache, never()).setSilently(anyString(), anyInt(), any(), any(Class.class));
+        verify(cache).getBulk(eq(new HashSet<String>(Arrays.asList(cacheKeys))), any(SerializationType.class));
+        verify(cache, never()).setSilently(anyString(), anyInt(), any(), any(SerializationType.class));
         verify(pjp, never()).proceed(params);
     }
 
@@ -143,8 +142,8 @@ public class ReadThroughMultiCacheAdviceTest extends AbstractCacheTest<ReadThrou
 
         assertEquals(expectedValue, advice.cacheMulti(pjp));
 
-        verify(cache, never()).getBulk(any(Collection.class), any(Class.class));
-        verify(cache, never()).set(anyString(), anyInt(), any(), any(Class.class));
+        verify(cache, never()).getBulk(any(Collection.class), any(SerializationType.class));
+        verify(cache, never()).set(anyString(), anyInt(), any(), any(SerializationType.class));
         verify(pjp).proceed();
     }
 

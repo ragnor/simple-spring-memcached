@@ -22,6 +22,7 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.concurrent.TimeoutException;
 
+import com.google.code.ssm.api.format.SerializationType;
 import com.google.code.ssm.providers.CacheException;
 
 /**
@@ -53,9 +54,10 @@ public interface Cache {
      */
     Collection<String> getAliases();
 
-    <T> void add(final String key, final int exp, final Object value, final Class<T> clazz) throws TimeoutException, CacheException;
+    <T> void add(final String key, final int exp, final Object value, final SerializationType serializationType) throws TimeoutException,
+            CacheException;
 
-    <T> void addSilently(final String cacheKey, final int expiration, final Object value, final Class<?> clazz);
+    <T> void addSilently(final String cacheKey, final int expiration, final Object value, final SerializationType serializationType);
 
     long decr(final String key, final int by) throws TimeoutException, CacheException;
 
@@ -92,22 +94,16 @@ public interface Cache {
      * @param <T>
      * @param key
      *            the key
-     * @param clazz
-     *            the class of object to return
+     * @param serializationType
+     *            the type of serialisation to use
      * @return value associated with given key or null
      * @throws TimeoutException
      * @throws CacheException
      */
-    <T> T get(final String key, final Class<T> clazz) throws TimeoutException, CacheException;
+    <T> T get(final String key, final SerializationType serializationType) throws TimeoutException, CacheException;
 
-    /**
-     * Gets available memcached servers.
-     * 
-     * @return collection of memcached servers
-     */
-    // Collection<SocketAddress> getAvailableServers();
-
-    Map<String, Object> getBulk(final Collection<String> keys, final Class<?> clazz) throws TimeoutException, CacheException;
+    Map<String, Object> getBulk(final Collection<String> keys, final SerializationType serializationType) throws TimeoutException,
+            CacheException;
 
     long incr(final String key, final int by, final long def) throws TimeoutException, CacheException;
 
@@ -123,14 +119,36 @@ public interface Cache {
      *            expire time
      * @param value
      *            stored data
-     * @param clazz
-     *            the class of stored data
+     * @param serializationType
+     *            the type of serialisation to use
      * @throws TimeoutException
      * @throws CacheException
      */
-    <T> void set(final String key, final int exp, final Object value, final Class<?> clazz) throws TimeoutException, CacheException;
+    <T> void set(final String key, final int exp, final Object value, final SerializationType serializationType) throws TimeoutException,
+            CacheException;
 
-    <T> void setSilently(final String cacheKey, final int expiration, final Object value, final Class<T> clazz);
+    <T> void setSilently(final String cacheKey, final int expiration, final Object value, final SerializationType serializationType);
+
+    /**
+     * Gets counter from cache without incrementing.
+     * 
+     * @param cacheKey
+     * @return
+     * @throws CacheException
+     * @throws TimeoutException
+     */
+    Long getCounter(String cacheKey) throws TimeoutException, CacheException;
+
+    /**
+     * Sets initial value of counter.
+     * 
+     * @param cacheKey
+     * @param expiration
+     * @param value
+     * @throws CacheException
+     * @throws TimeoutException
+     */
+    void setCounter(String cacheKey, int expiration, long value) throws TimeoutException, CacheException;
 
     /**
      * Shutdowns cache.

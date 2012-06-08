@@ -17,6 +17,8 @@
 
 package com.google.code.ssm.providers;
 
+import java.util.Arrays;
+
 /**
  * 
  * @author Jakub Białek
@@ -29,7 +31,7 @@ public class CachedObjectImpl implements CachedObject {
 
     private final byte[] data;
 
-    public CachedObjectImpl(int flags, byte[] data) {
+    public CachedObjectImpl(final int flags, final byte[] data) {
         this.flags = flags;
         this.data = data;
     }
@@ -42,6 +44,11 @@ public class CachedObjectImpl implements CachedObject {
     @Override
     public int getFlags() {
         return flags;
+    }
+
+    @Override
+    public String toString() {
+        return "CachedObjectImpl [flags=" + flags + ", data=" + Arrays.toString(data) + "]";
     }
 
 }

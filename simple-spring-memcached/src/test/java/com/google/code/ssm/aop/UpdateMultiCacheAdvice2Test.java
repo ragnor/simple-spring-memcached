@@ -41,6 +41,7 @@ import com.google.code.ssm.api.ReturnDataUpdateContent;
 import com.google.code.ssm.api.ReturnValueKeyProvider;
 import com.google.code.ssm.api.UpdateMultiCache;
 import com.google.code.ssm.api.UpdateMultiCacheOption;
+import com.google.code.ssm.api.format.SerializationType;
 import com.google.code.ssm.test.Point;
 
 /**
@@ -161,7 +162,6 @@ public class UpdateMultiCacheAdvice2Test extends AbstractCacheTest<UpdateMultiCa
     }
 
     @Test
-    @SuppressWarnings("unchecked")
     public void valid() throws Throwable {
         Assume.assumeTrue(isValid);
 
@@ -169,26 +169,25 @@ public class UpdateMultiCacheAdvice2Test extends AbstractCacheTest<UpdateMultiCa
 
         for (int i = 0; i < cacheKeys.length; i++) {
             if (advice.getCacheBase().getMethodToCache(pjp).getAnnotation(UpdateMultiCache.class).option().overwriteNoNulls()) {
-                verify(cache).setSilently(eq(cacheKeys[i]), eq(EXPIRATION), eq(expectedValue.get(i)), any(Class.class));
+                verify(cache).setSilently(eq(cacheKeys[i]), eq(EXPIRATION), eq(expectedValue.get(i)), any(SerializationType.class));
             } else if (advice.getCacheBase().getMethodToCache(pjp).getAnnotation(UpdateMultiCache.class).option().addNullsToCache()
                     && expectedValue.get(i) instanceof PertinentNegativeNull) {
-                verify(cache).addSilently(eq(cacheKeys[i]), eq(EXPIRATION), eq(expectedValue.get(i)), any(Class.class));
+                verify(cache).addSilently(eq(cacheKeys[i]), eq(EXPIRATION), eq(expectedValue.get(i)), any(SerializationType.class));
             } else {
-                verify(cache).setSilently(eq(cacheKeys[i]), eq(EXPIRATION), eq(expectedValue.get(i)), any(Class.class));
+                verify(cache).setSilently(eq(cacheKeys[i]), eq(EXPIRATION), eq(expectedValue.get(i)), any(SerializationType.class));
             }
 
         }
     }
 
     @Test
-    @SuppressWarnings("unchecked")
     public void invalid() throws Throwable {
         Assume.assumeThat(isValid, CoreMatchers.is(false));
 
         advice.cacheUpdateMulti(pjp, expectedValue);
 
-        verify(cache, never()).setSilently(anyString(), anyInt(), any(), any(Class.class));
-        verify(cache, never()).set(anyString(), anyInt(), any(), any(Class.class));
+        verify(cache, never()).setSilently(anyString(), anyInt(), any(), any(SerializationType.class));
+        verify(cache, never()).set(anyString(), anyInt(), any(), any(SerializationType.class));
     }
 
     @Override

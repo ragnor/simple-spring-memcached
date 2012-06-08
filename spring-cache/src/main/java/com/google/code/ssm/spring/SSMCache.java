@@ -60,8 +60,6 @@ public class SSMCache implements Cache {
 
     @Override
     public ValueWrapper get(final Object key) {
-        // FIXME store class in json object as one of the fields
-        // java serialization is used
         Object value = null;
         try {
             value = cache.get(getKey(key), null);
@@ -76,15 +74,12 @@ public class SSMCache implements Cache {
         }
 
         return value instanceof PertinentNegativeNull ? new SimpleValueWrapper(null) : new SimpleValueWrapper(value);
-
     }
 
     @Override
     public void put(final Object key, final Object value) {
         if (key != null) {
             try {
-                // FIXME store class in json object as one of the fields
-                // java serialization is used
                 cache.set(getKey(key), expiration, value, null);
             } catch (TimeoutException e) {
                 LOGGER.warn("An error has ocurred for cache " + getName() + " and key " + getKey(key), e);

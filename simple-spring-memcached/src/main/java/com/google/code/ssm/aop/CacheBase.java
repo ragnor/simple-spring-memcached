@@ -42,7 +42,8 @@ import com.google.code.ssm.aop.support.CacheKeyBuilderImpl;
 import com.google.code.ssm.aop.support.InvalidAnnotationException;
 import com.google.code.ssm.aop.support.PertinentNegativeNull;
 import com.google.code.ssm.api.ReadThroughMultiCache;
-import com.google.code.ssm.api.format.UseJson;
+import com.google.code.ssm.api.format.Serialization;
+import com.google.code.ssm.api.format.SerializationType;
 import com.google.code.ssm.util.Utils;
 
 /**
@@ -163,25 +164,13 @@ public class CacheBase implements ApplicationContextAware, InitializingBean {
         }
     }
 
-    protected Class<?> getReturnJsonClass(final Method method) {
-        UseJson useJsonAnnotation = method.getAnnotation(UseJson.class);
-        if (useJsonAnnotation == null) {
+    protected SerializationType getSerializationType(final Method method) {
+        Serialization serialization = method.getAnnotation(Serialization.class);
+        if (serialization == null) {
             return null;
         }
 
-        if (!NoClass.class.equals(useJsonAnnotation.value())) {
-            return useJsonAnnotation.value();
-        }
-
-        return method.getReturnType();
-    }
-
-    protected Class<?> getDataJsonClass(final Method method, final AnnotationData data) {
-        if (data.isReturnDataIndex()) {
-            return getReturnJsonClass(method);
-        } else {
-            return getParameterJsonClass(method, data.getDataIndex());
-        }
+        return serialization.value();
     }
 
     protected Logger getLogger() {
@@ -210,23 +199,6 @@ public class CacheBase implements ApplicationContextAware, InitializingBean {
                 caches.put(alias, cache);
             }
         }
-    }
-
-    private Class<?> getParameterJsonClass(final Method method, final int index) {
-        UseJson useJsonAnnotation = method.getAnnotation(UseJson.class);
-        if (useJsonAnnotation == null) {
-            return null;
-        }
-
-        if (NoClass.class.equals(useJsonAnnotation.value())) {
-            return useJsonAnnotation.value();
-        }
-
-        if (index < 0) {
-            throw new IllegalArgumentException("Parameter index is below 0");
-        }
-
-        return method.getParameterTypes()[index];
     }
 
     private Method findMethodFromTargetGivenNameAndParams(final Object target, final String name, final Class<?>[] parameters)

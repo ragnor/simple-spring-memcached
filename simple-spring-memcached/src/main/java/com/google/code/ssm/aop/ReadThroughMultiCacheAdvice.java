@@ -34,6 +34,7 @@ import com.google.code.ssm.aop.support.AnnotationData;
 import com.google.code.ssm.aop.support.AnnotationDataBuilder;
 import com.google.code.ssm.api.ReadThroughMultiCache;
 import com.google.code.ssm.api.ReadThroughMultiCacheOption;
+import com.google.code.ssm.api.format.SerializationType;
 import com.google.code.ssm.util.Utils;
 
 /**
@@ -64,7 +65,7 @@ public class ReadThroughMultiCacheAdvice extends MultiCacheAdvice {
         final ReadThroughMultiCache annotation;
         final MultiCacheCoordinator coord;
         final AnnotationData data;
-        final Class<?> jsonClass;
+        final SerializationType serializationType;
 
         Object[] args = pjp.getArgs();
         try {
@@ -74,7 +75,7 @@ public class ReadThroughMultiCacheAdvice extends MultiCacheAdvice {
 
             // Get the annotation associated with this method, and make sure the values are valid.
             annotation = methodToCache.getAnnotation(ReadThroughMultiCache.class);
-            jsonClass = getCacheBase().getReturnJsonClass(methodToCache);
+            serializationType = getCacheBase().getSerializationType(methodToCache);
 
             data = AnnotationDataBuilder.buildAnnotationData(annotation, ReadThroughMultiCache.class, methodToCache);
             coord = new MultiCacheCoordinator(methodToCache, data);
@@ -88,7 +89,7 @@ public class ReadThroughMultiCacheAdvice extends MultiCacheAdvice {
             coord.setListKeyObjects(listKeyObjects);
 
             // Get the full list of cache keys and ask the cache for the corresponding values.
-            coord.setInitialKey2Result(getCacheBase().getCache(data).getBulk(coord.getKey2Obj().keySet(), jsonClass));
+            coord.setInitialKey2Result(getCacheBase().getCache(data).getBulk(coord.getKey2Obj().keySet(), serializationType));
 
             // We've gotten all positive cache results back, so build up a results list and return it.
             if (coord.getMissedObjects().size() < 1) {
@@ -113,15 +114,15 @@ public class ReadThroughMultiCacheAdvice extends MultiCacheAdvice {
             // there are no results
             if (results == null || results.isEmpty()) {
                 if (coord.isAddNullsToCache()) {
-                    addNullValues(coord.getMissedObjects(), coord, jsonClass);
+                    addNullValues(coord.getMissedObjects(), coord, serializationType);
                 }
                 return coord.generatePartialResultList();
             }
 
             if (coord.isGenerateKeysFromResult()) {
-                return generateByKeysFromResult(results, coord, jsonClass);
+                return generateByKeysFromResult(results, coord, serializationType);
             } else {
-                return generateByKeysProviders(results, coord, jsonClass);
+                return generateByKeysProviders(results, coord, serializationType);
             }
         } catch (Throwable ex) {
             getLogger().warn("Caching on " + pjp.toShortString() + " aborted due to an error. The underlying method will be called twice.",
@@ -136,8 +137,8 @@ public class ReadThroughMultiCacheAdvice extends MultiCacheAdvice {
         coord.setSkipNullsInResult(options.skipNullsInResult());
     }
 
-    private List<?> generateByKeysFromResult(List<Object> results, final MultiCacheCoordinator coord, final Class<?> jsonClass)
-            throws Exception {
+    private List<?> generateByKeysFromResult(List<Object> results, final MultiCacheCoordinator coord,
+            final SerializationType serializationType) throws Exception {
         if (results == null) {
             results = new ArrayList<Object>();
         } else if (!results.isEmpty()) {
@@ -146,20 +147,22 @@ public class ReadThroughMultiCacheAdvice extends MultiCacheAdvice {
 
             for (Object resultObject : results) {
                 cacheKey = getCacheBase().cacheKeyBuilder.getCacheKey(resultObject, data.getNamespace());
-                getCacheBase().getCache(coord.getAnnotationData()).setSilently(cacheKey, data.getExpiration(), resultObject, jsonClass);
+                getCacheBase().getCache(coord.getAnnotationData()).setSilently(cacheKey, data.getExpiration(), resultObject,
+                        serializationType);
                 coord.getMissedObjects().remove(coord.getKey2Obj().get(cacheKey));
             }
         }
 
         if (coord.isAddNullsToCache()) {
-            addNullValues(coord.getMissedObjects(), coord, jsonClass);
+            addNullValues(coord.getMissedObjects(), coord, serializationType);
         }
 
         results.addAll(coord.generatePartialResultList());
         return results;
     }
 
-    private List<?> generateByKeysProviders(final List<Object> results, final MultiCacheCoordinator coord, final Class<?> jsonClass) {
+    private List<?> generateByKeysProviders(final List<Object> results, final MultiCacheCoordinator coord,
+            final SerializationType serializationType) {
         if (results.size() != coord.getMissedObjects().size()) {
             getLogger().info("Did not receive a correlated amount of data from the target method.");
             results.addAll(coord.generatePartialResultList());
@@ -172,7 +175,7 @@ public class ReadThroughMultiCacheAdvice extends MultiCacheAdvice {
             Object keyObject = misssedObjectsIter.next();
             String cacheKey = coord.getObj2Key().get(keyObject);
             getCacheBase().getCache(coord.getAnnotationData()).setSilently(cacheKey, coord.getAnnotationData().getExpiration(),
-                    resultObject, jsonClass);
+                    resultObject, serializationType);
             coord.getKey2Result().put(cacheKey, resultObject);
 
         }

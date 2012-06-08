@@ -30,6 +30,7 @@ import java.util.Set;
 import com.google.code.ssm.aop.support.AnnotationData;
 import com.google.code.ssm.aop.support.PertinentNegativeNull;
 import com.google.code.ssm.api.ParameterValueKeyProvider;
+import com.google.code.ssm.api.format.SerializationType;
 import com.google.code.ssm.util.Utils;
 
 /**
@@ -64,17 +65,19 @@ abstract class MultiCacheAdvice extends CacheAdvice {
         return holder;
     }
 
-    protected void addNullValues(final List<Object> missObjects, final MultiCacheCoordinator coord, final Class<?> jsonClass) {
+    protected void addNullValues(final List<Object> missObjects, final MultiCacheCoordinator coord,
+            final SerializationType serializationType) {
         for (Object keyObject : missObjects) {
             getCacheBase().getCache(coord.getAnnotationData()).addSilently(coord.getObj2Key().get(keyObject),
-                    coord.getAnnotationData().getExpiration(), PertinentNegativeNull.NULL, jsonClass);
+                    coord.getAnnotationData().getExpiration(), PertinentNegativeNull.NULL, serializationType);
         }
     }
 
-    protected void setNullValues(final List<Object> missObjects, final MultiCacheCoordinator coord, final Class<?> jsonClass) {
+    protected void setNullValues(final List<Object> missObjects, final MultiCacheCoordinator coord,
+            final SerializationType serializationType) {
         for (Object keyObject : missObjects) {
             getCacheBase().getCache(coord.getAnnotationData()).setSilently(coord.getObj2Key().get(keyObject),
-                    coord.getAnnotationData().getExpiration(), PertinentNegativeNull.NULL, jsonClass);
+                    coord.getAnnotationData().getExpiration(), PertinentNegativeNull.NULL, serializationType);
         }
     }
 

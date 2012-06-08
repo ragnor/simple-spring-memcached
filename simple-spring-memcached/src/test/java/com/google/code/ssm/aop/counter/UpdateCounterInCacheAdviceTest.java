@@ -37,6 +37,7 @@ import com.google.code.ssm.api.ParameterDataUpdateContent;
 import com.google.code.ssm.api.ParameterValueKeyProvider;
 import com.google.code.ssm.api.ReturnDataUpdateContent;
 import com.google.code.ssm.api.counter.UpdateCounterInCache;
+import com.google.code.ssm.api.format.SerializationType;
 import com.google.code.ssm.test.Point;
 
 /**
@@ -95,7 +96,7 @@ public class UpdateCounterInCacheAdviceTest extends AbstractCounterTest<UpdateCo
 
         advice.cacheCounterInCache(pjp, reternValue);
 
-        verify(cache).set(eq(cacheKey), eq(EXPIRATION), eq(((Number) expectedValue).longValue()), any(Class.class));
+        verify(cache).setCounter(eq(cacheKey), eq(EXPIRATION), eq(((Number) expectedValue).longValue()));
         verify(pjp, never()).proceed();
     }
 
@@ -105,7 +106,8 @@ public class UpdateCounterInCacheAdviceTest extends AbstractCounterTest<UpdateCo
 
         advice.cacheCounterInCache(pjp, reternValue);
 
-        verify(cache, never()).set(anyString(), anyInt(), anyLong(), any(Class.class));
+        verify(cache, never()).setCounter(anyString(), anyInt(), anyLong());
+        verify(cache, never()).set(anyString(), anyInt(), anyLong(), any(SerializationType.class));
         verify(pjp, never()).proceed();
     }
 

@@ -23,6 +23,7 @@ import java.util.Map;
 import org.codehaus.jackson.map.jsontype.impl.ClassNameIdResolver;
 import org.codehaus.jackson.map.type.TypeFactory;
 import org.codehaus.jackson.type.JavaType;
+import org.springframework.util.Assert;
 
 /**
  * To minimalize size of serialized json object instead of full qualified class name each class can be registered under
@@ -82,13 +83,8 @@ public class ClassAliasIdResolver extends ClassNameIdResolver {
 
         Map<String, Class<?>> reverseMap = new HashMap<String, Class<?>>();
         for (Map.Entry<Class<?>, String> entry : classToId.entrySet()) {
-            if (entry.getKey() == null || entry.getValue() == null) {
-                throw new IllegalArgumentException("Class or alias (id) cannot be null: " + entry);
-            }
-
-            if (entry.getValue().trim().length() == 0) {
-                throw new IllegalArgumentException("Alias for class " + entry.getKey() + " contains only whitespaces");
-            }
+            Assert.notNull(entry.getKey(), "Class cannot be null: " + entry);
+            Assert.hasText(entry.getValue(), "Alias (id) cannot be null or contain only whitespaces" + entry);
 
             if (reverseMap.put(entry.getValue(), entry.getKey()) != null) {
                 throw new IllegalArgumentException("Two or more classes with the same alias: " + entry.getValue());
@@ -106,17 +102,8 @@ public class ClassAliasIdResolver extends ClassNameIdResolver {
      * @param id
      */
     public synchronized void addClassToId(final Class<?> clazz, final String id) {
-        if (clazz == null) {
-            throw new IllegalArgumentException("Class cannot be null");
-        }
-
-        if (id == null) {
-            throw new IllegalArgumentException("Alias (id) cannot be null");
-        }
-
-        if (id.trim().length() == 0) {
-            throw new IllegalArgumentException("Alias (id) for class " + clazz + " contains only whitespaces");
-        }
+        Assert.notNull(clazz, "Class cannot be null");
+        Assert.hasText(id, "Alias (id) cannot be null or contain only whitespaces");
 
         if (classToId.containsKey(clazz)) {
             throw new IllegalArgumentException("Class " + clazz + " has already defined alias (id) " + classToId.get(clazz)

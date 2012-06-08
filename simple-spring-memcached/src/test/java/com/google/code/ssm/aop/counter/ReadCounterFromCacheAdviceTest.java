@@ -38,6 +38,7 @@ import org.junit.runners.Parameterized.Parameters;
 import com.google.code.ssm.api.ParameterValueKeyProvider;
 import com.google.code.ssm.api.ReturnValueKeyProvider;
 import com.google.code.ssm.api.counter.ReadCounterFromCache;
+import com.google.code.ssm.api.format.SerializationType;
 import com.google.code.ssm.test.Point;
 
 /**
@@ -83,37 +84,35 @@ public class ReadCounterFromCacheAdviceTest extends AbstractCounterTest<ReadCoun
     }
 
     @Test
-    @SuppressWarnings("unchecked")
     public void validReadCounterCacheMiss() throws Throwable {
         Assume.assumeTrue(isValid);
 
         when(pjp.proceed()).thenReturn(expectedValue);
+        when(cache.getCounter(eq(cacheKey))).thenReturn(null);
 
         assertEquals(expectedValue, advice.readCounter(pjp));
 
-        verify(cache).get(eq(cacheKey), any(Class.class));
+        verify(cache).getCounter(eq(cacheKey));
         verify(cache).incr(eq(cacheKey), eq(0), eq(((Number) expectedValue).longValue()), eq(EXPIRATION));
         verify(pjp).proceed();
     }
 
     @Test
-    @SuppressWarnings("unchecked")
     public void validReadCounterCacheHit() throws Throwable {
         Assume.assumeTrue(isValid);
 
         Long value = 100L;
 
-        when(cache.get(eq(cacheKey), any(Class.class))).thenReturn(value);
+        when(cache.getCounter(eq(cacheKey))).thenReturn(value);
 
         assertEquals(value.intValue(), ((Number) advice.readCounter(pjp)).intValue());
 
-        verify(cache).get(eq(cacheKey), any(Class.class));
+        verify(cache).getCounter(eq(cacheKey));
         verify(cache, never()).incr(anyString(), anyInt(), anyLong(), anyInt());
         verify(pjp, never()).proceed();
     }
 
     @Test
-    @SuppressWarnings("unchecked")
     public void invalidReadCounter() throws Throwable {
         Assume.assumeThat(isValid, CoreMatchers.is(false));
 
@@ -121,7 +120,8 @@ public class ReadCounterFromCacheAdviceTest extends AbstractCounterTest<ReadCoun
 
         assertEquals(expectedValue, advice.readCounter(pjp));
 
-        verify(cache, never()).get(anyString(), any(Class.class));
+        verify(cache, never()).getCounter(anyString());
+        verify(cache, never()).get(anyString(), any(SerializationType.class));
         verify(cache, never()).incr(anyString(), anyInt(), anyLong(), anyInt());
         verify(pjp).proceed();
     }

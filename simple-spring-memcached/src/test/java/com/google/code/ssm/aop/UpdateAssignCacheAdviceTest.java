@@ -37,6 +37,7 @@ import com.google.code.ssm.api.ParameterDataUpdateContent;
 import com.google.code.ssm.api.ParameterValueKeyProvider;
 import com.google.code.ssm.api.ReturnDataUpdateContent;
 import com.google.code.ssm.api.UpdateAssignCache;
+import com.google.code.ssm.api.format.SerializationType;
 
 /**
  * 
@@ -85,7 +86,7 @@ public class UpdateAssignCacheAdviceTest extends AbstractCacheTest<UpdateAssignC
 
         advice.cacheUpdateAssign(pjp, expectedValue);
 
-        verify(cache).set(eq(cacheKey), eq(EXPIRATION), eq(expectedValue), any(Class.class));
+        verify(cache).set(eq(cacheKey), eq(EXPIRATION), eq(expectedValue), any(SerializationType.class));
     }
 
     @Test
@@ -96,7 +97,7 @@ public class UpdateAssignCacheAdviceTest extends AbstractCacheTest<UpdateAssignC
 
         advice.cacheUpdateAssign(pjp, expectedValue);
 
-        verify(cache, never()).set(anyString(), anyInt(), any(), any(Class.class));
+        verify(cache, never()).set(anyString(), anyInt(), any(), any(SerializationType.class));
     }
 
     @Override

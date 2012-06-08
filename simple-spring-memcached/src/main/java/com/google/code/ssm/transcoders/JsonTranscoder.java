@@ -26,21 +26,20 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.Assert;
 
+import com.google.code.ssm.json.Holder;
 import com.google.code.ssm.providers.CacheTranscoder;
 import com.google.code.ssm.providers.CachedObject;
 import com.google.code.ssm.providers.CachedObjectImpl;
 
 /**
  * 
- * Transcoder responsible to decode and encode between given type and JSON format.
+ * Transcoder responsible to decode and encode objects from/to JSON format.
  * 
  * @author Jakub Białek
  * @since 2.0.0
  * 
- * @param <T>
- *            the type of class to transcode
  */
-public class JsonTranscoder<T> implements CacheTranscoder<T> { // NO_UCD
+public class JsonTranscoder implements CacheTranscoder<Object> { // NO_UCD
 
     private static final Logger LOGGER = LoggerFactory.getLogger(JsonTranscoder.class);
 
@@ -48,13 +47,9 @@ public class JsonTranscoder<T> implements CacheTranscoder<T> { // NO_UCD
 
     private final ObjectMapper mapper;
 
-    private final Class<T> clazz;
-
-    public JsonTranscoder(final Class<T> clazz, final ObjectMapper mapper) {
-        Assert.notNull(clazz, "'clazz' is required and cannot be null");
+    public JsonTranscoder(final ObjectMapper mapper) {
         Assert.notNull(mapper, "'mapper' is required and cannot be null");
 
-        this.clazz = clazz;
         this.mapper = mapper;
     }
 
@@ -63,18 +58,18 @@ public class JsonTranscoder<T> implements CacheTranscoder<T> { // NO_UCD
     }
 
     @Override
-    public T decode(final CachedObject data) {
+    public Object decode(final CachedObject data) {
         if ((data.getFlags() & JSON_SERIALIZED) == 0) {
-            LOGGER.warn("Cannot decode cached data to class {} using json transcoder", clazz.getName());
+            LOGGER.warn("Cannot decode cached data {} using json transcoder", data);
             throw new RuntimeException("Cannot decode cached data using json transcoder");
         }
 
         ByteArrayInputStream bais = new ByteArrayInputStream(data.getData());
 
         try {
-            return mapper.readValue(bais, clazz);
+            return mapper.readValue(bais, Holder.class).getValue();
         } catch (IOException e) {
-            LOGGER.warn(String.format("Error deserializing object to class %s", clazz.getName()), e);
+            LOGGER.warn(String.format("Error deserializing cached data %s", data.toString()), e);
             throw new RuntimeException(e);
         } finally {
             try {
@@ -87,14 +82,14 @@ public class JsonTranscoder<T> implements CacheTranscoder<T> { // NO_UCD
     }
 
     @Override
-    public CachedObject encode(final T o) {
+    public CachedObject encode(final Object o) {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
 
         try {
             mapper.writeValue(baos, o);
             return new CachedObjectImpl(JSON_SERIALIZED, baos.toByteArray());
         } catch (IOException e) {
-            LOGGER.warn(String.format("Error serializing object %s of class %s", o, clazz.getName()), e);
+            LOGGER.warn(String.format("Error serializing object %s", o), e);
             throw new RuntimeException(e);
         } finally {
             try {

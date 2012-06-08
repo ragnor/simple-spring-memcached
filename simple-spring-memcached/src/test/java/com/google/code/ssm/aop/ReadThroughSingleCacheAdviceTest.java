@@ -37,6 +37,7 @@ import org.junit.runners.Parameterized.Parameters;
 import com.google.code.ssm.api.ParameterValueKeyProvider;
 import com.google.code.ssm.api.ReadThroughSingleCache;
 import com.google.code.ssm.api.ReturnValueKeyProvider;
+import com.google.code.ssm.api.format.SerializationType;
 
 /**
  * 
@@ -76,7 +77,6 @@ public class ReadThroughSingleCacheAdviceTest extends AbstractCacheTest<ReadThro
     }
 
     @Test
-    @SuppressWarnings("unchecked")
     public void validCacheMiss() throws Throwable {
         Assume.assumeTrue(isValid);
 
@@ -84,27 +84,25 @@ public class ReadThroughSingleCacheAdviceTest extends AbstractCacheTest<ReadThro
 
         assertEquals(expectedValue, advice.cacheGetSingle(pjp));
 
-        verify(cache).get(eq(cacheKey), any(Class.class));
-        verify(cache).set(eq(cacheKey), eq(EXPIRATION), eq(expectedValue), any(Class.class));
+        verify(cache).get(eq(cacheKey), any(SerializationType.class));
+        verify(cache).set(eq(cacheKey), eq(EXPIRATION), eq(expectedValue), any(SerializationType.class));
         verify(pjp).proceed();
     }
 
     @Test
-    @SuppressWarnings("unchecked")
     public void validCacheHit() throws Throwable {
         Assume.assumeTrue(isValid);
 
-        when(cache.get(eq(cacheKey), any(Class.class))).thenReturn(expectedValue);
+        when(cache.get(eq(cacheKey), any(SerializationType.class))).thenReturn(expectedValue);
 
         assertEquals(expectedValue, advice.cacheGetSingle(pjp));
 
-        verify(cache).get(eq(cacheKey), any(Class.class));
-        verify(cache, never()).set(anyString(), anyInt(), any(), any(Class.class));
+        verify(cache).get(eq(cacheKey), any(SerializationType.class));
+        verify(cache, never()).set(anyString(), anyInt(), any(), any(SerializationType.class));
         verify(pjp, never()).proceed();
     }
 
     @Test
-    @SuppressWarnings("unchecked")
     public void invalid() throws Throwable {
         Assume.assumeThat(isValid, CoreMatchers.is(false));
 
@@ -112,8 +110,8 @@ public class ReadThroughSingleCacheAdviceTest extends AbstractCacheTest<ReadThro
 
         assertEquals(expectedValue, advice.cacheGetSingle(pjp));
 
-        verify(cache, never()).get(anyString(), any(Class.class));
-        verify(cache, never()).set(anyString(), anyInt(), any(), any(Class.class));
+        verify(cache, never()).get(anyString(), any(SerializationType.class));
+        verify(cache, never()).set(anyString(), anyInt(), any(), any(SerializationType.class));
         verify(pjp).proceed();
     }
 

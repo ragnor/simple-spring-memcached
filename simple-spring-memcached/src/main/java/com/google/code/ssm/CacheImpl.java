@@ -19,7 +19,6 @@ package com.google.code.ssm;
 
 import java.net.SocketAddress;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeoutException;
 
@@ -29,9 +28,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.Assert;
 
+import com.google.code.ssm.api.format.SerializationType;
 import com.google.code.ssm.providers.CacheClient;
 import com.google.code.ssm.providers.CacheException;
 import com.google.code.ssm.providers.CacheTranscoder;
+import com.google.code.ssm.transcoders.JsonTranscoder;
 import com.google.code.ssm.transcoders.LongToStringTranscoder;
 
 /**
@@ -48,23 +49,30 @@ class CacheImpl implements Cache {
 
     private final Collection<String> aliases;
 
+    private final SerializationType defaultSerializationType;
+
+    private final JsonTranscoder jsonTranscoder;
+
+    private final LongToStringTranscoder longToStringTranscoder = new LongToStringTranscoder();
+
+    private final CacheTranscoder<Object> customTranscoder;
+
     private volatile CacheClient cacheClient;
 
-    private final Map<Class<?>, CacheTranscoder<?>> transcoders = new HashMap<Class<?>, CacheTranscoder<?>>();
-
     CacheImpl(final String name, final Collection<String> aliases, final CacheClient cacheClient,
-            final Map<Class<?>, CacheTranscoder<?>> transcoders) {
+            final SerializationType defaultSerializationType, final JsonTranscoder jsonTranscoder,
+            final CacheTranscoder<Object> customTranscoder) {
         Assert.hasText(name, "'name' must not be null, empty, or blank");
         Assert.notNull(aliases, "'aliases' cannot be null");
         Assert.notNull(cacheClient, "'cacheClient' cannot be null");
+        Assert.notNull(defaultSerializationType, "'defaultSerializationType' cannot be null");
 
         this.name = name;
         this.aliases = aliases;
         this.cacheClient = cacheClient;
-        this.transcoders.putAll(transcoders);
-        if (this.transcoders.put(Long.class, new LongToStringTranscoder()) != null) {
-            LOGGER.warn("In cache '" + name + "' defined transoder for Long class was overwrited. It may cause errors.");
-        }
+        this.defaultSerializationType = defaultSerializationType;
+        this.jsonTranscoder = jsonTranscoder;
+        this.customTranscoder = customTranscoder;
     }
 
     @Override
@@ -84,42 +92,37 @@ class CacheImpl implements Cache {
 
     @Override
     @SuppressWarnings("unchecked")
-    public <T> T get(final String cacheKey, final Class<T> clazz) throws TimeoutException, CacheException {
-        if (clazz != null) {
-            CacheTranscoder<?> transcoder = getTranscoder(clazz);
-            if (transcoder != null) {
-                return (T) cacheClient.get(cacheKey, transcoder);
-            } else {
-                LOGGER.warn("There's no json transcoder for class " + clazz.getName() + ", standard transcoder will be used for key "
-                        + cacheKey);
-            }
+    public <T> T get(final String cacheKey, final SerializationType serializationType) throws TimeoutException, CacheException {
+        if (isFormat(serializationType, SerializationType.JSON)) {
+            return (T) cacheClient.get(cacheKey, jsonTranscoder);
+        } else if (isFormat(serializationType, SerializationType.PROVIDER)) {
+            return (T) cacheClient.get(cacheKey);
+        } else if (isFormat(serializationType, SerializationType.CUSTOM)) {
+            return (T) cacheClient.get(cacheKey, customTranscoder);
+        } else {
+            throw new IllegalArgumentException(String.format("Serialization type %s is not supported", serializationType));
         }
-
-        return (T) cacheClient.get(cacheKey);
     }
 
     @Override
     @SuppressWarnings("unchecked")
-    public <T> void set(final String cacheKey, final int expiration, final Object value, final Class<?> clazz) throws TimeoutException,
-            CacheException {
-        if (clazz != null) {
-            CacheTranscoder<?> transcoder = getTranscoder(clazz);
-            if (transcoder != null) {
-                cacheClient.set(cacheKey, expiration, (T) value, (CacheTranscoder<T>) transcoder);
-                return;
-            } else {
-                LOGGER.warn("There's no json transcoder for class " + clazz.getName() + ", standard transcoder will be used for key "
-                        + cacheKey);
-            }
+    public <T> void set(final String cacheKey, final int expiration, final Object value, final SerializationType serializationType)
+            throws TimeoutException, CacheException {
+        if (isFormat(serializationType, SerializationType.JSON)) {
+            cacheClient.set(cacheKey, expiration, (T) value, (CacheTranscoder<T>) jsonTranscoder);
+        } else if (isFormat(serializationType, SerializationType.PROVIDER)) {
+            cacheClient.set(cacheKey, expiration, value);
+        } else if (isFormat(serializationType, SerializationType.CUSTOM)) {
+            cacheClient.set(cacheKey, expiration, (T) value, (CacheTranscoder<T>) customTranscoder);
+        } else {
+            throw new IllegalArgumentException(String.format("Serialization type %s is not supported", serializationType));
         }
-
-        cacheClient.set(cacheKey, expiration, value);
     }
 
     @Override
-    public <T> void setSilently(final String cacheKey, final int expiration, final Object value, final Class<T> clazz) {
+    public <T> void setSilently(final String cacheKey, final int expiration, final Object value, final SerializationType serializationType) {
         try {
-            set(cacheKey, expiration, value, clazz);
+            set(cacheKey, expiration, value, serializationType);
         } catch (TimeoutException e) {
             LOGGER.warn("Cannot set on key " + cacheKey, e);
         } catch (CacheException e) {
@@ -128,29 +131,23 @@ class CacheImpl implements Cache {
     }
 
     @Override
-    public <T> void add(final String cacheKey, final int expiration, final Object value, final Class<T> clazz) throws TimeoutException,
-            CacheException {
-        if (clazz != null) {
-            CacheTranscoder<Object> transcoder = getTranscoder(clazz);
-            if (transcoder != null) {
-                cacheClient.add(cacheKey, expiration, value, transcoder);
-                if (LOGGER.isInfoEnabled()) {
-                    LOGGER.info("Add nullValue under key: " + cacheKey + ", json: " + clazz);
-                }
-                return;
-            } else {
-                LOGGER.warn("There's no json transcoder for class " + clazz.getName() + ", standard transcoder will be used for key "
-                        + cacheKey);
-            }
+    public <T> void add(final String cacheKey, final int expiration, final Object value, final SerializationType serializationType)
+            throws TimeoutException, CacheException {
+        if (isFormat(serializationType, SerializationType.JSON)) {
+            cacheClient.add(cacheKey, expiration, value, jsonTranscoder);
+        } else if (isFormat(serializationType, SerializationType.PROVIDER)) {
+            cacheClient.add(cacheKey, expiration, value);
+        } else if (isFormat(serializationType, SerializationType.CUSTOM)) {
+            cacheClient.add(cacheKey, expiration, value, customTranscoder);
+        } else {
+            throw new IllegalArgumentException(String.format("Serialization type %s is not supported", serializationType));
         }
-
-        cacheClient.add(cacheKey, expiration, value);
     }
 
     @Override
-    public <T> void addSilently(final String cacheKey, final int expiration, final Object value, final Class<?> clazz) {
+    public <T> void addSilently(final String cacheKey, final int expiration, final Object value, final SerializationType serializationType) {
         try {
-            add(cacheKey, expiration, value, clazz);
+            add(cacheKey, expiration, value, serializationType);
         } catch (TimeoutException e) {
             LOGGER.warn("Cannot add to key " + cacheKey, e);
         } catch (CacheException e) {
@@ -159,18 +156,17 @@ class CacheImpl implements Cache {
     }
 
     @Override
-    public Map<String, Object> getBulk(final Collection<String> keys, final Class<?> clazz) throws TimeoutException, CacheException {
-        if (clazz != null) {
-            CacheTranscoder<Object> transcoder = getTranscoder(clazz);
-            if (transcoder != null) {
-                return cacheClient.getBulk(keys, transcoder);
-            } else {
-                LOGGER.warn("There's no json transcoder for class " + clazz.getName() + ", standard transcoder will be used for keys "
-                        + keys);
-            }
+    public Map<String, Object> getBulk(final Collection<String> keys, final SerializationType serializationType) throws TimeoutException,
+            CacheException {
+        if (isFormat(serializationType, SerializationType.JSON)) {
+            return cacheClient.getBulk(keys, jsonTranscoder);
+        } else if (isFormat(serializationType, SerializationType.PROVIDER)) {
+            return cacheClient.getBulk(keys);
+        } else if (isFormat(serializationType, SerializationType.CUSTOM)) {
+            return cacheClient.getBulk(keys, customTranscoder);
+        } else {
+            throw new IllegalArgumentException(String.format("Serialization type %s is not supported", serializationType));
         }
-
-        return cacheClient.getBulk(keys);
     }
 
     @Override
@@ -204,6 +200,16 @@ class CacheImpl implements Cache {
     }
 
     @Override
+    public Long getCounter(final String cacheKey) throws TimeoutException, CacheException {
+        return cacheClient.get(cacheKey, longToStringTranscoder);
+    }
+
+    @Override
+    public void setCounter(final String cacheKey, final int expiration, final long value) throws TimeoutException, CacheException {
+        cacheClient.set(cacheKey, expiration, value, longToStringTranscoder);
+    }
+
+    @Override
     @PreDestroy
     public void shutdown() {
         cacheClient.shutdown();
@@ -221,9 +227,9 @@ class CacheImpl implements Cache {
         }
     }
 
-    @SuppressWarnings("unchecked")
-    private CacheTranscoder<Object> getTranscoder(final Class<?> clazz) {
-        return (CacheTranscoder<Object>) transcoders.get(clazz);
+    private boolean isFormat(final SerializationType serializationType, final SerializationType targetSerializationType) {
+        return serializationType == targetSerializationType
+                || (serializationType == null && defaultSerializationType == targetSerializationType);
     }
 
 }

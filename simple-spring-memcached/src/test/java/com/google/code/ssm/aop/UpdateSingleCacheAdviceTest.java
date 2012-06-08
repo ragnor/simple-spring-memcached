@@ -36,6 +36,7 @@ import com.google.code.ssm.api.ParameterDataUpdateContent;
 import com.google.code.ssm.api.ParameterValueKeyProvider;
 import com.google.code.ssm.api.ReturnDataUpdateContent;
 import com.google.code.ssm.api.UpdateSingleCache;
+import com.google.code.ssm.api.format.SerializationType;
 import com.google.code.ssm.test.Point;
 
 /**
@@ -92,7 +93,7 @@ public class UpdateSingleCacheAdviceTest extends AbstractCacheTest<UpdateSingleC
 
         advice.cacheUpdateSingle(pjp, returnValue);
 
-        verify(cache).set(eq(cacheKey), eq(EXPIRATION), eq(expectedValue), any(Class.class));
+        verify(cache).set(eq(cacheKey), eq(EXPIRATION), eq(expectedValue), any(SerializationType.class));
     }
 
     @Test
@@ -101,7 +102,7 @@ public class UpdateSingleCacheAdviceTest extends AbstractCacheTest<UpdateSingleC
 
         advice.cacheUpdateSingle(pjp, returnValue);
 
-        verify(cache, never()).set(anyString(), anyInt(), any(), any(Class.class));
+        verify(cache, never()).set(anyString(), anyInt(), any(), any(SerializationType.class));
     }
 
     @Override

@@ -40,6 +40,7 @@ import com.google.code.ssm.aop.support.PertinentNegativeNull;
 import com.google.code.ssm.api.ParameterValueKeyProvider;
 import com.google.code.ssm.api.ReadThroughMultiCache;
 import com.google.code.ssm.api.ReadThroughMultiCacheOption;
+import com.google.code.ssm.api.format.SerializationType;
 import com.google.code.ssm.test.Point;
 
 /**
@@ -132,7 +133,7 @@ public class ReadThroughMultiCacheAdvicePartialMissTest extends AbstractCacheTes
             missValues.add(expectedValue.get(element));
         }
 
-        when(cache.getBulk(eq(new HashSet<String>(Arrays.asList(cacheKeys))), any(Class.class))).thenReturn(cacheHits);
+        when(cache.getBulk(eq(new HashSet<String>(Arrays.asList(cacheKeys))), any(SerializationType.class))).thenReturn(cacheHits);
         when(pjp.proceed(missParams)).thenReturn(missValues);
 
         List<Object> result = (List<Object>) expectedValue;
@@ -146,9 +147,9 @@ public class ReadThroughMultiCacheAdvicePartialMissTest extends AbstractCacheTes
         }
         assertEquals(result, advice.cacheMulti(pjp));
 
-        verify(cache).getBulk(eq(new HashSet<String>(Arrays.asList(cacheKeys))), any(Class.class));
+        verify(cache).getBulk(eq(new HashSet<String>(Arrays.asList(cacheKeys))), any(SerializationType.class));
         for (int element : missedIndex) {
-            verify(cache).setSilently(eq(cacheKeys[element]), eq(EXPIRATION), eq(expectedValue.get(element)), any(Class.class));
+            verify(cache).setSilently(eq(cacheKeys[element]), eq(EXPIRATION), eq(expectedValue.get(element)), any(SerializationType.class));
         }
         verify(pjp).proceed(params);
     }

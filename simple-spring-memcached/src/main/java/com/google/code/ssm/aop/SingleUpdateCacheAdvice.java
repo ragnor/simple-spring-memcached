@@ -25,6 +25,7 @@ import org.aspectj.lang.JoinPoint;
 
 import com.google.code.ssm.aop.support.AnnotationData;
 import com.google.code.ssm.aop.support.AnnotationDataBuilder;
+import com.google.code.ssm.api.format.SerializationType;
 
 /**
  * 
@@ -59,9 +60,9 @@ abstract class SingleUpdateCacheAdvice<T extends Annotation> extends CacheAdvice
             cacheKey = getCacheKey(data, jp.getArgs(), methodToCache.toString());
 
             final Object dataObject = getCacheBase().<Object> getUpdateData(data, methodToCache, jp, retVal);
-            final Class<?> jsonClass = getCacheBase().getDataJsonClass(methodToCache, data);
+            final SerializationType serializationType = getCacheBase().getSerializationType(methodToCache);
             final Object submission = getCacheBase().getSubmission(dataObject);
-            getCacheBase().getCache(data).set(cacheKey, data.getExpiration(), submission, jsonClass);
+            getCacheBase().getCache(data).set(cacheKey, data.getExpiration(), submission, serializationType);
         } catch (Exception ex) {
             getLogger().warn(String.format("Caching on method %s and key [%s] aborted due to an error.", jp.toShortString(), cacheKey), ex);
         }

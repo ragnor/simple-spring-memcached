@@ -66,7 +66,7 @@ public class UpdateCounterInCacheAdvice extends CounterInCacheBase {
             Object dataObject = getCacheBase().getUpdateData(data, methodToCache, jp, retVal);
             if (checkData(dataObject, jp)) {
                 long value = ((Number) dataObject).longValue();
-                getCacheBase().getCache(data).set(cacheKey, annotation.expiration(), value, Long.class);
+                getCacheBase().getCache(data).setCounter(cacheKey, annotation.expiration(), value);
             }
         } catch (Exception ex) {
             getLogger().warn(String.format("Updating counter [%s] in cache via %s aborted due to an error.", cacheKey, jp.toShortString()),
