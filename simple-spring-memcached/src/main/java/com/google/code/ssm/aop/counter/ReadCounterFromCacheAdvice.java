@@ -71,8 +71,7 @@ public class ReadCounterFromCacheAdvice extends CounterInCacheBase {
                 return convertResult(methodToCache, result);
             }
         } catch (Throwable ex) {
-            getLogger()
-                    .warn(String.format("Caching on method %s and key [%s] aborted due to an error.", pjp.toShortString(), cacheKey), ex);
+            warn(ex, "Caching on method %s and key [%s] aborted due to an error.", pjp.toShortString(), cacheKey);
             return pjp.proceed();
         }
 
@@ -87,8 +86,7 @@ public class ReadCounterFromCacheAdvice extends CounterInCacheBase {
                 getCacheBase().getCache(data).incr(cacheKey, 0, value, annotation.expiration());
             }
         } catch (Throwable ex) {
-            getLogger()
-                    .warn(String.format("Caching on method %s and key [%s] aborted due to an error.", pjp.toShortString(), cacheKey), ex);
+            warn(ex, "Caching on method %s and key [%s] aborted due to an error.", pjp.toShortString(), cacheKey);
         }
         return result;
     }

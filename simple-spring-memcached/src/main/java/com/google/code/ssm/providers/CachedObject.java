@@ -27,8 +27,8 @@ public interface CachedObject {
 
     int MAX_SIZE = 1024 * 1024;
 
-    public byte[] getData();
+    byte[] getData();
 
-    public int getFlags();
+    int getFlags();
 
 }

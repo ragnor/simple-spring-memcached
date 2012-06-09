@@ -33,12 +33,14 @@ import com.google.code.ssm.api.format.SerializationType;
  * @author Jakub Białek
  * @since 2.0.0
  * 
+ * @param <T>
+ *            the type of SSM update cache annotation
  */
 abstract class SingleUpdateCacheAdvice<T extends Annotation> extends CacheAdvice {
 
     private final Class<T> annotationClass;
 
-    public SingleUpdateCacheAdvice(final Class<T> annotationClass) {
+    protected SingleUpdateCacheAdvice(final Class<T> annotationClass) {
         this.annotationClass = annotationClass;
     }
 
@@ -64,7 +66,7 @@ abstract class SingleUpdateCacheAdvice<T extends Annotation> extends CacheAdvice
             final Object submission = getCacheBase().getSubmission(dataObject);
             getCacheBase().getCache(data).set(cacheKey, data.getExpiration(), submission, serializationType);
         } catch (Exception ex) {
-            getLogger().warn(String.format("Caching on method %s and key [%s] aborted due to an error.", jp.toShortString(), cacheKey), ex);
+            warn(ex, "Caching on method %s and key [%s] aborted due to an error.", jp.toShortString(), cacheKey);
         }
     }
 

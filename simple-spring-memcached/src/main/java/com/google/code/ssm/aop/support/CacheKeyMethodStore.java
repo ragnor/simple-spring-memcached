@@ -39,6 +39,6 @@ public interface CacheKeyMethodStore {
      * @throws NoSuchMethodException
      *             if class doesn't contain method annotated by {@link CacheKeyMethod} or toString() method
      */
-    public Method getKeyMethod(final Class<?> keyClass) throws NoSuchMethodException;
+    Method getKeyMethod(final Class<?> keyClass) throws NoSuchMethodException;
 
 }

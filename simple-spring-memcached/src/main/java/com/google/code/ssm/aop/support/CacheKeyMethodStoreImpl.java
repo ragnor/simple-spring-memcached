@@ -31,6 +31,8 @@ import com.google.code.ssm.api.CacheKeyMethod;
  */
 public class CacheKeyMethodStoreImpl implements CacheKeyMethodStore { // NO_UCD
 
+    public static final String DEFAULT_KEY_METHOD_NAME = "toString";
+
     private final Map<Class<?>, Method> map = new ConcurrentHashMap<Class<?>, Method>();
 
     @Override
@@ -53,7 +55,7 @@ public class CacheKeyMethodStoreImpl implements CacheKeyMethodStore { // NO_UCD
         }
 
         if (targetMethod == null) {
-            targetMethod = keyClass.getMethod("toString", (Class<?>[]) null);
+            targetMethod = keyClass.getMethod(DEFAULT_KEY_METHOD_NAME, (Class<?>[]) null);
         }
 
         add(keyClass, targetMethod);

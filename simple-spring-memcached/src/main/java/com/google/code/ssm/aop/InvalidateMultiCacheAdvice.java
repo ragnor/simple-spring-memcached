@@ -68,7 +68,7 @@ public class InvalidateMultiCacheAdvice extends CacheAdvice {
                 cacheKeys = getCacheBase().getCacheKeyBuilder().getCacheKeys(data, pjp.getArgs(), methodToCache.toString());
             }
         } catch (Throwable ex) {
-            getLogger().warn(String.format("Caching on method %s aborted due to an error.", pjp.toShortString()), ex);
+            warn(ex, "Caching on method %s aborted due to an error.", pjp.toShortString());
             return pjp.proceed();
         }
 
@@ -90,7 +90,7 @@ public class InvalidateMultiCacheAdvice extends CacheAdvice {
             }
             getCacheBase().getCache(data).delete(cacheKeys);
         } catch (Throwable ex) {
-            getLogger().warn(String.format("Caching on method %s aborted due to an error.", pjp.toShortString()), ex);
+            warn(ex, "Caching on method %s aborted due to an error.", pjp.toShortString());
         }
         return result;
 

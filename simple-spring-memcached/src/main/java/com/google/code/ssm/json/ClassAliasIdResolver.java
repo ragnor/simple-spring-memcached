@@ -46,8 +46,8 @@ public class ClassAliasIdResolver extends ClassNameIdResolver {
 
     @Override
     public JavaType typeFromId(final String id) {
-        Class<?> clazz = null;
-        if ((clazz = idToClass.get(id)) != null) {
+        Class<?> clazz = idToClass.get(id);
+        if (clazz != null) {
             return _typeFactory.constructSpecializedType(_baseType, clazz);
         }
 
@@ -79,7 +79,7 @@ public class ClassAliasIdResolver extends ClassNameIdResolver {
      * 
      * @param classToId
      */
-    public synchronized void setClassToId(final Map<Class<?>, String> classToId) {
+    public void setClassToId(final Map<Class<?>, String> classToId) {
 
         Map<String, Class<?>> reverseMap = new HashMap<String, Class<?>>();
         for (Map.Entry<Class<?>, String> entry : classToId.entrySet()) {
@@ -101,7 +101,7 @@ public class ClassAliasIdResolver extends ClassNameIdResolver {
      * @param clazz
      * @param id
      */
-    public synchronized void addClassToId(final Class<?> clazz, final String id) {
+    public void addClassToId(final Class<?> clazz, final String id) {
         Assert.notNull(clazz, "Class cannot be null");
         Assert.hasText(id, "Alias (id) cannot be null or contain only whitespaces");
 

@@ -124,9 +124,9 @@ class CacheImpl implements Cache {
         try {
             set(cacheKey, expiration, value, serializationType);
         } catch (TimeoutException e) {
-            LOGGER.warn("Cannot set on key " + cacheKey, e);
+            warn(e, "Cannot set on key %s", cacheKey);
         } catch (CacheException e) {
-            LOGGER.warn("Cannot set on key " + cacheKey, e);
+            warn(e, "Cannot set on key %s", cacheKey);
         }
     }
 
@@ -149,9 +149,9 @@ class CacheImpl implements Cache {
         try {
             add(cacheKey, expiration, value, serializationType);
         } catch (TimeoutException e) {
-            LOGGER.warn("Cannot add to key " + cacheKey, e);
+            warn(e, "Cannot add to key %s", cacheKey);
         } catch (CacheException e) {
-            LOGGER.warn("Cannot add to key " + cacheKey, e);
+            warn(e, "Cannot add to key %s", cacheKey);
         }
     }
 
@@ -232,4 +232,9 @@ class CacheImpl implements Cache {
                 || (serializationType == null && defaultSerializationType == targetSerializationType);
     }
 
+    private void warn(final Exception e, final String format, final Object... args) {
+        if (LOGGER.isWarnEnabled()) {
+            LOGGER.warn(String.format(format, args), e);
+        }
+    }
 }

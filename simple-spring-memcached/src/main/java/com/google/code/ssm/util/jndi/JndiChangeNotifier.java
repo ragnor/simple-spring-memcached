@@ -65,7 +65,7 @@ public class JndiChangeNotifier extends JndiAddressProvider implements AddressCh
      */
     public void check() {
         List<InetSocketAddress> newAddrs = getAddresses();
-        if (newAddrs != null && !newAddrs.equals(currentAddrs) || newAddrs != currentAddrs) {
+        if (newAddrs != null && !newAddrs.equals(currentAddrs)) {
 
             if (addressChangeListener != null) {
                 currentAddrs = newAddrs;

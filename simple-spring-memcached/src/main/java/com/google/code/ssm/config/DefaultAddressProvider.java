@@ -92,7 +92,7 @@ public class DefaultAddressProvider implements AddressProvider {
             throw new IllegalArgumentException("No hosts in list: '" + s + "'");
         }
 
-        ArrayList<InetSocketAddress> addrs = new ArrayList<InetSocketAddress>();
+        List<InetSocketAddress> addrs = new ArrayList<InetSocketAddress>();
         for (String hoststuff : s.split("(?:\\s|,)+")) {
             if (hoststuff.equals("")) {
                 continue;

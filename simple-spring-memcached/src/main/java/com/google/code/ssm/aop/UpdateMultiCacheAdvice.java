@@ -103,7 +103,7 @@ public class UpdateMultiCacheAdvice extends MultiCacheAdvice {
                 updateCacheWithMissed(dataList, coord, annotation.option(), serializationType);
             }
         } catch (Exception ex) {
-            getLogger().warn("Updating caching via " + jp.toShortString() + " aborted due to an error.", ex);
+            warn(ex, "Updating caching via %s aborted due to an error.", jp.toShortString());
         }
     }
 
@@ -136,10 +136,12 @@ public class UpdateMultiCacheAdvice extends MultiCacheAdvice {
 
         Iterator<Object> returnListIter = returnList.iterator();
         Iterator<String> cacheKeyIter = cacheKeys.iterator();
+        String cacheKey;
+        Object result, cacheObject;
         while (returnListIter.hasNext()) {
-            final Object result = returnListIter.next();
-            final String cacheKey = cacheKeyIter.next();
-            final Object cacheObject = getCacheBase().getSubmission(result);
+            result = returnListIter.next();
+            cacheKey = cacheKeyIter.next();
+            cacheObject = getCacheBase().getSubmission(result);
             getCacheBase().getCache(data).setSilently(cacheKey, data.getExpiration(), cacheObject, serializationType);
         }
     }

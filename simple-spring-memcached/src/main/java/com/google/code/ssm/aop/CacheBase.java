@@ -204,9 +204,8 @@ public class CacheBase implements ApplicationContextAware, InitializingBean {
     private Method findMethodFromTargetGivenNameAndParams(final Object target, final String name, final Class<?>[] parameters)
             throws NoSuchMethodException {
         Method method = target.getClass().getMethod(name, parameters);
-        if (getLogger().isDebugEnabled()) {
-            getLogger().debug("Method to cache: " + method);
-        }
+        getLogger().debug("Method to cache: {}", method);
+
         return method;
     }
 

@@ -26,6 +26,10 @@ import org.slf4j.Logger;
  */
 public abstract class CacheAdvice {
 
+    public static final String DISABLE_CACHE_PROPERTY = "ssm.cache.disable";
+
+    public static final String DISABLE_CACHE_PROPERTY_VALUE = "true";
+
     private CacheBase cacheBase;
 
     public CacheBase getCacheBase() {
@@ -37,7 +41,13 @@ public abstract class CacheAdvice {
     }
 
     protected boolean isDisabled() {
-        return "true".equals(System.getProperty("ssm.cache.disable"));
+        return DISABLE_CACHE_PROPERTY_VALUE.equals(System.getProperty(DISABLE_CACHE_PROPERTY));
+    }
+
+    protected void warn(final Throwable e, final String format, final Object... args) {
+        if (getLogger().isWarnEnabled()) {
+            getLogger().warn(String.format(format, args), e);
+        }
     }
 
     protected abstract Logger getLogger();

@@ -51,6 +51,10 @@ import com.google.code.ssm.transcoders.JsonTranscoder;
  */
 public class CacheFactory implements AddressChangeListener, FactoryBean<Cache>, InitializingBean {
 
+    public static final String DISABLE_CACHE_PROPERTY = "ssm.cache.disable";
+
+    public static final String DISABLE_CACHE_PROPERTY_VALUE = "true";
+
     private static final Logger LOGGER = LoggerFactory.getLogger(CacheFactory.class);
 
     private CacheConfiguration configuration = new CacheConfiguration();
@@ -144,18 +148,20 @@ public class CacheFactory implements AddressChangeListener, FactoryBean<Cache>, 
 
     @Override
     public void changeAddresses(final List<InetSocketAddress> addresses) {
-        if ("true".equals(System.getProperty("ssm.cache.disable"))) {
+        if (DISABLE_CACHE_PROPERTY_VALUE.equals(System.getProperty(DISABLE_CACHE_PROPERTY))) {
             LOGGER.warn("Cache disabled");
             return;
         }
 
         try {
-            LOGGER.info("Creating new memcached client for new addresses: " + addresses);
+            LOGGER.info("Creating new memcached client for new addresses: {}", addresses);
             CacheClient memcacheClient = createClient(addresses);
-            LOGGER.info("New memcached client created with addresses: " + addresses);
+            LOGGER.info("New memcached client created with addresses: {}", addresses);
             cache.changeCacheClient(memcacheClient);
         } catch (IOException e) {
-            LOGGER.error("Cannot change memcached client to new one with addresses " + addresses, e);
+            if (LOGGER.isErrorEnabled()) {
+                LOGGER.error("Cannot change memcached client to new one with addresses " + addresses, e);
+            }
         }
     }
 
@@ -169,7 +175,7 @@ public class CacheFactory implements AddressChangeListener, FactoryBean<Cache>, 
         // this factory creates only one single cache and return it if someone invoked this method twice or
         // more
 
-        if ("true".equals(System.getProperty("ssm.cache.disable"))) {
+        if (DISABLE_CACHE_PROPERTY_VALUE.equals(System.getProperty(DISABLE_CACHE_PROPERTY))) {
             LOGGER.warn("Cache disabled");
             return null;
         }

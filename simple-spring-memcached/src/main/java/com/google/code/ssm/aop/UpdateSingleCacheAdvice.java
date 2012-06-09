@@ -53,13 +53,13 @@ public class UpdateSingleCacheAdvice extends SingleUpdateCacheAdvice<UpdateSingl
     }
 
     @Override
-    protected Logger getLogger() {
-        return LOG;
+    protected String getCacheKey(final AnnotationData data, final Object[] args, final String methodDesc) throws Exception {
+        return getCacheBase().getCacheKeyBuilder().getCacheKey(data, args, methodDesc);
     }
 
     @Override
-    protected String getCacheKey(final AnnotationData data, final Object[] args, final String methodDesc) throws Exception {
-        return getCacheBase().getCacheKeyBuilder().getCacheKey(data, args, methodDesc);
+    protected Logger getLogger() {
+        return LOG;
     }
 
 }

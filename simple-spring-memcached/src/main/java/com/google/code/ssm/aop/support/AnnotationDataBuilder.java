@@ -244,8 +244,9 @@ public class AnnotationDataBuilder {
         Set<Integer> order = new HashSet<Integer>();
 
         if (paramAnnotationArrays != null && paramAnnotationArrays.length > 0) {
+            ParameterValueKeyProvider foundAnnotation;
             for (int ix = 0; ix < paramAnnotationArrays.length; ix++) {
-                ParameterValueKeyProvider foundAnnotation = getAnnotation(ParameterValueKeyProvider.class, paramAnnotationArrays[ix]);
+                foundAnnotation = getAnnotation(ParameterValueKeyProvider.class, paramAnnotationArrays[ix]);
                 if (foundAnnotation != null) {
                     // throw if order below 0
                     if (foundAnnotation.order() < 0) {

@@ -63,7 +63,7 @@ public class DecrementCounterInCacheAdvice extends CounterInCacheBase {
             cacheKey = getCacheBase().getCacheKeyBuilder().getCacheKey(data, jp.getArgs(), methodToCache.toString());
             getCacheBase().getCache(data).decr(cacheKey, 1);
         } catch (Throwable ex) {
-            getLogger().warn(String.format("Decrementing counter [%s] via %s aborted due to an error.", cacheKey, jp.toShortString()), ex);
+            warn(ex, "Decrementing counter [%s] via %s aborted due to an error.", cacheKey, jp.toShortString());
         }
     }
 

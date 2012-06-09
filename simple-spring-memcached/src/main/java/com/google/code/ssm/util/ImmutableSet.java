@@ -32,14 +32,14 @@ import java.util.Set;
 public class ImmutableSet {
 
     public static <E> Set<E> of(final E e1) {
-        HashSet<E> set = new HashSet<E>(1, 1);
+        Set<E> set = new HashSet<E>(1, 1);
         set.add(e1);
 
         return Collections.unmodifiableSet(set);
     }
 
     public static <E> Set<E> of(final E e1, final E e2) {
-        HashSet<E> set = new HashSet<E>(2, 1);
+        Set<E> set = new HashSet<E>(2, 1);
         set.add(e1);
         set.add(e2);
 
@@ -47,7 +47,7 @@ public class ImmutableSet {
     }
 
     public static <E> Set<E> of(final E e1, final E e2, final E e3) {
-        HashSet<E> set = new HashSet<E>(3, 1);
+        Set<E> set = new HashSet<E>(3, 1);
         set.add(e1);
         set.add(e2);
         set.add(e3);
@@ -56,7 +56,7 @@ public class ImmutableSet {
     }
 
     public static <E> Set<E> of(final E e1, final E e2, final E e3, final E e4) {
-        HashSet<E> set = new HashSet<E>(4, 1);
+        Set<E> set = new HashSet<E>(4, 1);
         set.add(e1);
         set.add(e2);
         set.add(e3);

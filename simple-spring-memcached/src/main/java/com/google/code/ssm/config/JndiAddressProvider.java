@@ -70,7 +70,7 @@ public class JndiAddressProvider extends DefaultAddressProvider implements Initi
         List<InetSocketAddress> addrs = null;
         try {
             if (jndiKey != null && (ips = jndiTemplate.lookup(jndiKey)) != null) {
-                logger.info(String.format("Addresses from JNDI will be used to connect to memcached servers. Addresses: %s", ips));
+                logger.info("Addresses from JNDI will be used to connect to memcached servers. Addresses: {}", ips);
                 addrs = getAddresses((String) ips);
             } else {
                 addrs = super.getAddresses();
@@ -84,5 +84,4 @@ public class JndiAddressProvider extends DefaultAddressProvider implements Initi
 
         return addrs;
     }
-
 }

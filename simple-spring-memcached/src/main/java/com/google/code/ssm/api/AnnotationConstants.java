@@ -25,8 +25,8 @@ package com.google.code.ssm.api;
  */
 public interface AnnotationConstants {
 
-    public static final String DEFAULT_STRING = "[unassigned]";
+    String DEFAULT_STRING = "[unassigned]";
 
-    public static final String DEFAULT_CACHE_NAME = "default";
+    String DEFAULT_CACHE_NAME = "default";
 
 }

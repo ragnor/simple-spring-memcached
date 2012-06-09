@@ -51,9 +51,11 @@ abstract class MultiCacheAdvice extends CacheAdvice {
         Iterator<Object> listObjectsIter = listObjects.iterator();
         Iterator<String> cacheKeysIter = cacheKeys.iterator();
 
+        Object obj;
+        String cacheKey;
         while (listObjectsIter.hasNext()) {
-            Object obj = listObjectsIter.next();
-            String cacheKey = cacheKeysIter.next();
+            obj = listObjectsIter.next();
+            cacheKey = cacheKeysIter.next();
             if (holder.getObj2Key().get(obj) == null) {
                 holder.getObj2Key().put(obj, cacheKey);
             }
@@ -82,8 +84,8 @@ abstract class MultiCacheAdvice extends CacheAdvice {
     }
 
     static class MapHolder {
-        final private Map<String, Object> key2Obj = new LinkedHashMap<String, Object>();
-        final private Map<Object, String> obj2Key = new LinkedHashMap<Object, String>();
+        private final Map<String, Object> key2Obj = new LinkedHashMap<String, Object>();
+        private final Map<Object, String> obj2Key = new LinkedHashMap<Object, String>();
 
         public Map<String, Object> getKey2Obj() {
             return key2Obj;

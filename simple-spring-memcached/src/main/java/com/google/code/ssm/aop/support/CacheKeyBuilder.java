@@ -28,14 +28,14 @@ import java.util.List;
  */
 public interface CacheKeyBuilder {
 
-    public String getCacheKey(final AnnotationData data, final Object[] args, final String methodDesc) throws Exception;
+    String getCacheKey(final AnnotationData data, final Object[] args, final String methodDesc) throws Exception;
 
-    public String getCacheKey(final Object keyObject, final String namespace);
+    String getCacheKey(final Object keyObject, final String namespace);
 
-    public List<String> getCacheKeys(final List<Object> keyObjects, final String namespace) throws Exception;
+    List<String> getCacheKeys(final List<Object> keyObjects, final String namespace) throws Exception;
 
-    public List<String> getCacheKeys(final AnnotationData data, final Object[] args, final String methodDesc);
+    List<String> getCacheKeys(final AnnotationData data, final Object[] args, final String methodDesc);
 
-    public String getAssignCacheKey(final AnnotationData data);
+    String getAssignCacheKey(final AnnotationData data);
 
 }

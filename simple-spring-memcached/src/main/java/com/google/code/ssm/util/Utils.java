@@ -60,7 +60,7 @@ public class Utils {
         Class<?>[] methodParameterTypes = method.getParameterTypes();
 
         int i = 0;
-        for (Integer index : indexes) {
+        for (int index : indexes) {
             if (index < 0) {
                 throw new InvalidParameterException(String.format("An index of %s is invalid", index));
             }

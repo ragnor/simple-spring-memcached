@@ -33,12 +33,14 @@ import com.google.code.ssm.api.format.SerializationType;
  * @author Jakub Białek
  * @since 2.0.0
  * 
+ * @param <T>
+ *            the type of SSM read from cache annotation
  */
 abstract class SingleReadCacheAdvice<T extends Annotation> extends CacheAdvice {
 
     private final Class<T> annotationClass;
 
-    public SingleReadCacheAdvice(final Class<T> annotationClass) {
+    protected SingleReadCacheAdvice(final Class<T> annotationClass) {
         this.annotationClass = annotationClass;
     }
 
@@ -68,8 +70,7 @@ abstract class SingleReadCacheAdvice<T extends Annotation> extends CacheAdvice {
                 return getCacheBase().getResult(result);
             }
         } catch (Throwable ex) {
-            getLogger()
-                    .warn(String.format("Caching on method %s and key [%s] aborted due to an error.", pjp.toShortString(), cacheKey), ex);
+            warn(ex, "Caching on method %s and key [%s] aborted due to an error.", pjp.toShortString(), cacheKey);
             return pjp.proceed();
         }
 
@@ -81,8 +82,7 @@ abstract class SingleReadCacheAdvice<T extends Annotation> extends CacheAdvice {
             final Object submission = getCacheBase().getSubmission(result);
             getCacheBase().getCache(data).set(cacheKey, data.getExpiration(), submission, serializationType);
         } catch (Throwable ex) {
-            getLogger()
-                    .warn(String.format("Caching on method %s and key [%s] aborted due to an error.", pjp.toShortString(), cacheKey), ex);
+            warn(ex, "Caching on method %s and key [%s] aborted due to an error.", pjp.toShortString(), cacheKey);
         }
         return result;
     }
