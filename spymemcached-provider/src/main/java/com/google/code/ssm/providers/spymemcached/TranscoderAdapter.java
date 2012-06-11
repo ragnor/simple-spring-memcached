@@ -28,13 +28,12 @@ import com.google.code.ssm.providers.CachedObject;
  * @author Jakub Białek
  * @since 2.0.0
  * 
- * @param <T>
  */
-class TranscoderAdapter<T> implements Transcoder<T> {
+class TranscoderAdapter implements Transcoder<Object> {
 
-    private final CacheTranscoder<T> transcoder;
+    private final CacheTranscoder transcoder;
 
-    TranscoderAdapter(final CacheTranscoder<T> transcoder) {
+    TranscoderAdapter(final CacheTranscoder transcoder) {
         this.transcoder = transcoder;
     }
 
@@ -44,12 +43,12 @@ class TranscoderAdapter<T> implements Transcoder<T> {
     }
 
     @Override
-    public T decode(final CachedData d) {
+    public Object decode(final CachedData d) {
         return transcoder.decode(new CachedObjectWrapper(d));
     }
 
     @Override
-    public CachedData encode(final T o) {
+    public CachedData encode(final Object o) {
         CachedObject cachedObject = transcoder.encode(o);
         return new CachedData(cachedObject.getFlags(), cachedObject.getData(), CachedObject.MAX_SIZE);
     }

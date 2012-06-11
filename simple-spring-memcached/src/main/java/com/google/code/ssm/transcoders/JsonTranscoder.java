@@ -39,7 +39,7 @@ import com.google.code.ssm.providers.CachedObjectImpl;
  * @since 2.0.0
  * 
  */
-public class JsonTranscoder implements CacheTranscoder<Object> { // NO_UCD
+public class JsonTranscoder implements CacheTranscoder { // NO_UCD
 
     private static final Logger LOGGER = LoggerFactory.getLogger(JsonTranscoder.class);
 
@@ -103,6 +103,31 @@ public class JsonTranscoder implements CacheTranscoder<Object> { // NO_UCD
 
     public int getMaxSize() {
         return CachedObject.MAX_SIZE;
+    }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((mapper == null) ? 0 : mapper.hashCode());
+        return result;
+    }
+
+    @Override
+    public boolean equals(final Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        JsonTranscoder other = (JsonTranscoder) obj;
+        if (mapper == null) {
+            if (other.mapper != null)
+                return false;
+        } else if (!mapper.equals(other.mapper))
+            return false;
+        return true;
     }
 
 }

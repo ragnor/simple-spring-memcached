@@ -32,7 +32,7 @@ public interface CacheClient {
 
     boolean add(final String key, final int exp, final Object value) throws TimeoutException, CacheException;
 
-    <T> boolean add(final String key, final int exp, final T value, final CacheTranscoder<T> transcoder) throws TimeoutException,
+    <T> boolean add(final String key, final int exp, final T value, final CacheTranscoder transcoder) throws TimeoutException,
             CacheException;
 
     long decr(final String key, final int by) throws TimeoutException, CacheException;
@@ -89,7 +89,7 @@ public interface CacheClient {
      * @throws TimeoutException
      * @throws CacheException
      */
-    <T> T get(final String key, final CacheTranscoder<T> transcoder) throws TimeoutException, CacheException;
+    <T> T get(final String key, final CacheTranscoder transcoder) throws TimeoutException, CacheException;
 
     /**
      * Get value by key.
@@ -105,7 +105,7 @@ public interface CacheClient {
      * @throws TimeoutException
      * @throws CacheException
      */
-    <T> T get(final String key, final CacheTranscoder<T> transcoder, final long timeout) throws TimeoutException, CacheException;
+    <T> T get(final String key, final CacheTranscoder transcoder, final long timeout) throws TimeoutException, CacheException;
 
     /**
      * Gets available cache servers.
@@ -116,14 +116,14 @@ public interface CacheClient {
 
     Map<String, Object> getBulk(final Collection<String> keys) throws TimeoutException, CacheException;
 
-    <T> Map<String, T> getBulk(final Collection<String> keys, final CacheTranscoder<T> transcoder) throws TimeoutException, CacheException;
+    <T> Map<String, T> getBulk(final Collection<String> keys, final CacheTranscoder transcoder) throws TimeoutException, CacheException;
 
     /**
      * Gets default transcoder.
      * 
      * @return default transcoder
      */
-    CacheTranscoder<?> getTranscoder();
+    CacheTranscoder getTranscoder();
 
     long incr(final String key, final int by) throws TimeoutException, CacheException;
 
@@ -149,7 +149,7 @@ public interface CacheClient {
      * @throws TimeoutException
      * @throws CacheException
      */
-    <T> boolean set(final String key, final int exp, final T value, final CacheTranscoder<T> transcoder) throws TimeoutException,
+    <T> boolean set(final String key, final int exp, final T value, final CacheTranscoder transcoder) throws TimeoutException,
             CacheException;
 
     /**

@@ -75,7 +75,7 @@ public class CacheFactory implements AddressChangeListener, FactoryBean<Cache>, 
 
     private JsonTranscoder jsonTranscoder = new JsonTranscoder(new JsonObjectMapper());
 
-    private CacheTranscoder<Object> customTranscoder;
+    private CacheTranscoder customTranscoder;
 
     @Override
     public void afterPropertiesSet() throws Exception {
@@ -127,7 +127,7 @@ public class CacheFactory implements AddressChangeListener, FactoryBean<Cache>, 
         this.jsonTranscoder = jsonTranscoder;
     }
 
-    public void setCustomTranscoder(final CacheTranscoder<Object> transcoder) {
+    public void setCustomTranscoder(final CacheTranscoder transcoder) {
         this.customTranscoder = transcoder;
     }
 

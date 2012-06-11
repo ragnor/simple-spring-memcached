@@ -22,10 +22,8 @@ package com.google.code.ssm.providers;
  * @author Jakub Białek
  * @since 2.0.0
  * 
- * @param <T>
- *            the type of object to decode/encode
  */
-public interface CacheTranscoder<T> {
+public interface CacheTranscoder {
 
     /**
      * Decodes cached object.
@@ -34,7 +32,7 @@ public interface CacheTranscoder<T> {
      *            the cached object to decode
      * @return decoded object
      */
-    T decode(final CachedObject data);
+    Object decode(final CachedObject data);
 
     /**
      * Encodes object.
@@ -43,6 +41,6 @@ public interface CacheTranscoder<T> {
      *            the object to encode
      * @return encoded object
      */
-    CachedObject encode(final T o);
+    CachedObject encode(final Object o);
 
 }

@@ -50,7 +50,7 @@ class MemcacheClientWrapper extends AbstractMemcacheClientWrapper {
 
     private final static Logger LOGGER = LoggerFactory.getLogger(MemcacheClientWrapper.class);
 
-    private final Map<CacheTranscoder<?>, Object> adapters = new HashMap<CacheTranscoder<?>, Object>();
+    private final Map<CacheTranscoder, Object> adapters = new HashMap<CacheTranscoder, Object>();
 
     private final MemcachedClientIF memcachedClient;
 
@@ -74,7 +74,7 @@ class MemcacheClientWrapper extends AbstractMemcacheClientWrapper {
     }
 
     @Override
-    public <T> boolean add(final String key, final int exp, final T value, final CacheTranscoder<T> transcoder) throws TimeoutException,
+    public <T> boolean add(final String key, final int exp, final T value, final CacheTranscoder transcoder) throws TimeoutException,
             CacheException {
         Future<Boolean> f = null;
         try {
@@ -157,9 +157,9 @@ class MemcacheClientWrapper extends AbstractMemcacheClientWrapper {
     }
 
     @Override
-    public <T> T get(final String key, final CacheTranscoder<T> transcoder) throws CacheException, TimeoutException {
+    public <T> T get(final String key, final CacheTranscoder transcoder) throws CacheException, TimeoutException {
         try {
-            return memcachedClient.get(key, getTranscoder(transcoder));
+            return memcachedClient.get(key, this.<T> getTranscoder(transcoder));
         } catch (RuntimeException e) {
             if (translateException(e)) {
                 throw new CacheException(e);
@@ -172,10 +172,10 @@ class MemcacheClientWrapper extends AbstractMemcacheClientWrapper {
     }
 
     @Override
-    public <T> T get(final String key, final CacheTranscoder<T> transcoder, final long timeout) throws TimeoutException, CacheException {
+    public <T> T get(final String key, final CacheTranscoder transcoder, final long timeout) throws TimeoutException, CacheException {
         Future<T> f = null;
         try {
-            f = memcachedClient.asyncGet(key, getTranscoder(transcoder));
+            f = memcachedClient.asyncGet(key, this.<T> getTranscoder(transcoder));
             return f.get(timeout, TimeUnit.MILLISECONDS);
         } catch (InterruptedException e) {
             cancel(f);
@@ -206,10 +206,10 @@ class MemcacheClientWrapper extends AbstractMemcacheClientWrapper {
     }
 
     @Override
-    public <T> Map<String, T> getBulk(final Collection<String> keys, final CacheTranscoder<T> transcoder) throws TimeoutException,
+    public <T> Map<String, T> getBulk(final Collection<String> keys, final CacheTranscoder transcoder) throws TimeoutException,
             CacheException {
         try {
-            return memcachedClient.getBulk(keys, getTranscoder(transcoder));
+            return memcachedClient.getBulk(keys, this.<T> getTranscoder(transcoder));
         } catch (OperationTimeoutException e) {
             throw (TimeoutException) e.getCause();
         } catch (RuntimeException e) {
@@ -281,7 +281,7 @@ class MemcacheClientWrapper extends AbstractMemcacheClientWrapper {
     }
 
     @Override
-    public <T> boolean set(final String key, final int exp, final T value, final CacheTranscoder<T> transcoder) throws TimeoutException,
+    public <T> boolean set(final String key, final int exp, final T value, final CacheTranscoder transcoder) throws TimeoutException,
             CacheException {
         Future<Boolean> f = null;
         try {
@@ -302,15 +302,15 @@ class MemcacheClientWrapper extends AbstractMemcacheClientWrapper {
     }
 
     @Override
-    public CacheTranscoder<?> getTranscoder() {
+    public CacheTranscoder getTranscoder() {
         return new TranscoderWrapper(memcachedClient.getTranscoder());
     }
 
     @SuppressWarnings("unchecked")
-    private <T> Transcoder<T> getTranscoder(final CacheTranscoder<T> transcoder) {
+    private <T> Transcoder<T> getTranscoder(final CacheTranscoder transcoder) {
         Transcoder<T> transcoderAdapter = (Transcoder<T>) adapters.get(transcoder);
         if (transcoderAdapter == null) {
-            transcoderAdapter = new TranscoderAdapter<T>(transcoder);
+            transcoderAdapter = (Transcoder<T>) new TranscoderAdapter(transcoder);
             adapters.put(transcoder, transcoderAdapter);
         }
 
@@ -327,7 +327,7 @@ class MemcacheClientWrapper extends AbstractMemcacheClientWrapper {
         return e.getCause() instanceof InterruptedException || e.getCause() instanceof ExecutionException;
     }
 
-    private static class TranscoderWrapper implements CacheTranscoder<Object> {
+    private static class TranscoderWrapper implements CacheTranscoder {
 
         private final Transcoder<Object> transcoder;
 

@@ -25,9 +25,6 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.concurrent.TimeoutException;
 
-import com.google.code.ssm.providers.CacheException;
-import com.google.code.ssm.providers.CacheTranscoder;
-
 import net.rubyeye.xmemcached.MemcachedClient;
 import net.rubyeye.xmemcached.exception.MemcachedException;
 import net.rubyeye.xmemcached.transcoders.Transcoder;
@@ -35,6 +32,9 @@ import net.rubyeye.xmemcached.transcoders.Transcoder;
 import org.easymock.EasyMock;
 import org.junit.Before;
 import org.junit.Test;
+
+import com.google.code.ssm.providers.CacheException;
+import com.google.code.ssm.providers.CacheTranscoder;
 
 /**
  * 
@@ -64,7 +64,7 @@ public class MemcacheClientWrapperTest {
     @Test
     @SuppressWarnings("unchecked")
     public void addStringIntTMemcacheTranscoderOfT() throws TimeoutException, InterruptedException, MemcachedException, CacheException {
-        CacheTranscoder<String> transcoder = EasyMock.createMock(CacheTranscoder.class);
+        CacheTranscoder transcoder = EasyMock.createMock(CacheTranscoder.class);
         EasyMock.expect(client.add(EasyMock.eq("test"), EasyMock.eq(1000), EasyMock.eq("value"), EasyMock.anyObject(Transcoder.class)))
                 .andReturn(true);
         EasyMock.replay(client, transcoder);
@@ -116,7 +116,7 @@ public class MemcacheClientWrapperTest {
     @Test
     @SuppressWarnings("unchecked")
     public void getStringMemcacheTranscoderOfT() throws TimeoutException, InterruptedException, MemcachedException, CacheException {
-        CacheTranscoder<String> transcoder = EasyMock.createMock(CacheTranscoder.class);
+        CacheTranscoder transcoder = EasyMock.createMock(CacheTranscoder.class);
         EasyMock.expect(client.get(EasyMock.eq("key1"), EasyMock.anyObject(Transcoder.class))).andReturn("test-value");
         EasyMock.replay(client);
         assertEquals("test-value", clientWrapper.get("key1", transcoder));
@@ -126,7 +126,7 @@ public class MemcacheClientWrapperTest {
     @Test
     @SuppressWarnings("unchecked")
     public void getStringMemcacheTranscoderOfTLong() throws TimeoutException, InterruptedException, MemcachedException, CacheException {
-        CacheTranscoder<String> transcoder = EasyMock.createMock(CacheTranscoder.class);
+        CacheTranscoder transcoder = EasyMock.createMock(CacheTranscoder.class);
         EasyMock.expect(client.get(EasyMock.eq("key1"), EasyMock.eq(100L), EasyMock.anyObject(Transcoder.class))).andReturn("test-value");
         EasyMock.replay(client);
         assertEquals("test-value", clientWrapper.get("key1", transcoder, 100L));
@@ -161,7 +161,7 @@ public class MemcacheClientWrapperTest {
             CacheException {
         Collection<String> keys = EasyMock.createMock(Collection.class);
         Map<String, Object> results = EasyMock.createMock(Map.class);
-        CacheTranscoder<String> transcoder = EasyMock.createMock(CacheTranscoder.class);
+        CacheTranscoder transcoder = EasyMock.createMock(CacheTranscoder.class);
 
         EasyMock.expect(client.get(EasyMock.eq(keys), EasyMock.anyObject(Transcoder.class))).andReturn(results);
         EasyMock.replay(client);
@@ -205,7 +205,7 @@ public class MemcacheClientWrapperTest {
     @Test
     @SuppressWarnings("unchecked")
     public void setStringIntTMemcacheTranscoderOfT() throws TimeoutException, InterruptedException, MemcachedException, CacheException {
-        CacheTranscoder<String> transcoder = EasyMock.createMock(CacheTranscoder.class);
+        CacheTranscoder transcoder = EasyMock.createMock(CacheTranscoder.class);
         EasyMock.expect(client.set(EasyMock.eq("key1"), EasyMock.eq(1), EasyMock.eq("value"), EasyMock.anyObject(Transcoder.class)))
                 .andReturn(true);
         EasyMock.replay(client);

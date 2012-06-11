@@ -27,15 +27,15 @@ import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
-import com.google.code.ssm.providers.CacheException;
-import com.google.code.ssm.providers.CacheTranscoder;
-
 import net.spy.memcached.MemcachedClientIF;
 import net.spy.memcached.transcoders.Transcoder;
 
 import org.easymock.EasyMock;
 import org.junit.Before;
 import org.junit.Test;
+
+import com.google.code.ssm.providers.CacheException;
+import com.google.code.ssm.providers.CacheTranscoder;
 
 /**
  * 
@@ -65,7 +65,7 @@ public class MemcacheClientWrapperTest {
     @Test
     @SuppressWarnings("unchecked")
     public void addStringIntTMemcacheTranscoderOfT() throws TimeoutException, CacheException {
-        CacheTranscoder<String> transcoder = EasyMock.createMock(CacheTranscoder.class);
+        CacheTranscoder transcoder = EasyMock.createMock(CacheTranscoder.class);
         EasyMock.expect(client.add(EasyMock.eq("test"), EasyMock.eq(1000), EasyMock.eq("value"), EasyMock.anyObject(Transcoder.class)))
                 .andReturn(getFuture(true));
         EasyMock.replay(client, transcoder);
@@ -116,7 +116,7 @@ public class MemcacheClientWrapperTest {
     @Test
     @SuppressWarnings("unchecked")
     public void getStringMemcacheTranscoderOfT() throws CacheException, TimeoutException {
-        CacheTranscoder<String> transcoder = EasyMock.createMock(CacheTranscoder.class);
+        CacheTranscoder transcoder = EasyMock.createMock(CacheTranscoder.class);
         EasyMock.expect(client.get(EasyMock.eq("key1"), EasyMock.anyObject(Transcoder.class))).andReturn("test-value");
         EasyMock.replay(client);
         assertEquals("test-value", clientWrapper.get("key1", transcoder));
@@ -126,7 +126,7 @@ public class MemcacheClientWrapperTest {
     @Test
     @SuppressWarnings("unchecked")
     public void getStringMemcacheTranscoderOfTLong() throws TimeoutException, CacheException {
-        CacheTranscoder<String> transcoder = EasyMock.createMock(CacheTranscoder.class);
+        CacheTranscoder transcoder = EasyMock.createMock(CacheTranscoder.class);
         EasyMock.expect(client.asyncGet(EasyMock.eq("key1"), EasyMock.anyObject(Transcoder.class))).andReturn(getFuture("test-value"));
         EasyMock.replay(client);
         assertEquals("test-value", clientWrapper.get("key1", transcoder, 100));
@@ -160,7 +160,7 @@ public class MemcacheClientWrapperTest {
     public void getBulkCollectionOfStringMemcacheTranscoderOfT() throws TimeoutException, CacheException {
         Collection<String> keys = EasyMock.createMock(Collection.class);
         Map<String, Object> results = EasyMock.createMock(Map.class);
-        CacheTranscoder<String> transcoder = EasyMock.createMock(CacheTranscoder.class);
+        CacheTranscoder transcoder = EasyMock.createMock(CacheTranscoder.class);
 
         EasyMock.expect(client.getBulk(EasyMock.eq(keys), EasyMock.anyObject(Transcoder.class))).andReturn(results);
         EasyMock.replay(client);
@@ -203,7 +203,7 @@ public class MemcacheClientWrapperTest {
     @Test
     @SuppressWarnings("unchecked")
     public void setStringIntTMemcacheTranscoderOfT() throws TimeoutException, CacheException {
-        CacheTranscoder<String> transcoder = EasyMock.createMock(CacheTranscoder.class);
+        CacheTranscoder transcoder = EasyMock.createMock(CacheTranscoder.class);
         EasyMock.expect(client.set(EasyMock.eq("key1"), EasyMock.eq(1), EasyMock.eq("value"), EasyMock.anyObject(Transcoder.class)))
                 .andReturn(getFuture(true));
         EasyMock.replay(client);
@@ -236,7 +236,7 @@ public class MemcacheClientWrapperTest {
         return new Future<T>() {
 
             @Override
-            public boolean cancel(boolean mayInterruptIfRunning) {
+            public boolean cancel(final boolean mayInterruptIfRunning) {
                 return false;
             }
 
@@ -246,7 +246,7 @@ public class MemcacheClientWrapperTest {
             }
 
             @Override
-            public T get(long timeout, TimeUnit unit) throws InterruptedException, ExecutionException, TimeoutException {
+            public T get(final long timeout, final TimeUnit unit) throws InterruptedException, ExecutionException, TimeoutException {
                 return value;
             }
 

@@ -55,13 +55,12 @@ class CacheImpl implements Cache {
 
     private final LongToStringTranscoder longToStringTranscoder = new LongToStringTranscoder();
 
-    private final CacheTranscoder<Object> customTranscoder;
+    private final CacheTranscoder customTranscoder;
 
     private volatile CacheClient cacheClient;
 
     CacheImpl(final String name, final Collection<String> aliases, final CacheClient cacheClient,
-            final SerializationType defaultSerializationType, final JsonTranscoder jsonTranscoder,
-            final CacheTranscoder<Object> customTranscoder) {
+            final SerializationType defaultSerializationType, final JsonTranscoder jsonTranscoder, final CacheTranscoder customTranscoder) {
         Assert.hasText(name, "'name' must not be null, empty, or blank");
         Assert.notNull(aliases, "'aliases' cannot be null");
         Assert.notNull(cacheClient, "'cacheClient' cannot be null");
@@ -109,11 +108,11 @@ class CacheImpl implements Cache {
     public <T> void set(final String cacheKey, final int expiration, final Object value, final SerializationType serializationType)
             throws TimeoutException, CacheException {
         if (isFormat(serializationType, SerializationType.JSON)) {
-            cacheClient.set(cacheKey, expiration, (T) value, (CacheTranscoder<T>) jsonTranscoder);
+            cacheClient.set(cacheKey, expiration, (T) value, jsonTranscoder);
         } else if (isFormat(serializationType, SerializationType.PROVIDER)) {
             cacheClient.set(cacheKey, expiration, value);
         } else if (isFormat(serializationType, SerializationType.CUSTOM)) {
-            cacheClient.set(cacheKey, expiration, (T) value, (CacheTranscoder<T>) customTranscoder);
+            cacheClient.set(cacheKey, expiration, (T) value, customTranscoder);
         } else {
             throw new IllegalArgumentException(String.format("Serialization type %s is not supported", serializationType));
         }
@@ -237,4 +236,5 @@ class CacheImpl implements Cache {
             LOGGER.warn(String.format(format, args), e);
         }
     }
+
 }

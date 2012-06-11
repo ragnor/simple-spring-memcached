@@ -33,10 +33,10 @@ import com.google.code.ssm.providers.CachedObjectImpl;
  * @since 2.0.0
  * 
  */
-public class LongToStringTranscoder implements CacheTranscoder<Long> {
+public class LongToStringTranscoder implements CacheTranscoder {
 
     @Override
-    public Long decode(final CachedObject data) {
+    public Object decode(final CachedObject data) {
         byte[] value = data.getData();
         if (value == null || value.length == 0) {
             return null;
@@ -52,7 +52,11 @@ public class LongToStringTranscoder implements CacheTranscoder<Long> {
     }
 
     @Override
-    public CachedObject encode(final Long o) {
+    public CachedObject encode(final Object o) {
+        if (!(o instanceof Long)) {
+            throw new IllegalArgumentException("Only Long objects are supported by this transcoder");
+        }
+
         try {
             return new CachedObjectImpl(0, String.valueOf(o).getBytes("UTF-8"));
         } catch (UnsupportedEncodingException e) {
