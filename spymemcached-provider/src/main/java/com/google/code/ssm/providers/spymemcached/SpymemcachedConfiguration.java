@@ -140,7 +140,7 @@ public class SpymemcachedConfiguration extends CacheConfiguration {
     /**
      * 
      * @return default transcoder or null if not set
-     * @since 2.1.0
+     * @since 3.0.0
      */
     public Transcoder<Object> getDefaultTranscoder() {
         return defaultTranscoder;
@@ -149,7 +149,7 @@ public class SpymemcachedConfiguration extends CacheConfiguration {
     /**
      * 
      * @param defaultTranscoder
-     * @since 2.1.0
+     * @since 3.0.0
      */
     public void setDefaultTranscoder(final Transcoder<Object> defaultTranscoder) {
         this.defaultTranscoder = defaultTranscoder;

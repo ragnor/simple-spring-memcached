@@ -30,6 +30,7 @@ import com.google.code.ssm.providers.CacheException;
 /**
  * 
  * @author Jakub Białek
+ * @since 3.0.0
  * 
  */
 public class SSMCacheTest {

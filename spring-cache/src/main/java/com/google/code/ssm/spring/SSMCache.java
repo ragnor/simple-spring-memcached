@@ -29,7 +29,7 @@ import com.google.code.ssm.providers.CacheException;
 /**
  * 
  * @author Jakub Białek
- * @since 2.1.0
+ * @since 3.0.0
  * 
  */
 public class SSMCache implements Cache {
@@ -80,7 +80,12 @@ public class SSMCache implements Cache {
     public void put(final Object key, final Object value) {
         if (key != null) {
             try {
-                cache.set(getKey(key), expiration, value, null);
+                Object store = value;
+                if (value == null) {
+                    store = PertinentNegativeNull.NULL;
+                }
+
+                cache.set(getKey(key), expiration, store, null);
             } catch (TimeoutException e) {
                 LOGGER.warn("An error has ocurred for cache " + getName() + " and key " + getKey(key), e);
             } catch (CacheException e) {

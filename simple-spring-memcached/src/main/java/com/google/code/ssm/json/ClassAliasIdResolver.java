@@ -31,7 +31,7 @@ import org.springframework.util.Assert;
  * Alias (id) must be unique! If alias is not defined for class then full qualified name is used.
  * 
  * @author Jakub Białek
- * @since 2.1.0
+ * @since 3.0.0
  * 
  */
 public class ClassAliasIdResolver extends ClassNameIdResolver {

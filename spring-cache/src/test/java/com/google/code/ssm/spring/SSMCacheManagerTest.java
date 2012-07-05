@@ -35,13 +35,14 @@ import com.google.code.ssm.Cache;
 /**
  * 
  * @author Jakub Białek
+ * @since 3.0.0
  * 
  */
 public class SSMCacheManagerTest {
 
     private SSMCacheManager ssmCacheManager;
 
-    private Set<Cache> caches;
+    private Set<SSMCache> caches;
 
     private Cache cache1;
 
@@ -59,11 +60,11 @@ public class SSMCacheManagerTest {
         Mockito.when(cache2.getName()).thenReturn("cache2");
         Mockito.when(cache3.getName()).thenReturn("cache3");
 
-        caches = new HashSet<Cache>(Arrays.asList(cache1, cache2, cache3));
+        caches = new HashSet<SSMCache>(Arrays.asList(new SSMCache(cache1, 60, false), new SSMCache(cache2, 60, false), new SSMCache(cache3,
+                60, false)));
 
         ssmCacheManager = new SSMCacheManager();
         ssmCacheManager.setCaches(caches);
-        ssmCacheManager.setExpiration(60);
 
         ssmCacheManager.afterPropertiesSet();
     }

@@ -26,13 +26,13 @@ import com.google.code.ssm.aop.NoClass;
 
 /**
  * 
- * Cached data will be kept in JSON format. In version 2.1.0 and above using this annotation doesn't have any effect. In
+ * Cached data will be kept in JSON format. In version 3.0.0 and above using this annotation doesn't have any effect. In
  * next version this annotation will be removed.
  * 
  * 
  * @author Jakub Białek
  * @since 2.0.0
- * @deprecated since 2.1.0 use {@link Serialization}.
+ * @deprecated since 3.0.0 use {@link Serialization}.
  * 
  */
 @Deprecated
@@ -45,7 +45,7 @@ public @interface UseJson {
      * useful in case of generic collection (ReadThroughMultiCache).
      * 
      * @return class to which deserialise data from cache
-     * @deprecated since 2.1.0 information about type/class of cached object are stored within serialised object (in
+     * @deprecated since 3.0.0 information about type/class of cached object are stored within serialised object (in
      *             json string). Settings this field doesn't have any efect, field will be removed in next release.
      */
     @Deprecated

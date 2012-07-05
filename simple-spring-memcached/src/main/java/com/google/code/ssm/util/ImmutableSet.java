@@ -26,7 +26,7 @@ import java.util.Set;
  * Simple replacement for guava ImmutableSet.
  * 
  * @author Jakub Białek
- * @since 2.1.0
+ * @since 3.0.0
  * 
  */
 public class ImmutableSet {

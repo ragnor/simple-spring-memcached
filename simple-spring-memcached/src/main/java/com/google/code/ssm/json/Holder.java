@@ -27,7 +27,7 @@ import org.codehaus.jackson.annotate.JsonTypeInfo.Id;
  * object in Spring 3.1 Cache Abstraction (spring cache module) where type/class of desired object is unknown.
  * 
  * @author Jakub Białek
- * @since 2.1.0
+ * @since 3.0.0
  * 
  */
 @JsonTypeInfo(use = Id.NONE)

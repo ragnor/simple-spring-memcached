@@ -14,14 +14,11 @@
  * COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
-package com.google.code.ssm.spring;
 
-import java.util.Collection;
-import java.util.Set;
+package com.google.code.ssm.test.dao;
 
-import org.springframework.cache.Cache;
-import org.springframework.cache.support.AbstractCacheManager;
-import org.springframework.util.Assert;
+import com.google.code.ssm.test.entity.AppUser;
+import com.google.code.ssm.test.entity.AppUserPK;
 
 /**
  * 
@@ -29,19 +26,17 @@ import org.springframework.util.Assert;
  * @since 3.0.0
  * 
  */
-public class SSMCacheManager extends AbstractCacheManager {
+public interface AppUserDAO {
 
-    private Collection<SSMCache> caches;
+    AppUser create(AppUser entity);
 
-    public void setCaches(final Set<SSMCache> caches) {
-        this.caches = caches;
-    }
+    AppUser getByPk(AppUserPK pk);
 
-    @Override
-    protected Collection<? extends Cache> loadCaches() {
-        Assert.notEmpty(caches, "A collection of caches is required and cannot be empty");
+    void remove(AppUserPK pk);
 
-        return caches;
-    }
+    void removeAllUsers();
 
+    AppUser update(AppUser entity);
+
+    void removeAllFromCache();
 }

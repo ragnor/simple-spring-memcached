@@ -17,13 +17,10 @@
 
 package com.google.code.ssm.test;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 import java.util.Arrays;
 import java.util.List;
-
-import com.google.code.ssm.test.entity.AppUser;
-import com.google.code.ssm.test.svc.AppUserService;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -32,6 +29,9 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestExecutionListeners;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
+
+import com.google.code.ssm.test.entity.AppUser;
+import com.google.code.ssm.test.svc.AppUserService;
 
 /**
  * 
@@ -88,7 +88,6 @@ public class ComplexTest {
 
         for (int i = 1; i <= 15; i++) {
             assertEquals(i, appUserService.get(15, i).getApplicationId());
-            ;
         }
 
         appUsers = appUserService.getInstalledList(10, Arrays.asList(4, 5, 1));

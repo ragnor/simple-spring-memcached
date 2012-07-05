@@ -30,7 +30,7 @@ import org.codehaus.jackson.type.JavaType;
  * Sets as a type resolver {@link ClassAliasIdResolver}.
  * 
  * @author Jakub Białek
- * @since 2.1.0
+ * @since 3.0.0
  * 
  */
 public class ClassAliasTypeResolverBuilder extends DefaultTypeResolverBuilder {

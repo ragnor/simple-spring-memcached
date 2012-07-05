@@ -27,7 +27,7 @@ import java.lang.annotation.Target;
  * How cached data will be kept (serialized/deserialized).
  * 
  * @author Jakub Białek
- * @since 2.1.0
+ * @since 3.0.0
  * 
  */
 @Retention(RetentionPolicy.RUNTIME)
