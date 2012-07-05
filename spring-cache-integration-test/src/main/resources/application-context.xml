@@ -18,7 +18,7 @@
 	<cache:annotation-driven />
 
 	<context:annotation-config />
-	<context:component-scan base-package="com.google.code.ssm.test" />
+	<context:component-scan base-package="com.google.code.ssm.spring.test" />
 	
 	<bean name="cacheManager" class="com.google.code.ssm.spring.SSMCacheManager">
 		<property name="caches">

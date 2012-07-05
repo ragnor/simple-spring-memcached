@@ -15,12 +15,9 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package com.google.code.ssm.test.entity;
+package com.google.code.ssm.spring.test.entity;
 
-import java.io.Externalizable;
-import java.io.IOException;
-import java.io.ObjectInput;
-import java.io.ObjectOutput;
+import java.io.Serializable;
 
 import com.google.code.ssm.api.CacheKeyMethod;
 
@@ -30,31 +27,21 @@ import com.google.code.ssm.api.CacheKeyMethod;
  * @since 3.0.0
  * 
  */
-public class AppUser implements Externalizable {
+public class AppUserPK implements Serializable {
 
-    private static final long serialVersionUID = 1L;
-
-    private static final int CLASS_VERSION = 1;
+    private static final long serialVersionUID = -2833660418204559330L;
 
     private int userId;
 
     private int applicationId;
 
-    private boolean enabled;
-
-    private int version;
-
-    public AppUser() {
+    public AppUserPK() {
 
     }
 
-    public AppUser(final int userId, final int applicationId) {
+    public AppUserPK(final int userId, final int applicationId) {
         this.userId = userId;
         this.applicationId = applicationId;
-    }
-
-    public AppUser(final AppUserPK pk) {
-        this(pk.getUserId(), pk.getApplicationId());
     }
 
     public int getUserId() {
@@ -73,44 +60,12 @@ public class AppUser implements Externalizable {
         this.applicationId = applicationId;
     }
 
-    public boolean isEnabled() {
-        return enabled;
-    }
-
-    public void setEnabled(final boolean enabled) {
-        this.enabled = enabled;
-    }
-
-    public int getVersion() {
-        return version;
-    }
-
-    @Override
-    public void readExternal(final ObjectInput in) throws IOException, ClassNotFoundException {
-        in.readInt(); // reads CLASS_VERSION
-        userId = in.readInt();
-        applicationId = in.readInt();
-        enabled = in.readBoolean();
-        version = in.readInt();
-    }
-
-    @Override
-    public void writeExternal(final ObjectOutput out) throws IOException {
-        out.writeInt(CLASS_VERSION);
-        out.writeInt(userId);
-        out.writeInt(applicationId);
-        out.writeBoolean(enabled);
-        out.writeInt(version);
-    }
-
     @Override
     public int hashCode() {
         final int prime = 31;
         int result = 1;
         result = prime * result + applicationId;
-        result = prime * result + (enabled ? 1231 : 1237);
         result = prime * result + userId;
-        result = prime * result + version;
         return result;
     }
 
@@ -122,30 +77,22 @@ public class AppUser implements Externalizable {
             return false;
         if (getClass() != obj.getClass())
             return false;
-        AppUser other = (AppUser) obj;
+        AppUserPK other = (AppUserPK) obj;
         if (applicationId != other.applicationId)
             return false;
-        if (enabled != other.enabled)
-            return false;
         if (userId != other.userId)
-            return false;
-        if (version != other.version)
             return false;
         return true;
     }
 
     @Override
     public String toString() {
-        return String.format("AppUser [userId=%d, applicationId=%d, enabled=%b, verion=%d]", userId, applicationId, enabled, version);
+        return "AppUserPK [applicationId=" + applicationId + ", userId=" + userId + "]";
     }
 
     @CacheKeyMethod
     public String cacheKey() {
         return userId + "/" + applicationId;
-    }
-
-    public AppUserPK getPK() {
-        return new AppUserPK(userId, applicationId);
     }
 
 }

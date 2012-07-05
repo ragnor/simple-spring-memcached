@@ -1,4 +1,4 @@
-package com.google.code.ssm.test;
+package com.google.code.ssm.spring.test;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -19,9 +19,9 @@ import com.google.code.ssm.Cache;
 import com.google.code.ssm.aop.support.PertinentNegativeNull;
 import com.google.code.ssm.api.format.SerializationType;
 import com.google.code.ssm.providers.CacheException;
-import com.google.code.ssm.test.dao.AppUserDAO;
-import com.google.code.ssm.test.entity.AppUser;
-import com.google.code.ssm.test.entity.AppUserPK;
+import com.google.code.ssm.spring.test.dao.AppUserDAO;
+import com.google.code.ssm.spring.test.entity.AppUser;
+import com.google.code.ssm.spring.test.entity.AppUserPK;
 
 /**
  * 

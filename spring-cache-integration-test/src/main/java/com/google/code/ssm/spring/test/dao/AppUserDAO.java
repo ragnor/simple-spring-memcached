@@ -15,10 +15,10 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package com.google.code.ssm.test.dao;
+package com.google.code.ssm.spring.test.dao;
 
-import com.google.code.ssm.test.entity.AppUser;
-import com.google.code.ssm.test.entity.AppUserPK;
+import com.google.code.ssm.spring.test.entity.AppUser;
+import com.google.code.ssm.spring.test.entity.AppUserPK;
 
 /**
  * 
