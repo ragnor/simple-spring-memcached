@@ -65,6 +65,7 @@
 		<module>xmemcached-provider</module>
 		<module>spymemcached-provider</module>
 		<module>spring-cache</module>
+		<module>spring-cache-integration-test</module>
 	</modules>
 
 	<properties>
