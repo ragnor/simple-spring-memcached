@@ -62,6 +62,7 @@ public class SSMCache implements Cache {
     public ValueWrapper get(final Object key) {
         Object value = null;
         try {
+            LOGGER.info("Get {} from {}", key, cache.getName());
             value = cache.get(getKey(key), null);
         } catch (TimeoutException e) {
             LOGGER.warn("An error has ocurred for cache " + getName() + " and key " + getKey(key), e);
@@ -80,6 +81,8 @@ public class SSMCache implements Cache {
     public void put(final Object key, final Object value) {
         if (key != null) {
             try {
+                LOGGER.info("Put '{}' under key {} to {}", new Object[] { value, key, cache.getName() });
+
                 Object store = value;
                 if (value == null) {
                     store = PertinentNegativeNull.NULL;
@@ -91,6 +94,8 @@ public class SSMCache implements Cache {
             } catch (CacheException e) {
                 LOGGER.warn("An error has ocurred for cache " + getName() + " and key " + getKey(key), e);
             }
+        } else {
+            LOGGER.info("Cannot put to cache {} because key is null", cache.getName());
         }
     }
 
@@ -98,12 +103,15 @@ public class SSMCache implements Cache {
     public void evict(final Object key) {
         if (key != null) {
             try {
+                LOGGER.info("Evict {} from {}", key, cache.getName());
                 cache.delete(getKey(key));
             } catch (TimeoutException e) {
                 LOGGER.warn("An error has ocurred for cache " + getName() + " and key " + getKey(key), e);
             } catch (CacheException e) {
                 LOGGER.warn("An error has ocurred for cache " + getName() + " and key " + getKey(key), e);
             }
+        } else {
+            LOGGER.info("Cannot evict from cache {} because key is null", cache.getName());
         }
     }
 
@@ -116,6 +124,7 @@ public class SSMCache implements Cache {
             throw new IllegalStateException("Cannot clear cache " + getName());
         }
         try {
+            LOGGER.info("Clear {}", cache.getName());
             cache.flush();
         } catch (TimeoutException e) {
             LOGGER.warn("An error has ocurred for cache " + getName(), e);
