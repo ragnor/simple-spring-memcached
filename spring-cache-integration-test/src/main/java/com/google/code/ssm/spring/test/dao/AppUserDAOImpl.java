@@ -23,6 +23,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
@@ -51,7 +52,7 @@ public class AppUserDAOImpl implements AppUserDAO {
     }
 
     @Override
-    @Cacheable(value = USER_CACHE_NAME, key = "#entity.cacheKey()")
+    @CachePut(value = USER_CACHE_NAME, key = "#entity.cacheKey()")
     public AppUser create(final AppUser entity) {
         map.put(entity.getPK(), entity);
         List<AppUser> list = userIdApp.get(entity.getUserId());
@@ -71,7 +72,7 @@ public class AppUserDAOImpl implements AppUserDAO {
     }
 
     @Override
-    @Cacheable(value = USER_CACHE_NAME, key = "#entity.cacheKey()")
+    @CachePut(value = USER_CACHE_NAME, key = "#entity.cacheKey()")
     public AppUser update(final AppUser entity) {
         AppUser appUser = entity;
         map.put(entity.getPK(), entity);
