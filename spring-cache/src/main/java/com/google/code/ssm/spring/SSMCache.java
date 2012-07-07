@@ -143,6 +143,14 @@ public class SSMCache implements Cache {
         }
     }
 
+    public int getExpiration() {
+        return expiration;
+    }
+
+    public boolean isAllowClear() {
+        return allowClear;
+    }
+
     private String getKey(final Object key) {
         return key.toString();
     }
