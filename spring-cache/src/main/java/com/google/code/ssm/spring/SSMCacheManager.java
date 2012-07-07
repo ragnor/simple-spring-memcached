@@ -25,6 +25,11 @@ import org.springframework.util.Assert;
 
 /**
  * 
+ * CacheManager backed by a Simple Spring Memcached (SSM) {@link com.google.code.ssm.Cache}. Because using Spring Cache
+ * and CacheManager it is not possible to pass expiration time to backend cache, default expiration time has to be set
+ * in {@link SSMCache#SSMCache(com.google.code.ssm.Cache, int, boolean)}. This expiration time is used for all store
+ * requests.
+ * 
  * @author Jakub Białek
  * @since 3.0.0
  * 

@@ -27,6 +27,10 @@ import com.google.code.ssm.aop.support.PertinentNegativeNull;
 import com.google.code.ssm.providers.CacheException;
 
 /**
+ * Wrapper around {@link com.google.code.ssm.Cache} that allow to set default expiration time used in all
+ * {@link SSMCache#put(Object, Object)} (
+ * {@link com.google.code.ssm.Cache#set(String, int, Object, com.google.code.ssm.api.format.SerializationType)})
+ * requests.
  * 
  * @author Jakub Białek
  * @since 3.0.0
@@ -46,6 +50,12 @@ public class SSMCache implements Cache {
         this.cache = cache;
         this.expiration = expiration;
         this.allowClear = allowClear;
+    }
+
+    public SSMCache(final SSMCache ssmCache, final int expiration) {
+        this.cache = ssmCache.cache;
+        this.expiration = expiration;
+        this.allowClear = ssmCache.allowClear;
     }
 
     @Override
