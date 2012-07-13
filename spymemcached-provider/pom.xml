@@ -19,8 +19,9 @@
 			<artifactId>simple-spring-memcached</artifactId>
 			<version>${project.version}</version>
 		</dependency>
+		<!-- it's spymemcached deployed to central repo-->
 		<dependency>
-			<groupId>spy</groupId>
+			<groupId>com.google.code.simple-spring-memcached</groupId>
 			<artifactId>spymemcached</artifactId>
 		</dependency>
 

@@ -85,24 +85,6 @@
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 	</properties>
 
-	<repositories>
-		<repository>
-			<id>spy</id>
-			<url>http://files.couchbase.com/maven2/</url>
-		</repository>
-		<repository>
-			<id>jboss.releases</id>
-			<name>JBoss releases</name>
-			<url>https://repository.jboss.org/nexus/content/repositories/releases/</url>
-			<releases>
-				<enabled>true</enabled>
-			</releases>
-			<snapshots>
-				<enabled>false</enabled>
-			</snapshots>
-		</repository>
-	</repositories>
-
 	<dependencyManagement>
 		<dependencies>
 			<dependency>
@@ -135,8 +117,9 @@
 				<artifactId>aspectjweaver</artifactId>
 				<version>${aspectj.version}</version>
 			</dependency>
+			<!-- it's spymemcached deployed to central repo-->
 			<dependency>
-				<groupId>spy</groupId>
+				<groupId>com.google.code.simple-spring-memcached</groupId>
 				<artifactId>spymemcached</artifactId>
 				<version>${spymemcached.version}</version>
 				<optional>true</optional>
