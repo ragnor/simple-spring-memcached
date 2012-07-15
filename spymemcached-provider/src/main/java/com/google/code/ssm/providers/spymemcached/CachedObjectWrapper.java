@@ -45,4 +45,9 @@ class CachedObjectWrapper implements CachedObject {
         return cachedData.getFlags();
     }
 
+    @Override
+    public String toString() {
+        return "CachedObjectWrapper [cachedData=" + cachedData + "]";
+    }
+
 }
