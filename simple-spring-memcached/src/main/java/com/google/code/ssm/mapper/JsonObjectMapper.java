@@ -25,6 +25,7 @@ import org.codehaus.jackson.annotate.JsonTypeInfo.As;
 import org.codehaus.jackson.map.JsonDeserializer;
 import org.codehaus.jackson.map.JsonSerializer;
 import org.codehaus.jackson.map.ObjectMapper;
+import org.codehaus.jackson.map.SerializationConfig.Feature;
 import org.codehaus.jackson.map.jsontype.TypeResolverBuilder;
 import org.codehaus.jackson.map.module.SimpleModule;
 
@@ -48,6 +49,8 @@ public class JsonObjectMapper extends ObjectMapper { // NO_UCD
         TypeResolverBuilder<?> typer = new ClassAliasTypeResolverBuilder(DefaultTyping.NON_FINAL);
         typer = typer.inclusion(As.PROPERTY);
         setDefaultTyping(typer);
+        enableDefaultTyping(DefaultTyping.NON_FINAL, As.PROPERTY);
+        setSerializationConfig(getSerializationConfig().with(Feature.REQUIRE_SETTERS_FOR_GETTERS));
     }
 
     public void setSerializers(final List<JsonSerializer<?>> serializers) {
