@@ -33,7 +33,7 @@ import com.google.code.ssm.json.ClassAliasTypeResolverBuilder;
 
 /**
  * 
- * Default jackson {@link ObjectMapper} initialized with disabled auto detecting of fields, getters and setters.
+ * Default jackson {@link ObjectMapper} initialized with enabled auto detecting of fields, getters and setters.
  * 
  * @author Jakub Białek
  * @since 2.0.0
@@ -46,11 +46,13 @@ public class JsonObjectMapper extends ObjectMapper { // NO_UCD
     public JsonObjectMapper() {
         registerModule(module);
 
-        TypeResolverBuilder<?> typer = new ClassAliasTypeResolverBuilder(DefaultTyping.NON_FINAL);
-        typer = typer.inclusion(As.PROPERTY);
-        setDefaultTyping(typer);
-        enableDefaultTyping(DefaultTyping.NON_FINAL, As.PROPERTY);
         setSerializationConfig(getSerializationConfig().with(Feature.REQUIRE_SETTERS_FOR_GETTERS));
+        setSerializationConfig(getSerializationConfig().without(Feature.FAIL_ON_EMPTY_BEANS));
+        enableDefaultTyping(DefaultTyping.NON_FINAL, As.WRAPPER_OBJECT);
+
+        TypeResolverBuilder<?> typer = new ClassAliasTypeResolverBuilder(DefaultTyping.NON_FINAL);
+        typer = typer.inclusion(As.WRAPPER_OBJECT);
+        setDefaultTyping(typer);
     }
 
     public void setSerializers(final List<JsonSerializer<?>> serializers) {

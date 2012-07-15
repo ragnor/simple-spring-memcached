@@ -23,14 +23,11 @@ import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
 
-import org.codehaus.jackson.map.annotate.JsonSerialize;
-
 /**
  * 
  * @author Nelson Carpentier
  * 
  */
-@JsonSerialize(using = PertinentNegativeNullJsonSerializer.class)
 public final class PertinentNegativeNull implements Externalizable {
 
     public static final PertinentNegativeNull NULL = new PertinentNegativeNull();

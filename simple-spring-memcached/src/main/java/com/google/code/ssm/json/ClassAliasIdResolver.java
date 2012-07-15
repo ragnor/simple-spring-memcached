@@ -25,6 +25,8 @@ import org.codehaus.jackson.map.type.TypeFactory;
 import org.codehaus.jackson.type.JavaType;
 import org.springframework.util.Assert;
 
+import com.google.code.ssm.aop.support.PertinentNegativeNull;
+
 /**
  * To minimalize size of serialized json object instead of full qualified class name each class can be registered under
  * alias (id). This alias (id) will be used in serialized string to mark type of object (required in deserialization).
@@ -42,6 +44,8 @@ public class ClassAliasIdResolver extends ClassNameIdResolver {
 
     public ClassAliasIdResolver(final JavaType baseType, final TypeFactory typeFactory) {
         super(baseType, typeFactory);
+
+        addClassToId(PertinentNegativeNull.class, "N");
     }
 
     @Override

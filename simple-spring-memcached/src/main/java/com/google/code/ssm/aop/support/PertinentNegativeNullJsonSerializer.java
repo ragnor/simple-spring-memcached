@@ -24,7 +24,6 @@ import org.codehaus.jackson.JsonProcessingException;
 import org.codehaus.jackson.map.JsonSerializer;
 import org.codehaus.jackson.map.SerializerProvider;
 
-
 /**
  * 
  * JSON serializer for {@link PertinentNegativeNull} class. Serialize object to [null].
