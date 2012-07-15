@@ -40,6 +40,7 @@ import com.google.code.ssm.providers.CacheClient;
 import com.google.code.ssm.providers.CacheClientFactory;
 import com.google.code.ssm.providers.CacheConfiguration;
 import com.google.code.ssm.providers.CacheTranscoder;
+import com.google.code.ssm.transcoders.JavaTranscoder;
 import com.google.code.ssm.transcoders.JsonTranscoder;
 
 /**
@@ -75,6 +76,8 @@ public class CacheFactory implements AddressChangeListener, FactoryBean<Cache>, 
 
     private JsonTranscoder jsonTranscoder = new JsonTranscoder(new JsonObjectMapper());
 
+    private JavaTranscoder javaTranscoder = new JavaTranscoder();
+
     private CacheTranscoder customTranscoder;
 
     @Override
@@ -95,40 +98,88 @@ public class CacheFactory implements AddressChangeListener, FactoryBean<Cache>, 
         }
     }
 
+    public CacheConfiguration getConfiguration() {
+        return configuration;
+    }
+
     public void setConfiguration(final CacheConfiguration configuration) {
         this.configuration = configuration;
+    }
+
+    public AddressProvider getAddressProvider() {
+        return addressProvider;
     }
 
     public void setAddressProvider(final AddressProvider addressProvider) {
         this.addressProvider = addressProvider;
     }
 
+    public CacheClientFactory getCacheClientFactory() {
+        return cacheClientFactory;
+    }
+
     public void setCacheClientFactory(final CacheClientFactory cacheClientFactory) {
         this.cacheClientFactory = cacheClientFactory;
+    }
+
+    public String getCacheName() {
+        return cacheName;
     }
 
     public void setCacheName(final String cacheName) {
         this.cacheName = cacheName;
     }
 
+    public Collection<String> getCacheAliases() {
+        return cacheAliases;
+    }
+
     public void setCacheAliases(final Collection<String> cacheAliases) {
         this.cacheAliases = cacheAliases;
+    }
+
+    public AddressChangeNotifier getAddressChangeNotifier() {
+        return addressChangeNotifier;
     }
 
     public void setAddressChangeNotifier(final AddressChangeNotifier addressChangeNotifier) {
         this.addressChangeNotifier = addressChangeNotifier;
     }
 
-    public void setDefaultSerializationType(final SerializationType serializationType) {
-        this.defaultSerializationType = serializationType;
+    public SerializationType getDefaultSerializationType() {
+        return defaultSerializationType;
+    }
+
+    public void setDefaultSerializationType(final SerializationType defaultSerializationType) {
+        this.defaultSerializationType = defaultSerializationType;
+    }
+
+    public JsonTranscoder getJsonTranscoder() {
+        return jsonTranscoder;
     }
 
     public void setJsonTranscoder(final JsonTranscoder jsonTranscoder) {
         this.jsonTranscoder = jsonTranscoder;
     }
 
-    public void setCustomTranscoder(final CacheTranscoder transcoder) {
-        this.customTranscoder = transcoder;
+    public JavaTranscoder getJavaTranscoder() {
+        return javaTranscoder;
+    }
+
+    public void setJavaTranscoder(final JavaTranscoder javaTranscoder) {
+        this.javaTranscoder = javaTranscoder;
+    }
+
+    public CacheTranscoder getCustomTranscoder() {
+        return customTranscoder;
+    }
+
+    public void setCustomTranscoder(final CacheTranscoder customTranscoder) {
+        this.customTranscoder = customTranscoder;
+    }
+
+    public CacheImpl getCache() {
+        return cache;
     }
 
     @Override
@@ -189,7 +240,8 @@ public class CacheFactory implements AddressChangeListener, FactoryBean<Cache>, 
         }
 
         List<InetSocketAddress> addrs = addressProvider.getAddresses();
-        cache = new CacheImpl(cacheName, cacheAliases, createClient(addrs), defaultSerializationType, jsonTranscoder, customTranscoder);
+        cache = new CacheImpl(cacheName, cacheAliases, createClient(addrs), defaultSerializationType, jsonTranscoder, javaTranscoder,
+                customTranscoder);
 
         return cache;
     }

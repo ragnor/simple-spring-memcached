@@ -16,8 +16,8 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
 
 import com.google.code.ssm.Cache;
+import com.google.code.ssm.CacheFactory;
 import com.google.code.ssm.aop.support.PertinentNegativeNull;
-import com.google.code.ssm.api.format.SerializationType;
 import com.google.code.ssm.providers.CacheException;
 import com.google.code.ssm.spring.test.dao.AppUserDAO;
 import com.google.code.ssm.spring.test.entity.AppUser;
@@ -34,8 +34,6 @@ import com.google.code.ssm.spring.test.entity.AppUserPK;
 @ContextConfiguration(locations = { "classpath*:simplesm-context.xml", "classpath*:application-context.xml" })
 public class CacheTest {
 
-    private static final SerializationType SERIALIZATION_TYPE = SerializationType.PROVIDER;
-
     @Autowired
     private AppUserDAO dao;
 
@@ -46,6 +44,14 @@ public class CacheTest {
     @Autowired
     @Qualifier("clearableCache")
     private Cache clearableCache;
+
+    @Autowired
+    @Qualifier("userCache")
+    private CacheFactory userCacheFactory;
+
+    @Autowired
+    @Qualifier("clearableCache")
+    private CacheFactory clearableCacheFactory;
 
     @Test
     public void test() throws TimeoutException, CacheException {
@@ -70,11 +76,11 @@ public class CacheTest {
     @Test
     public void validClearAll() throws TimeoutException, CacheException {
         String key = "test-key";
-        clearableCache.set(key, 10, "test-value", SERIALIZATION_TYPE);
-        assertNotNull(clearableCache.get(key, SERIALIZATION_TYPE));
+        clearableCache.set(key, 10, "test-value", clearableCacheFactory.getDefaultSerializationType());
+        assertNotNull(clearableCache.get(key, clearableCacheFactory.getDefaultSerializationType()));
 
         dao.removeAllFromCache();
-        assertNull(clearableCache.get(key, SERIALIZATION_TYPE));
+        assertNull(clearableCache.get(key, clearableCacheFactory.getDefaultSerializationType()));
     }
 
     @Test(expected = IllegalStateException.class)
@@ -92,7 +98,7 @@ public class CacheTest {
 
     private void check(final AppUserPK pk, final AppUser target) throws TimeoutException, CacheException {
         AppUser au;
-        au = getResult(userCache.get(pk.cacheKey(), SERIALIZATION_TYPE));
+        au = getResult(userCache.get(pk.cacheKey(), userCacheFactory.getDefaultSerializationType()));
         assertEquals(target, au);
 
         au = dao.getByPk(pk);

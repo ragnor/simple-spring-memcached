@@ -32,6 +32,7 @@ import com.google.code.ssm.api.format.SerializationType;
 import com.google.code.ssm.providers.CacheClient;
 import com.google.code.ssm.providers.CacheException;
 import com.google.code.ssm.providers.CacheTranscoder;
+import com.google.code.ssm.transcoders.JavaTranscoder;
 import com.google.code.ssm.transcoders.JsonTranscoder;
 import com.google.code.ssm.transcoders.LongToStringTranscoder;
 
@@ -53,6 +54,8 @@ class CacheImpl implements Cache {
 
     private final JsonTranscoder jsonTranscoder;
 
+    private final JavaTranscoder javaTranscoder;
+
     private final LongToStringTranscoder longToStringTranscoder = new LongToStringTranscoder();
 
     private final CacheTranscoder customTranscoder;
@@ -60,7 +63,8 @@ class CacheImpl implements Cache {
     private volatile CacheClient cacheClient;
 
     CacheImpl(final String name, final Collection<String> aliases, final CacheClient cacheClient,
-            final SerializationType defaultSerializationType, final JsonTranscoder jsonTranscoder, final CacheTranscoder customTranscoder) {
+            final SerializationType defaultSerializationType, final JsonTranscoder jsonTranscoder, final JavaTranscoder javaTranscoder,
+            final CacheTranscoder customTranscoder) {
         Assert.hasText(name, "'name' must not be null, empty, or blank");
         Assert.notNull(aliases, "'aliases' cannot be null");
         Assert.notNull(cacheClient, "'cacheClient' cannot be null");
@@ -71,6 +75,7 @@ class CacheImpl implements Cache {
         this.cacheClient = cacheClient;
         this.defaultSerializationType = defaultSerializationType;
         this.jsonTranscoder = jsonTranscoder;
+        this.javaTranscoder = javaTranscoder;
         this.customTranscoder = customTranscoder;
     }
 
@@ -92,28 +97,41 @@ class CacheImpl implements Cache {
     @Override
     @SuppressWarnings("unchecked")
     public <T> T get(final String cacheKey, final SerializationType serializationType) throws TimeoutException, CacheException {
-        if (isFormat(serializationType, SerializationType.JSON)) {
+
+        switch (getSerializationType(serializationType)) {
+        case JAVA:
+            return (T) cacheClient.get(cacheKey, javaTranscoder);
+        case JSON:
             return (T) cacheClient.get(cacheKey, jsonTranscoder);
-        } else if (isFormat(serializationType, SerializationType.PROVIDER)) {
+        case PROVIDER:
             return (T) cacheClient.get(cacheKey);
-        } else if (isFormat(serializationType, SerializationType.CUSTOM)) {
+        case CUSTOM:
             return (T) cacheClient.get(cacheKey, customTranscoder);
-        } else {
+        default:
             throw new IllegalArgumentException(String.format("Serialization type %s is not supported", serializationType));
         }
+
     }
 
     @Override
     @SuppressWarnings("unchecked")
     public <T> void set(final String cacheKey, final int expiration, final Object value, final SerializationType serializationType)
             throws TimeoutException, CacheException {
-        if (isFormat(serializationType, SerializationType.JSON)) {
+
+        switch (getSerializationType(serializationType)) {
+        case JAVA:
+            cacheClient.set(cacheKey, expiration, (T) value, javaTranscoder);
+            break;
+        case JSON:
             cacheClient.set(cacheKey, expiration, (T) value, jsonTranscoder);
-        } else if (isFormat(serializationType, SerializationType.PROVIDER)) {
+            break;
+        case PROVIDER:
             cacheClient.set(cacheKey, expiration, value);
-        } else if (isFormat(serializationType, SerializationType.CUSTOM)) {
+            break;
+        case CUSTOM:
             cacheClient.set(cacheKey, expiration, (T) value, customTranscoder);
-        } else {
+            break;
+        default:
             throw new IllegalArgumentException(String.format("Serialization type %s is not supported", serializationType));
         }
     }
@@ -132,13 +150,21 @@ class CacheImpl implements Cache {
     @Override
     public <T> void add(final String cacheKey, final int expiration, final Object value, final SerializationType serializationType)
             throws TimeoutException, CacheException {
-        if (isFormat(serializationType, SerializationType.JSON)) {
+
+        switch (getSerializationType(serializationType)) {
+        case JAVA:
+            cacheClient.add(cacheKey, expiration, value, javaTranscoder);
+            break;
+        case JSON:
             cacheClient.add(cacheKey, expiration, value, jsonTranscoder);
-        } else if (isFormat(serializationType, SerializationType.PROVIDER)) {
+            break;
+        case PROVIDER:
             cacheClient.add(cacheKey, expiration, value);
-        } else if (isFormat(serializationType, SerializationType.CUSTOM)) {
+            break;
+        case CUSTOM:
             cacheClient.add(cacheKey, expiration, value, customTranscoder);
-        } else {
+            break;
+        default:
             throw new IllegalArgumentException(String.format("Serialization type %s is not supported", serializationType));
         }
     }
@@ -157,13 +183,17 @@ class CacheImpl implements Cache {
     @Override
     public Map<String, Object> getBulk(final Collection<String> keys, final SerializationType serializationType) throws TimeoutException,
             CacheException {
-        if (isFormat(serializationType, SerializationType.JSON)) {
+
+        switch (getSerializationType(serializationType)) {
+        case JAVA:
+            return cacheClient.getBulk(keys, javaTranscoder);
+        case JSON:
             return cacheClient.getBulk(keys, jsonTranscoder);
-        } else if (isFormat(serializationType, SerializationType.PROVIDER)) {
+        case PROVIDER:
             return cacheClient.getBulk(keys);
-        } else if (isFormat(serializationType, SerializationType.CUSTOM)) {
+        case CUSTOM:
             return cacheClient.getBulk(keys, customTranscoder);
-        } else {
+        default:
             throw new IllegalArgumentException(String.format("Serialization type %s is not supported", serializationType));
         }
     }
@@ -226,9 +256,8 @@ class CacheImpl implements Cache {
         }
     }
 
-    private boolean isFormat(final SerializationType serializationType, final SerializationType targetSerializationType) {
-        return serializationType == targetSerializationType
-                || (serializationType == null && defaultSerializationType == targetSerializationType);
+    private SerializationType getSerializationType(final SerializationType serializationType) {
+        return serializationType != null ? serializationType : defaultSerializationType;
     }
 
     private void warn(final Exception e, final String format, final Object... args) {

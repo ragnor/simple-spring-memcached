@@ -22,6 +22,8 @@ public enum SerializationType {
     PROVIDER,
     /** Data are serialized to and deserialized from JSON by jackson library. */
     JSON,
+    /** Data are serialized to and deserialized using java default machanizm. */
+    JAVA,
     /** Custom serialization/deserialization which requires to register custom transcoder. */
     CUSTOM;
 }

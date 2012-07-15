@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<beans xmlns="http://www.springframework.org/schema/beans"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
-	xmlns:aop="http://www.springframework.org/schema/aop" xmlns:tx="http://www.springframework.org/schema/tx"
-	xmlns:cache="http://www.springframework.org/schema/cache"
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:context="http://www.springframework.org/schema/context" xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:tx="http://www.springframework.org/schema/tx" xmlns:cache="http://www.springframework.org/schema/cache"
 	xsi:schemaLocation="
 		   http://www.springframework.org/schema/beans
            http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
@@ -19,26 +18,31 @@
 
 	<context:annotation-config />
 	<context:component-scan base-package="com.google.code.ssm.spring.test" />
-	
+
 	<bean name="cacheManager" class="com.google.code.ssm.spring.SSMCacheManager">
 		<property name="caches">
 			<set>
 				<bean class="com.google.code.ssm.spring.SSMCache">
-					<constructor-arg index="0" ref="userCache"/>
-					<constructor-arg index="1" value="60"/>
-					<constructor-arg index="2" value="false"/>
+					<constructor-arg index="0" ref="userCache" />
+					<constructor-arg index="1" value="60" />
+					<constructor-arg index="2" value="false" />
 				</bean>
 				<bean class="com.google.code.ssm.spring.SSMCache">
-					<constructor-arg index="0" ref="clearableCache"/>
-					<constructor-arg index="1" value="60"/>
-					<constructor-arg index="2" value="true"/>
+					<constructor-arg index="0" ref="clearableCache" />
+					<constructor-arg index="1" value="60" />
+					<constructor-arg index="2" value="true" />
 				</bean>
 			</set>
 		</property>
 	</bean>
-	
+
+	<!-- easy way to test different types of serialization mechanizm by passing it as system property (-Dssm.provider=JSON) -->
+	<bean name="defaultSerializationTypeAsString" class="java.lang.String">
+		<constructor-arg value="#{systemProperties['ssm.defaultSerializationType']?:'JSON'}" />
+	</bean>
+
 	<bean name="userCache" class="com.google.code.ssm.CacheFactory">
-		<property name="cacheName" value="userCache"/>
+		<property name="cacheName" value="userCache" />
 		<property name="cacheClientFactory">
 			<bean class="com.google.code.ssm.providers.xmemcached.MemcacheClientFactoryImpl" />
 		</property>
@@ -52,10 +56,12 @@
 				<property name="consistentHashing" value="true" />
 			</bean>
 		</property>
+		<property name="defaultSerializationType"
+			value="#{T(com.google.code.ssm.api.format.SerializationType).valueOf(@defaultSerializationTypeAsString)}" />
 	</bean>
-	
+
 	<bean name="clearableCache" class="com.google.code.ssm.CacheFactory">
-		<property name="cacheName" value="clearableCache"/>
+		<property name="cacheName" value="clearableCache" />
 		<property name="cacheClientFactory">
 			<bean class="com.google.code.ssm.providers.xmemcached.MemcacheClientFactoryImpl" />
 		</property>
@@ -69,6 +75,22 @@
 				<property name="consistentHashing" value="true" />
 			</bean>
 		</property>
+		<property name="defaultSerializationType"
+			value="#{T(com.google.code.ssm.api.format.SerializationType).valueOf(@defaultSerializationTypeAsString)}" />
 	</bean>
 	
+	
+	<!-- flush all data from memcached before starting tests -->
+	<bean id="flushUserCache" class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
+		<property name="targetObject" ref="userCache" />
+		<property name="targetMethod" value="flush" />
+	</bean>
+
+	<!-- flush all data from memcached before starting tests -->
+	<bean id="flushClearableCache" class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
+		<property name="targetObject" ref="clearableCache" />
+		<property name="targetMethod" value="flush" />
+	</bean>
+	
+
 </beans>
