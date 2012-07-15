@@ -86,7 +86,7 @@ public class JsonTranscoder implements CacheTranscoder { // NO_UCD
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
 
         try {
-            mapper.writeValue(baos, o);
+            mapper.writeValue(baos, new Holder(o));
             return new CachedObjectImpl(JSON_SERIALIZED, baos.toByteArray());
         } catch (IOException e) {
             LOGGER.warn(String.format("Error serializing object %s", o), e);
