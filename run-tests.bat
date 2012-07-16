@@ -33,12 +33,13 @@ goto:eof
 
 
 :execute
- echo Executing %~1 in %CD%
+ echo #########    Executing: %~1 in %CD%    #########
  call %~1
  if not "%ERRORLEVEL%" == "0" (
  	echo Error while executing  %~1 in %CD%
- 	call:exit 2> null
- )
+ 	call:exit 2> NUL
+ ) else echo #########    Executed: %~1 in %CD%   ######### 
+ 
 goto:eof
 
 :exit
