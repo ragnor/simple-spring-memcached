@@ -26,7 +26,6 @@ import org.codehaus.jackson.map.JsonDeserializer;
 import org.codehaus.jackson.map.JsonSerializer;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.map.SerializationConfig.Feature;
-import org.codehaus.jackson.map.jsontype.TypeResolverBuilder;
 import org.codehaus.jackson.map.module.SimpleModule;
 
 import com.google.code.ssm.json.ClassAliasTypeResolverBuilder;
@@ -43,6 +42,8 @@ public class JsonObjectMapper extends ObjectMapper { // NO_UCD
 
     private final SimpleModule module = new SimpleModule("ssm", new Version(1, 0, 0, null));
 
+    private final ClassAliasTypeResolverBuilder typer;
+
     public JsonObjectMapper() {
         registerModule(module);
 
@@ -50,9 +51,8 @@ public class JsonObjectMapper extends ObjectMapper { // NO_UCD
         setSerializationConfig(getSerializationConfig().without(Feature.FAIL_ON_EMPTY_BEANS));
         enableDefaultTyping(DefaultTyping.NON_FINAL, As.WRAPPER_OBJECT);
 
-        TypeResolverBuilder<?> typer = new ClassAliasTypeResolverBuilder(DefaultTyping.NON_FINAL);
-        typer = typer.inclusion(As.WRAPPER_OBJECT);
-        setDefaultTyping(typer);
+        typer = new ClassAliasTypeResolverBuilder(DefaultTyping.NON_FINAL);
+        setDefaultTyping(typer.inclusion(As.WRAPPER_OBJECT));
     }
 
     public void setSerializers(final List<JsonSerializer<?>> serializers) {
@@ -73,6 +73,16 @@ public class JsonObjectMapper extends ObjectMapper { // NO_UCD
         for (Map.Entry<Class<?>, JsonDeserializer<?>> entry : deserializers.entrySet()) {
             module.addDeserializer((Class) entry.getKey(), entry.getValue());
         }
+    }
+
+    /**
+     * Registers mappings between classes and aliases (ids).
+     * 
+     * @param classToId
+     * @since 3.0.0
+     */
+    public void setClassToId(final Map<Class<?>, String> classToId) {
+        typer.setClassToId(classToId);
     }
 
 }

@@ -47,7 +47,7 @@ public class ClassAliasIdResolverTest {
         baseType = Mockito.mock(JavaType.class);
         typeFactory = TypeFactory.instance;
 
-        resolver = new ClassAliasIdResolver(baseType, typeFactory);
+        resolver = new ClassAliasIdResolver(baseType, typeFactory, new HashMap<String, Class<?>>(), new HashMap<Class<?>, String>());
     }
 
     @Test

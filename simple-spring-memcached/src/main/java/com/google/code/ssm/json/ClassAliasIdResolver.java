@@ -42,10 +42,14 @@ public class ClassAliasIdResolver extends ClassNameIdResolver {
 
     private Map<Class<?>, String> classToId = new HashMap<Class<?>, String>();
 
-    public ClassAliasIdResolver(final JavaType baseType, final TypeFactory typeFactory) {
+    public ClassAliasIdResolver(final JavaType baseType, final TypeFactory typeFactory, final Map<String, Class<?>> idToClass,
+            final Map<Class<?>, String> classToId) {
         super(baseType, typeFactory);
 
-        addClassToId(PertinentNegativeNull.class, "N");
+        this.idToClass.putAll(idToClass);
+        this.classToId.putAll(classToId);
+
+        init();
     }
 
     @Override
@@ -97,6 +101,8 @@ public class ClassAliasIdResolver extends ClassNameIdResolver {
 
         this.classToId = classToId;
         this.idToClass = reverseMap;
+
+        init();
     }
 
     /**
@@ -121,6 +127,11 @@ public class ClassAliasIdResolver extends ClassNameIdResolver {
 
         classToId.put(clazz, id);
         idToClass.put(id, clazz);
+    }
+
+    private void init() {
+        // PertinentNegativeNull uses N as a id
+        addClassToId(PertinentNegativeNull.class, "N");
     }
 
 }
