@@ -24,12 +24,6 @@
 			<artifactId>spring-cache</artifactId>
 			<version>${project.version}</version>
 		</dependency>
-		<dependency>
-			<groupId>com.google.code.simple-spring-memcached</groupId>
-			<artifactId>xmemcached-provider</artifactId>
-			<version>${project.version}</version>
-			<type>jar</type>
-		</dependency>
 
 		<!-- overwrite all spring dependencies to use 3.1.x -->
 		<!-- those overwrites are required because parent of this project uses 
@@ -92,6 +86,33 @@
 	</dependencies>
 
 	<profiles>
+		<profile>
+			<id>xmemcached</id>
+			<activation>
+				<activeByDefault>true</activeByDefault>
+			</activation>
+			<dependencies>
+				<dependency>
+					<groupId>com.google.code.simple-spring-memcached</groupId>
+					<artifactId>xmemcached-provider</artifactId>
+					<version>${project.version}</version>
+					<type>jar</type>
+				</dependency>
+			</dependencies>
+		</profile>
+
+		<profile>
+			<id>spymemcached</id>
+			<dependencies>
+				<dependency>
+					<groupId>com.google.code.simple-spring-memcached</groupId>
+					<artifactId>spymemcached-provider</artifactId>
+					<version>${project.version}</version>
+					<type>jar</type>
+				</dependency>
+			</dependencies>
+		</profile>
+
 		<profile>
 			<id>release-sign-artifacts</id>
 			<activation>
