@@ -78,6 +78,7 @@ public class ReadThroughMultiCacheAdvice extends MultiCacheAdvice {
             serializationType = getCacheBase().getSerializationType(methodToCache);
 
             data = AnnotationDataBuilder.buildAnnotationData(annotation, ReadThroughMultiCache.class, methodToCache);
+            verifyNoUseJsonAnnotation(methodToCache);
             coord = new MultiCacheCoordinator(methodToCache, data);
             setMultiCacheOptions(coord, annotation.option());
 

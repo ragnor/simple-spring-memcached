@@ -70,6 +70,7 @@ public class UpdateMultiCacheAdvice extends MultiCacheAdvice {
             final Method methodToCache = getCacheBase().getMethodToCache(jp);
             final UpdateMultiCache annotation = methodToCache.getAnnotation(UpdateMultiCache.class);
             final AnnotationData data = AnnotationDataBuilder.buildAnnotationData(annotation, UpdateMultiCache.class, methodToCache);
+            verifyNoUseJsonAnnotation(methodToCache);
             final List<Object> dataList = getCacheBase().<List<Object>> getUpdateData(data, methodToCache, jp, retVal);
             final SerializationType serializationType = getCacheBase().getSerializationType(methodToCache);
             final MultiCacheCoordinator coord = new MultiCacheCoordinator(methodToCache, data);

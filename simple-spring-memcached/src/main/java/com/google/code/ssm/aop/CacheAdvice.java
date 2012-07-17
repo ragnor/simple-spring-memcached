@@ -16,7 +16,11 @@
  */
 package com.google.code.ssm.aop;
 
+import java.lang.reflect.Method;
+
 import org.slf4j.Logger;
+
+import com.google.code.ssm.api.format.UseJson;
 
 /**
  * 
@@ -24,6 +28,7 @@ import org.slf4j.Logger;
  * @since 2.0.0
  * 
  */
+@SuppressWarnings("deprecation")
 public abstract class CacheAdvice {
 
     public static final String DISABLE_CACHE_PROPERTY = "ssm.cache.disable";
@@ -42,6 +47,14 @@ public abstract class CacheAdvice {
 
     protected boolean isDisabled() {
         return DISABLE_CACHE_PROPERTY_VALUE.equals(System.getProperty(DISABLE_CACHE_PROPERTY));
+    }
+
+    protected void verifyNoUseJsonAnnotation(final Method methodToCache) {
+        UseJson annotation = methodToCache.getAnnotation(UseJson.class);
+        if (annotation != null) {
+            getLogger().warn("@UseJson on method {} doesn't work! Use @Serialization with SerializationType.JSON to specify JSON format.",
+                    methodToCache.getName());
+        }
     }
 
     protected void warn(final Throwable e, final String format, final Object... args) {

@@ -64,6 +64,7 @@ public class InvalidateMultiCacheAdvice extends CacheAdvice {
             methodToCache = getCacheBase().getMethodToCache(pjp);
             final InvalidateMultiCache annotation = methodToCache.getAnnotation(InvalidateMultiCache.class);
             data = AnnotationDataBuilder.buildAnnotationData(annotation, InvalidateMultiCache.class, methodToCache);
+            verifyNoUseJsonAnnotation(methodToCache);
             if (!data.isReturnKeyIndex()) {
                 cacheKeys = getCacheBase().getCacheKeyBuilder().getCacheKeys(data, pjp.getArgs(), methodToCache.toString());
             }

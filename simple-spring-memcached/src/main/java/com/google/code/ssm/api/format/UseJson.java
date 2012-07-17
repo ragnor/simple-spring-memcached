@@ -46,7 +46,7 @@ public @interface UseJson {
      * 
      * @return class to which deserialise data from cache
      * @deprecated since 3.0.0 information about type/class of cached object are stored within serialised object (in
-     *             json string). Settings this field doesn't have any efect, field will be removed in next release.
+     *             json string). Settings this field doesn't have any effect.
      */
     @Deprecated
     Class<?> value() default NoClass.class;

@@ -17,7 +17,14 @@
 
 package com.google.code.ssm.api.format;
 
+/**
+ * 
+ * @author Jakub Białek
+ * @since 3.0.0
+ * 
+ */
 public enum SerializationType {
+
     /** Provider defines serialization and deserialization mechanizm. */
     PROVIDER,
     /** Data are serialized to and deserialized from JSON by jackson library. */

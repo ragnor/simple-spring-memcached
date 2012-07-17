@@ -62,6 +62,7 @@ public class InvalidateAssignCacheAdvice extends CacheAdvice {
             final Method methodToCache = getCacheBase().getMethodToCache(pjp);
             final InvalidateAssignCache annotation = methodToCache.getAnnotation(InvalidateAssignCache.class);
             final AnnotationData data = AnnotationDataBuilder.buildAnnotationData(annotation, InvalidateAssignCache.class, methodToCache);
+            verifyNoUseJsonAnnotation(methodToCache);
 
             cacheKey = getCacheBase().getCacheKeyBuilder().getAssignCacheKey(data);
 
