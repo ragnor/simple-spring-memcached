@@ -137,7 +137,7 @@ public class MemcacheClientWrapperTest {
     @SuppressWarnings("unchecked")
     public void getAvailableServers() {
         Collection<InetSocketAddress> servers = EasyMock.createMock(Collection.class);
-        EasyMock.expect(client.getAvaliableServers()).andReturn(servers);
+        EasyMock.expect(client.getAvailableServers()).andReturn(servers);
         EasyMock.replay(client);
         clientWrapper.getAvailableServers();
         EasyMock.verify(client);

@@ -18,6 +18,7 @@
 package com.google.code.ssm.providers.xmemcached;
 
 import net.rubyeye.xmemcached.transcoders.CachedData;
+import net.rubyeye.xmemcached.transcoders.CompressionMode;
 import net.rubyeye.xmemcached.transcoders.Transcoder;
 
 import com.google.code.ssm.providers.CacheTranscoder;
@@ -59,8 +60,8 @@ class TranscoderAdapter implements Transcoder<Object> {
     }
 
     @Override
-    public void setCompressionThreshold(final int to) {
-
+    public void setCompressionThreshold(final int compressionThreshold) {
+        throw new UnsupportedOperationException("TranscoderAdapter doesn't support compression threshold");
     }
 
     @Override
@@ -70,7 +71,12 @@ class TranscoderAdapter implements Transcoder<Object> {
 
     @Override
     public void setPrimitiveAsString(final boolean primitiveAsString) {
+        throw new UnsupportedOperationException("TranscoderAdapter doesn't support primitive as string");
+    }
 
+    @Override
+    public void setCompressionMode(final CompressionMode compressionMode) {
+        throw new UnsupportedOperationException("TranscoderAdapter doesn't support compression mode");
     }
 
 }

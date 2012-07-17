@@ -163,10 +163,10 @@ class MemcacheClientWrapper extends AbstractMemcacheClientWrapper {
     @Override
     public Collection<SocketAddress> getAvailableServers() {
         List<SocketAddress> servers = new ArrayList<SocketAddress>();
-        Collection<InetSocketAddress> inetSocketAddresses = memcachedClient.getAvaliableServers();
+        Collection<InetSocketAddress> inetSocketAddresses = memcachedClient.getAvailableServers();
 
         if (inetSocketAddresses != null && inetSocketAddresses.size() > 0) {
-            servers.addAll(memcachedClient.getAvaliableServers());
+            servers.addAll(inetSocketAddresses);
         }
 
         return servers;
