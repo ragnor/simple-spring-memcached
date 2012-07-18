@@ -25,7 +25,7 @@ import net.spy.memcached.ConnectionFactory;
 import net.spy.memcached.ConnectionFactoryBuilder;
 import net.spy.memcached.ConnectionFactoryBuilder.Locator;
 import net.spy.memcached.ConnectionFactoryBuilder.Protocol;
-import net.spy.memcached.HashAlgorithm;
+import net.spy.memcached.DefaultHashAlgorithm;
 import net.spy.memcached.MemcachedClient;
 
 import com.google.code.ssm.providers.CacheClient;
@@ -50,7 +50,7 @@ public class MemcacheClientFactoryImpl implements CacheClientFactory {
             ConnectionFactoryBuilder builder = new ConnectionFactoryBuilder();
 
             if (conf.isConsistentHashing()) {
-                builder.setHashAlg(HashAlgorithm.KETAMA_HASH);
+                builder.setHashAlg(DefaultHashAlgorithm.KETAMA_HASH);
                 builder.setLocatorType(Locator.CONSISTENT);
             }
 
