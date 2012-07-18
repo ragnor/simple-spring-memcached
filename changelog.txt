@@ -1,0 +1,79 @@
+SIMPLE SPRING MEMCACHED CHANGELOG
+=================================
+http://code.google.com/p/simple-spring-memcached/
+
+
+Changes in version 3.0.0 (2012-?)
+-------------------------------------
+
+* providers (spymemcached and xmemcached) in separated modules
+* integration with Spring 3.1 Cache Abstraction
+* sample project spring-cache-integration-test that shows how to use SSM as a Spring Cache backend
+* per method expiration time while using SSM as a backend for Spring 3.1 Cache
+* custom default transcoder
+* new serialization logic, for each type: java, json or custom serialization can be used
+* json serialization stores information about type
+* remove dependency to external maven repositories, deploy spymemcached under changed groupId to central maven repository 
+
+
+Changes in version 2.0.0 (2012-04-15)
+-------------------------------------
+
+* cache key can be generated using several input method's parameters
+* counters support: increment, decrement, update (overwrite) and read
+* inline parameter annotation, rather than an integer keyIndex, to identify the object that will provide the key
+* support different memcached clients: spymemcached and xmemcached
+* runtime memcached node switching. IPs of memcached servers can be modified in the fly without redeploying application
+* object can be serialized to json, pluggable json transcoders mechanism configurable per class
+* cache zones - instead of one global cache many caches using different providers, servers and configuration can be defined
+* integration with Spring 3
+* order of missed keys are the same as order of input arguments in intercepted method
+* extra options in ReadThroughMultiCache 
+* extra options in UpdateMultiCache 
+* cached disabling
+* deploy artifacts to maven central repository 
+
+
+Changes in version 1.0.1 (2009-08-02)
+-------------------------------------
+
+* package up a 'code complete' set for release to the wild. 
+
+
+Changes in version 1.0.0-RC1 (2009-08-02)
+-------------------------------------
+
+* update individual item cache by assigned id 
+* invalidate individual item cache by assigned id 
+* read-through individual item cache by assigned id 
+
+
+Changes in version 0.6 (2009-04-25)
+-----------------------------------
+
+* invalidate multiplexed item cache
+* invalidate individual item cache
+ 
+
+Changes in version 0.4 (2008-11-24)
+-----------------------------------
+
+* update multiplexed item cache
+ 
+
+Changes in version 0.3 (2008-11-19)
+-----------------------------------
+
+* update individual item cache
+ 
+
+Changes in version 0.2 (2008-11-15)
+-----------------------------------
+
+* read-through multiplexed item cache
+
+ 
+Changes in version 0.1 (2008-11-02)
+-----------------------------------
+
+* read-through individual item cache 

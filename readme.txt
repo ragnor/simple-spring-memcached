@@ -1,3 +1,8 @@
+SIMPLE SPRING MEMCACHED 3.0.0 (2012)
+-----------------------------------------
+http://code.google.com/p/simple-spring-memcached/
+
+
 To build project and execute tests two memcached instances are required (on localhost, ports 11211 and 11212):
  memcached -d -m 256 -l 127.0.0.1 -p 11211
  memcached -d -m 256 -l 127.0.0.1 -p 11212
@@ -7,3 +12,6 @@ Currently project can use one of two available providers:
    mvn clean package -Pxmemcached -Dspring.profiles.active=xmemcached
  for spymemcached use:
    mvn clean package -Pspymemcached -Dspring.profiles.active=spymemcached
+Above maven and spring profile settings only define what provider will be used in integration tests. 
+In both cases created artifacts support spymemcached and xmemcached.
+   
