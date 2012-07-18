@@ -13,6 +13,43 @@
 	<description>Integration with Spring 3.1 cache abstraction</description>
 	<url>http://code.google.com/p/simple-spring-memcached/</url>
 
+	<licenses>
+		<license>
+			<name>MIT License</name>
+			<url>http://www.opensource.org/licenses/mit-license.php</url>
+		</license>
+	</licenses>
+
+	<developers>
+		<developer>
+			<id>ragnor84</id>
+			<name>Jakub Białek</name>
+			<roles>
+				<role>Owner</role>
+			</roles>
+		</developer>
+	</developers>
+
+	<mailingLists>
+		<mailingList>
+			<name>Project Google group</name>
+			<post>simple-spring-memecached@googlegroups.com</post>
+			<subscribe>simple-spring-memecached@googlegroups.com</subscribe>
+			<unsubscribe>simple-spring-memecached@googlegroups.com</unsubscribe>
+			<archive>http://groups.google.com/group/simple-spring-memecached</archive>
+		</mailingList>
+	</mailingLists>
+
+	<scm>
+		<url>scm:svn:http://simple-spring-memcached.googlecode.com/svn/trunk</url>
+		<connection>scm:svn:http://simple-spring-memcached.googlecode.com/svn/trunk</connection>
+		<developerConnection>scm:svn:https://simple-spring-memcached.googlecode.com/svn/trunk</developerConnection>
+	</scm>
+
+	<issueManagement>
+		<url>http://code.google.com/p/simple-spring-memcached/issues/list</url>
+	</issueManagement>
+
 	<properties>
 		<spring.version>3.1.2.RELEASE</spring.version>
 	</properties>
