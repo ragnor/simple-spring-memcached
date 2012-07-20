@@ -55,6 +55,11 @@
 		<url>http://code.google.com/p/simple-spring-memcached/issues/list</url>
 	</issueManagement>
 
+	<prerequisites>
+		<!-- use javac at least in version 1.6.30 otherwise you get 'incompatible types' errors -->
+		<!-- see http://bugs.sun.com/view_bug.do?bug_id=6512707 -->
+	</prerequisites>
+	
 	<!--For the release process, to create the artifact with all dependencies and docs, -->
 	<!--run this command: "mvn clean site:site assembly:assembly" -->
 	<build>

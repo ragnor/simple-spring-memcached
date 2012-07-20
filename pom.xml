@@ -67,9 +67,11 @@
 		<module>spring-cache</module>
 		<module>spring-cache-integration-test</module>
 	</modules>
-	
+
 	<prerequisites>
 		<maven>2.2.1</maven>
+		<!-- use javac at least in version 1.6.30 otherwise you get 'incompatible types' errors -->
+		<!-- see: http://bugs.sun.com/view_bug.do?bug_id=6512707 -->
 	</prerequisites>
 
 	<properties>
@@ -118,7 +120,7 @@
 				<artifactId>aspectjweaver</artifactId>
 				<version>${aspectj.version}</version>
 			</dependency>
-			<!-- it's spymemcached deployed to central repo-->
+			<!-- it's spymemcached deployed to central repo -->
 			<dependency>
 				<groupId>com.google.code.simple-spring-memcached</groupId>
 				<artifactId>spymemcached</artifactId>
@@ -140,7 +142,7 @@
 				<groupId>org.slf4j</groupId>
 				<artifactId>slf4j-api</artifactId>
 				<version>${slf4j.version}</version>
-			</dependency>			
+			</dependency>
 			<dependency>
 				<groupId>org.projectlombok</groupId>
 				<artifactId>lombok</artifactId>
