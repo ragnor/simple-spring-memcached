@@ -19,6 +19,9 @@ package com.google.code.ssm.transcoders;
 
 import java.io.UnsupportedEncodingException;
 
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
+
 import com.google.code.ssm.providers.CacheTranscoder;
 import com.google.code.ssm.providers.CachedObject;
 import com.google.code.ssm.providers.CachedObjectImpl;
@@ -33,6 +36,8 @@ import com.google.code.ssm.providers.CachedObjectImpl;
  * @since 2.0.0
  * 
  */
+@ToString
+@EqualsAndHashCode
 public class LongToStringTranscoder implements CacheTranscoder {
 
     @Override

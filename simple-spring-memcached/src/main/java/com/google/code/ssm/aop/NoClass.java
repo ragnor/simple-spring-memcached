@@ -25,8 +25,10 @@ package com.google.code.ssm.aop;
  * 
  * @author Jakub Białek
  * @since 2.0.0
+ * @deprecated since 3.0.0
  * 
  */
+@Deprecated
 public final class NoClass {
 
     private NoClass() {

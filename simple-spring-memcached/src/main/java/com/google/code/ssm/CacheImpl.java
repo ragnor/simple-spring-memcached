@@ -24,6 +24,8 @@ import java.util.concurrent.TimeoutException;
 
 import javax.annotation.PreDestroy;
 
+import lombok.Getter;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.Assert;
@@ -46,8 +48,10 @@ class CacheImpl implements Cache {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(CacheImpl.class);
 
+    @Getter
     private final String name;
 
+    @Getter
     private final Collection<String> aliases;
 
     private final SerializationType defaultSerializationType;
@@ -69,6 +73,8 @@ class CacheImpl implements Cache {
         Assert.notNull(aliases, "'aliases' cannot be null");
         Assert.notNull(cacheClient, "'cacheClient' cannot be null");
         Assert.notNull(defaultSerializationType, "'defaultSerializationType' cannot be null");
+        Assert.notNull(jsonTranscoder, "'jsonTranscoder' cannot be null");
+        Assert.notNull(javaTranscoder, "'javaTranscoder' cannot be null");
 
         this.name = name;
         this.aliases = aliases;
@@ -82,16 +88,6 @@ class CacheImpl implements Cache {
     @Override
     public Collection<SocketAddress> getAvailableServers() {
         return cacheClient.getAvailableServers();
-    }
-
-    @Override
-    public String getName() {
-        return name;
-    }
-
-    @Override
-    public Collection<String> getAliases() {
-        return aliases;
     }
 
     @Override

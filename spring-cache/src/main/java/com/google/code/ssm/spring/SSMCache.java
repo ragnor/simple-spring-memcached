@@ -18,6 +18,8 @@ package com.google.code.ssm.spring;
 
 import java.util.concurrent.TimeoutException;
 
+import lombok.Getter;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.cache.Cache;
@@ -40,10 +42,13 @@ public class SSMCache implements Cache {
 
     private final static Logger LOGGER = LoggerFactory.getLogger(SSMCache.class);
 
+    @Getter
     private final com.google.code.ssm.Cache cache;
 
+    @Getter
     private final int expiration;
 
+    @Getter
     private final boolean allowClear;
 
     public SSMCache(final com.google.code.ssm.Cache cache, final int expiration, final boolean allowClear) {
@@ -141,14 +146,6 @@ public class SSMCache implements Cache {
         } catch (CacheException e) {
             LOGGER.warn("An error has ocurred for cache " + getName(), e);
         }
-    }
-
-    public int getExpiration() {
-        return expiration;
-    }
-
-    public boolean isAllowClear() {
-        return allowClear;
     }
 
     private String getKey(final Object key) {

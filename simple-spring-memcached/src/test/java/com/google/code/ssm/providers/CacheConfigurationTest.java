@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2008-20011 Nelson Carpentier, Jakub Białek
+ * Copyright (c) 2008-2012 Nelson Carpentier, Jakub Białek
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
  * documentation files (the "Software"), to deal in the Software without restriction, including without limitation the
@@ -15,7 +15,7 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package com.google.code.ssm;
+package com.google.code.ssm.providers;
 
 import static org.junit.Assert.assertEquals;
 
@@ -24,22 +24,20 @@ import org.junit.Test;
 
 import com.google.code.ssm.providers.CacheConfiguration;
 
-
 /**
  * 
  * @author Nelson Carpentier
  * @author Jakub Białek
  * 
  */
-public class MemcachedConfigurationTest {
+public class CacheConfigurationTest {
 
     @Test
     public void testInAndOut() {
         final boolean consistent = RandomUtils.nextBoolean();
         final int opTimeout = RandomUtils.nextInt();
         final boolean useBinaryProt = RandomUtils.nextBoolean();
-        
-        
+
         final CacheConfiguration conf = new CacheConfiguration();
         conf.setConsistentHashing(consistent);
         conf.setOperationTimeout(opTimeout);

@@ -166,11 +166,16 @@ public class CacheBase implements ApplicationContextAware, InitializingBean {
 
     protected SerializationType getSerializationType(final Method method) {
         Serialization serialization = method.getAnnotation(Serialization.class);
-        if (serialization == null) {
-            return null;
+        if (serialization != null) {
+            return serialization.value();
         }
 
-        return serialization.value();
+        serialization = method.getDeclaringClass().getAnnotation(Serialization.class);
+        if (serialization != null) {
+            return serialization.value();
+        }
+
+        return null;
     }
 
     protected Logger getLogger() {

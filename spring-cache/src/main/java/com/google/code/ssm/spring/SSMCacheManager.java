@@ -17,7 +17,9 @@
 package com.google.code.ssm.spring;
 
 import java.util.Collection;
-import java.util.Set;
+
+import lombok.Getter;
+import lombok.Setter;
 
 import org.springframework.cache.Cache;
 import org.springframework.cache.support.AbstractCacheManager;
@@ -36,11 +38,9 @@ import org.springframework.util.Assert;
  */
 public class SSMCacheManager extends AbstractCacheManager {
 
+    @Getter
+    @Setter
     private Collection<SSMCache> caches;
-
-    public void setCaches(final Set<SSMCache> caches) {
-        this.caches = caches;
-    }
 
     @Override
     protected Collection<? extends Cache> loadCaches() {

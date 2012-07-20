@@ -22,6 +22,9 @@ import java.util.List;
 
 import javax.naming.NamingException;
 
+import lombok.Getter;
+import lombok.Setter;
+
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.jndi.JndiTemplate;
 import org.springframework.util.Assert;
@@ -40,6 +43,8 @@ public class JndiAddressProvider extends DefaultAddressProvider implements Initi
 
     private final JndiTemplate jndiTemplate = new JndiTemplate();
 
+    @Getter
+    @Setter
     private String jndiKey;
 
     public JndiAddressProvider() {
@@ -54,14 +59,6 @@ public class JndiAddressProvider extends DefaultAddressProvider implements Initi
     @Override
     public void afterPropertiesSet() throws Exception {
         Assert.notNull(jndiKey, "'jndiKey' is required and cannot be null");
-    }
-
-    public String getJndiKey() {
-        return jndiKey;
-    }
-
-    public void setJndiKey(final String jndiKey) {
-        this.jndiKey = jndiKey;
     }
 
     @Override

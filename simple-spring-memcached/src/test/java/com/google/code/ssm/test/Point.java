@@ -16,6 +16,8 @@
 
 package com.google.code.ssm.test;
 
+import java.io.Serializable;
+
 import com.google.code.ssm.api.CacheKeyMethod;
 
 /**
@@ -23,14 +25,35 @@ import com.google.code.ssm.api.CacheKeyMethod;
  * @author Jakub Białek
  * 
  */
-public class Point {
+public class Point implements Serializable {
+
+    private static final long serialVersionUID = 1L;
 
     private int x;
 
     private int y;
 
-    public Point(int x, int y) {
+    public Point() {
+    }
+
+    public Point(final int x, final int y) {
         this.x = x;
+        this.y = y;
+    }
+
+    public int getX() {
+        return x;
+    }
+
+    public void setX(final int x) {
+        this.x = x;
+    }
+
+    public int getY() {
+        return y;
+    }
+
+    public void setY(final int y) {
         this.y = y;
     }
 
@@ -49,7 +72,7 @@ public class Point {
     }
 
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(final Object obj) {
         if (this == obj)
             return true;
         if (obj == null)
@@ -62,6 +85,11 @@ public class Point {
         if (y != other.y)
             return false;
         return true;
+    }
+
+    @Override
+    public String toString() {
+        return "Point [x=" + x + ", y=" + y + "]";
     }
 
 }

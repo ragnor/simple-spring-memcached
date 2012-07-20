@@ -50,7 +50,7 @@ import com.google.code.ssm.providers.CacheConfiguration;
  * @author Nelson Carpentier
  * 
  */
-public class MemcachedClientFactoryTest {
+public class CacheFactoryTest {
 
     @Test
     public void testCreateClientException() throws IOException, NamingException {

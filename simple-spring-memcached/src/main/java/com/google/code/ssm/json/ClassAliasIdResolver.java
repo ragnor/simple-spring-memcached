@@ -64,12 +64,11 @@ public class ClassAliasIdResolver extends ClassNameIdResolver {
 
     @Override
     public String idFromValue(final Object value) {
-        String id = null;
-        if (value != null && (id = classToId.get(value.getClass())) != null) {
-            return id;
+        if (value != null) {
+            return idFromValueAndType(value, value.getClass());
         }
 
-        return _idFrom(value, value.getClass());
+        return _idFrom(value, null);
     }
 
     @Override

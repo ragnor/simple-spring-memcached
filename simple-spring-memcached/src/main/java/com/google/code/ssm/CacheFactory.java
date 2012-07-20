@@ -24,6 +24,9 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
+import lombok.Getter;
+import lombok.Setter;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.FactoryBean;
@@ -50,6 +53,7 @@ import com.google.code.ssm.transcoders.JsonTranscoder;
  * @author Jakub Białek
  * 
  */
+@Getter
 public class CacheFactory implements AddressChangeListener, FactoryBean<Cache>, InitializingBean {
 
     public static final String DISABLE_CACHE_PROPERTY = "ssm.cache.disable";
@@ -58,26 +62,36 @@ public class CacheFactory implements AddressChangeListener, FactoryBean<Cache>, 
 
     private static final Logger LOGGER = LoggerFactory.getLogger(CacheFactory.class);
 
+    @Setter
     private CacheConfiguration configuration = new CacheConfiguration();
 
+    @Setter
     private AddressProvider addressProvider;
 
+    @Setter
     private CacheClientFactory cacheClientFactory;
 
+    @Setter
     private String cacheName = AnnotationConstants.DEFAULT_CACHE_NAME;
 
+    @Setter
     private Collection<String> cacheAliases = Collections.emptyList();
 
     private CacheImpl cache;
 
+    @Setter
     private AddressChangeNotifier addressChangeNotifier;
 
+    @Setter
     private SerializationType defaultSerializationType = SerializationType.PROVIDER;
 
+    @Setter
     private JsonTranscoder jsonTranscoder = new JsonTranscoder(new JsonObjectMapper());
 
+    @Setter
     private JavaTranscoder javaTranscoder = new JavaTranscoder();
 
+    @Setter
     private CacheTranscoder customTranscoder;
 
     @Override
@@ -94,92 +108,9 @@ public class CacheFactory implements AddressChangeListener, FactoryBean<Cache>, 
         }
 
         if (defaultSerializationType == SerializationType.CUSTOM) {
-            Assert.notNull(customTranscoder, "'customTranscoder' cannot be null if default serialization type is set to CUSTOM");
+            Assert.notNull(customTranscoder, "'customTranscoder' cannot be null if default serialization type is set to "
+                    + SerializationType.CUSTOM);
         }
-    }
-
-    public CacheConfiguration getConfiguration() {
-        return configuration;
-    }
-
-    public void setConfiguration(final CacheConfiguration configuration) {
-        this.configuration = configuration;
-    }
-
-    public AddressProvider getAddressProvider() {
-        return addressProvider;
-    }
-
-    public void setAddressProvider(final AddressProvider addressProvider) {
-        this.addressProvider = addressProvider;
-    }
-
-    public CacheClientFactory getCacheClientFactory() {
-        return cacheClientFactory;
-    }
-
-    public void setCacheClientFactory(final CacheClientFactory cacheClientFactory) {
-        this.cacheClientFactory = cacheClientFactory;
-    }
-
-    public String getCacheName() {
-        return cacheName;
-    }
-
-    public void setCacheName(final String cacheName) {
-        this.cacheName = cacheName;
-    }
-
-    public Collection<String> getCacheAliases() {
-        return cacheAliases;
-    }
-
-    public void setCacheAliases(final Collection<String> cacheAliases) {
-        this.cacheAliases = cacheAliases;
-    }
-
-    public AddressChangeNotifier getAddressChangeNotifier() {
-        return addressChangeNotifier;
-    }
-
-    public void setAddressChangeNotifier(final AddressChangeNotifier addressChangeNotifier) {
-        this.addressChangeNotifier = addressChangeNotifier;
-    }
-
-    public SerializationType getDefaultSerializationType() {
-        return defaultSerializationType;
-    }
-
-    public void setDefaultSerializationType(final SerializationType defaultSerializationType) {
-        this.defaultSerializationType = defaultSerializationType;
-    }
-
-    public JsonTranscoder getJsonTranscoder() {
-        return jsonTranscoder;
-    }
-
-    public void setJsonTranscoder(final JsonTranscoder jsonTranscoder) {
-        this.jsonTranscoder = jsonTranscoder;
-    }
-
-    public JavaTranscoder getJavaTranscoder() {
-        return javaTranscoder;
-    }
-
-    public void setJavaTranscoder(final JavaTranscoder javaTranscoder) {
-        this.javaTranscoder = javaTranscoder;
-    }
-
-    public CacheTranscoder getCustomTranscoder() {
-        return customTranscoder;
-    }
-
-    public void setCustomTranscoder(final CacheTranscoder customTranscoder) {
-        this.customTranscoder = customTranscoder;
-    }
-
-    public CacheImpl getCache() {
-        return cache;
     }
 
     @Override

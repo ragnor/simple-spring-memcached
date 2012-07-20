@@ -17,6 +17,8 @@
 
 package com.google.code.ssm.json;
 
+import lombok.Data;
+
 import org.codehaus.jackson.annotate.JsonProperty;
 import org.codehaus.jackson.annotate.JsonTypeInfo;
 import org.codehaus.jackson.annotate.JsonTypeInfo.Id;
@@ -30,6 +32,7 @@ import org.codehaus.jackson.annotate.JsonTypeInfo.Id;
  * @since 3.0.0
  * 
  */
+@Data
 @JsonTypeInfo(use = Id.NONE)
 public class Holder {
 
@@ -44,14 +47,6 @@ public class Holder {
     }
 
     public Holder(final Object value) {
-        this.value = value;
-    }
-
-    public Object getValue() {
-        return value;
-    }
-
-    public void setValue(final Object value) {
         this.value = value;
     }
 

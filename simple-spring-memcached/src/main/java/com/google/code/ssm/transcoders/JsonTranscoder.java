@@ -21,6 +21,10 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.ToString;
+
 import org.codehaus.jackson.map.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,12 +43,15 @@ import com.google.code.ssm.providers.CachedObjectImpl;
  * @since 2.0.0
  * 
  */
+@ToString
+@EqualsAndHashCode
 public class JsonTranscoder implements CacheTranscoder { // NO_UCD
 
     private static final Logger LOGGER = LoggerFactory.getLogger(JsonTranscoder.class);
 
     private static final int JSON_SERIALIZED = 8; // json format
 
+    @Getter
     private final ObjectMapper mapper;
 
     public JsonTranscoder(final ObjectMapper mapper) {
@@ -103,31 +110,6 @@ public class JsonTranscoder implements CacheTranscoder { // NO_UCD
 
     public int getMaxSize() {
         return CachedObject.MAX_SIZE;
-    }
-
-    @Override
-    public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((mapper == null) ? 0 : mapper.hashCode());
-        return result;
-    }
-
-    @Override
-    public boolean equals(final Object obj) {
-        if (this == obj)
-            return true;
-        if (obj == null)
-            return false;
-        if (getClass() != obj.getClass())
-            return false;
-        JsonTranscoder other = (JsonTranscoder) obj;
-        if (mapper == null) {
-            if (other.mapper != null)
-                return false;
-        } else if (!mapper.equals(other.mapper))
-            return false;
-        return true;
     }
 
 }

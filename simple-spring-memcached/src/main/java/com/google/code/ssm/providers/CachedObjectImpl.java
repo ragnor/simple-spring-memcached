@@ -19,6 +19,8 @@ package com.google.code.ssm.providers;
 
 import java.util.Arrays;
 
+import lombok.Getter;
+
 /**
  * 
  * @author Jakub Białek
@@ -27,23 +29,15 @@ import java.util.Arrays;
  */
 public class CachedObjectImpl implements CachedObject {
 
+    @Getter
     private final int flags;
 
+    @Getter
     private final byte[] data;
 
     public CachedObjectImpl(final int flags, final byte[] data) {
         this.flags = flags;
         this.data = data;
-    }
-
-    @Override
-    public byte[] getData() {
-        return data;
-    }
-
-    @Override
-    public int getFlags() {
-        return flags;
     }
 
     @Override

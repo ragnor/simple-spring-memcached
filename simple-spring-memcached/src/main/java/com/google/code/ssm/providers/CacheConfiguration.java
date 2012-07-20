@@ -18,12 +18,15 @@
 
 package com.google.code.ssm.providers;
 
+import lombok.Data;
+
 /**
  * 
  * @author Nelson Carpentier
  * @author Jakub Białek
  * 
  */
+@Data
 public class CacheConfiguration {
 
     private boolean consistentHashing;
@@ -31,29 +34,5 @@ public class CacheConfiguration {
     private boolean useBinaryProtocol;
 
     private Integer operationTimeout;
-
-    public boolean isConsistentHashing() {
-        return consistentHashing;
-    }
-
-    public void setConsistentHashing(final boolean consistentHashing) {
-        this.consistentHashing = consistentHashing;
-    }
-
-    public void setUseBinaryProtocol(final boolean useBinaryProtocol) {
-        this.useBinaryProtocol = useBinaryProtocol;
-    }
-
-    public boolean isUseBinaryProtocol() {
-        return useBinaryProtocol;
-    }
-
-    public void setOperationTimeout(final Integer operationTimeout) {
-        this.operationTimeout = operationTimeout;
-    }
-
-    public Integer getOperationTimeout() {
-        return operationTimeout;
-    }
 
 }

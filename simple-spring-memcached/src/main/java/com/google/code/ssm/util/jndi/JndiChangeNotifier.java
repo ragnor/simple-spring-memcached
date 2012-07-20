@@ -20,6 +20,9 @@ package com.google.code.ssm.util.jndi;
 import java.net.InetSocketAddress;
 import java.util.List;
 
+import lombok.Getter;
+import lombok.Setter;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
@@ -41,6 +44,8 @@ public class JndiChangeNotifier extends JndiAddressProvider implements AddressCh
 
     private static final Logger LOGGER = LoggerFactory.getLogger(JndiChangeNotifier.class);
 
+    @Getter
+    @Setter
     private AddressChangeListener addressChangeListener;
 
     private List<InetSocketAddress> currentAddrs;
@@ -48,15 +53,6 @@ public class JndiChangeNotifier extends JndiAddressProvider implements AddressCh
     @Override
     public void afterPropertiesSet() throws Exception {
         currentAddrs = getAddresses();
-    }
-
-    @Override
-    public void setAddressChangeListener(final AddressChangeListener addressChangeListener) {
-        this.addressChangeListener = addressChangeListener;
-    }
-
-    public AddressChangeListener getAddressChangeListener() {
-        return addressChangeListener;
     }
 
     /**

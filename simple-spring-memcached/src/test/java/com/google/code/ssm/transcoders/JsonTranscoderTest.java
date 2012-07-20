@@ -1,5 +1,4 @@
-/*
- * Copyright (c) 2012 Jakub Białek
+/* Copyright (c) 2012 Jakub Białek
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
  * documentation files (the "Software"), to deal in the Software without restriction, including without limitation the
@@ -15,30 +14,39 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package com.google.code.ssm.api.format;
+package com.google.code.ssm.transcoders;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+
+import org.junit.Test;
+
+import com.google.code.ssm.mapper.JsonObjectMapper;
+import com.google.code.ssm.providers.CachedObject;
+import com.google.code.ssm.test.Point;
 
 /**
  * 
- * How cached data will be kept (serialized/deserialized). Annotation on method overwrites this on class.
- * 
  * @author Jakub Białek
- * @since 3.0.0
  * 
  */
-@Retention(RetentionPolicy.RUNTIME)
-@Target({ ElementType.TYPE, ElementType.METHOD })
-public @interface Serialization {
+public class JsonTranscoderTest {
 
-    /**
-     * The type of serialization that will be used to keep in cache result of intercepted method.
-     * 
-     * @return type of serialization.
-     */
-    SerializationType value() default SerializationType.PROVIDER;
+    private JsonTranscoder transcoder;
+
+    @Test
+    public void testEncodeAndDecode() {
+        transcoder = new JsonTranscoder(new JsonObjectMapper());
+
+        Point p = new Point(40, 50);
+
+        CachedObject co = transcoder.encode(p);
+        assertNotNull(co);
+        assertNotNull(co.getData());
+
+        Point p2 = (Point) transcoder.decode(co);
+        assertNotNull(p2);
+        assertEquals(p, p2);
+    }
 
 }

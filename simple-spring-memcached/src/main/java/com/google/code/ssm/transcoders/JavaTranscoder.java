@@ -26,6 +26,11 @@ import java.io.ObjectOutputStream;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -43,6 +48,8 @@ import com.google.code.ssm.providers.CachedObjectImpl;
  * @since 3.0.0
  * 
  */
+@ToString
+@EqualsAndHashCode
 public class JavaTranscoder implements CacheTranscoder { // NO_UCD
 
     /**
@@ -58,15 +65,9 @@ public class JavaTranscoder implements CacheTranscoder { // NO_UCD
     private static final int SERIALIZED = 1;
     private static final int COMPRESSED = 2;
 
+    @Getter
+    @Setter
     private int compressionThreshold = DEFAULT_COMPRESSION_THRESHOLD;
-
-    public void setCompressionThreshold(final int compressionThreshold) {
-        this.compressionThreshold = compressionThreshold;
-    }
-
-    public int getCompressionThreshold() {
-        return compressionThreshold;
-    }
 
     @Override
     public Object decode(final CachedObject d) {
