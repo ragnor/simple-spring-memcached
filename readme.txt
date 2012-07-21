@@ -15,3 +15,6 @@ Currently project can use one of two available providers:
 Above maven and spring profile settings only define what provider will be used in integration tests. 
 In both cases created artifacts support spymemcached and xmemcached.
    
+   
+Because of the lombok library and bug in older JVM versions (http://bugs.sun.com/view_bug.do?bug_id=6512707) you may get 
+'incompatible types' errors in compilation. To prevent such errors use Java in version at least 1.6.30.

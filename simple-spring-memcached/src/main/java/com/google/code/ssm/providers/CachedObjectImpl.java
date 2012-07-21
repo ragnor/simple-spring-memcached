@@ -27,12 +27,11 @@ import lombok.Getter;
  * @since 2.0.0
  * 
  */
+@Getter
 public class CachedObjectImpl implements CachedObject {
 
-    @Getter
     private final int flags;
 
-    @Getter
     private final byte[] data;
 
     public CachedObjectImpl(final int flags, final byte[] data) {

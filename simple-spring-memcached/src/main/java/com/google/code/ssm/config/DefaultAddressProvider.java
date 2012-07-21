@@ -88,7 +88,7 @@ public class DefaultAddressProvider implements AddressProvider {
         if (s == null) {
             throw new NullPointerException("Null host list");
         }
-        if (s.trim().equals("")) {
+        if (s.trim().isEmpty()) {
             throw new IllegalArgumentException("No hosts in list: '" + s + "'");
         }
 
