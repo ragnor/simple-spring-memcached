@@ -63,7 +63,7 @@ public class UpdateCounterInCacheAdvice extends CounterInCacheBase {
             AnnotationData data = AnnotationDataBuilder.buildAnnotationData(annotation, UpdateCounterInCache.class, methodToCache);
             cacheKey = getCacheBase().getCacheKeyBuilder().getCacheKey(data, jp.getArgs(), methodToCache.toString());
 
-            Object dataObject = getCacheBase().getUpdateData(data, methodToCache, jp, retVal);
+            Object dataObject = getCacheBase().getUpdateData(data, methodToCache, jp.getArgs(), retVal);
             if (checkData(dataObject, jp)) {
                 long value = ((Number) dataObject).longValue();
                 getCacheBase().getCache(data).setCounter(cacheKey, annotation.expiration(), value);

@@ -41,7 +41,6 @@ import com.google.code.ssm.aop.support.CacheKeyBuilder;
 import com.google.code.ssm.aop.support.CacheKeyBuilderImpl;
 import com.google.code.ssm.aop.support.InvalidAnnotationException;
 import com.google.code.ssm.aop.support.PertinentNegativeNull;
-import com.google.code.ssm.api.ReadThroughMultiCache;
 import com.google.code.ssm.api.format.Serialization;
 import com.google.code.ssm.api.format.SerializationType;
 import com.google.code.ssm.util.Utils;
@@ -56,9 +55,9 @@ public class CacheBase implements ApplicationContextAware, InitializingBean {
 
     private static final Logger LOG = LoggerFactory.getLogger(CacheBase.class);
 
-    protected CacheKeyBuilder cacheKeyBuilder = new CacheKeyBuilderImpl();
+    private CacheKeyBuilder cacheKeyBuilder = new CacheKeyBuilderImpl();
 
-    protected BridgeMethodMappingStore bridgeMethodMappingStore = new BridgeMethodMappingStoreImpl();
+    private BridgeMethodMappingStore bridgeMethodMappingStore = new BridgeMethodMappingStoreImpl();
 
     // mapping cache zone <-> cache
     private final Map<String, Cache> caches = new HashMap<String, Cache>();
@@ -131,9 +130,9 @@ public class CacheBase implements ApplicationContextAware, InitializingBean {
     }
 
     @SuppressWarnings("unchecked")
-    public <T> T getUpdateData(final AnnotationData data, final Method method, final JoinPoint jp, final Object returnValue)
+    public <T> T getUpdateData(final AnnotationData data, final Method method, final Object[] args, final Object returnValue)
             throws Exception {
-        return data.isReturnDataIndex() ? (T) returnValue : (T) Utils.getMethodArg(data.getDataIndex(), jp.getArgs(), method.toString());
+        return data.isReturnDataIndex() ? (T) returnValue : (T) Utils.getMethodArg(data.getDataIndex(), args, method.toString());
     }
 
     protected Object getSubmission(final Object o) {
@@ -146,10 +145,9 @@ public class CacheBase implements ApplicationContextAware, InitializingBean {
 
     protected void verifyReturnTypeIsList(final Method method, final Class<?> annotationClass) {
         if (!verifyTypeIsList(method.getReturnType())) {
-            throw new InvalidAnnotationException(String.format(
-                    "The annotation [%s] is only valid on a method that returns a [%s] or its subclass. "
-                            + "[%s] does not fulfill this requirement.", ReadThroughMultiCache.class.getName(), List.class.getName(),
-                    method.toString()));
+            throw new InvalidAnnotationException(
+                    String.format("The annotation [%s] is only valid on a method that returns a [%s] or its subclass. "
+                            + "[%s] does not fulfill this requirement.", annotationClass.getName(), List.class.getName(), method.toString()));
         }
     }
 

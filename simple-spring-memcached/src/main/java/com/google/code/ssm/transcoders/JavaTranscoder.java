@@ -157,9 +157,9 @@ public class JavaTranscoder implements CacheTranscoder { // NO_UCD
                 bis.close();
             }
         } catch (IOException e) {
-            LOGGER.warn(String.format("Caught IOException decoding %d bytes of data", in == null ? 0 : in.length), e);
+            LOGGER.warn(String.format("Caught IOException decoding %d bytes of data", (in == null) ? 0 : in.length), e);
         } catch (ClassNotFoundException e) {
-            LOGGER.warn(String.format("Caught CNFE decoding %d bytes of data", in == null ? 0 : in.length), e);
+            LOGGER.warn(String.format("Caught CNFE decoding %d bytes of data", (in == null) ? 0 : in.length), e);
         } finally {
             close(is);
             close(bis);

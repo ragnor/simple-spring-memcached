@@ -16,63 +16,60 @@
 
 package com.google.code.ssm.json;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-
 import java.util.HashMap;
+import java.util.Map;
 
-import org.codehaus.jackson.map.type.TypeFactory;
-import org.codehaus.jackson.type.JavaType;
+import org.codehaus.jackson.map.ObjectMapper.DefaultTyping;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.Mockito;
 
 /**
  * 
  * @author Jakub Białek
  * 
  */
-public class ClassAliasIdResolverTest {
+public class ClassAliasTypeResolverBuilderTest {
 
-    private ClassAliasIdResolver resolver;
-
-    private JavaType baseType;
-
-    private TypeFactory typeFactory;
+    private ClassAliasTypeResolverBuilder builder;
 
     @Before
-    @SuppressWarnings("deprecation")
     public void setUp() {
-        baseType = Mockito.mock(JavaType.class);
-        typeFactory = TypeFactory.instance;
-
-        resolver = new ClassAliasIdResolver(baseType, typeFactory, new HashMap<String, Class<?>>(), new HashMap<Class<?>, String>());
+        builder = new ClassAliasTypeResolverBuilder(DefaultTyping.NON_FINAL);
     }
 
     @Test
-    public void addClassToId() {
-        resolver.addClassToId(ClassAliasIdResolverTest.class, "cairt");
-        String id = resolver.idFromValue(new ClassAliasIdResolverTest());
-        assertNotNull(id);
-        assertEquals("cairt", id);
+    public void setClassToIdMap() {
+        Map<Class<?>, String> map = new HashMap<Class<?>, String>();
+        map.put(ClassAliasIdResolverTest.class, "cairt");
 
-        id = resolver.idFromValue(new Object());
-        assertEquals(Object.class.getName(), id);
+        builder.setClassToId(map);
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void invalidAddClassToIdNullClass() {
-        resolver.addClassToId(null, "id");
+    public void invalidSetClassToIdMapNotUniqueAlias() {
+        Map<Class<?>, String> map = new HashMap<Class<?>, String>();
+        map.put(ClassAliasIdResolverTest.class, "cairt");
+        map.put(Object.class, "cairt");
+
+        builder.setClassToId(map);
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void invalidAddClassToIdMapNullAlias() {
-        resolver.addClassToId(ClassAliasIdResolverTest.class, null);
+    public void invalidSetClassToIdMapNullAlias() {
+        Map<Class<?>, String> map = new HashMap<Class<?>, String>();
+        map.put(ClassAliasIdResolverTest.class, "cairt");
+        map.put(Object.class, null);
+
+        builder.setClassToId(map);
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void invalidAddClassToIdMapEmptyAlias() {
-        resolver.addClassToId(ClassAliasIdResolverTest.class, "");
+    public void invalidSetClassToIdMapEmptyAlias() {
+        Map<Class<?>, String> map = new HashMap<Class<?>, String>();
+        map.put(ClassAliasIdResolverTest.class, "cairt");
+        map.put(Object.class, "");
+
+        builder.setClassToId(map);
     }
 
 }

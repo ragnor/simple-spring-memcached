@@ -130,7 +130,7 @@ public class CacheFactory implements AddressChangeListener, FactoryBean<Cache>, 
 
     @Override
     public void changeAddresses(final List<InetSocketAddress> addresses) {
-        if (DISABLE_CACHE_PROPERTY_VALUE.equals(System.getProperty(DISABLE_CACHE_PROPERTY))) {
+        if (isCacheDisabled()) {
             LOGGER.warn("Cache disabled");
             return;
         }
@@ -157,7 +157,7 @@ public class CacheFactory implements AddressChangeListener, FactoryBean<Cache>, 
         // this factory creates only one single cache and return it if someone invoked this method twice or
         // more
 
-        if (DISABLE_CACHE_PROPERTY_VALUE.equals(System.getProperty(DISABLE_CACHE_PROPERTY))) {
+        if (isCacheDisabled()) {
             LOGGER.warn("Cache disabled");
             return null;
         }
@@ -183,6 +183,10 @@ public class CacheFactory implements AddressChangeListener, FactoryBean<Cache>, 
         }
 
         return cacheClientFactory.create(addrs, configuration);
+    }
+
+    private boolean isCacheDisabled() {
+        return DISABLE_CACHE_PROPERTY_VALUE.equals(System.getProperty(DISABLE_CACHE_PROPERTY));
     }
 
 }

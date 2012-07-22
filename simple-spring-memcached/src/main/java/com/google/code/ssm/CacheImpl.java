@@ -253,7 +253,7 @@ class CacheImpl implements Cache {
     }
 
     private SerializationType getSerializationType(final SerializationType serializationType) {
-        return serializationType != null ? serializationType : defaultSerializationType;
+        return (serializationType != null) ? serializationType : defaultSerializationType;
     }
 
     private void warn(final Exception e, final String format, final Object... args) {

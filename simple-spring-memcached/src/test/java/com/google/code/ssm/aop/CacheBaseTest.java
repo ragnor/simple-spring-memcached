@@ -17,21 +17,32 @@
 
 package com.google.code.ssm.aop;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
-import org.junit.BeforeClass;
+import org.junit.Before;
 import org.junit.Test;
-import org.slf4j.Logger;
+import org.mockito.Mockito;
 
-import com.google.code.ssm.aop.support.CacheKeyBuilderImpl;
+import com.google.code.ssm.Cache;
+import com.google.code.ssm.aop.support.AnnotationData;
 import com.google.code.ssm.aop.support.InvalidAnnotationException;
 import com.google.code.ssm.api.CacheKeyMethod;
 import com.google.code.ssm.api.ReadThroughMultiCache;
+import com.google.code.ssm.api.format.Serialization;
+import com.google.code.ssm.api.format.SerializationType;
 
 /**
  * 
@@ -40,20 +51,11 @@ import com.google.code.ssm.api.ReadThroughMultiCache;
  */
 public class CacheBaseTest {
 
-    private static CacheBase cut;
+    private CacheBase cut;
 
-    @BeforeClass
-    public static void beforeClass() {
-        cut = new CacheBase() {
-
-            @Override
-            protected Logger getLogger() {
-                return null;
-            }
-
-        };
-
-        cut.setCacheKeyBuilder(new CacheKeyBuilderImpl());
+    @Before
+    public void setUp() {
+        cut = new CacheBase();
     }
 
     /*
@@ -85,6 +87,7 @@ public class CacheBaseTest {
      * 
      * final String result = "momma"; assertEquals(result, cut.generateObjectId(method, new KeyObject(result))); }
      */
+
     @Test
     public void testReturnTypeChecking() throws Exception {
         Method method = null;
@@ -107,6 +110,121 @@ public class CacheBaseTest {
             fail("Expected Exception.");
         } catch (InvalidAnnotationException ex) {
             assertTrue(ex.getMessage().indexOf("requirement") != -1);
+        }
+    }
+
+    @Test
+    public void getSerializationType() throws Exception {
+        Method method = null;
+        SerializationType serializationType = null;
+
+        method = SerializationTypeTestObject.class.getMethod("methodA", (Class<?>[]) null);
+        serializationType = cut.getSerializationType(method);
+        assertEquals(SerializationType.JAVA, serializationType);
+
+        method = SerializationTypeTestObject.class.getMethod("methodB", (Class<?>[]) null);
+        serializationType = cut.getSerializationType(method);
+        assertEquals(SerializationType.JSON, serializationType);
+    }
+
+    @Test
+    public void addCache() {
+        String cacheName = "cache1";
+        Cache cache = Mockito.mock(Cache.class);
+        Mockito.when(cache.getName()).thenReturn(cacheName);
+        Mockito.when(cache.getAliases()).thenReturn(Arrays.asList("cacheA1", "cacheB1"));
+
+        cut.addCache(cache);
+
+        AnnotationData annotationData = new AnnotationData();
+        annotationData.setCacheName(cacheName);
+        assertSame(cache, cut.getCache(annotationData));
+
+        annotationData.setCacheName("cacheA1");
+        assertSame(cache, cut.getCache(annotationData));
+    }
+
+    @Test(expected = IllegalStateException.class)
+    public void invalidAddCacheDuplicateName() {
+        String cacheName = "cache1";
+        Cache cache1 = Mockito.mock(Cache.class);
+        Cache cache2 = Mockito.mock(Cache.class);
+
+        Mockito.when(cache1.getName()).thenReturn(cacheName);
+        Mockito.when(cache2.getName()).thenReturn(cacheName);
+
+        cut.addCache(cache1);
+        cut.addCache(cache2);
+    }
+
+    @Test(expected = IllegalStateException.class)
+    public void invalidAddCacheDuplicateAlias() {
+        Cache cache1 = Mockito.mock(Cache.class);
+        Cache cache2 = Mockito.mock(Cache.class);
+
+        Mockito.when(cache1.getName()).thenReturn("cache1");
+        Mockito.when(cache2.getName()).thenReturn("cache2");
+        Mockito.when(cache2.getAliases()).thenReturn(Arrays.asList("cache1"));
+
+        cut.addCache(cache1);
+        cut.addCache(cache2);
+    }
+
+    @Test
+    public void verifyTypeIsList() {
+        assertTrue(cut.verifyTypeIsList(List.class));
+        assertTrue(cut.verifyTypeIsList(ArrayList.class));
+        assertTrue(cut.verifyTypeIsList(LinkedList.class));
+        assertTrue(cut.verifyTypeIsList(ArrayList.class));
+
+        assertFalse(cut.verifyTypeIsList(Integer.class));
+        assertFalse(cut.verifyTypeIsList(Collection.class));
+        assertFalse(cut.verifyTypeIsList(Map.class));
+        assertFalse(cut.verifyTypeIsList(Set.class));
+    }
+
+    @Test
+    public void getUpdateData() throws Exception {
+        AnnotationData annotationData = new AnnotationData();
+        annotationData.setDataIndex(-1);
+        Object entity = new Object();
+
+        Object result = cut.getUpdateData(annotationData, null, null, entity);
+        assertSame(entity, result);
+
+        annotationData = new AnnotationData();
+        annotationData.setReturnDataIndex(true);
+        result = cut.getUpdateData(annotationData, null, null, entity);
+        assertSame(entity, result);
+
+        annotationData = new AnnotationData();
+        annotationData.setDataIndex(1);
+        Method method = UpdateData.class.getMethod("update", new Class[] { int.class, Object.class });
+        result = cut.getUpdateData(annotationData, method, new Object[] { 144, entity }, entity);
+        assertSame(entity, result);
+
+    }
+
+    @SuppressWarnings("unused")
+    @Serialization(SerializationType.JAVA)
+    private static class SerializationTypeTestObject {
+
+        public int methodA() {
+            return 1;
+        }
+
+        @Serialization(SerializationType.JSON)
+        public int methodB() {
+            return 1;
+        }
+
+    }
+
+    @SuppressWarnings("unused")
+    private static class UpdateData {
+
+        public void update(final int id, final Object entity) {
+
         }
     }
 

@@ -146,7 +146,7 @@ public class ReadThroughMultiCacheAdvice extends MultiCacheAdvice {
             String cacheKey;
 
             for (Object resultObject : results) {
-                cacheKey = getCacheBase().cacheKeyBuilder.getCacheKey(resultObject, data.getNamespace());
+                cacheKey = getCacheBase().getCacheKeyBuilder().getCacheKey(resultObject, data.getNamespace());
                 getCacheBase().getCache(coord.getAnnotationData()).setSilently(cacheKey, data.getExpiration(), resultObject,
                         serializationType);
                 coord.getMissedObjects().remove(coord.getKey2Obj().get(cacheKey));

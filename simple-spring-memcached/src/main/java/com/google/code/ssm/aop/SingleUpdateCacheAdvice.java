@@ -62,7 +62,7 @@ abstract class SingleUpdateCacheAdvice<T extends Annotation> extends CacheAdvice
 
             cacheKey = getCacheKey(data, jp.getArgs(), methodToCache.toString());
 
-            final Object dataObject = getCacheBase().<Object> getUpdateData(data, methodToCache, jp, retVal);
+            final Object dataObject = getCacheBase().<Object> getUpdateData(data, methodToCache, jp.getArgs(), retVal);
             final SerializationType serializationType = getCacheBase().getSerializationType(methodToCache);
             final Object submission = getCacheBase().getSubmission(dataObject);
             getCacheBase().getCache(data).set(cacheKey, data.getExpiration(), submission, serializationType);

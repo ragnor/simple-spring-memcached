@@ -30,13 +30,16 @@ public abstract class AbstractMemcacheClientWrapper implements CacheClient {
 
     @Override
     public void delete(final Collection<String> keys) throws TimeoutException, CacheException {
-        if (keys != null && keys.size() > 0) {
-            for (final String key : keys) {
-                if (key != null) {
-                    delete(key);
-                }
+        if (keys == null || keys.isEmpty()) {
+            return;
+        }
+
+        for (final String key : keys) {
+            if (key != null) {
+                delete(key);
             }
         }
+
     }
 
 }

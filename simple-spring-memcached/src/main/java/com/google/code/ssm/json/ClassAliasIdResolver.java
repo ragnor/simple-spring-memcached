@@ -38,9 +38,9 @@ import com.google.code.ssm.aop.support.PertinentNegativeNull;
  */
 public class ClassAliasIdResolver extends ClassNameIdResolver {
 
-    private Map<String, Class<?>> idToClass = new HashMap<String, Class<?>>();
+    private final Map<String, Class<?>> idToClass = new HashMap<String, Class<?>>();
 
-    private Map<Class<?>, String> classToId = new HashMap<Class<?>, String>();
+    private final Map<Class<?>, String> classToId = new HashMap<Class<?>, String>();
 
     public ClassAliasIdResolver(final JavaType baseType, final TypeFactory typeFactory, final Map<String, Class<?>> idToClass,
             final Map<Class<?>, String> classToId) {
@@ -79,29 +79,6 @@ public class ClassAliasIdResolver extends ClassNameIdResolver {
         }
 
         return _idFrom(value, type);
-    }
-
-    /**
-     * Registers mappings between classes and aliases (ids).
-     * 
-     * @param classToId
-     */
-    public void setClassToId(final Map<Class<?>, String> classToId) {
-
-        Map<String, Class<?>> reverseMap = new HashMap<String, Class<?>>();
-        for (Map.Entry<Class<?>, String> entry : classToId.entrySet()) {
-            Assert.notNull(entry.getKey(), "Class cannot be null: " + entry);
-            Assert.hasText(entry.getValue(), "Alias (id) cannot be null or contain only whitespaces" + entry);
-
-            if (reverseMap.put(entry.getValue(), entry.getKey()) != null) {
-                throw new IllegalArgumentException("Two or more classes with the same alias: " + entry.getValue());
-            }
-        }
-
-        this.classToId = classToId;
-        this.idToClass = reverseMap;
-
-        init();
     }
 
     /**

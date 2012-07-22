@@ -11,9 +11,9 @@ Changes in version 3.0.0 (2012-?)
 * sample project spring-cache-integration-test that shows how to use SSM as a Spring Cache backend
 * per method expiration time while using SSM as a backend for Spring 3.1 Cache
 * custom default transcoder
-* new serialization logic, for each type: java, json or custom serialization can be used
+* new serialization logic, for each type: java, json, provider or custom serialization can be used
 * json serialization stores information about type
-* remove dependency to external maven repositories, deploy spymemcached under changed groupId to central maven repository 
+* remove dependency to external maven repositories
 
 
 Changes in version 2.0.0 (2012-04-15)
