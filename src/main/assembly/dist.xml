@@ -1,9 +1,9 @@
-<assembly xmlns="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<assembly xmlns="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="
-  	http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.0 
-  	http://maven.apache.org/xsd/assembly-1.1.0.xsd">
+  	http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.2 
+  	http://maven.apache.org/xsd/assembly-1.1.2.xsd">
 
-	<id>bin_with_dependencies</id>
+	<id>dist</id>
 	<includeBaseDirectory>false</includeBaseDirectory>
 	<formats>
 		<format>zip</format>
@@ -13,28 +13,17 @@
 	<moduleSets>
 		<moduleSet>
  			<includeSubModules>false</includeSubModules>
-			<!-- Enable access to all projects in the current multimodule build! -->
-			<!-- <useAllReactorProjects>true</useAllReactorProjects> -->
-
-			<!-- Now, select which projects to include in this module-set. -->
-			<includes>
-				<include>${project.groupId}:simple-spring-memcached</include>
-				<include>${project.groupId}:spymemcached-provider</include>
-				<include>${project.groupId}:xmemcached-provider</include>
-				<include>${project.groupId}:spring-cache</include>
-				<include>${project.groupId}:integration-test</include>
-				<include>${project.groupId}:spring-cache-integration-test</include>
-			</includes>
 			<sources>
-				<outputDirectoryMapping>
-                    projects/${module.basedir.name}
-                </outputDirectoryMapping>
+				<outputDirectoryMapping>projects/${module.basedir.name}</outputDirectoryMapping>
         		<fileSets>
                     <fileSet>
                         <directory>/</directory>
                         <includes>
                             <include>**/pom.xml</include>
                             <include>**/src/**</include>
+                            <include>**/.settings/*</include>
+                            <include>**/.classpath</include>
+                            <include>**/.project</include>
                         </includes>
                     </fileSet>
                 </fileSets>
@@ -43,33 +32,58 @@
         		<outputDirectory>dist</outputDirectory>
         		<unpack>false</unpack>
       		</binaries>
-		</moduleSet>
-		<moduleSet>
-      		<binaries>
-        		<attachmentClassifier>javadoc</attachmentClassifier>
-        		<outputDirectory>docs</outputDirectory>
-        		<unpack>false</unpack>
-      		</binaries>
-		</moduleSet>
-		
-		<!-- <moduleSet>		
+		</moduleSet>		
+		<moduleSet>		
 			<includeSubModules>false</includeSubModules>
-			<sources>
-				<includeModuleDirectory>false</includeModuleDirectory>
-				<outputDirectory>src</outputDirectory>
-				<outputDirectoryMapping>
-                    src
-                </outputDirectoryMapping>
-        		<fileSets>
+			<sources>	
+				<outputDirectoryMapping>src</outputDirectoryMapping>
+        		 <fileSets>
                     <fileSet>
-                        <directory>*/target</directory>
+                        <directory>/target</directory>
                         <includes>
                             <include>**/*-sources.jar</include>
                         </includes>
                     </fileSet>
                 </fileSets>
       		</sources>
-		</moduleSet> -->
+		</moduleSet>
+		<!-- <moduleSet>
+			<includeSubModules>false</includeSubModules>
+			<binaries>
+				<outputDirectory>lib</outputDirectory>
+				<unpack>false</unpack>
+				<dependencySets>
+					<dependencySet>
+						<outputDirectory>lib</outputDirectory>
+						<useProjectArtifact>false</useProjectArtifact>
+						<scope>runtime</scope>
+						<excludes>
+							<exclude>com.google.code.simple-spring-memcached:*</exclude>
+						</excludes>
+						<includes>
+							<include>*:*</include>
+						</includes>
+					</dependencySet>
+					<dependencySet>
+						<outputDirectory>lib</outputDirectory>
+						<useProjectArtifact>false</useProjectArtifact>
+						<scope>runtime</scope>
+						<includes>
+							<include>com.google.code.simple-spring-memcached:spymemcached</include>
+						</includes>
+					</dependencySet>		
+					<dependencySet>
+						<outputDirectory>lib</outputDirectory>
+						<useProjectArtifact>false</useProjectArtifact>
+						<scope>test</scope>
+						<includes>
+							<include>log4j:log4j</include>
+							<include>org.slf4j:slf4j-log4j12</include>
+						</includes>
+					</dependencySet>
+				</dependencySets>					
+			</binaries>
+		</moduleSet>		 -->		
 	</moduleSets>
 
 	<fileSets>
@@ -77,55 +91,50 @@
 			<outputDirectory>/</outputDirectory>
 			<includes>
 				<include>changelog.txt</include>
+				<include>license.txt</include>
 			</includes>
 		</fileSet>
 		<fileSet>
 			<outputDirectory>/projects</outputDirectory>
 			<includes>
 				<include>pom.xml</include>
+				<include>.settings/*</include>
+                <include>.classpath</include>
+                <include>.project</include>
 				<include>readme.txt</include>
 				<include>run-tests.bat</include>
 				<include>start_memcached.sh</include>
 			</includes>
 		</fileSet>
-	 	<!-- <fileSet>
-	 		
-			<outputDirectory>${project.basedir}/../src</outputDirectory>
-			
-			<includes>
-				<include>**/*-sources.jar</include>
-			</includes>
-		</fileSet> -->
-	</fileSets>
-	
-	<!-- <fileSets>
 		<fileSet>
-			<directory>${project.basedir}</directory>
-			<outputDirectory>/</outputDirectory>
+			<directory>/target/site/apidocs/</directory>
+			<outputDirectory>/docs/javadoc-api</outputDirectory>
 			<includes>
-				<include>README*</include>
-				<include>LICENSE*</include>
-				<include>NOTICE*</include>
-			</includes>
-		</fileSet>
-		<fileSet>
-			<directory>${project.build.directory}/site</directory>
-			<outputDirectory>docs</outputDirectory>
-		</fileSet>
-		<fileSet>
-			<directory>${project.build.directory}</directory>
-			<outputDirectory>/</outputDirectory>
-			<includes>
-				<include>*.jar</include>
+				<include>*</include>
 			</includes>
 		</fileSet>
 	</fileSets>
+
 	<dependencySets>
 		<dependencySet>
 			<outputDirectory>lib</outputDirectory>
 			<useProjectArtifact>false</useProjectArtifact>
 			<scope>runtime</scope>
+			<excludes>
+				<exclude>${project.groupId}:*</exclude>
+			</excludes>
+			<includes>
+				<include>*:*</include>
+			</includes>
 		</dependencySet>
+		<dependencySet>
+			<outputDirectory>lib</outputDirectory>
+			<useProjectArtifact>false</useProjectArtifact>
+			<scope>runtime</scope>
+			<includes>
+				<include>${project.groupId}:spymemcached</include>
+			</includes>
+		</dependencySet>		
 		<dependencySet>
 			<outputDirectory>lib</outputDirectory>
 			<useProjectArtifact>false</useProjectArtifact>
@@ -135,5 +144,5 @@
 				<include>org.slf4j:slf4j-log4j12</include>
 			</includes>
 		</dependencySet>
-	</dependencySets> -->
+	</dependencySets>
 </assembly>

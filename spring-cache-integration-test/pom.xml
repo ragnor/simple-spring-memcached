@@ -51,10 +51,6 @@
 		<url>http://code.google.com/p/simple-spring-memcached/issues/list</url>
 	</issueManagement>
 
-	<properties>
-		<spring.version>3.1.2.RELEASE</spring.version>
-	</properties>
-
 	<dependencies>
 		<dependency>
 			<groupId>com.google.code.simple-spring-memcached</groupId>
@@ -68,25 +64,25 @@
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-core</artifactId>
-			<version>${spring.version}</version>
+			<version>${spring31.version}</version>
 			<!--$NO-MVN-MAN-VER$ -->
 		</dependency>
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-beans</artifactId>
-			<version>${spring.version}</version>
+			<version>${spring31.version}</version>
 			<!--$NO-MVN-MAN-VER$ -->
 		</dependency>
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-aop</artifactId>
-			<version>${spring.version}</version>
+			<version>${spring31.version}</version>
 			<!--$NO-MVN-MAN-VER$ -->
 		</dependency>
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-context</artifactId>
-			<version>${spring.version}</version>
+			<version>${spring31.version}</version>
 			<!--$NO-MVN-MAN-VER$ -->
 		</dependency>
 

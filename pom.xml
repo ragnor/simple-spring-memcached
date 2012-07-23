@@ -69,13 +69,14 @@
 	</modules>
 
 	<prerequisites>
-		<maven>2.2.1</maven>
+		<maven>3.0.4</maven>
 		<!-- use javac at least in version 1.6.30 otherwise you get 'incompatible types' errors -->
 		<!-- see: http://bugs.sun.com/view_bug.do?bug_id=6512707 -->
 	</prerequisites>
 
 	<properties>
 		<spring.version>3.0.7.RELEASE</spring.version>
+		<spring31.version>3.1.2.RELEASE</spring31.version>
 		<aspectj.version>1.6.8</aspectj.version>
 		<jackson.version>1.9.7</jackson.version>
 		<spymemcached.version>2.8.1</spymemcached.version>
@@ -194,11 +195,23 @@
 
 	<build>
 		<plugins>
+			<!-- For the release process, to create the artifact with all dependencies and docs, -->
+			<!-- run this command: --> 
+			<!-- "mvn clean package source:jar javadoc:aggregate assembly:assembly -Pxmemcached -Dspring.profiles.active=xmemcached" -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-assembly-plugin</artifactId>
+				<configuration>
+					<descriptors>
+						<descriptor>src/main/assembly/dist.xml</descriptor>
+					</descriptors>
+				</configuration>
+			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-javadoc-plugin</artifactId>
 				<configuration>
-					<excludePackageNames>com.google.code.ssm.test.*</excludePackageNames>
+					<excludePackageNames>com.google.code.ssm.test.*,com.google.code.ssm.spring.test.*	</excludePackageNames>
 					<offlineLinks>
 						<offlineLink>
 							<url>http://fnil.net/docs/xmemcached/</url>
@@ -252,11 +265,6 @@
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-assembly-plugin</artifactId>
 					<version>2.3</version>
-					<configuration>
-						<descriptors>
-							<descriptor>src/main/assembly/dist.xml</descriptor>
-						</descriptors>
-					</configuration>      	
 				</plugin>
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
@@ -271,7 +279,7 @@
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-enforcer-plugin</artifactId>
-					<version>1.1</version>
+					<version>1.1.1</version>
 				</plugin>
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
@@ -284,7 +292,7 @@
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-site-plugin</artifactId>
-					<version>2.3</version>
+					<version>3.1</version>
 				</plugin>
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
