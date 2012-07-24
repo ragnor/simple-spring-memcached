@@ -133,11 +133,11 @@ public interface Cache {
      * Gets counter from cache without incrementing.
      * 
      * @param cacheKey
-     * @return
+     * @return the value of counter
      * @throws CacheException
      * @throws TimeoutException
      */
-    Long getCounter(String cacheKey) throws TimeoutException, CacheException;
+    Long getCounter(final String cacheKey) throws TimeoutException, CacheException;
 
     /**
      * Sets initial value of counter.
@@ -148,7 +148,7 @@ public interface Cache {
      * @throws CacheException
      * @throws TimeoutException
      */
-    void setCounter(String cacheKey, int expiration, long value) throws TimeoutException, CacheException;
+    void setCounter(final String cacheKey, final int expiration, final long value) throws TimeoutException, CacheException;
 
     /**
      * Shutdowns cache.

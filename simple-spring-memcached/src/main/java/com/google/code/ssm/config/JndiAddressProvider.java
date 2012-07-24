@@ -30,10 +30,10 @@ import org.springframework.jndi.JndiTemplate;
 import org.springframework.util.Assert;
 
 /**
- * Gets servers' addresses from JNDI defined under key {@link #getJndiKey()}. If value under given JNDI key is not
- * defined or cannot be converted then value defined by {@link JndiAddressProvider#getAddress()} is used. The correct
- * value binded to JNDI key should be of type {@link String} with comma or whitespace separated list of servers'
- * addresses.
+ * Gets servers' addresses from JNDI defined under key {@link JndiAddressProvider#getJndiKey()}. If value under given
+ * JNDI key is not defined or cannot be converted then value defined by {@link JndiAddressProvider#getAddress()} is
+ * used. The correct value binded to JNDI key should be of type {@link String} with comma or whitespace separated list
+ * of servers' addresses.
  * 
  * @author Jakub Białek
  * @since 2.0.0
