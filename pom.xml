@@ -70,7 +70,8 @@
 
 	<prerequisites>
 		<maven>3.0.4</maven>
-		<!-- use javac at least in version 1.6.30 otherwise you get 'incompatible types' errors -->
+		<!-- use javac at least in version 1.6.30 otherwise you get 'incompatible 
+			types' errors -->
 		<!-- see: http://bugs.sun.com/view_bug.do?bug_id=6512707 -->
 	</prerequisites>
 
@@ -92,64 +93,10 @@
 	<dependencyManagement>
 		<dependencies>
 			<dependency>
-				<groupId>org.springframework</groupId>
-				<artifactId>spring-core</artifactId>
-				<version>${spring.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.springframework</groupId>
-				<artifactId>spring-beans</artifactId>
-				<version>${spring.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.springframework</groupId>
-				<artifactId>spring-aop</artifactId>
-				<version>${spring.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.springframework</groupId>
-				<artifactId>spring-context</artifactId>
-				<version>${spring.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.aspectj</groupId>
-				<artifactId>aspectjrt</artifactId>
-				<version>${aspectj.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.aspectj</groupId>
-				<artifactId>aspectjweaver</artifactId>
-				<version>${aspectj.version}</version>
-			</dependency>
-			<!-- it's spymemcached deployed to central repo -->
-			<dependency>
-				<groupId>com.google.code.simple-spring-memcached</groupId>
-				<artifactId>spymemcached</artifactId>
-				<version>${spymemcached.version}</version>
-				<optional>true</optional>
-			</dependency>
-			<dependency>
-				<groupId>com.googlecode.xmemcached</groupId>
-				<artifactId>xmemcached</artifactId>
-				<version>${xmemcached.version}</version>
-				<optional>true</optional>
-			</dependency>
-			<dependency>
-				<groupId>org.codehaus.jackson</groupId>
-				<artifactId>jackson-mapper-asl</artifactId>
-				<version>${jackson.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.slf4j</groupId>
-				<artifactId>slf4j-api</artifactId>
-				<version>${slf4j.version}</version>
-			</dependency>
-			<dependency>
 				<groupId>org.projectlombok</groupId>
 				<artifactId>lombok</artifactId>
 				<version>${lombok.version}</version>
 			</dependency>
-
 			<dependency>
 				<groupId>org.springframework</groupId>
 				<artifactId>spring-test</artifactId>
@@ -195,9 +142,11 @@
 
 	<build>
 		<plugins>
-			<!-- For the release process, to create the artifact with all dependencies and docs, -->
-			<!-- run this command: --> 
-			<!-- "mvn clean package source:jar javadoc:aggregate assembly:assembly -Pxmemcached -Dspring.profiles.active=xmemcached" -->
+			<!-- For the release process, to create the artifact with all dependencies 
+				and docs, -->
+			<!-- run this command: -->
+			<!-- "mvn clean package source:jar javadoc:aggregate assembly:assembly 
+				-Pxmemcached -Dspring.profiles.active=xmemcached" -->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-assembly-plugin</artifactId>
@@ -237,7 +186,7 @@
 					<author>true</author>
 					<keywords>true</keywords>
 				</configuration>
-			</plugin>			
+			</plugin>
 		</plugins>
 
 		<pluginManagement>

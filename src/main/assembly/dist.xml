@@ -47,43 +47,6 @@
                 </fileSets>
       		</sources>
 		</moduleSet>
-		<!-- <moduleSet>
-			<includeSubModules>false</includeSubModules>
-			<binaries>
-				<outputDirectory>lib</outputDirectory>
-				<unpack>false</unpack>
-				<dependencySets>
-					<dependencySet>
-						<outputDirectory>lib</outputDirectory>
-						<useProjectArtifact>false</useProjectArtifact>
-						<scope>runtime</scope>
-						<excludes>
-							<exclude>com.google.code.simple-spring-memcached:*</exclude>
-						</excludes>
-						<includes>
-							<include>*:*</include>
-						</includes>
-					</dependencySet>
-					<dependencySet>
-						<outputDirectory>lib</outputDirectory>
-						<useProjectArtifact>false</useProjectArtifact>
-						<scope>runtime</scope>
-						<includes>
-							<include>com.google.code.simple-spring-memcached:spymemcached</include>
-						</includes>
-					</dependencySet>		
-					<dependencySet>
-						<outputDirectory>lib</outputDirectory>
-						<useProjectArtifact>false</useProjectArtifact>
-						<scope>test</scope>
-						<includes>
-							<include>log4j:log4j</include>
-							<include>org.slf4j:slf4j-log4j12</include>
-						</includes>
-					</dependencySet>
-				</dependencySets>					
-			</binaries>
-		</moduleSet>		 -->		
 	</moduleSets>
 
 	<fileSets>

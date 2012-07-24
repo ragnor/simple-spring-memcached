@@ -59,6 +59,7 @@
 		<dependency>
 			<groupId>com.googlecode.xmemcached</groupId>
 			<artifactId>xmemcached</artifactId>
+			<version>${xmemcached.version}</version>
 		</dependency>
 
 		<dependency>

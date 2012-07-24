@@ -18,3 +18,7 @@ In both cases created artifacts support spymemcached and xmemcached.
    
 Because of the lombok library and bug in older JVM versions (http://bugs.sun.com/view_bug.do?bug_id=6512707) you may get 
 'incompatible types' errors in compilation. To prevent such errors use Java in version at least 1.6.30.
+
+
+Core modules of SSM: simple-spring-memcached, spymemcached-provider and xmemcached-provider require Spring 3.0.7.RELEASE.
+The spring-cache module which provides integration with Spring Cache abstraction requires Spring 3.1.2.RELEASE (Spring Cache was introduced in 3.1).

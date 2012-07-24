@@ -58,34 +58,6 @@
 			<version>${project.version}</version>
 		</dependency>
 
-		<!-- overwrite all spring dependencies to use 3.1.x -->
-		<!-- those overwrites are required because parent of this project uses 
-			spring 3.0.x -->
-		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-core</artifactId>
-			<version>${spring31.version}</version>
-			<!--$NO-MVN-MAN-VER$ -->
-		</dependency>
-		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-beans</artifactId>
-			<version>${spring31.version}</version>
-			<!--$NO-MVN-MAN-VER$ -->
-		</dependency>
-		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-aop</artifactId>
-			<version>${spring31.version}</version>
-			<!--$NO-MVN-MAN-VER$ -->
-		</dependency>
-		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-context</artifactId>
-			<version>${spring31.version}</version>
-			<!--$NO-MVN-MAN-VER$ -->
-		</dependency>
-
 		<dependency>
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-log4j12</artifactId>
@@ -129,7 +101,6 @@
 					<groupId>com.google.code.simple-spring-memcached</groupId>
 					<artifactId>xmemcached-provider</artifactId>
 					<version>${project.version}</version>
-					<type>jar</type>
 				</dependency>
 			</dependencies>
 		</profile>
@@ -141,7 +112,6 @@
 					<groupId>com.google.code.simple-spring-memcached</groupId>
 					<artifactId>spymemcached-provider</artifactId>
 					<version>${project.version}</version>
-					<type>jar</type>
 				</dependency>
 			</dependencies>
 		</profile>

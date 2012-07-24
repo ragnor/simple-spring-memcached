@@ -60,6 +60,7 @@
 		<dependency>
 			<groupId>com.google.code.simple-spring-memcached</groupId>
 			<artifactId>spymemcached</artifactId>
+			<version>${spymemcached.version}</version>
 		</dependency>
 
 		<dependency>
