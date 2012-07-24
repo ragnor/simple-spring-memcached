@@ -3,13 +3,13 @@ SIMPLE SPRING MEMCACHED CHANGELOG
 http://code.google.com/p/simple-spring-memcached/
 
 
-Changes in version 3.0.0 (2012-?)
+Changes in version 3.0.0 (2012-07-24)
 -------------------------------------
 
-* providers (spymemcached and xmemcached) in separated modules
 * integration with Spring 3.1 Cache Abstraction
-* sample project spring-cache-integration-test that shows how to use SSM as a Spring Cache backend
 * per method expiration time while using SSM as a backend for Spring 3.1 Cache
+* sample project spring-cache-integration-test that shows how to use SSM as a Spring Cache backend
+* providers (spymemcached and xmemcached) in separated modules
 * custom default transcoder
 * new serialization logic, for each type: java, json, provider or custom serialization can be used
 * json serialization stores information about type
