@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<groupId>org.sonatype.oss</groupId>
@@ -69,8 +70,7 @@
 
 	<prerequisites>
 		<maven>3.0.4</maven>
-		<!-- use javac at least in version 1.6.30 otherwise you get 'incompatible 
-			types' errors -->
+		<!-- use javac at least in version 1.6.30 otherwise you get 'incompatible types' errors -->
 		<!-- see: http://bugs.sun.com/view_bug.do?bug_id=6512707 -->
 	</prerequisites>
 
@@ -141,11 +141,9 @@
 
 	<build>
 		<plugins>
-			<!-- For the release process, to create the artifact with all dependencies 
-				and docs, -->
+			<!-- For the release process, to create the artifact with all dependencies and docs, -->
 			<!-- run this command: -->
-			<!-- "mvn clean package source:jar javadoc:aggregate assembly:assembly 
-				-Pxmemcached -Dspring.profiles.active=xmemcached" -->
+			<!-- "mvn clean package source:jar javadoc:aggregate assembly:assembly -Pxmemcached -Dspring.profiles.active=xmemcached" -->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-assembly-plugin</artifactId>
@@ -153,6 +151,7 @@
 					<descriptors>
 						<descriptor>src/main/assembly/dist.xml</descriptor>
 					</descriptors>
+					<finalName>simple-spring-memcached-${project.version}</finalName>
 				</configuration>
 			</plugin>
 			<plugin>
@@ -168,6 +167,8 @@
 				<inherited>false</inherited>
 				<configuration>
 					<excludePackageNames>com.google.code.ssm.test.*,com.google.code.ssm.spring.test.*</excludePackageNames>
+					<doctitle>Simple Spring Memcached ${project.version}</doctitle>
+					<windowtitle>Simple Spring Memcached ${project.version}</windowtitle>
 					<offlineLinks>
 						<offlineLink>
 							<url>http://fnil.net/docs/xmemcached/</url>
