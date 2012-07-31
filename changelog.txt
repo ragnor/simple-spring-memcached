@@ -3,6 +3,12 @@ SIMPLE SPRING MEMCACHED CHANGELOG
 http://code.google.com/p/simple-spring-memcached/
 
 
+Changes in version 3.0.1 (2012-07-31)
+-------------------------------------
+
+* remove log4j.properties from simple-spring-memcached module
+
+
 Changes in version 3.0.0 (2012-07-25)
 -------------------------------------
 
