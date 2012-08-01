@@ -57,10 +57,12 @@ public class SSMCache implements Cache {
         this.allowClear = allowClear;
     }
 
+    public SSMCache(final com.google.code.ssm.Cache cache, final int expiration) {
+        this(cache, expiration, false);
+    }
+
     public SSMCache(final SSMCache ssmCache, final int expiration) {
-        this.cache = ssmCache.cache;
-        this.expiration = expiration;
-        this.allowClear = ssmCache.allowClear;
+        this(ssmCache.cache, expiration, ssmCache.allowClear);
     }
 
     @Override
