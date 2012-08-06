@@ -1,0 +1,304 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+	elementFormDefault="qualified">
+
+	<xsd:annotation>
+		<xsd:documentation><![CDATA[
+	Simple Spring Memcached XML Beans Schema, version 3.0
+	Author: Jakub Białek
+
+	This defines a simple and consistent way of creating and configuring
+	caching layer base on Simple Spring Memcached (SSm).
+		]]></xsd:documentation>
+	</xsd:annotation>
+
+	<xs:complexType name="configuration" abstract="true">
+		<xs:attribute name="consistent-hashing" type="xs:boolean"
+			default="false" />
+		<xs:attribute name="use-binary-protocol" type="xs:boolean"
+			default="false" />
+		<xs:attribute name="operation-timeout" type="xs:integer">
+			<xs:annotation>
+				<xs:documentation><![CDATA[
+	Default operation timeout in milliseconds.
+				]]></xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+	</xs:complexType>
+
+	<xs:complexType name="spymemcachedConfiguration">
+		<xs:complexContent>
+			<xs:extension base="configuration">
+				<xs:attribute name="deamon" type="xs:boolean">
+					<xs:annotation>
+						<xs:documentation><![CDATA[
+	The daemon state of the IO thread (defaults to true).
+						]]></xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+				<xs:attribute name="failure-mode" type="failureMode" />
+				<xs:attribute name="hash-algorithm" type="hashAlgorithm" />
+				<xs:attribute name="locator-type" type="locator" />
+				<xs:attribute name="max-reconnect-delay" type="xs:integer" />
+				<xs:attribute name="op-queue-max-block-time" type="xs:long">
+					<xs:annotation>
+						<xs:documentation><![CDATA[
+	The maximum amount of time (in milliseconds) a client is willing to
+	wait for space to become available in an output queue.
+						]]></xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+				<xs:attribute name="read-buffer-size" type="xs:integer" />
+				<xs:attribute name="shouldOptimize" type="xs:boolean">
+					<xs:annotation>
+						<xs:documentation><![CDATA[
+	Set to false if the default operation optimization is not desirable.
+						]]></xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+				<xs:attribute name="timeout-exception-threshold" type="xs:integer" />
+				<xs:attribute name="use-nagle-algorithm" type="xs:boolean">
+					<xs:annotation>
+						<xs:documentation><![CDATA[
+	Set to true if you'd like to enable the Nagle algorithm.
+						]]></xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+				<!-- private Transcoder<Object> defaultTranscoder; -->
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<xs:simpleType name="failureMode">
+		<xs:restriction base="xs:token">
+			<xs:enumeration value="redistribute">
+				<xs:annotation>
+					<xs:documentation><![CDATA[
+	Move on to functional nodes when nodes fail.
+    In this failure mode, the failure of a node will cause its current queue
+    and future requests to move to the next logical node in the cluster for a
+    given key.
+						]]></xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="retry">
+				<xs:annotation>
+					<xs:documentation><![CDATA[
+	Continue to retry a failing node until it comes back up.
+    This failure mode is appropriate when you have a rare short downtime of a
+    memcached node that will be back quickly, and your app is written to not
+    wait very long for async command completion.
+						]]></xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="cancel">
+				<xs:annotation>
+					<xs:documentation><![CDATA[
+	Automatically cancel all operations heading towards a downed node.
+						]]></xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:simpleType name="hashAlgorithm">
+		<xs:restriction base="xs:token">
+			<xs:enumeration value="native_hash">
+				<xs:annotation>
+					<xs:documentation><![CDATA[
+	Native hash (String.hashCode()).
+						]]></xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="crc_hash">
+				<xs:annotation>
+					<xs:documentation><![CDATA[
+	CRC_HASH as used by the perl API. This will be more consistent both
+   	across multiple API users as well as java versions, but is mostly likely
+    significantly slower.
+						]]></xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="fnv1_64_hash">
+				<xs:annotation>
+					<xs:documentation><![CDATA[
+	FNV hashes are designed to be fast while maintaining a low collision rate.
+  	The FNV speed allows one to quickly hash lots of data while maintaining a
+    reasonable collision rate.
+						]]></xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="fnv1a_64_hash">
+				<xs:annotation>
+					<xs:documentation><![CDATA[
+	Variation of FNV.
+						]]></xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="fnv1_32_hash" />
+			<xs:enumeration value="fnv1a_32_hash" />
+			<xs:enumeration value="ketama_hash">
+				<xs:annotation>
+					<xs:documentation><![CDATA[
+	MD5-based hash algorithm used by ketama.
+						]]></xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:simpleType name="locator">
+		<xs:restriction base="xs:token">
+			<xs:enumeration value="array_mod">
+				<xs:annotation>
+					<xs:documentation><![CDATA[
+	Array modulus - the classic node location algorithm.
+						]]></xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="consistent">
+				<xs:annotation>
+					<xs:documentation><![CDATA[
+	Consistent hash algorithm.
+    This uses ketema's distribution algorithm, but may be used with any hash algorithm.
+						]]></xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="vbucket" />
+		</xs:restriction>
+	</xs:simpleType>
+
+
+	<xs:complexType name="xmemcachedConfiguration">
+		<xs:complexContent>
+			<xs:extension base="configuration">
+				<xs:attribute name="max-away-time" type="xs:integer" />
+				<xs:attribute name="connection-pool-size" type="xs:integer">
+					<xs:annotation>
+						<xs:documentation><![CDATA[
+	In a high concurrent enviroment,you may want to pool memcached
+	clients.But a xmemcached client has to start a reactor thread and some
+	thread pools,if you create too many clients,the cost is very large.
+	Xmemcached supports connection pool instreadof client pool.you can create
+	more connections to one or more memcached servers,and these connections
+	share the same reactor and thread pools,it will reduce the cost of
+	system. The default is 1.
+						]]></xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+				<!-- private Configuration configuration; -->
+				<xs:attribute name="failure-mode" type="xs:boolean">
+					<xs:annotation>
+						<xs:documentation><![CDATA[
+	Configure wheather to set client in failure mode.If set it to true,that
+	means you want to configure client in failure mode. Failure mode is that
+	when a memcached server is down,it would not taken from the server list
+	but marked as unavailable,and then further requests to this server will
+	be transformed to standby node if configured or throw an exception until
+	it comes back up.	
+						]]></xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+				<!-- private Map SocketOption, Object  socketOptions; -->
+				<xs:attribute name="heal-session-interval" type="xs:long">
+					<xs:annotation>
+						<xs:documentation><![CDATA[
+	If the memcached dump or network error cause connection closed,xmemcached
+	would try to heal the connection.The interval between reconnections is 2
+	seconds by default.	
+						]]></xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+				<xs:attribute name="merge-factor" type="xs:integer">
+					<xs:annotation>
+						<xs:documentation><![CDATA[
+	Set the merge factor,this factor determins how many 'get' commands would
+	be merge to one multi-get command. The default is 150.	
+						]]></xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+				<xs:attribute name="optimize-get" type="xs:boolean">
+					<xs:annotation>
+						<xs:documentation><![CDATA[
+	Enable/Disable merge many get commands to one multi-get command.true is
+	to enable it,false is to disable it. The default is true. Recommend users to
+	enable it.
+						]]></xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+				<xs:attribute name="optimize-merge-buffer" type="xs:boolean">
+					<xs:annotation>
+						<xs:documentation><![CDATA[
+	Enable/Disable merge many command's buffers to one big buffer fit
+	socket's send buffer size.Default is true.Recommend true.	
+						]]></xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+				<xs:attribute name="enable-heart-beat" type="xs:boolean" />
+				<xs:attribute name="primitive-as-string" type="xs:boolean">
+					<xs:annotation>
+						<xs:documentation><![CDATA[
+	Store all primitive type as string,defualt is false.
+						]]></xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+				<xs:attribute name="sanitize-keys" type="xs:boolean">
+					<xs:annotation>
+						<xs:documentation><![CDATA[
+	Enables/disables sanitizing keys by URLEncoding.
+						]]></xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+				<!-- private Transcoder defaultTranscoder; -->
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<xs:simpleType name="serialization">
+		<xs:restriction base="xs:token">
+			<xs:enumeration value="provider" />
+			<xs:enumeration value="json" />
+			<xs:enumeration value="java" />
+			<xs:enumeration value="custom" />
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:element name="cache">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:choice>
+					<xs:element ref="spymemcached" />
+					<xs:element ref="xmemcached" />
+				</xs:choice>
+				<xs:element ref="simple-address" />
+			</xs:sequence>
+			<xs:attribute name="default_serialization" type="serialization"
+				default="provider" />
+			<xs:attribute name="name" use="required" type="xs:string" />
+		</xs:complexType>
+	</xs:element>
+
+	<xs:element name="spymemcached">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="configuration" type="spymemcachedConfiguration"
+					minOccurs="0" />
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+
+	<xs:element name="xmemcached">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="configuration" type="xmemcachedConfiguration"
+					minOccurs="0" />
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+
+	<xs:element name="simple-address">
+		<xs:complexType>
+			<xs:attribute name="value" use="required" type="xs:NMTOKEN" />
+		</xs:complexType>
+	</xs:element>
+</xs:schema>
