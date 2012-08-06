@@ -4,7 +4,7 @@
 
 	<xsd:annotation>
 		<xsd:documentation><![CDATA[
-	Simple Spring Memcached XML Beans Schema, version 3.0
+	Simple Spring Memcached XML Core Schema, version 3.0
 	Author: Jakub Białek
 
 	This defines a simple and consistent way of creating and configuring
