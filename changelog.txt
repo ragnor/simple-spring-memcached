@@ -3,6 +3,12 @@ SIMPLE SPRING MEMCACHED CHANGELOG
 http://code.google.com/p/simple-spring-memcached/
 
 
+Changes in version 3.0.2 (2012-08-07)
+-------------------------------------
+
+* CacheFactory should be a DisposableBean to permit server shutdown
+
+
 Changes in version 3.0.1 (2012-07-31)
 -------------------------------------
 
