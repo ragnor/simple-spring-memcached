@@ -29,6 +29,7 @@ import lombok.Setter;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.util.Assert;
@@ -54,7 +55,7 @@ import com.google.code.ssm.transcoders.JsonTranscoder;
  * 
  */
 @Getter
-public class CacheFactory implements AddressChangeListener, FactoryBean<Cache>, InitializingBean {
+public class CacheFactory implements AddressChangeListener, FactoryBean<Cache>, InitializingBean, DisposableBean {
 
     public static final String DISABLE_CACHE_PROPERTY = "ssm.cache.disable";
 
@@ -129,20 +130,28 @@ public class CacheFactory implements AddressChangeListener, FactoryBean<Cache>, 
     }
 
     @Override
+    public void destroy() throws Exception {
+        if (cache != null) {
+            LOGGER.info("Shutdowning cache {}", cacheName);
+            cache.shutdown();
+        }
+    }
+
+    @Override
     public void changeAddresses(final List<InetSocketAddress> addresses) {
         if (isCacheDisabled()) {
-            LOGGER.warn("Cache disabled");
+            LOGGER.warn("Cache {} is disabled", cacheName);
             return;
         }
 
         try {
-            LOGGER.info("Creating new memcached client for new addresses: {}", addresses);
+            LOGGER.info("Creating new memcached client for cache {} with new addresses: {}", cacheName, addresses);
             CacheClient memcacheClient = createClient(addresses);
-            LOGGER.info("New memcached client created with addresses: {}", addresses);
+            LOGGER.info("New memcached client for cache {} was created with addresses: {}", cacheName, addresses);
             cache.changeCacheClient(memcacheClient);
         } catch (IOException e) {
             if (LOGGER.isErrorEnabled()) {
-                LOGGER.error("Cannot change memcached client to new one with addresses " + addresses, e);
+                LOGGER.error(String.format("Cannot change memcached client to new one with addresses %s", addresses), e);
             }
         }
     }
@@ -158,16 +167,16 @@ public class CacheFactory implements AddressChangeListener, FactoryBean<Cache>, 
         // more
 
         if (isCacheDisabled()) {
-            LOGGER.warn("Cache disabled");
+            LOGGER.warn("Cache {} is disabled", cacheName);
             return null;
         }
 
         if (cache != null) {
-            throw new IllegalStateException("This factory has already created memcached client");
+            throw new IllegalStateException(String.format("This factory has already created memcached client fro cache %s", cacheName));
         }
 
         if (this.configuration == null) {
-            throw new RuntimeException("The MemcachedConnectionBean must be defined!");
+            throw new RuntimeException(String.format("The MemcachedConnectionBean for cache %s must be defined!", cacheName));
         }
 
         List<InetSocketAddress> addrs = addressProvider.getAddresses();
@@ -179,7 +188,7 @@ public class CacheFactory implements AddressChangeListener, FactoryBean<Cache>, 
 
     private CacheClient createClient(final List<InetSocketAddress> addrs) throws IOException {
         if (addrs == null || addrs.isEmpty()) {
-            throw new IllegalArgumentException("No memcached addresses specified");
+            throw new IllegalArgumentException(String.format("No memcached addresses specified for cache %s", cacheName));
         }
 
         return cacheClientFactory.create(addrs, configuration);

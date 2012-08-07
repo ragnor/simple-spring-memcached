@@ -22,8 +22,6 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.concurrent.TimeoutException;
 
-import javax.annotation.PreDestroy;
-
 import lombok.Getter;
 
 import org.slf4j.Logger;
@@ -235,7 +233,6 @@ class CacheImpl implements Cache {
     }
 
     @Override
-    @PreDestroy
     public void shutdown() {
         cacheClient.shutdown();
     }
