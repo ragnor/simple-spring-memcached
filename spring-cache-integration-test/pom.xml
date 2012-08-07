@@ -3,7 +3,7 @@
 	<parent>
 		<groupId>com.google.code.simple-spring-memcached</groupId>
 		<artifactId>simple-spring-memcached-parent</artifactId>
-		<version>3.0.2</version>
+		<version>3.0.3-SNAPSHOT</version>
 	</parent>
 
 	<artifactId>spring-cache-integration-test</artifactId>
@@ -40,9 +40,9 @@
 	</mailingLists>
 
 	<scm>
-		<url>scm:svn:http://simple-spring-memcached.googlecode.com/svn/tags/simple-spring-memcached-parent-3.0.2/trunk</url>
-		<connection>scm:svn:http://simple-spring-memcached.googlecode.com/svn/tags/simple-spring-memcached-parent-3.0.2/trunk</connection>
-		<developerConnection>scm:svn:https://simple-spring-memcached.googlecode.com/svn/tags/simple-spring-memcached-parent-3.0.2/trunk</developerConnection>
+		<url>scm:svn:http://simple-spring-memcached.googlecode.com/svn/trunk</url>
+		<connection>scm:svn:http://simple-spring-memcached.googlecode.com/svn/trunk</connection>
+		<developerConnection>scm:svn:https://simple-spring-memcached.googlecode.com/svn/trunk</developerConnection>
 	</scm>
 
 	<issueManagement>
