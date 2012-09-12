@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2008-2009 Nelson Carpentier
+ * Copyright (c) 2008-2012 Nelson Carpentier, Jakub Białek
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
  * documentation files (the "Software"), to deal in the Software without restriction, including without limitation the
@@ -27,6 +27,7 @@ import com.google.code.ssm.api.CacheKeyMethod;
 /**
  * 
  * @author Nelson Carpentier
+ * @author Jakub Białek
  * 
  */
 public class CacheKeyMethodStoreImpl implements CacheKeyMethodStore { // NO_UCD
@@ -55,7 +56,15 @@ public class CacheKeyMethodStoreImpl implements CacheKeyMethodStore { // NO_UCD
         }
 
         if (targetMethod == null) {
-            targetMethod = keyClass.getMethod(DEFAULT_KEY_METHOD_NAME, (Class<?>[]) null);
+            // try to get from superclass
+            Class<?> superKeyClass = keyClass.getSuperclass();
+            if (superKeyClass != null) {
+                targetMethod = getKeyMethod(superKeyClass);
+            }
+
+            if (targetMethod == null || DEFAULT_KEY_METHOD_NAME.equals(targetMethod.getName())) {
+                targetMethod = keyClass.getMethod(DEFAULT_KEY_METHOD_NAME, (Class<?>[]) null);
+            }
         }
 
         add(keyClass, targetMethod);
