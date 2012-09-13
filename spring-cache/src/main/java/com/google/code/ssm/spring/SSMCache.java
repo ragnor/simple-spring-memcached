@@ -79,7 +79,6 @@ public class SSMCache implements Cache {
     public ValueWrapper get(final Object key) {
         Object value = null;
         try {
-            LOGGER.info("Get {} from {}", key, cache.getName());
             value = cache.get(getKey(key), null);
         } catch (TimeoutException e) {
             LOGGER.warn("An error has ocurred for cache " + getName() + " and key " + getKey(key), e);
@@ -88,9 +87,11 @@ public class SSMCache implements Cache {
         }
 
         if (value == null) {
+            LOGGER.info("Cache miss. Get by key {} from cache {}", key, cache.getName());
             return null;
         }
 
+        LOGGER.info("Cache hit. Get by key {} from cache {} value '{}'", new Object[] { key, cache.getName(), value });
         return value instanceof PertinentNegativeNull ? new SimpleValueWrapper(null) : new SimpleValueWrapper(value);
     }
 
@@ -98,7 +99,7 @@ public class SSMCache implements Cache {
     public void put(final Object key, final Object value) {
         if (key != null) {
             try {
-                LOGGER.info("Put '{}' under key {} to {}", new Object[] { value, key, cache.getName() });
+                LOGGER.info("Put '{}' under key {} to cache {}", new Object[] { value, key, cache.getName() });
 
                 Object store = value;
                 if (value == null) {
@@ -120,7 +121,7 @@ public class SSMCache implements Cache {
     public void evict(final Object key) {
         if (key != null) {
             try {
-                LOGGER.info("Evict {} from {}", key, cache.getName());
+                LOGGER.info("Evict {} from cache {}", key, cache.getName());
                 cache.delete(getKey(key));
             } catch (TimeoutException e) {
                 LOGGER.warn("An error has ocurred for cache " + getName() + " and key " + getKey(key), e);
@@ -135,9 +136,9 @@ public class SSMCache implements Cache {
     @Override
     public void clear() {
         if (!allowClear) {
-            LOGGER.error("Clearing cache '" + getName() + "' is not allowed. To enable it set allowClear to true. "
+            LOGGER.error("Clearing cache '{}' is not allowed. To enable it set allowClear to true. "
                     + "Make sure that caches don't overlap (one memcached instance isn't used by more than one cache) "
-                    + "otherwise clearing one cache will affect another.");
+                    + "otherwise clearing one cache will affect another.", getName());
             throw new IllegalStateException("Cannot clear cache " + getName());
         }
         try {
