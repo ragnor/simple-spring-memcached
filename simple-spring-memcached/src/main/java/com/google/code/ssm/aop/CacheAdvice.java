@@ -19,6 +19,7 @@ package com.google.code.ssm.aop;
 import java.lang.reflect.Method;
 
 import org.slf4j.Logger;
+import org.springframework.core.Ordered;
 
 import com.google.code.ssm.api.format.UseJson;
 
@@ -29,7 +30,7 @@ import com.google.code.ssm.api.format.UseJson;
  * 
  */
 @SuppressWarnings("deprecation")
-public abstract class CacheAdvice {
+public abstract class CacheAdvice implements Ordered {
 
     public static final String DISABLE_CACHE_PROPERTY = "ssm.cache.disable";
 
@@ -43,6 +44,11 @@ public abstract class CacheAdvice {
 
     public void setCacheBase(final CacheBase cacheBase) {
         this.cacheBase = cacheBase;
+    }
+
+    @Override
+    public int getOrder() {
+        return 0;
     }
 
     protected boolean isDisabled() {
