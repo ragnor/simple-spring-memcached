@@ -48,7 +48,7 @@ public abstract class CacheAdvice implements Ordered {
 
     @Override
     public int getOrder() {
-        return 0;
+        return cacheBase.getSettings().getOrder();
     }
 
     protected boolean isDisabled() {

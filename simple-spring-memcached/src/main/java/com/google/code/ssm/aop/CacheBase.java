@@ -30,10 +30,12 @@ import org.aspectj.lang.reflect.MethodSignature;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 
 import com.google.code.ssm.Cache;
+import com.google.code.ssm.Settings;
 import com.google.code.ssm.aop.support.AnnotationData;
 import com.google.code.ssm.aop.support.BridgeMethodMappingStore;
 import com.google.code.ssm.aop.support.BridgeMethodMappingStoreImpl;
@@ -62,12 +64,20 @@ public class CacheBase implements ApplicationContextAware, InitializingBean {
     // mapping cache zone <-> cache
     private final Map<String, Cache> caches = new HashMap<String, Cache>();
 
+    private Settings settings = new Settings();
+
     private ApplicationContext context;
 
     @Override
     public void afterPropertiesSet() throws Exception {
         for (Cache cache : context.getBeansOfType(Cache.class).values()) {
             addCache(cache);
+        }
+
+        try {
+            settings = context.getBean(Settings.class);
+        } catch (NoSuchBeanDefinitionException ex) {
+            LOG.info("Cannot obtain custom SSM settings, default is used", ex);
         }
     }
 
@@ -133,6 +143,10 @@ public class CacheBase implements ApplicationContextAware, InitializingBean {
     public <T> T getUpdateData(final AnnotationData data, final Method method, final Object[] args, final Object returnValue)
             throws Exception {
         return data.isReturnDataIndex() ? (T) returnValue : (T) Utils.getMethodArg(data.getDataIndex(), args, method.toString());
+    }
+
+    protected Settings getSettings() {
+        return settings;
     }
 
     protected Object getSubmission(final Object o) {
