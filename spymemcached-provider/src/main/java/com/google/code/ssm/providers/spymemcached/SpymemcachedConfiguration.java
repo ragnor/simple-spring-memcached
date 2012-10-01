@@ -17,6 +17,8 @@
 
 package com.google.code.ssm.providers.spymemcached;
 
+import lombok.Data;
+import lombok.EqualsAndHashCode;
 import net.spy.memcached.ConnectionFactoryBuilder;
 import net.spy.memcached.ConnectionFactoryBuilder.Locator;
 import net.spy.memcached.FailureMode;
@@ -33,6 +35,8 @@ import com.google.code.ssm.providers.CacheConfiguration;
  * @since 2.0.0
  * 
  */
+@Data
+@EqualsAndHashCode(callSuper = true)
 public class SpymemcachedConfiguration extends CacheConfiguration {
 
     private Boolean daemon;
@@ -55,104 +59,11 @@ public class SpymemcachedConfiguration extends CacheConfiguration {
 
     private Boolean useNagleAlgorithm;
 
+    /**
+     * default transcoder or null if not set
+     * 
+     * @since 3.0.0
+     */
     private Transcoder<Object> defaultTranscoder;
-
-    public Boolean getDaemon() {
-        return daemon;
-    }
-
-    public void setDaemon(final Boolean daemon) {
-        this.daemon = daemon;
-    }
-
-    public FailureMode getFailureMode() {
-        return failureMode;
-    }
-
-    public void setFailureMode(final FailureMode failureMode) {
-        this.failureMode = failureMode;
-    }
-
-    public HashAlgorithm getHashAlg() {
-        return hashAlg;
-    }
-
-    public void setHashAlg(final HashAlgorithm hashAlg) {
-        this.hashAlg = hashAlg;
-    }
-
-    public Locator getLocatorType() {
-        return locatorType;
-    }
-
-    public void setLocatorType(final Locator locatorType) {
-        this.locatorType = locatorType;
-    }
-
-    public Long getMaxReconnectDelay() {
-        return maxReconnectDelay;
-    }
-
-    public void setMaxReconnectDelay(final Long maxReconnectDelay) {
-        this.maxReconnectDelay = maxReconnectDelay;
-    }
-
-    public Long getOpQueueMaxBlockTime() {
-        return opQueueMaxBlockTime;
-    }
-
-    public void setOpQueueMaxBlockTime(final Long opQueueMaxBlockTime) {
-        this.opQueueMaxBlockTime = opQueueMaxBlockTime;
-    }
-
-    public Integer getReadBufferSize() {
-        return readBufferSize;
-    }
-
-    public void setReadBufferSize(final Integer readBufferSize) {
-        this.readBufferSize = readBufferSize;
-    }
-
-    public Boolean getShouldOptimize() {
-        return shouldOptimize;
-    }
-
-    public void setShouldOptimize(final Boolean shouldOptimize) {
-        this.shouldOptimize = shouldOptimize;
-    }
-
-    public Integer getTimeoutExceptionThreshold() {
-        return timeoutExceptionThreshold;
-    }
-
-    public void setTimeoutExceptionThreshold(final Integer timeoutExceptionThreshold) {
-        this.timeoutExceptionThreshold = timeoutExceptionThreshold;
-    }
-
-    public Boolean getUseNagleAlgorithm() {
-        return useNagleAlgorithm;
-    }
-
-    public void setUseNagleAlgorithm(final Boolean useNagleAlgorithm) {
-        this.useNagleAlgorithm = useNagleAlgorithm;
-    }
-
-    /**
-     * 
-     * @return default transcoder or null if not set
-     * @since 3.0.0
-     */
-    public Transcoder<Object> getDefaultTranscoder() {
-        return defaultTranscoder;
-    }
-
-    /**
-     * 
-     * @param defaultTranscoder
-     * @since 3.0.0
-     */
-    public void setDefaultTranscoder(final Transcoder<Object> defaultTranscoder) {
-        this.defaultTranscoder = defaultTranscoder;
-    }
 
 }
