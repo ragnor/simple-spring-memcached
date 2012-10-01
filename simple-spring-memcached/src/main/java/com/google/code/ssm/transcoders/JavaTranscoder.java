@@ -157,9 +157,9 @@ public class JavaTranscoder implements CacheTranscoder { // NO_UCD
                 bis.close();
             }
         } catch (IOException e) {
-            LOGGER.warn(String.format("Caught IOException decoding %d bytes of data", (in == null) ? 0 : in.length), e);
+            LOGGER.warn(String.format("Caught IOException decoding %d bytes of data", in.length), e);
         } catch (ClassNotFoundException e) {
-            LOGGER.warn(String.format("Caught CNFE decoding %d bytes of data", (in == null) ? 0 : in.length), e);
+            LOGGER.warn(String.format("Caught CNFE decoding %d bytes of data", in.length), e);
         } finally {
             close(is);
             close(bis);
@@ -219,16 +219,15 @@ public class JavaTranscoder implements CacheTranscoder { // NO_UCD
             while ((r = gis.read(buf)) > 0) {
                 bos.write(buf, 0, r);
             }
+
+            return bos.toByteArray();
         } catch (IOException e) {
-            LOGGER.warn("Failed to decompress data", e);
-            bos = null;
+            throw new RuntimeException("IO exception decompressing data");
         } finally {
             close(gis);
             close(bis);
             close(bos);
         }
-
-        return bos.toByteArray();
     }
 
     protected void close(final Closeable closeable) {

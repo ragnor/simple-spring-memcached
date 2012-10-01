@@ -57,7 +57,7 @@ public class BridgeMethodMappingStoreImpl implements BridgeMethodMappingStore {
         if (targetParamTypes == null) {
             throw new RuntimeException(String.format(
                     "Annotation [%s] must be defined on [%s] for bridge method [%s] with erased param types [%s]",
-                    BridgeMethodMappings.class.getName(), clazz.getName(), methodName, erasedParamTypes));
+                    BridgeMethodMappings.class.getName(), clazz.getName(), methodName, key));
         }
 
         return targetParamTypes;
@@ -93,7 +93,7 @@ public class BridgeMethodMappingStoreImpl implements BridgeMethodMappingStore {
             throw new InvalidAnnotationException(
                     String.format(
                             "@BridgeMethodMappings annotation on class [%s] defines two or more mappings for the same bridge method, method name [%s], erased param types: [%s]",
-                            clazz, methodName, erasedParamTypes));
+                            clazz, methodName, erasedParamTypesKey));
         }
         erasedParamTypesMap.put(erasedParamTypesKey, targetParamTypes);
     }
