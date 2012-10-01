@@ -54,7 +54,7 @@ public class JndiAddressProviderTest {
         List<InetSocketAddress> result = spy.getAddresses();
         assertNotNull(result);
         assertEquals(1, result.size());
-        assertEquals("127.0.0.1", result.get(0).getHostName());
+        assertEquals("127.0.0.1", result.get(0).getAddress().getHostAddress());
         assertEquals(11311, result.get(0).getPort());
 
     }
@@ -65,14 +65,14 @@ public class JndiAddressProviderTest {
         List<InetSocketAddress> result = jndiAdressProvider.getAddresses();
         assertNotNull(result);
         assertEquals(1, result.size());
-        assertEquals("127.0.0.1", result.get(0).getHostName());
+        assertEquals("127.0.0.1", result.get(0).getAddress().getHostAddress());
         assertEquals(11211, result.get(0).getPort());
 
         jndiAdressProvider = new JndiAddressProvider(null, "127.0.0.1:11211");
         result = jndiAdressProvider.getAddresses();
         assertNotNull(result);
         assertEquals(1, result.size());
-        assertEquals("127.0.0.1", result.get(0).getHostName());
+        assertEquals("127.0.0.1", result.get(0).getAddress().getHostAddress());
         assertEquals(11211, result.get(0).getPort());
     }
 
@@ -84,7 +84,7 @@ public class JndiAddressProviderTest {
         List<InetSocketAddress> result = spy.getAddresses();
         assertNotNull(result);
         assertEquals(1, result.size());
-        assertEquals("127.0.0.1", result.get(0).getHostName());
+        assertEquals("127.0.0.1", result.get(0).getAddress().getHostAddress());
         assertEquals(11211, result.get(0).getPort());
     }
 
@@ -96,7 +96,7 @@ public class JndiAddressProviderTest {
         List<InetSocketAddress> result = spy.getAddresses();
         assertNotNull(result);
         assertEquals(1, result.size());
-        assertEquals("127.0.0.1", result.get(0).getHostName());
+        assertEquals("127.0.0.1", result.get(0).getAddress().getHostAddress());
         assertEquals(11211, result.get(0).getPort());
     }
 

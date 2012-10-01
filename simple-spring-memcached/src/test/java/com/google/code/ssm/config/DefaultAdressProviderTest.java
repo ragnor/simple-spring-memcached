@@ -50,7 +50,7 @@ public class DefaultAdressProviderTest {
         List<InetSocketAddress> list = defaultAddressProvider.getAddresses();
         assertNotNull(list);
         assertEquals(1, list.size());
-        assertEquals("127.0.0.1", list.get(0).getHostName());
+        assertEquals("127.0.0.1", list.get(0).getAddress().getHostAddress());
         assertEquals(11211, list.get(0).getPort());
 
         defaultAddressProvider = new DefaultAddressProvider(address);
@@ -60,7 +60,7 @@ public class DefaultAdressProviderTest {
         list = defaultAddressProvider.getAddresses();
         assertNotNull(list);
         assertEquals(1, list.size());
-        assertEquals("127.0.0.1", list.get(0).getHostName());
+        assertEquals("127.0.0.1", list.get(0).getAddress().getHostAddress());
         assertEquals(11211, list.get(0).getPort());
     }
 
@@ -74,9 +74,9 @@ public class DefaultAdressProviderTest {
         List<InetSocketAddress> list = defaultAddressProvider.getAddresses();
         assertNotNull(list);
         assertEquals(2, list.size());
-        assertEquals("127.0.0.1", list.get(0).getHostName());
+        assertEquals("127.0.0.1", list.get(0).getAddress().getHostAddress());
         assertEquals(11211, list.get(0).getPort());
-        assertEquals("127.0.0.1", list.get(1).getHostName());
+        assertEquals("127.0.0.1", list.get(1).getAddress().getHostAddress());
         assertEquals(11311, list.get(1).getPort());
     }
 
