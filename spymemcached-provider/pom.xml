@@ -200,7 +200,11 @@
 								<goals>
 									<goal>cobertura</goal>
 								</goals>
+								<configuration>
+									<format>xml</format>
+								</configuration>
 							</execution>
+
 						</executions>
 					</plugin>
 					<plugin>
