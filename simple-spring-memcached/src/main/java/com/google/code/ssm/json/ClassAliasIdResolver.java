@@ -68,7 +68,7 @@ public class ClassAliasIdResolver extends ClassNameIdResolver {
             return idFromValueAndType(value, value.getClass());
         }
 
-        return _idFrom(value, null);
+        return _idFrom(null, null);
     }
 
     @Override
