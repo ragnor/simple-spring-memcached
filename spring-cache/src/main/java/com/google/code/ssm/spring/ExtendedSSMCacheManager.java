@@ -100,7 +100,7 @@ public class ExtendedSSMCacheManager extends SSMCacheManager {
         try {
             expiration = Integer.parseInt(expirationAsString);
         } catch (NumberFormatException ex) {
-            LOGGER.error("Cannnot separate expiration time from cache: '{}'", name);
+            LOGGER.error(String.format("Cannnot separate expiration time from cache: '%s'", name), ex);
         }
 
         return expiration;

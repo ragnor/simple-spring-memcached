@@ -222,7 +222,7 @@ public class JavaTranscoder implements CacheTranscoder { // NO_UCD
 
             return bos.toByteArray();
         } catch (IOException e) {
-            throw new RuntimeException("IO exception decompressing data");
+            throw new RuntimeException("IO exception decompressing data", e);
         } finally {
             close(gis);
             close(bis);
