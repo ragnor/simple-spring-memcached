@@ -6,7 +6,7 @@
 		<artifactId>simple-spring-memcached-parent</artifactId>
 		<version>3.0.3-SNAPSHOT</version>
 	</parent>
-	
+
 	<artifactId>jmemcached-maven-plugin</artifactId>
 	<packaging>maven-plugin</packaging>
 	<name>jmemcached-maven-plugin Maven Mojo</name>
@@ -29,7 +29,7 @@
 			</roles>
 		</developer>
 	</developers>
-	
+
 	<mailingLists>
 		<mailingList>
 			<name>Project Google group</name>
@@ -48,8 +48,13 @@
 
 	<issueManagement>
 		<url>http://code.google.com/p/simple-spring-memcached/issues/list</url>
-	</issueManagement>	
-	
+	</issueManagement>
+
+	<ciManagement>
+		<system>Jenkins at CloudBees</system>
+		<url>https://ragnor.ci.cloudbees.com/</url>
+	</ciManagement>
+
 	<dependencies>
 		<dependency>
 			<groupId>org.apache.maven</groupId>

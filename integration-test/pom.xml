@@ -56,6 +56,11 @@
 		<url>http://code.google.com/p/simple-spring-memcached/issues/list</url>
 	</issueManagement>
 
+	<ciManagement>
+		<system>Jenkins at CloudBees</system>
+		<url>https://ragnor.ci.cloudbees.com/</url>
+	</ciManagement>
+
 	<dependencies>
 		<dependency>
 			<groupId>com.google.code.simple-spring-memcached</groupId>
