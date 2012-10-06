@@ -97,27 +97,19 @@
 	<build>
 		<plugins>
 			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-failsafe-plugin</artifactId>
-				<version>2.12.4</version>
-				<executions>
-					<execution>
-						<goals>
-							<goal>integration-test</goal>
-							<goal>verify</goal>
-						</goals>
-					</execution>
-				</executions>
-				<configuration>
-					<includes>
-						<include>**/*.java</include>
-					</includes>
-				</configuration>
-			</plugin>
-			<plugin>
 				<groupId>com.google.code.simple-spring-memcached</groupId>
 				<artifactId>jmemcached-maven-plugin</artifactId>
 				<version>${project.version}</version>
+				<configuration>
+					<servers>
+						<server>
+							<port>11211</port>
+						</server>
+						<server>
+							<port>11212</port>
+						</server>
+					</servers>
+				</configuration>
 				<executions>
 					<execution>
 						<id>start-memcached</id>
@@ -159,6 +151,33 @@
 					<version>${project.version}</version>
 				</dependency>
 			</dependencies>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-failsafe-plugin</artifactId>
+						<version>2.12.4</version>
+						<executions>
+							<execution>
+								<goals>
+									<goal>integration-test</goal>
+									<goal>verify</goal>
+								</goals>
+							</execution>
+						</executions>
+						<configuration>
+							<includes>
+								<include>**/*.java</include>
+							</includes>
+							<systemPropertyVariables>
+								<spring.profiles.active>
+									xmemcached
+								</spring.profiles.active>
+							</systemPropertyVariables>
+						</configuration>
+					</plugin>
+				</plugins>
+			</build>
 		</profile>
 
 		<profile>
@@ -170,6 +189,33 @@
 					<version>${project.version}</version>
 				</dependency>
 			</dependencies>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-failsafe-plugin</artifactId>
+						<version>2.12.4</version>
+						<executions>
+							<execution>
+								<goals>
+									<goal>integration-test</goal>
+									<goal>verify</goal>
+								</goals>
+							</execution>
+						</executions>
+						<configuration>
+							<includes>
+								<include>**/*.java</include>
+							</includes>
+							<systemPropertyVariables>
+								<spring.profiles.active>
+									spymemcached
+								</spring.profiles.active>
+							</systemPropertyVariables>
+						</configuration>
+					</plugin>
+				</plugins>
+			</build>
 		</profile>
 
 		<profile>

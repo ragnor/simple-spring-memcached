@@ -118,6 +118,16 @@
 				<groupId>com.google.code.simple-spring-memcached</groupId>
 				<artifactId>jmemcached-maven-plugin</artifactId>
 				<version>${project.version}</version>
+				<configuration>
+					<servers>
+						<server>
+							<port>11211</port>
+						</server>
+						<server>
+							<port>11212</port>
+						</server>
+					</servers>
+				</configuration>
 				<executions>
 					<execution>
 						<id>start-memcached</id>

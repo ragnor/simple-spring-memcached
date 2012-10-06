@@ -20,10 +20,12 @@ package com.google.code.ssm.jmemcached.plugin;
 import org.apache.maven.plugin.MojoExecutionException;
 
 /**
+ * 
  * @author Jakub Białek
  * @since 3.1.0
  * @goal start
  * @phase pre-integration-test
+ * 
  */
 public class JmemcachedStartMojo extends AbstractJmemcachedMojo {
 

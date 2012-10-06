@@ -18,6 +18,8 @@
 package com.google.code.ssm.jmemcached.plugin;
 
 import java.net.InetSocketAddress;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.maven.plugin.AbstractMojo;
 
@@ -36,69 +38,91 @@ import com.thimbleware.jmemcached.storage.hash.ConcurrentLinkedHashMap;
  */
 public abstract class AbstractJmemcachedMojo extends AbstractMojo {
 
-    private static MemCacheDaemon<LocalCacheElement> daemon1;
+    /**
+     * 
+     * @parameter expression="${jmemcached.disable}" default-value="false"
+     */
+    protected boolean disabled;
 
-    private static MemCacheDaemon<LocalCacheElement> daemon2;
+    /**
+     * 
+     * @parameter
+     */
+    protected List<Server> servers;
 
     private static boolean started = false;
 
+    private static List<MemCacheDaemon<LocalCacheElement>> daemons;
+
+    public boolean isDisabled() {
+        return disabled;
+    }
+
+    public void setDisabled(final boolean disabled) {
+        this.disabled = disabled;
+    }
+
+    public List<Server> getServers() {
+        return servers;
+    }
+
+    public void setServers(final List<Server> servers) {
+        this.servers = servers;
+    }
+
     protected void start() {
-        if (started) {
+        if (disabled || servers == null) {
+            getLog().info("Skipping starting jmemcached daemons");
             return;
+        }
+
+        getLog().info("Startng jmemcached daemons: " + servers);
+        if (started) {
+            getLog().info("Jmemcached daemons are already started");
+            return;
+        }
+
+        MemCacheDaemon<LocalCacheElement> daemon;
+        daemons = new ArrayList<MemCacheDaemon<LocalCacheElement>>();
+        for (Server server : servers) {
+            getLog().debug("Creating memcached: " + server);
+            daemon = build(server);
+            getLog().debug("Starting memcached: " + server);
+            daemon.start();
+            getLog().info("Memcached has been started: " + server);
+            daemons.add(daemon);
         }
 
         started = true;
 
-        daemon1 = build(11211);
-        daemon2 = build(11212);
-
-        System.err.println("#########2###########");
-        Thread t = new Thread(new Runnable() {
-
-            @Override
-            public void run() {
-                daemon1.start();
-            }
-        });
-        t.setDaemon(false);
-        t.start();
-
-        t = new Thread(new Runnable() {
-
-            @Override
-            public void run() {
-                daemon2.start();
-            }
-        });
-        t.setDaemon(false);
-        t.start();
-
-    }
-
-    private static MemCacheDaemon<LocalCacheElement> build(final int port) {
-        MemCacheDaemon<LocalCacheElement> daemon = new MemCacheDaemon<LocalCacheElement>();
-
-        CacheStorage<Key, LocalCacheElement> storage = ConcurrentLinkedHashMap.create(ConcurrentLinkedHashMap.EvictionPolicy.FIFO, 1000,
-                100000);
-        daemon.setCache(new CacheImpl(storage));
-        daemon.setBinary(false);
-        daemon.setAddr(new InetSocketAddress("localhost", port));
-        daemon.setIdleTime(10);
-        daemon.setVerbose(true);
-
-        return daemon;
+        getLog().info("Jmemcached daemons have been started");
     }
 
     protected void stop() {
-        if (daemon1 != null && daemon1.isRunning()) {
-            daemon1.stop();
+        if (disabled) {
+            return;
         }
 
-        if (daemon2 != null && daemon2.isRunning()) {
-            daemon2.stop();
+        getLog().info("Stoping jmemcached daemons");
+
+        for (MemCacheDaemon<LocalCacheElement> daemon : daemons) {
+            daemon.stop();
         }
 
         started = false;
+        getLog().info("Jmemcached daemons have been stopped");
+    }
+
+    private MemCacheDaemon<LocalCacheElement> build(final Server server) {
+        MemCacheDaemon<LocalCacheElement> daemon = new MemCacheDaemon<LocalCacheElement>();
+
+        CacheStorage<Key, LocalCacheElement> storage = ConcurrentLinkedHashMap.create(ConcurrentLinkedHashMap.EvictionPolicy.FIFO,
+                server.getMaximumCapacity(), server.getMaximumMemoryCapacity());
+        daemon.setCache(new CacheImpl(storage));
+        daemon.setBinary(false);
+        daemon.setAddr(new InetSocketAddress("localhost", server.getPort()));
+
+        return daemon;
     }
 
 }

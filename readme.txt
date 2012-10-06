@@ -3,20 +3,23 @@ SIMPLE SPRING MEMCACHED 3.0.0 (2012)
 http://code.google.com/p/simple-spring-memcached/
 
 
-To build project and execute tests two memcached instances are required (on localhost, ports 11211 and 11212):
+To build project and execute (integration) tests two memcached instances are required (on localhost, ports 11211 and 11212). By default two embedded 
+memcached (jmemcached) instances are used. Those instances are started on ports 11211 and 11212 at the beginning of integration tests and stopped after 
+by maven plugin (jmemcached-maven-plugin). No need to install external memcached to build project and run integration tests. 
+To use external memcached set maven property: -Djmemcached.disable=true.
  memcached -d -m 256 -l 127.0.0.1 -p 11211
  memcached -d -m 256 -l 127.0.0.1 -p 11212
 
 Currently project can use one of two available providers:
  for xmemcached use: 
-   mvn clean package -Pxmemcached -Dspring.profiles.active=xmemcached
+   mvn clean package -Pxmemcached
  for spymemcached use:
-   mvn clean package -Pspymemcached -Dspring.profiles.active=spymemcached
+   mvn clean package -Pspymemcached
 Above maven and spring profile settings only define what provider will be used in integration tests. 
 In both cases created artifacts support spymemcached and xmemcached.
    
    
-Because of the lombok library and bug in older JVM versions (http://bugs.sun.com/view_bug.do?bug_id=6512707) you may get 
+Because of using the lombok library and bug in older JVM versions (http://bugs.sun.com/view_bug.do?bug_id=6512707) you may get 
 'incompatible types' errors in compilation. To prevent such errors use Java in version at least 1.6.30.
 
 
