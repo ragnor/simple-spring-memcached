@@ -190,7 +190,7 @@
 		<plugins>
 			<!-- For the release process, to create the artifact with all dependencies and docs, -->
 			<!-- run this command: -->
-			<!-- "mvn clean package source:jar javadoc:aggregate assembly:assembly -Pxmemcached -Dspring.profiles.active=xmemcached" -->
+			<!-- "mvn clean package source:jar javadoc:aggregate assembly:assembly -Pxmemcached" -->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-assembly-plugin</artifactId>
@@ -205,7 +205,7 @@
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-release-plugin</artifactId>
 				<configuration>
-					<arguments>-Dspring.profiles.active=xmemcached -Pxmemcached,release-sign-artifacts</arguments>
+					<arguments>-Pxmemcached,release-sign-artifacts</arguments>
 				</configuration>
 			</plugin>
 			<plugin>
