@@ -65,7 +65,7 @@
 		<dependency>
 			<groupId>com.google.code.simple-spring-memcached</groupId>
 			<artifactId>simple-spring-memcached</artifactId>
-			<version>${project.parent.version}</version>
+			<version>${project.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>commons-lang</groupId>
@@ -99,7 +99,6 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-failsafe-plugin</artifactId>
-				<version>2.12.4</version>
 				<executions>
 					<execution>
 						<goals>
@@ -250,7 +249,6 @@
 					<plugin>
 						<groupId>org.apache.maven.plugins</groupId>
 						<artifactId>maven-gpg-plugin</artifactId>
-						<version>1.1</version>
 						<executions>
 							<execution>
 								<id>sign-artifacts</id>

@@ -9,7 +9,7 @@
 
 	<artifactId>jmemcached-maven-plugin</artifactId>
 	<packaging>maven-plugin</packaging>
-	<name>jmemcached-maven-plugin Maven Mojo</name>
+	<name>jmemcached-maven-plugin</name>
 	<description>Maven plugin to run embedded memcached (jmemcached) in integration tests</description>
 	<url>http://code.google.com/p/simple-spring-memcached/</url>
 
@@ -59,7 +59,6 @@
 		<dependency>
 			<groupId>org.apache.maven</groupId>
 			<artifactId>maven-plugin-api</artifactId>
-			<version>3.0.4</version>
 		</dependency>
 		<dependency>
 			<groupId>com.thimbleware.jmemcached</groupId>
@@ -68,7 +67,6 @@
 		<dependency>
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-log4j12</artifactId>
-			<version>1.5.11</version>
 		</dependency>
 	</dependencies>
 </project>

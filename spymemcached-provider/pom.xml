@@ -65,7 +65,6 @@
 		<dependency>
 			<groupId>com.google.code.simple-spring-memcached</groupId>
 			<artifactId>spymemcached</artifactId>
-			<version>${spymemcached.version}</version>
 		</dependency>
 
 		<dependency>
@@ -171,7 +170,6 @@
 					<plugin>
 						<groupId>org.apache.maven.plugins</groupId>
 						<artifactId>maven-gpg-plugin</artifactId>
-						<version>1.1</version>
 						<executions>
 							<execution>
 								<id>sign-artifacts</id>

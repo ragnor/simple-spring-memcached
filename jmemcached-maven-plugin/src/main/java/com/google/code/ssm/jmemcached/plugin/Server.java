@@ -32,7 +32,7 @@ public class Server {
     private int maximumCapacity = 1000;
 
     /**
-     * Max cache size in bytes. Default around 10MB.
+     * Max cache size in bytes. Default about 10MB.
      */
     private long maximumMemoryCapacity = 10000000;
 
