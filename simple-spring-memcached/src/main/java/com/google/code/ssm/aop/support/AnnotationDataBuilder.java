@@ -67,11 +67,6 @@ public class AnnotationDataBuilder {
             UpdateAssignCache.class, //
             InvalidateAssignCache.class);
 
-    /*
-     * private static final Set<Class<? extends Annotation>> SINGLES = ImmutableSet.of( // ReadThroughSingleCache.class,
-     * // UpdateSingleCache.class, // InvalidateSingleCache.class, // ReadCounterFromCache.class, //
-     * UpdateCounterInCache.class);
-     */
     private static final Set<Class<? extends Annotation>> MULTIS = ImmutableSet.of( //
             ReadThroughMultiCache.class, //
             UpdateMultiCache.class, //

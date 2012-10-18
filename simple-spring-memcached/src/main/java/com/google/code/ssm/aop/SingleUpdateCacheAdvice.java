@@ -58,7 +58,6 @@ abstract class SingleUpdateCacheAdvice<T extends Annotation> extends CacheAdvice
             final Method methodToCache = getCacheBase().getMethodToCache(jp);
             final T annotation = methodToCache.getAnnotation(annotationClass);
             final AnnotationData data = AnnotationDataBuilder.buildAnnotationData(annotation, annotationClass, methodToCache);
-            verifyNoUseJsonAnnotation(methodToCache);
 
             cacheKey = getCacheKey(data, jp.getArgs(), methodToCache.toString());
 

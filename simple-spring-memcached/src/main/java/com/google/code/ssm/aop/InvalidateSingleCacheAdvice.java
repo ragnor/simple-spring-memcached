@@ -62,7 +62,6 @@ public class InvalidateSingleCacheAdvice extends CacheAdvice {
             methodToCache = getCacheBase().getMethodToCache(pjp);
             final InvalidateSingleCache annotation = methodToCache.getAnnotation(InvalidateSingleCache.class);
             data = AnnotationDataBuilder.buildAnnotationData(annotation, InvalidateSingleCache.class, methodToCache);
-            verifyNoUseJsonAnnotation(methodToCache);
             if (!data.isReturnKeyIndex()) {
                 cacheKey = getCacheBase().getCacheKeyBuilder().getCacheKey(data, pjp.getArgs(), methodToCache.toString());
             }

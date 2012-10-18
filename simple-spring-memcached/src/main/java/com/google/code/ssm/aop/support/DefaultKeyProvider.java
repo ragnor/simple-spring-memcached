@@ -21,7 +21,6 @@ package com.google.code.ssm.aop.support;
 import java.lang.reflect.Method;
 import java.security.InvalidParameterException;
 
-
 /**
  * 
  * @author Nelson Carpentier
@@ -59,7 +58,7 @@ public class DefaultKeyProvider implements KeyProvider { // NO_UCD
             throw new InvalidParameterException("The key objects must be defined.");
         }
 
-        final String[] results = new String[(keyObjects.length)];
+        final String[] results = new String[keyObjects.length];
         for (int i = 0; i < keyObjects.length; i++) {
             results[i] = generateKey(keyObjects[i]);
         }

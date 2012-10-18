@@ -58,7 +58,6 @@ abstract class SingleReadCacheAdvice<T extends Annotation> extends CacheAdvice {
         try {
             final Method methodToCache = getCacheBase().getMethodToCache(pjp);
             getCacheBase().verifyReturnTypeIsNoVoid(methodToCache, annotationClass);
-            verifyNoUseJsonAnnotation(methodToCache);
             annotation = methodToCache.getAnnotation(annotationClass);
             serializationType = getCacheBase().getSerializationType(methodToCache);
             data = AnnotationDataBuilder.buildAnnotationData(annotation, annotationClass, methodToCache);
