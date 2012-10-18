@@ -15,58 +15,30 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package com.google.code.ssm.util;
-
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
+package com.google.code.ssm.test.cache;
 
 /**
  * 
- * Simple replacement for guava ImmutableSet.
- * 
  * @author Jakub Białek
- * @since 3.0.0
+ * @since 3.1.1
  * 
  */
-public class ImmutableSet {
+public interface CacheConst {
 
-    private ImmutableSet() {
+    String ALPHA = "Alpha";
 
-    }
+    String BRAVO = "Bravo";
 
-    public static <E> Set<E> of(final E e1) {
-        Set<E> set = new HashSet<E>(1, 1);
-        set.add(e1);
+    String CHARLIE = "Charlie";
 
-        return Collections.unmodifiableSet(set);
-    }
+    String DELTA = "Delta";
 
-    public static <E> Set<E> of(final E e1, final E e2) {
-        Set<E> set = new HashSet<E>(2, 1);
-        set.add(e1);
-        set.add(e2);
+    String ECHO = "Echo";
 
-        return Collections.unmodifiableSet(set);
-    }
+    String OMEGA = "Omega";
 
-    public static <E> Set<E> of(final E e1, final E e2, final E e3) {
-        Set<E> set = new HashSet<E>(3, 1);
-        set.add(e1);
-        set.add(e2);
-        set.add(e3);
+    String MULTI = "multi";
 
-        return Collections.unmodifiableSet(set);
-    }
-
-    public static <E> Set<E> of(final E e1, final E e2, final E e3, final E e4) {
-        Set<E> set = new HashSet<E>(4, 1);
-        set.add(e1);
-        set.add(e2);
-        set.add(e3);
-        set.add(e4);
-
-        return Collections.unmodifiableSet(set);
-    }
+    String BAGGINS = "Baggins";
 
 }

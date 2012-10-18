@@ -17,7 +17,7 @@
 
 package com.google.code.ssm.test.svc;
 
-import java.util.*;
+import java.util.List;
 
 /**
  * 
@@ -26,21 +26,20 @@ import java.util.*;
  */
 public interface TestSvc {
 
-	public String getDateString(final String key);
+    public String getDateString(final String key);
 
     public void overrideDateString(final int trash, final String key, final String overrideData);
-    
+
     public List<String> getTimestampValues(final List<Long> keys);
 
-	public String updateTimestampValue(final Long key);
+    public String updateTimestampValue(final Long key);
 
-	public List<String> updateTimestamValues(final List<Long> keys);
+    public List<String> updateTimestamValues(final List<Long> keys);
 
-    public void overrideTimestampValues(final int trash, final List<Long> keys,
-                                        final String nuthin, final List<String> overrideData);
-    
+    public void overrideTimestampValues(final int trash, final List<Long> keys, final String nuthin, final List<String> overrideData);
+
     public String getRandomString(final Long key);
-    
+
     public void updateRandomString(final Long key);
 
     public Long updateRandomStringAgain(final Long key);
@@ -56,16 +55,15 @@ public interface TestSvc {
     public void invalidateAssignStrings();
 
     public void updateAssignStrings(final List<String> newData);
-    
-    public void increment(String key);
-    
-    public void decrement(String key);
-    
-    public long getCounter(String key);
 
-	void update(String key, Long value);
-    
-	void invalidate(String key);    
+    public void increment(final String key);
+
+    public void decrement(final String key);
+
+    public long getCounter(final String key);
+
+    void update(final String key, final Long value);
+
+    void invalidate(final String key);
 
 }
-

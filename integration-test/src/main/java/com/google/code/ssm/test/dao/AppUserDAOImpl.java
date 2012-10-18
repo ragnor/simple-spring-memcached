@@ -50,9 +50,9 @@ public class AppUserDAOImpl implements AppUserDAO {
 
     private static final String LIST_NS = PREFIX + "user/l";
 
-    private static final Map<AppUserPK, AppUser> map = new ConcurrentHashMap<AppUserPK, AppUser>();
+    private static final Map<AppUserPK, AppUser> MAP = new ConcurrentHashMap<AppUserPK, AppUser>();
 
-    private static final Map<Integer, List<AppUser>> userIdApp = new ConcurrentHashMap<Integer, List<AppUser>>();
+    private static final Map<Integer, List<AppUser>> USER_ID_MAP = new ConcurrentHashMap<Integer, List<AppUser>>();
 
     public AppUserDAOImpl() {
 
@@ -61,11 +61,11 @@ public class AppUserDAOImpl implements AppUserDAO {
     @Override
     @UpdateSingleCache(namespace = SINGLE_NS, expiration = 2)
     public AppUserPK create(@ParameterDataUpdateContent @ParameterValueKeyProvider AppUser entity) {
-        map.put(entity.getPK(), entity);
-        List<AppUser> list = userIdApp.get(entity.getUserId());
+        MAP.put(entity.getPK(), entity);
+        List<AppUser> list = USER_ID_MAP.get(entity.getUserId());
         if (list == null) {
             list = new ArrayList<AppUser>();
-            userIdApp.put(entity.getUserId(), list);
+            USER_ID_MAP.put(entity.getUserId(), list);
         }
         list.add(entity);
 
@@ -83,11 +83,11 @@ public class AppUserDAOImpl implements AppUserDAO {
     @ReturnDataUpdateContent
     public AppUser update(@ParameterValueKeyProvider AppUser entity) {
         AppUser appUser = entity;
-        map.put(entity.getPK(), entity);
-        List<AppUser> list = userIdApp.get(entity.getUserId());
+        MAP.put(entity.getPK(), entity);
+        List<AppUser> list = USER_ID_MAP.get(entity.getUserId());
         if (list == null) {
             list = new ArrayList<AppUser>();
-            userIdApp.put(entity.getUserId(), list);
+            USER_ID_MAP.put(entity.getUserId(), list);
         }
         list.add(entity);
 
@@ -100,8 +100,8 @@ public class AppUserDAOImpl implements AppUserDAO {
     @Override
     @InvalidateSingleCache(namespace = SINGLE_NS)
     public void remove(@ParameterValueKeyProvider AppUserPK pk) {
-        AppUser appUser = map.remove(pk);
-        List<AppUser> list = userIdApp.get(pk.getUserId());
+        AppUser appUser = MAP.remove(pk);
+        List<AppUser> list = USER_ID_MAP.get(pk.getUserId());
         if (list != null) {
             list.remove(appUser);
         }
@@ -113,7 +113,7 @@ public class AppUserDAOImpl implements AppUserDAO {
             @ParameterValueKeyProvider(order = 1) final List<Integer> appsIds) {
         List<AppUser> list = new ArrayList<AppUser>();
         for (Integer appId : appsIds) {
-            AppUser au = map.get(new AppUserPK(userId, appId));
+            AppUser au = MAP.get(new AppUserPK(userId, appId));
             if (au != null) {
                 list.add(au);
             }
@@ -126,7 +126,7 @@ public class AppUserDAOImpl implements AppUserDAO {
     @ReadThroughSingleCache(namespace = LIST_NS, expiration = 0)
     public List<Integer> getAppIdList(@ParameterValueKeyProvider(order = 0) int userId,
             @ParameterValueKeyProvider(order = 1) boolean authorized) {
-        List<AppUser> list = userIdApp.get(userId);
+        List<AppUser> list = USER_ID_MAP.get(userId);
         List<Integer> result = new ArrayList<Integer>();
         if (list != null) {
             for (AppUser appUser : list) {
@@ -145,7 +145,7 @@ public class AppUserDAOImpl implements AppUserDAO {
             @ParameterValueKeyProvider(order = 0) List<Integer> userIds) {
         List<AppUser> list = new ArrayList<AppUser>();
         for (Integer userId : userIds) {
-            AppUser au = map.get(new AppUserPK(userId, applicationId));
+            AppUser au = MAP.get(new AppUserPK(userId, applicationId));
             if (au != null && au.isEnabled()) {
                 list.add(au);
             }
@@ -173,7 +173,7 @@ public class AppUserDAOImpl implements AppUserDAO {
     @UpdateSingleCache(namespace = SINGLE_NS, expiration = 0)
     @ReturnDataUpdateContent
     public AppUser getByPKFromDB(@ParameterValueKeyProvider AppUserPK pk) {
-        AppUser appUser = map.get(pk);
+        AppUser appUser = MAP.get(pk);
 
         assert appUser == null || appUser.getApplicationId() == pk.getApplicationId();
         assert appUser == null || appUser.getUserId() == pk.getUserId();

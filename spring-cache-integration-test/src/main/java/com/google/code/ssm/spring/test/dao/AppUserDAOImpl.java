@@ -43,9 +43,9 @@ public class AppUserDAOImpl implements AppUserDAO {
 
     private static final String CLEARABLE_CACHE_NAME = "clearableCache";
 
-    private static final Map<AppUserPK, AppUser> map = new ConcurrentHashMap<AppUserPK, AppUser>();
+    private static final Map<AppUserPK, AppUser> MAP = new ConcurrentHashMap<AppUserPK, AppUser>();
 
-    private static final Map<Integer, List<AppUser>> userIdApp = new ConcurrentHashMap<Integer, List<AppUser>>();
+    private static final Map<Integer, List<AppUser>> USER_ID_MAP = new ConcurrentHashMap<Integer, List<AppUser>>();
 
     public AppUserDAOImpl() {
 
@@ -54,11 +54,11 @@ public class AppUserDAOImpl implements AppUserDAO {
     @Override
     @CachePut(value = USER_CACHE_NAME, key = "#entity.cacheKey()")
     public AppUser create(final AppUser entity) {
-        map.put(entity.getPK(), entity);
-        List<AppUser> list = userIdApp.get(entity.getUserId());
+        MAP.put(entity.getPK(), entity);
+        List<AppUser> list = USER_ID_MAP.get(entity.getUserId());
         if (list == null) {
             list = new ArrayList<AppUser>();
-            userIdApp.put(entity.getUserId(), list);
+            USER_ID_MAP.put(entity.getUserId(), list);
         }
         list.add(entity);
 
@@ -75,11 +75,11 @@ public class AppUserDAOImpl implements AppUserDAO {
     @CachePut(value = USER_CACHE_NAME, key = "#entity.cacheKey()")
     public AppUser update(final AppUser entity) {
         AppUser appUser = entity;
-        map.put(entity.getPK(), entity);
-        List<AppUser> list = userIdApp.get(entity.getUserId());
+        MAP.put(entity.getPK(), entity);
+        List<AppUser> list = USER_ID_MAP.get(entity.getUserId());
         if (list == null) {
             list = new ArrayList<AppUser>();
-            userIdApp.put(entity.getUserId(), list);
+            USER_ID_MAP.put(entity.getUserId(), list);
         }
         list.add(entity);
 
@@ -92,8 +92,8 @@ public class AppUserDAOImpl implements AppUserDAO {
     @Override
     @CacheEvict(value = USER_CACHE_NAME, key = "#pk.cacheKey()")
     public void remove(final AppUserPK pk) {
-        AppUser appUser = map.remove(pk);
-        List<AppUser> list = userIdApp.get(pk.getUserId());
+        AppUser appUser = MAP.remove(pk);
+        List<AppUser> list = USER_ID_MAP.get(pk.getUserId());
         if (list != null) {
             list.remove(appUser);
         }
@@ -102,7 +102,7 @@ public class AppUserDAOImpl implements AppUserDAO {
     @Override
     @CacheEvict(value = USER_CACHE_NAME, allEntries = true)
     public void removeAllUsers() {
-        map.clear();
+        MAP.clear();
     }
 
     @Override
@@ -112,7 +112,7 @@ public class AppUserDAOImpl implements AppUserDAO {
     }
 
     private AppUser getByPKFromDB(final AppUserPK pk) {
-        AppUser appUser = map.get(pk);
+        AppUser appUser = MAP.get(pk);
 
         assert appUser == null || appUser.getApplicationId() == pk.getApplicationId();
         assert appUser == null || appUser.getUserId() == pk.getUserId();

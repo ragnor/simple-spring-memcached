@@ -21,6 +21,10 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.commons.lang.RandomStringUtils;
+import org.apache.commons.lang.math.RandomUtils;
+import org.springframework.stereotype.Repository;
+
 import com.google.code.ssm.api.InvalidateAssignCache;
 import com.google.code.ssm.api.InvalidateMultiCache;
 import com.google.code.ssm.api.InvalidateSingleCache;
@@ -38,10 +42,7 @@ import com.google.code.ssm.api.counter.DecrementCounterInCache;
 import com.google.code.ssm.api.counter.IncrementCounterInCache;
 import com.google.code.ssm.api.counter.ReadCounterFromCache;
 import com.google.code.ssm.api.counter.UpdateCounterInCache;
-
-import org.apache.commons.lang.RandomStringUtils;
-import org.apache.commons.lang.math.RandomUtils;
-import org.springframework.stereotype.Repository;
+import com.google.code.ssm.test.cache.CacheConst;
 
 /**
  * 
@@ -51,7 +52,8 @@ import org.springframework.stereotype.Repository;
 @Repository("testDao")
 public class TestDAOImpl implements TestDAO {
 
-    @ReadThroughSingleCache(namespace = "Alpha", expiration = 30)
+    @Override
+    @ReadThroughSingleCache(namespace = CacheConst.ALPHA, expiration = 30)
     public String getDateString(@ParameterValueKeyProvider final String key) {
         final Date now = new Date();
         try {
@@ -61,12 +63,14 @@ public class TestDAOImpl implements TestDAO {
         return now.toString() + ":" + now.getTime();
     }
 
-    @UpdateSingleCache(namespace = "Alpha", expiration = 30)
+    @Override
+    @UpdateSingleCache(namespace = CacheConst.ALPHA, expiration = 30)
     public void overrideDateString(final int trash, @ParameterValueKeyProvider final String key,
             @ParameterDataUpdateContent final String overrideData) {
     }
 
-    @ReadThroughMultiCache(namespace = "Bravo", expiration = 300)
+    @Override
+    @ReadThroughMultiCache(namespace = CacheConst.BRAVO, expiration = 300)
     public List<String> getTimestampValues(@ParameterValueKeyProvider final List<Long> keys) {
         final List<String> results = new ArrayList<String>();
         try {
@@ -80,7 +84,8 @@ public class TestDAOImpl implements TestDAO {
         return results;
     }
 
-    @UpdateSingleCache(namespace = "Bravo", expiration = 300)
+    @Override
+    @UpdateSingleCache(namespace = CacheConst.BRAVO, expiration = 300)
     @ReturnDataUpdateContent
     public String updateTimestampValue(@ParameterValueKeyProvider final Long key) {
         try {
@@ -88,11 +93,11 @@ public class TestDAOImpl implements TestDAO {
         } catch (InterruptedException ex) {
         }
         final Long now = new Date().getTime();
-        final String result = now.toString() + "-U-" + key.toString();
-        return result;
+        return now.toString() + "-U-" + key.toString();
     }
 
-    @UpdateMultiCache(namespace = "Bravo", expiration = 300)
+    @Override
+    @UpdateMultiCache(namespace = CacheConst.BRAVO, expiration = 300)
     @ReturnDataUpdateContent
     public List<String> updateTimestamValues(@ParameterValueKeyProvider final List<Long> keys) {
         try {
@@ -107,11 +112,13 @@ public class TestDAOImpl implements TestDAO {
         return results;
     }
 
-    @UpdateMultiCache(namespace = "Bravo", expiration = 300)
+    @Override
+    @UpdateMultiCache(namespace = CacheConst.BRAVO, expiration = 300)
     public void overrideTimestampValues(final int trash, @ParameterValueKeyProvider final List<Long> keys, final String nuthin,
             @ParameterDataUpdateContent final List<String> overrideData) {
     }
 
+    @Override
     @ReadThroughSingleCache(namespace = "Charlie", expiration = 1000)
     public String getRandomString(@ParameterValueKeyProvider final Long key) {
         try {
@@ -121,18 +128,21 @@ public class TestDAOImpl implements TestDAO {
         return RandomStringUtils.randomAlphanumeric(25 + RandomUtils.nextInt(30));
     }
 
-    @InvalidateSingleCache(namespace = "Charlie")
+    @Override
+    @InvalidateSingleCache(namespace = CacheConst.CHARLIE)
     public void updateRandomString(@ParameterValueKeyProvider final Long key) {
         // Nothing really to do here.
     }
 
-    @InvalidateSingleCache(namespace = "Charlie")
+    @Override
+    @InvalidateSingleCache(namespace = CacheConst.CHARLIE)
     @ReturnValueKeyProvider
     public Long updateRandomStringAgain(final Long key) {
         return key;
     }
 
-    @ReadThroughMultiCache(namespace = "Delta", expiration = 1000)
+    @Override
+    @ReadThroughMultiCache(namespace = CacheConst.DELTA, expiration = 1000)
     public List<String> getRandomStrings(@ParameterValueKeyProvider final List<Long> keys) {
         try {
             Thread.sleep(500);
@@ -146,18 +156,21 @@ public class TestDAOImpl implements TestDAO {
         return results;
     }
 
-    @InvalidateMultiCache(namespace = "Delta")
+    @Override
+    @InvalidateMultiCache(namespace = CacheConst.DELTA)
     public void updateRandomStrings(@ParameterValueKeyProvider final List<Long> keys) {
         // Nothing to do.
     }
 
-    @InvalidateMultiCache(namespace = "Delta")
+    @Override
+    @InvalidateMultiCache(namespace = CacheConst.DELTA)
     @ReturnValueKeyProvider
     public List<Long> updateRandomStringsAgain(final List<Long> keys) {
         return keys;
     }
 
-    @ReadThroughAssignCache(assignedKey = "SomePhatKey", namespace = "Echo", expiration = 3000)
+    @Override
+    @ReadThroughAssignCache(assignedKey = "SomePhatKey", namespace = CacheConst.ECHO, expiration = 3000)
     public List<String> getAssignStrings() {
         try {
             Thread.sleep(500);
@@ -172,39 +185,43 @@ public class TestDAOImpl implements TestDAO {
         return results;
     }
 
-    @InvalidateAssignCache(assignedKey = "SomePhatKey", namespace = "Echo")
+    @Override
+    @InvalidateAssignCache(assignedKey = "SomePhatKey", namespace = CacheConst.ECHO)
     public void invalidateAssignStrings() {
     }
 
-    @UpdateAssignCache(assignedKey = "SomePhatKey", namespace = "Echo", expiration = 3000)
-    public void updateAssignStrings(int bubpkus, @ParameterDataUpdateContent final List<String> newData) {
+    @Override
+    @UpdateAssignCache(assignedKey = "SomePhatKey", namespace = CacheConst.ECHO, expiration = 3000)
+    public void updateAssignStrings(final int bubpkus, @ParameterDataUpdateContent final List<String> newData) {
     }
 
-    @DecrementCounterInCache(namespace = "Omega")
-    public void decrement(@ParameterValueKeyProvider String key) {
-
-    }
-
-    @IncrementCounterInCache(namespace = "Omega")
-    public void increment(@ParameterValueKeyProvider String key) {
+    @Override
+    @DecrementCounterInCache(namespace = CacheConst.OMEGA)
+    public void decrement(@ParameterValueKeyProvider final String key) {
 
     }
 
     @Override
-    @ReadCounterFromCache(namespace = "Omega")
-    public long getCounter(@ParameterValueKeyProvider String key) {
+    @IncrementCounterInCache(namespace = CacheConst.OMEGA)
+    public void increment(@ParameterValueKeyProvider final String key) {
+
+    }
+
+    @Override
+    @ReadCounterFromCache(namespace = CacheConst.OMEGA)
+    public long getCounter(@ParameterValueKeyProvider final String key) {
         return 100;
     }
 
     @Override
-    @UpdateCounterInCache(namespace = "Omega", expiration = 100)
-    public void update(@ParameterValueKeyProvider String key, @ParameterDataUpdateContent Long value) {
+    @UpdateCounterInCache(namespace = CacheConst.OMEGA, expiration = 100)
+    public void update(@ParameterValueKeyProvider final String key, @ParameterDataUpdateContent final Long value) {
 
     }
 
     @Override
-    @InvalidateSingleCache(namespace = "Omega")
-    public void invalidate(@ParameterValueKeyProvider String key) {
+    @InvalidateSingleCache(namespace = CacheConst.OMEGA)
+    public void invalidate(@ParameterValueKeyProvider final String key) {
 
     }
 }

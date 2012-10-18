@@ -11,6 +11,7 @@ import com.google.code.ssm.api.ParameterDataUpdateContent;
 import com.google.code.ssm.api.ParameterValueKeyProvider;
 import com.google.code.ssm.api.ReadThroughSingleCache;
 import com.google.code.ssm.api.UpdateSingleCache;
+import com.google.code.ssm.test.cache.CacheConst;
 
 /*
  * Copyright (c) 2012 Jakub Białek
@@ -40,40 +41,40 @@ public class MultiCacheDAOImpl implements MultiCacheDAO {
     private final Map<String, String> storedValues = new HashMap<String, String>();
 
     @Override
-    @UpdateSingleCache(namespace = "multi", expiration = 30)
+    @UpdateSingleCache(namespace = CacheConst.MULTI, expiration = 30)
     public void storeToDefault(@ParameterValueKeyProvider final String key, @ParameterDataUpdateContent final String value) {
         storedValues.put(key, value);
     }
 
     @Override
-    @ReadThroughSingleCache(namespace = "multi", expiration = 30)
+    @ReadThroughSingleCache(namespace = CacheConst.MULTI, expiration = 30)
     public String getFromDefault(@ParameterValueKeyProvider final String key) {
         return storedValues.get(key);
     }
 
     @Override
-    @InvalidateSingleCache(namespace = "multi")
+    @InvalidateSingleCache(namespace = CacheConst.MULTI)
     public void removeFromDefault(@ParameterValueKeyProvider final String key) {
         storedValues.remove(key);
     }
 
     @Override
     @CacheName("cache1")
-    @UpdateSingleCache(namespace = "multi", expiration = 30)
+    @UpdateSingleCache(namespace = CacheConst.MULTI, expiration = 30)
     public void storeToDedicated(@ParameterValueKeyProvider final String key, @ParameterDataUpdateContent final String value) {
         storedValues.put(key, value);
     }
 
     @Override
     @CacheName("cache1Alias")
-    @ReadThroughSingleCache(namespace = "multi", expiration = 30)
+    @ReadThroughSingleCache(namespace = CacheConst.MULTI, expiration = 30)
     public String getFromDedicated(@ParameterValueKeyProvider final String key) {
         return storedValues.get(key);
     }
 
     @Override
     @CacheName("cache1Alias")
-    @InvalidateSingleCache(namespace = "multi")
+    @InvalidateSingleCache(namespace = CacheConst.MULTI)
     public void removeFromDedicated(@ParameterValueKeyProvider final String key) {
         storedValues.remove(key);
     }

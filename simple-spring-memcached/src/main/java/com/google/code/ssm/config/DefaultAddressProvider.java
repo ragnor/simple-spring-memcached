@@ -94,7 +94,7 @@ public class DefaultAddressProvider implements AddressProvider {
 
         List<InetSocketAddress> addrs = new ArrayList<InetSocketAddress>();
         for (String hoststuff : s.split("(?:\\s|,)+")) {
-            if (hoststuff.equals("")) {
+            if ("".equals(hoststuff)) {
                 continue;
             }
 

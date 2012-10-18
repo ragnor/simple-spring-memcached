@@ -83,7 +83,6 @@ public class JsonTranscoder implements CacheTranscoder { // NO_UCD
                 bais.close();
             } catch (IOException e) {
                 LOGGER.warn("Error while closing stream", e);
-                throw new RuntimeException(e);
             }
         }
     }
@@ -103,7 +102,6 @@ public class JsonTranscoder implements CacheTranscoder { // NO_UCD
                 baos.close();
             } catch (IOException e) {
                 LOGGER.warn("Error while closing stream", e);
-                throw new RuntimeException(e);
             }
         }
     }

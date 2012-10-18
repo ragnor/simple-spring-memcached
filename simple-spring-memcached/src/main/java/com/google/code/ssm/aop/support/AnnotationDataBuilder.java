@@ -93,6 +93,10 @@ public class AnnotationDataBuilder {
             IncrementCounterInCache.class, //
             DecrementCounterInCache.class);
 
+    private AnnotationDataBuilder() {
+
+    }
+
     public static AnnotationData buildAnnotationData(final Annotation annotation,
             final Class<? extends Annotation> expectedAnnotationClass, final Method targetMethod) {
         final AnnotationData data = new AnnotationData();

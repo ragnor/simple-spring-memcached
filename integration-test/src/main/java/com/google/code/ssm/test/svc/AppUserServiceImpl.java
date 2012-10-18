@@ -24,14 +24,14 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
-import com.google.code.ssm.test.dao.AppUserDAO;
-import com.google.code.ssm.test.entity.AppUser;
-import com.google.code.ssm.test.entity.AppUserPK;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import com.google.code.ssm.test.dao.AppUserDAO;
+import com.google.code.ssm.test.entity.AppUser;
+import com.google.code.ssm.test.entity.AppUserPK;
 
 /**
  * 
@@ -47,21 +47,21 @@ public class AppUserServiceImpl implements AppUserService {
     private AppUserDAO dao;
 
     @Override
-    public void disableAppForUser(int userId, int applicationId) {
+    public void disableAppForUser(final int userId, final int applicationId) {
         AppUserPK pk = new AppUserPK(userId, applicationId);
         AppUser appUser = getApplicationUserFromDB(pk);
         if (appUser != null && appUser.isEnabled()) {
             appUser.setEnabled(false);
-            getResponsibleDAO(userId).update(appUser);
+            getDao().update(appUser);
 
-            Set<Integer> appsIdsSet = new HashSet<Integer>(getResponsibleDAO(userId).getAppIdList(userId, true));
+            Set<Integer> appsIdsSet = new HashSet<Integer>(getDao().getAppIdList(userId, true));
             if (appsIdsSet.remove(applicationId)) {
-                getResponsibleDAO(userId).updateListInCache(userId, true, new ArrayList<Integer>(appsIdsSet));
+                getDao().updateListInCache(userId, true, new ArrayList<Integer>(appsIdsSet));
             }
 
-            appsIdsSet = new HashSet<Integer>(getResponsibleDAO(userId).getAppIdList(userId, false));
+            appsIdsSet = new HashSet<Integer>(getDao().getAppIdList(userId, false));
             if (appsIdsSet.add(applicationId)) {
-                getResponsibleDAO(userId).updateListInCache(userId, false, new ArrayList<Integer>(appsIdsSet));
+                getDao().updateListInCache(userId, false, new ArrayList<Integer>(appsIdsSet));
             }
         } else {
             LOGGER.info("Appuser with PK: " + pk + " won't be uninstalled because it is null or already not marked as authorized: "
@@ -70,7 +70,7 @@ public class AppUserServiceImpl implements AppUserService {
     }
 
     @Override
-    public void enableAppForUser(int userId, int applicationId, boolean favourite) {
+    public void enableAppForUser(final int userId, final int applicationId, final boolean favourite) {
         AppUserPK pk = new AppUserPK(userId, applicationId);
         AppUser appUser = getApplicationUserFromDB(pk);
         if (appUser == null) {
@@ -80,31 +80,31 @@ public class AppUserServiceImpl implements AppUserService {
         appUser.setEnabled(true);
 
         if (appUser.getVersion() != 0) {
-            getResponsibleDAO(userId).update(appUser);
+            getDao().update(appUser);
         } else {
-            getResponsibleDAO(userId).create(appUser);
+            getDao().create(appUser);
         }
 
-        Set<Integer> appsIdsSet = new HashSet<Integer>(getResponsibleDAO(userId).getAppIdList(userId, true));
+        Set<Integer> appsIdsSet = new HashSet<Integer>(getDao().getAppIdList(userId, true));
         if (appsIdsSet.add(applicationId)) {
-            getResponsibleDAO(userId).updateListInCache(userId, true, new ArrayList<Integer>(appsIdsSet));
+            getDao().updateListInCache(userId, true, new ArrayList<Integer>(appsIdsSet));
         }
 
-        appsIdsSet = new HashSet<Integer>(getResponsibleDAO(userId).getAppIdList(userId, false));
+        appsIdsSet = new HashSet<Integer>(getDao().getAppIdList(userId, false));
         if (appsIdsSet.remove(applicationId)) {
-            getResponsibleDAO(userId).updateListInCache(userId, false, new ArrayList<Integer>(appsIdsSet));
+            getDao().updateListInCache(userId, false, new ArrayList<Integer>(appsIdsSet));
         }
     }
 
     @Override
-    public AppUser get(int userId, int applicationId) {
-        return getResponsibleDAO(userId).getByPk(new AppUserPK(userId, applicationId));
+    public AppUser get(final int userId, final int applicationId) {
+        return getDao().getByPk(new AppUserPK(userId, applicationId));
     }
 
     @Override
-    public List<AppUser> getInstalledList(int userId, List<Integer> applicationsIds) {
+    public List<AppUser> getInstalledList(final int userId, final List<Integer> applicationsIds) {
         Collections.sort(applicationsIds);
-        List<AppUser> applicationUsers = getResponsibleDAO(userId).getList(userId, applicationsIds);
+        List<AppUser> applicationUsers = getDao().getList(userId, applicationsIds);
 
         Iterator<AppUser> iter = applicationUsers.iterator();
         AppUser appUser = null;
@@ -119,34 +119,34 @@ public class AppUserServiceImpl implements AppUserService {
     }
 
     @Override
-    public List<AppUser> getList(int userId) {
-        List<Integer> appsIds = getResponsibleDAO(userId).getAppIdList(userId, true);
-        appsIds.addAll(getResponsibleDAO(userId).getAppIdList(userId, false));
-        return getResponsibleDAO(userId).getList(userId, getUniqueSortedList(appsIds));
+    public List<AppUser> getList(final int userId) {
+        List<Integer> appsIds = getDao().getAppIdList(userId, true);
+        appsIds.addAll(getDao().getAppIdList(userId, false));
+        return getDao().getList(userId, getUniqueSortedList(appsIds));
     }
 
     @Override
-    public List<AppUser> getList(int userId, boolean authorized) {
-        List<Integer> appsIds = getUniqueSortedList(getResponsibleDAO(userId).getAppIdList(userId, authorized));
-        List<AppUser> appUsers = getResponsibleDAO(userId).getList(userId, appsIds);
+    public List<AppUser> getList(final int userId, final boolean authorized) {
+        List<Integer> appsIds = getUniqueSortedList(getDao().getAppIdList(userId, authorized));
+        List<AppUser> appUsers = getDao().getList(userId, appsIds);
         removeWithDifferentAuth(appUsers, authorized);
         return appUsers;
     }
 
     @Override
-    public List<Integer> getUserIdsList(int applicationId, List<Integer> userIds) {
+    public List<Integer> getUserIdsList(final int applicationId, final List<Integer> userIds) {
         List<AppUser> applicationUsers = new ArrayList<AppUser>();
         List<Integer> notFoundUsersIds = new ArrayList<Integer>();
 
         // no matter which DAO is selected because data is fetched from global cache
-        List<AppUser> result = getResponsibleDAO(0).getUsersListFromCache(applicationId, userIds, notFoundUsersIds);
+        List<AppUser> result = getDao().getUsersListFromCache(applicationId, userIds, notFoundUsersIds);
         if (result != null) {
             applicationUsers.addAll(result);
         }
 
         if (notFoundUsersIds.size() > 0) {
             Collections.sort(notFoundUsersIds);
-            applicationUsers.addAll(getResponsibleDAO(1).getUsersList(applicationId, notFoundUsersIds));
+            applicationUsers.addAll(getDao().getUsersList(applicationId, notFoundUsersIds));
         }
 
         List<Integer> idsOfAppUsers = new ArrayList<Integer>(applicationUsers.size());
@@ -160,20 +160,20 @@ public class AppUserServiceImpl implements AppUserService {
     }
 
     @Override
-    public boolean isEnabled(int userId, int applicationId) {
+    public boolean isEnabled(final int userId, final int applicationId) {
         AppUser au = get(userId, applicationId);
         return isAuthorized(au);
     }
 
-    private AppUser getApplicationUserFromDB(AppUserPK pk) {
-        return getResponsibleDAO(pk.getUserId()).getByPKFromDB(pk);
+    private AppUser getApplicationUserFromDB(final AppUserPK pk) {
+        return getDao().getByPKFromDB(pk);
     }
 
-    private boolean isAuthorized(AppUser applicationUser) {
+    private boolean isAuthorized(final AppUser applicationUser) {
         return applicationUser != null && applicationUser.isEnabled();
     }
 
-    private List<Integer> getUniqueSortedList(List<Integer> list) {
+    private List<Integer> getUniqueSortedList(final List<Integer> list) {
         // remove duplicates
         List<Integer> uniqueList = new ArrayList<Integer>(new HashSet<Integer>(list));
         // sort ASC
@@ -182,7 +182,7 @@ public class AppUserServiceImpl implements AppUserService {
         return uniqueList;
     }
 
-    private List<Integer> removeWithDifferentAuth(List<AppUser> appUsers, boolean authorized) {
+    private List<Integer> removeWithDifferentAuth(final List<AppUser> appUsers, final boolean authorized) {
         List<Integer> removedAppIds = new ArrayList<Integer>();
         Iterator<AppUser> iter = appUsers.iterator();
         AppUser appUser = null;
@@ -198,7 +198,7 @@ public class AppUserServiceImpl implements AppUserService {
         return removedAppIds;
     }
 
-    private AppUserDAO getResponsibleDAO(int userId) {
+    private AppUserDAO getDao() {
         return dao;
     }
 

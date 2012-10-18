@@ -17,6 +17,8 @@
 
 package com.google.code.ssm.test.dao;
 
+import java.util.Random;
+
 import org.springframework.stereotype.Repository;
 
 import com.google.code.ssm.api.BridgeMethodMapping;
@@ -24,6 +26,7 @@ import com.google.code.ssm.api.BridgeMethodMappings;
 import com.google.code.ssm.api.InvalidateSingleCache;
 import com.google.code.ssm.api.ParameterValueKeyProvider;
 import com.google.code.ssm.api.ReadThroughSingleCache;
+import com.google.code.ssm.test.cache.CacheConst;
 import com.google.code.ssm.test.entity.AppUser;
 import com.google.code.ssm.test.entity.AppUserPK;
 
@@ -36,13 +39,15 @@ import com.google.code.ssm.test.entity.AppUserPK;
 @BridgeMethodMappings({ @BridgeMethodMapping(methodName = "updateUser", erasedParamTypes = { Object.class }, targetParamTypes = { AppUser.class }) })
 public class SpecificDAOImpl implements SpecificDAO {
 
+    private final Random random = new Random();
+
     @Override
-    @InvalidateSingleCache(namespace = "Baggins")
+    @InvalidateSingleCache(namespace = CacheConst.BAGGINS)
     public void updateUser(@ParameterValueKeyProvider final AppUser entity) {
     }
 
     @Override
-    @InvalidateSingleCache(namespace = "Baggins")
+    @InvalidateSingleCache(namespace = CacheConst.BAGGINS)
     public void updateUserWithoutGenerics(@ParameterValueKeyProvider final AppUser entity) {
     }
 
@@ -54,13 +59,14 @@ public class SpecificDAOImpl implements SpecificDAO {
     }
 
     @Override
-    @ReadThroughSingleCache(namespace = "Baggins")
+    @ReadThroughSingleCache(namespace = CacheConst.BAGGINS)
     public AppUser getRandomUserByPk(@ParameterValueKeyProvider final AppUserPK pk) {
         try {
             Thread.sleep(500);
         } catch (InterruptedException ex) {
         }
-        return new AppUser((int) (Math.random() * 100000), 1);
+
+        return new AppUser(random.nextInt(100000), 1);
     }
 
 }

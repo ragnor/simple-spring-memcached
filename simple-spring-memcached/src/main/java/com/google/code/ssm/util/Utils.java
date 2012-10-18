@@ -30,6 +30,10 @@ import java.util.Iterator;
  */
 public class Utils {
 
+    private Utils() {
+
+    }
+
     public static Object getMethodArg(final int index, final Object[] args, final String methodDesc) {
         if (index < 0) {
             throw new InvalidParameterException(String.format("An index of %s is invalid", index));

@@ -94,7 +94,7 @@ class MemcacheClientWrapper extends AbstractMemcacheClientWrapper {
         try {
             return memcachedClient.decr(key, by);
         } catch (OperationTimeoutException e) {
-            LOGGER.warn("Operation timeout while incr " + key, e);
+            LOGGER.warn("Operation timeout while decr " + key, e);
             throw new TimeoutException(e.getMessage());
         } catch (RuntimeException e) {
             if (translateException(e)) {
@@ -109,7 +109,7 @@ class MemcacheClientWrapper extends AbstractMemcacheClientWrapper {
         try {
             return memcachedClient.decr(key, by, def);
         } catch (OperationTimeoutException e) {
-            LOGGER.warn("Operation timeout while incr " + key, e);
+            LOGGER.warn("Operation timeout while decr " + key, e);
             throw new TimeoutException(e.getMessage());
         } catch (RuntimeException e) {
             if (translateException(e)) {

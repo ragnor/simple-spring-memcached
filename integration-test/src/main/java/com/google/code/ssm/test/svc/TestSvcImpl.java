@@ -17,12 +17,12 @@
 
 package com.google.code.ssm.test.svc;
 
-import com.google.code.ssm.test.dao.*;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.*;
+import org.springframework.stereotype.Service;
 
-import java.util.*;
+import com.google.code.ssm.test.dao.TestDAO;
 
 /**
  * 
@@ -32,97 +32,111 @@ import java.util.*;
 @Service("testSvc")
 public class TestSvcImpl implements TestSvc {
 
-	@Autowired
-	private TestDAO dao;
+    @Autowired
+    private TestDAO dao;
 
-	public void setDao(TestDAO dao) {
-		this.dao = dao;
-	}
+    public void setDao(final TestDAO dao) {
+        this.dao = dao;
+    }
 
-	public String getDateString(final String key) {
-		return this.dao.getDateString(key);
-	}
+    @Override
+    public String getDateString(final String key) {
+        return this.dao.getDateString(key);
+    }
 
+    @Override
     public void overrideDateString(final int trash, final String key, final String overrideData) {
         dao.overrideDateString(trash, key, overrideData);
     }
 
-	public List<String> getTimestampValues(final List<Long> keys) {
-		return this.dao.getTimestampValues(keys);
-	}
+    @Override
+    public List<String> getTimestampValues(final List<Long> keys) {
+        return this.dao.getTimestampValues(keys);
+    }
 
-	public String updateTimestampValue(final Long key) {
-		return this.dao.updateTimestampValue(key);
-	}
+    @Override
+    public String updateTimestampValue(final Long key) {
+        return this.dao.updateTimestampValue(key);
+    }
 
-	public List<String> updateTimestamValues(final List<Long> keys) {
-		return this.dao.updateTimestamValues(keys);
-	}
+    @Override
+    public List<String> updateTimestamValues(final List<Long> keys) {
+        return this.dao.updateTimestamValues(keys);
+    }
 
-    public void overrideTimestampValues(final int trash, final List<Long> keys,
-                                        final String nuthin, final List<String> overrideData) {
+    @Override
+    public void overrideTimestampValues(final int trash, final List<Long> keys, final String nuthin, final List<String> overrideData) {
         dao.overrideTimestampValues(trash, keys, nuthin, overrideData);
     }
 
+    @Override
     public String getRandomString(final Long key) {
         return this.dao.getRandomString(key);
     }
 
+    @Override
     public void updateRandomString(final Long key) {
         this.dao.updateRandomString(key);
     }
 
+    @Override
     public Long updateRandomStringAgain(final Long key) {
         return this.dao.updateRandomStringAgain(key);
     }
 
-    public List<String> getRandomStrings(List<Long> keys) {
+    @Override
+    public List<String> getRandomStrings(final List<Long> keys) {
         return this.dao.getRandomStrings(keys);
     }
 
-    public void updateRandomStrings(List<Long> keys) {
+    @Override
+    public void updateRandomStrings(final List<Long> keys) {
         this.dao.updateRandomStrings(keys);
     }
 
-    public List<Long> updateRandomStringsAgain(List<Long> keys) {
+    @Override
+    public List<Long> updateRandomStringsAgain(final List<Long> keys) {
         return this.dao.updateRandomStringsAgain(keys);
     }
 
+    @Override
     public List<String> getAssignStrings() {
         return this.dao.getAssignStrings();
     }
 
+    @Override
     public void invalidateAssignStrings() {
         this.dao.invalidateAssignStrings();
     }
 
+    @Override
     public void updateAssignStrings(final List<String> newData) {
         this.dao.updateAssignStrings(25, newData);
     }
 
-	@Override
-	public void decrement(String key) {
-		dao.decrement(key);		
-	}
+    @Override
+    public void decrement(final String key) {
+        dao.decrement(key);
+    }
 
-	@Override
-	public long getCounter(String key) {
-		return dao.getCounter(key);
-	}
+    @Override
+    public long getCounter(final String key) {
+        return dao.getCounter(key);
+    }
 
-	@Override
-	public void increment(String key) {
-		dao.increment(key);		
-	}
-	
-	@Override
-	public void update(String key, Long value) {
-		dao.update(key, value);
-	}
+    @Override
+    public void increment(final String key) {
+        dao.increment(key);
+    }
 
-	@Override
-	public void invalidate(String key) {
-		dao.invalidate(key);		
-	}
+    @Override
+    public void update(final String key, final Long value) {
+        dao.update(key, value);
+    }
+
+    @Override
+    public void invalidate(final String key) {
+        dao.invalidate(key);
+    }
 
 }
