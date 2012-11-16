@@ -17,11 +17,10 @@
 
 package com.google.code.ssm.test;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 
 import java.util.List;
-
-import com.google.code.ssm.test.svc.TestSvc;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -31,6 +30,7 @@ import org.springframework.test.context.TestExecutionListeners;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
 
+import com.google.code.ssm.test.svc.TestSvc;
 
 /**
  * 
@@ -38,16 +38,14 @@ import org.springframework.test.context.support.DependencyInjectionTestExecution
  * 
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@TestExecutionListeners( {DependencyInjectionTestExecutionListener.class })
+@TestExecutionListeners({ DependencyInjectionTestExecutionListener.class })
 @ContextConfiguration(locations = { "classpath*:META-INF/test-context.xml", "classpath*:simplesm-context.xml" })
 public class InvalidateAssignCacheTest {
-	@Autowired
-	private TestSvc test;
+    @Autowired
+    private TestSvc test;
 
     @Test
-    public void test() {
-        //final TestSvc test = (TestSvc) context.getBean("testSvc");
-
+    public void test() throws InterruptedException {
         final List<String> result1 = test.getAssignStrings();
         final List<String> result2 = test.getAssignStrings();
 
@@ -57,6 +55,8 @@ public class InvalidateAssignCacheTest {
         }
 
         test.invalidateAssignStrings();
+        // a time to invalidate cache
+        Thread.sleep(100);
         final List<String> result3 = test.getAssignStrings();
 
         // This was wrong before. The 3rd array is supposed to come
@@ -64,6 +64,6 @@ public class InvalidateAssignCacheTest {
         assertFalse(result1.size() == result3.size());
         for (int ix = 0; ix < result1.size(); ix++) {
             assertFalse(result3.contains(result1.get(ix)));
-        }                
+        }
     }
 }
