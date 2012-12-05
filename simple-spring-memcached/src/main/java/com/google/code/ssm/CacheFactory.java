@@ -87,13 +87,16 @@ public class CacheFactory implements AddressChangeListener, FactoryBean<Cache>, 
     private SerializationType defaultSerializationType = SerializationType.PROVIDER;
 
     @Setter
-    private JsonTranscoder jsonTranscoder = new JsonTranscoder(new JsonObjectMapper());
+    private JsonTranscoder jsonTranscoder;
 
     @Setter
-    private JavaTranscoder javaTranscoder = new JavaTranscoder();
+    private JavaTranscoder javaTranscoder;
 
     @Setter
     private CacheTranscoder customTranscoder;
+
+    @Setter
+    private boolean initializeTranscoders = true;
 
     @Override
     public void afterPropertiesSet() throws Exception {
@@ -102,15 +105,22 @@ public class CacheFactory implements AddressChangeListener, FactoryBean<Cache>, 
         Assert.notNull(cacheClientFactory, "'cacheClientFactory' is required and cannot be null");
         Assert.notNull(cacheName, "'cacheName' cannot be null");
         Assert.notNull(defaultSerializationType, "'defaultSerializationType' cannot be null");
-        Assert.notNull(jsonTranscoder, "'jsonTranscoder' cannot be null");
+
+        if (initializeTranscoders) {
+            if (jsonTranscoder == null) {
+                jsonTranscoder = new JsonTranscoder(new JsonObjectMapper());
+            }
+            if (javaTranscoder == null) {
+                javaTranscoder = new JavaTranscoder();
+            }
+        }
+
+        validateTranscoder(SerializationType.JSON, jsonTranscoder, "jsonTranscoder");
+        validateTranscoder(SerializationType.JAVA, javaTranscoder, "javaTranscoder");
+        validateTranscoder(SerializationType.CUSTOM, customTranscoder, "customTranscoder");
 
         if (addressChangeNotifier != null) {
             addressChangeNotifier.setAddressChangeListener(this);
-        }
-
-        if (defaultSerializationType == SerializationType.CUSTOM) {
-            Assert.notNull(customTranscoder, "'customTranscoder' cannot be null if default serialization type is set to "
-                    + SerializationType.CUSTOM);
         }
     }
 
@@ -196,6 +206,14 @@ public class CacheFactory implements AddressChangeListener, FactoryBean<Cache>, 
 
     private boolean isCacheDisabled() {
         return DISABLE_CACHE_PROPERTY_VALUE.equals(System.getProperty(DISABLE_CACHE_PROPERTY));
+    }
+
+    private void validateTranscoder(final SerializationType serializationType, final CacheTranscoder cacheTranscoder,
+            final String transcoderName) {
+        if (defaultSerializationType == serializationType) {
+            Assert.notNull(cacheTranscoder,
+                    String.format("'%s' cannot be null if default serialization type is set to %s", transcoderName, serializationType));
+        }
     }
 
 }

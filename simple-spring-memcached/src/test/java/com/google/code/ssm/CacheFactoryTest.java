@@ -36,8 +36,6 @@ import org.easymock.EasyMock;
 import org.easymock.IAnswer;
 import org.junit.Test;
 
-import com.google.code.ssm.Cache;
-import com.google.code.ssm.CacheFactory;
 import com.google.code.ssm.config.AddressProvider;
 import com.google.code.ssm.config.DefaultAddressProvider;
 import com.google.code.ssm.config.JndiAddressProvider;
@@ -64,7 +62,7 @@ public class CacheFactoryTest {
     }
 
     @Test
-    public void testCreateClient() throws IOException, NamingException {
+    public void testCreateClient() throws Exception {
         CacheConfiguration bean = new CacheConfiguration();
         bean.setConsistentHashing(false);
         AddressProvider addrsProvider = new DefaultAddressProvider("127.0.0.1:11211");
@@ -73,6 +71,7 @@ public class CacheFactoryTest {
         factory.setAddressProvider(addrsProvider);
         CacheClientFactory clientFactory = getClientFactoryMock(bean);
         factory.setCacheClientFactory(clientFactory);
+        factory.afterPropertiesSet();
 
         Cache cache = factory.createCache();
 
@@ -86,6 +85,7 @@ public class CacheFactoryTest {
         clientFactory = getClientFactoryMock(bean);
 
         factory.setCacheClientFactory(clientFactory);
+        factory.afterPropertiesSet();
 
         cache = factory.createCache();
         assertNotNull(cache);
@@ -99,6 +99,7 @@ public class CacheFactoryTest {
         factory.setAddressProvider(addrsProvider);
         clientFactory = getClientFactoryMock(bean);
         factory.setCacheClientFactory(clientFactory);
+        factory.afterPropertiesSet();
 
         cache = factory.createCache();
 
@@ -115,6 +116,7 @@ public class CacheFactoryTest {
 
     }
 
+    @Test
     public void changeAddresses() throws IOException, NamingException {
         final CacheConfiguration bean = new CacheConfiguration();
         bean.setConsistentHashing(false);
@@ -122,7 +124,7 @@ public class CacheFactoryTest {
         final CacheFactory factory = new CacheFactory();
         factory.setConfiguration(bean);
         factory.setAddressProvider(addrsProvider);
-        CacheClientFactory clientFactory = getClientFactoryMock(bean);
+        CacheClientFactory clientFactory = getClientFactoryMock(bean, 2, true);
         factory.setCacheClientFactory(clientFactory);
 
         Cache cache = factory.createCache();
@@ -135,8 +137,13 @@ public class CacheFactoryTest {
         assertEquals(newAddrs, c);
     }
 
-    @SuppressWarnings("unchecked")
     private CacheClientFactory getClientFactoryMock(final CacheConfiguration bean) throws IOException {
+        return getClientFactoryMock(bean, 1, false);
+    }
+
+    @SuppressWarnings("unchecked")
+    private CacheClientFactory getClientFactoryMock(final CacheConfiguration bean, final int times, final boolean expectShutdown)
+            throws IOException {
         CacheClientFactory clientFactory = EasyMock.createMock(CacheClientFactory.class);
 
         EasyMock.expect(clientFactory.create(EasyMock.anyObject(List.class), EasyMock.eq(bean))).andAnswer(new IAnswer<CacheClient>() {
@@ -149,11 +156,15 @@ public class CacheFactoryTest {
                 List<SocketAddress> socketAddress = new ArrayList<SocketAddress>();
                 socketAddress.addAll(address);
                 EasyMock.expect(client.getAvailableServers()).andReturn(socketAddress);
+                if (expectShutdown) {
+                    client.shutdown();
+                    EasyMock.expectLastCall();
+                }
                 EasyMock.replay(client);
 
                 return client;
             }
-        });
+        }).times(times);
         EasyMock.replay(clientFactory);
 
         return clientFactory;

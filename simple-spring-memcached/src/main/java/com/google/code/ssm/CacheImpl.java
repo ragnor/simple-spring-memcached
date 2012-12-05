@@ -71,8 +71,9 @@ class CacheImpl implements Cache {
         Assert.notNull(aliases, "'aliases' cannot be null");
         Assert.notNull(cacheClient, "'cacheClient' cannot be null");
         Assert.notNull(defaultSerializationType, "'defaultSerializationType' cannot be null");
-        Assert.notNull(jsonTranscoder, "'jsonTranscoder' cannot be null");
-        Assert.notNull(javaTranscoder, "'javaTranscoder' cannot be null");
+        validateTranscoder(SerializationType.JSON, jsonTranscoder, "jsonTranscoder");
+        validateTranscoder(SerializationType.JAVA, javaTranscoder, "javaTranscoder");
+        validateTranscoder(SerializationType.CUSTOM, customTranscoder, "customTranscoder");
 
         this.name = name;
         this.aliases = aliases;
@@ -89,18 +90,17 @@ class CacheImpl implements Cache {
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     public <T> T get(final String cacheKey, final SerializationType serializationType) throws TimeoutException, CacheException {
 
         switch (getSerializationType(serializationType)) {
         case JAVA:
-            return (T) cacheClient.get(cacheKey, javaTranscoder);
+            return get(cacheKey, SerializationType.JAVA, javaTranscoder);
         case JSON:
-            return (T) cacheClient.get(cacheKey, jsonTranscoder);
+            return get(cacheKey, SerializationType.JSON, jsonTranscoder);
         case PROVIDER:
-            return (T) cacheClient.get(cacheKey);
+            return get(cacheKey, SerializationType.PROVIDER, null);
         case CUSTOM:
-            return (T) cacheClient.get(cacheKey, customTranscoder);
+            return get(cacheKey, SerializationType.CUSTOM, customTranscoder);
         default:
             throw new IllegalArgumentException(String.format("Serialization type %s is not supported", serializationType));
         }
@@ -114,16 +114,16 @@ class CacheImpl implements Cache {
 
         switch (getSerializationType(serializationType)) {
         case JAVA:
-            cacheClient.set(cacheKey, expiration, (T) value, javaTranscoder);
+            set(cacheKey, expiration, (T) value, SerializationType.JAVA, javaTranscoder);
             break;
         case JSON:
-            cacheClient.set(cacheKey, expiration, (T) value, jsonTranscoder);
+            set(cacheKey, expiration, (T) value, SerializationType.JSON, jsonTranscoder);
             break;
         case PROVIDER:
-            cacheClient.set(cacheKey, expiration, value);
+            set(cacheKey, expiration, (T) value, SerializationType.PROVIDER, null);
             break;
         case CUSTOM:
-            cacheClient.set(cacheKey, expiration, (T) value, customTranscoder);
+            set(cacheKey, expiration, (T) value, SerializationType.CUSTOM, customTranscoder);
             break;
         default:
             throw new IllegalArgumentException(String.format("Serialization type %s is not supported", serializationType));
@@ -147,16 +147,16 @@ class CacheImpl implements Cache {
 
         switch (getSerializationType(serializationType)) {
         case JAVA:
-            cacheClient.add(cacheKey, expiration, value, javaTranscoder);
+            add(cacheKey, expiration, value, SerializationType.JAVA, javaTranscoder);
             break;
         case JSON:
-            cacheClient.add(cacheKey, expiration, value, jsonTranscoder);
+            add(cacheKey, expiration, value, SerializationType.JSON, jsonTranscoder);
             break;
         case PROVIDER:
-            cacheClient.add(cacheKey, expiration, value);
+            add(cacheKey, expiration, value, SerializationType.PROVIDER, null);
             break;
         case CUSTOM:
-            cacheClient.add(cacheKey, expiration, value, customTranscoder);
+            add(cacheKey, expiration, value, SerializationType.CUSTOM, customTranscoder);
             break;
         default:
             throw new IllegalArgumentException(String.format("Serialization type %s is not supported", serializationType));
@@ -180,13 +180,13 @@ class CacheImpl implements Cache {
 
         switch (getSerializationType(serializationType)) {
         case JAVA:
-            return cacheClient.getBulk(keys, javaTranscoder);
+            return getBulk(keys, SerializationType.JAVA, javaTranscoder);
         case JSON:
-            return cacheClient.getBulk(keys, jsonTranscoder);
+            return getBulk(keys, SerializationType.JSON, jsonTranscoder);
         case PROVIDER:
-            return cacheClient.getBulk(keys);
+            return getBulk(keys, SerializationType.PROVIDER, null);
         case CUSTOM:
-            return cacheClient.getBulk(keys, customTranscoder);
+            return getBulk(keys, SerializationType.CUSTOM, customTranscoder);
         default:
             throw new IllegalArgumentException(String.format("Serialization type %s is not supported", serializationType));
         }
@@ -249,6 +249,65 @@ class CacheImpl implements Cache {
         }
     }
 
+    @SuppressWarnings("unchecked")
+    private <T> T get(final String cacheKey, final SerializationType serializationType, final CacheTranscoder cacheTranscoder)
+            throws TimeoutException, CacheException {
+        if (SerializationType.PROVIDER.equals(serializationType)) {
+            return (T) cacheClient.get(cacheKey);
+        }
+
+        if (cacheTranscoder == null) {
+            throw new IllegalArgumentException(String.format("Cannot use %s serialization because dedicated cache transcoder is null!",
+                    serializationType));
+        }
+
+        return (T) cacheClient.get(cacheKey, cacheTranscoder);
+    }
+
+    private <T> void set(final String cacheKey, final int expiration, final T value, final SerializationType serializationType,
+            final CacheTranscoder cacheTranscoder) throws TimeoutException, CacheException {
+        if (SerializationType.PROVIDER.equals(serializationType)) {
+            cacheClient.set(cacheKey, expiration, value);
+            return;
+        }
+
+        if (cacheTranscoder == null) {
+            throw new IllegalArgumentException(String.format("Cannot use %s serialization because dedicated cache transcoder is null!",
+                    serializationType));
+        }
+
+        cacheClient.set(cacheKey, expiration, value, cacheTranscoder);
+    }
+
+    private <T> void add(final String cacheKey, final int expiration, final Object value, final SerializationType serializationType,
+            final CacheTranscoder cacheTranscoder) throws TimeoutException, CacheException {
+        if (SerializationType.PROVIDER.equals(serializationType)) {
+            cacheClient.add(cacheKey, expiration, value);
+            return;
+        }
+
+        if (cacheTranscoder == null) {
+            throw new IllegalArgumentException(String.format("Cannot use %s serialization because dedicated cache transcoder is null!",
+                    serializationType));
+        }
+
+        cacheClient.add(cacheKey, expiration, value, cacheTranscoder);
+    }
+
+    private Map<String, Object> getBulk(final Collection<String> keys, final SerializationType serializationType,
+            final CacheTranscoder cacheTranscoder) throws TimeoutException, CacheException {
+        if (SerializationType.PROVIDER.equals(serializationType)) {
+            return cacheClient.getBulk(keys);
+        }
+
+        if (cacheTranscoder == null) {
+            throw new IllegalArgumentException(String.format("Cannot use %s serialization because dedicated cache transcoder is null!",
+                    serializationType));
+        }
+
+        return cacheClient.getBulk(keys, cacheTranscoder);
+    }
+
     private SerializationType getSerializationType(final SerializationType serializationType) {
         return (serializationType != null) ? serializationType : defaultSerializationType;
     }
@@ -256,6 +315,14 @@ class CacheImpl implements Cache {
     private void warn(final Exception e, final String format, final Object... args) {
         if (LOGGER.isWarnEnabled()) {
             LOGGER.warn(String.format(format, args), e);
+        }
+    }
+
+    private void validateTranscoder(final SerializationType serializationType, final CacheTranscoder cacheTranscoder,
+            final String transcoderName) {
+        if (defaultSerializationType == serializationType) {
+            Assert.notNull(cacheTranscoder,
+                    String.format("'%s' cannot be null if default serialization type is set to %s", transcoderName, serializationType));
         }
     }
 
