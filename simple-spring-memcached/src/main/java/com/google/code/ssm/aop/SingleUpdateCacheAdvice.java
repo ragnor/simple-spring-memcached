@@ -59,7 +59,11 @@ abstract class SingleUpdateCacheAdvice<T extends Annotation> extends CacheAdvice
             final T annotation = methodToCache.getAnnotation(annotationClass);
             final AnnotationData data = AnnotationDataBuilder.buildAnnotationData(annotation, annotationClass, methodToCache);
 
-            cacheKey = getCacheKey(data, jp.getArgs(), methodToCache.toString());
+            if (data.isReturnKeyIndex()) {
+                cacheKey = getCacheBase().getCacheKeyBuilder().getCacheKey(retVal, data.getNamespace());
+            } else {
+                cacheKey = getCacheKey(data, jp.getArgs(), methodToCache.toString());
+            }
 
             final Object dataObject = getCacheBase().<Object> getUpdateData(data, methodToCache, jp.getArgs(), retVal);
             final SerializationType serializationType = getCacheBase().getSerializationType(methodToCache);

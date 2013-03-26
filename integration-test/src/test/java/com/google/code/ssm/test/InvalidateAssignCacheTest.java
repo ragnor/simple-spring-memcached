@@ -55,13 +55,10 @@ public class InvalidateAssignCacheTest {
         }
 
         test.invalidateAssignStrings();
-        // a time to invalidate cache
-        Thread.sleep(100);
         final List<String> result3 = test.getAssignStrings();
 
         // This was wrong before. The 3rd array is supposed to come
         // back different than the ones pulled before the invalidate
-        assertFalse(result1.size() == result3.size());
         for (int ix = 0; ix < result1.size(); ix++) {
             assertFalse(result3.contains(result1.get(ix)));
         }

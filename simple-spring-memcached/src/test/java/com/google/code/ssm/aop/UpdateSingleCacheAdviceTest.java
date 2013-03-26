@@ -35,6 +35,7 @@ import org.junit.runners.Parameterized.Parameters;
 import com.google.code.ssm.api.ParameterDataUpdateContent;
 import com.google.code.ssm.api.ParameterValueKeyProvider;
 import com.google.code.ssm.api.ReturnDataUpdateContent;
+import com.google.code.ssm.api.ReturnValueKeyProvider;
 import com.google.code.ssm.api.UpdateSingleCache;
 import com.google.code.ssm.api.format.SerializationType;
 import com.google.code.ssm.test.Point;
@@ -60,6 +61,7 @@ public class UpdateSingleCacheAdviceTest extends AbstractCacheTest<UpdateSingleC
                         { true, "method7", new Class[] { int.class, String.class, Point.class }, new Object[] { 7, "8", new Point(1, 2) },
                                 new Point(1, 1), new Point(1, 2), NS + ":8/7" }, //
                         { true, "method8", new Class[] { int.class }, new Object[] { 8 }, 9, 9, null }, //
+                        { true, "method9", new Class[] { String.class }, new Object[] { "9" }, "9", "9", null }, //
 
                         { false, "method50", new Class[] { int.class }, new Object[] { 50 }, 50, null, null }, //
                         { false, "method51", new Class[] { int.class }, new Object[] { 51 }, 51, null, null }, //
@@ -164,6 +166,13 @@ public class UpdateSingleCacheAdviceTest extends AbstractCacheTest<UpdateSingleC
         @UpdateSingleCache(namespace = NS, expiration = EXPIRATION)
         public int method8(@ParameterDataUpdateContent @ParameterValueKeyProvider final int id1) {
             return 8;
+        }
+
+        @ReturnValueKeyProvider
+        @ReturnDataUpdateContent
+        @UpdateSingleCache(namespace = NS, expiration = EXPIRATION)
+        public String method9(final String s) {
+            return "9";
         }
 
         // no @ParameterValueKeyProvider
