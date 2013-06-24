@@ -17,12 +17,16 @@
 
 package com.google.code.ssm.providers.xmemcached;
 
+import java.net.InetSocketAddress;
+import java.util.List;
 import java.util.Map;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import net.rubyeye.xmemcached.MemcachedClient;
 import net.rubyeye.xmemcached.MemcachedClientBuilder;
+import net.rubyeye.xmemcached.MemcachedClientStateListener;
+import net.rubyeye.xmemcached.auth.AuthInfo;
 import net.rubyeye.xmemcached.transcoders.Transcoder;
 
 import com.google.code.ssm.providers.CacheConfiguration;
@@ -73,5 +77,30 @@ public class XMemcachedConfiguration extends CacheConfiguration {
      * @since 3.0.0
      * */
     private Transcoder<?> defaultTranscoder;
+
+    /**
+     * @since 3.2.0
+     */
+    private Long connectionTimeout;
+
+    /**
+     * @since 3.2.0
+     */
+    private Integer maxQueuedNoReplyOperations;
+
+    /**
+     * @since 3.2.0
+     */
+    private Boolean enableHealSession;
+
+    /**
+     * @since 3.2.0
+     */
+    private Map<InetSocketAddress, AuthInfo> authInfoMap;
+
+    /**
+     * @since 3.2.0
+     */
+    private List<MemcachedClientStateListener> stateListeners;
 
 }

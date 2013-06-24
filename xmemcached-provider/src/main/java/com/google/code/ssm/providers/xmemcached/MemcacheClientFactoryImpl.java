@@ -91,6 +91,26 @@ public class MemcacheClientFactoryImpl implements CacheClientFactory {
         if (conf.getDefaultTranscoder() != null) {
             builder.setTranscoder(conf.getDefaultTranscoder());
         }
+
+        if (conf.getConnectionTimeout() != null) {
+            builder.setConnectTimeout(conf.getConnectionTimeout());
+        }
+
+        if (conf.getMaxQueuedNoReplyOperations() != null) {
+            builder.setMaxQueuedNoReplyOperations(conf.getMaxQueuedNoReplyOperations());
+        }
+
+        if (conf.getEnableHealSession() != null) {
+            builder.setEnableHealSession(conf.getEnableHealSession());
+        }
+
+        if (conf.getAuthInfoMap() != null) {
+            builder.setAuthInfoMap(conf.getAuthInfoMap());
+        }
+
+        if (conf.getStateListeners() != null) {
+            builder.setStateListeners(conf.getStateListeners());
+        }
     }
 
     private void setProviderClientSpecificSettings(final MemcachedClient client, final XMemcachedConfiguration conf) {
