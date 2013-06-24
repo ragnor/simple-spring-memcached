@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2008-2012 Nelson Carpentier, Jakub Białek
+ * Copyright (c) 2008-2013 Nelson Carpentier, Jakub Białek
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
  * documentation files (the "Software"), to deal in the Software without restriction, including without limitation the
@@ -17,7 +17,10 @@
 
 package com.google.code.ssm.aop.support;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
@@ -26,16 +29,14 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
 
+import net.vidageek.mirror.dsl.Mirror;
+
 import org.junit.Test;
 
 import com.google.code.ssm.aop.AnnotationDataDummy;
-import com.google.code.ssm.aop.support.AnnotationData;
-import com.google.code.ssm.aop.support.AnnotationDataBuilder;
 import com.google.code.ssm.api.InvalidateAssignCache;
 import com.google.code.ssm.api.InvalidateSingleCache;
 import com.google.code.ssm.api.UpdateAssignCache;
-
-import net.vidageek.mirror.dsl.Mirror;
 
 /**
  * 
@@ -233,7 +234,7 @@ public class AnnotationDataBuilderTest {
         AnnotationDataBuilder.populateKeyIndexes(data, expected, targetMethod);
         assertTrue(data.getKeyIndexes().isEmpty());
         assertTrue(data.isReturnKeyIndex());
-        
+
         // ParamKeyProvider
         data = new AnnotationData();
         expected = InvalidateSingleCache.class;
@@ -241,7 +242,7 @@ public class AnnotationDataBuilderTest {
         AnnotationDataBuilder.populateKeyIndexes(data, expected, targetMethod);
         assertCollectionEquals(Collections.singleton(0), data.getKeyIndexes());
         assertFalse(data.isReturnKeyIndex());
-        
+
         // Multiple ParamKeyProviders with the same order value
         data = new AnnotationData();
         expected = InvalidateSingleCache.class;
@@ -253,7 +254,7 @@ public class AnnotationDataBuilderTest {
         } catch (InvalidParameterException ex) {
         }
         assertFalse(data.isReturnKeyIndex());
-        
+
         // Param KeyProvider with override
         data = new AnnotationData();
         expected = InvalidateSingleCache.class;
@@ -262,7 +263,7 @@ public class AnnotationDataBuilderTest {
         AnnotationDataBuilder.populateKeyIndexes(data, expected, targetMethod);
         assertCollectionEquals(Collections.singleton(2), data.getKeyIndexes());
         assertFalse(data.isReturnKeyIndex());
-        
+
         // Return KeyProvider with override
         data = new AnnotationData();
         expected = InvalidateSingleCache.class;
@@ -270,7 +271,7 @@ public class AnnotationDataBuilderTest {
         AnnotationDataBuilder.populateKeyIndexes(data, expected, targetMethod);
         assertTrue(data.isReturnKeyIndex());
         assertTrue(data.getKeyIndexes().isEmpty());
-        
+
         // Param KeyProvider without override
         data = new AnnotationData();
         expected = InvalidateSingleCache.class;
@@ -279,7 +280,7 @@ public class AnnotationDataBuilderTest {
         AnnotationDataBuilder.populateKeyIndexes(data, expected, targetMethod);
         assertCollectionEquals(Collections.singleton(1), data.getKeyIndexes());
         assertFalse(data.isReturnKeyIndex());
-        
+
         // Return KeyProvider without override
         data = new AnnotationData();
         expected = InvalidateSingleCache.class;
@@ -287,7 +288,7 @@ public class AnnotationDataBuilderTest {
         AnnotationDataBuilder.populateKeyIndexes(data, expected, targetMethod);
         assertTrue(data.isReturnKeyIndex());
         assertTrue(data.getKeyIndexes().isEmpty());
-        
+
         // Multiple ParamKeyProviders with the different order
         data = new AnnotationData();
         expected = InvalidateSingleCache.class;
@@ -346,7 +347,7 @@ public class AnnotationDataBuilderTest {
         assertEquals(1, data.getDataIndex());
     }
 
-    private static void assertCollectionEquals(Collection<?> expected, Collection<?> target) {
+    private static void assertCollectionEquals(final Collection<?> expected, final Collection<?> target) {
         assertTrue(String.format("Expected %s, currect %s", expected, target), expected.containsAll(target));
         assertTrue(String.format("Expected %s, currect %s", expected, target), target.containsAll(expected));
     }

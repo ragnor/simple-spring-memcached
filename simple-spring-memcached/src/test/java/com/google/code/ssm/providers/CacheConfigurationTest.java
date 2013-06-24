@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2008-2012 Nelson Carpentier, Jakub Białek
+ * Copyright (c) 2008-2013 Nelson Carpentier, Jakub Białek
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
  * documentation files (the "Software"), to deal in the Software without restriction, including without limitation the
@@ -21,8 +21,6 @@ import static org.junit.Assert.assertEquals;
 
 import org.apache.commons.lang.math.RandomUtils;
 import org.junit.Test;
-
-import com.google.code.ssm.providers.CacheConfiguration;
 
 /**
  * 

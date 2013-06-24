@@ -1,4 +1,4 @@
-SIMPLE SPRING MEMCACHED 3.0.0 (2012)
+SIMPLE SPRING MEMCACHED 3.2.0 (2013)
 ------------------------------------
 http://code.google.com/p/simple-spring-memcached/
 
