@@ -114,6 +114,13 @@ public class MemcacheClientFactoryImpl implements CacheClientFactory {
             builder.setTranscoder(conf.getDefaultTranscoder());
         }
 
+        if (conf.getAuthDescriptor() != null) {
+            builder.setAuthDescriptor(conf.getAuthDescriptor());
+        }
+
+        if (conf.getInitialObservers() != null) {
+            builder.setInitialObservers(conf.getInitialObservers());
+        }
     }
 
 }
