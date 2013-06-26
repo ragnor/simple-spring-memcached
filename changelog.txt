@@ -3,6 +3,19 @@ SIMPLE SPRING MEMCACHED CHANGELOG
 http://code.google.com/p/simple-spring-memcached/
 
 
+Changes in version 3.2.0 (2013-06-26)
+-------------------------------------
+
+* extend spymemcached provider to support more settings from ConnectionFactoryBuilder
+* extend xmemcached provider to support more settings from XMemcachedClientBuilder
+* add connect timeout from CacheClientFactory for xmemcached
+* update spymemcached to 2.9.0 and switch to official artifact that is now available in central repository in net.spy group
+* update xmemcached to 1.4.1
+* remove deprecated classes
+* allow to disable jackson
+* fix key generation for method annotated with @ReturnValueKeyProvider and @UpdateSingleCache
+
+
 Changes in version 3.1.0 (2012-10-08)
 -------------------------------------
 
