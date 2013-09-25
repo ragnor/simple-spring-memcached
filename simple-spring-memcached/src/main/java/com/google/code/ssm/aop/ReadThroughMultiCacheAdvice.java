@@ -82,10 +82,10 @@ public class ReadThroughMultiCacheAdvice extends MultiCacheAdvice {
             setMultiCacheOptions(coord, annotation.option());
 
             // Create key->object and object->key mappings.
-            coord.setHolder(createObjectIdCacheKeyMapping(data, pjp.getArgs(), coord.getMethod()));
+            coord.setHolder(createObjectIdCacheKeyMapping(data, args, coord.getMethod()));
 
-            List<Object> listKeyObjects = (List<Object>) Utils.getMethodArg(data.getListIndexInMethodArgs(), pjp.getArgs(), coord
-                    .getMethod().toString());
+            List<Object> listKeyObjects = (List<Object>) Utils.getMethodArg(data.getListIndexInMethodArgs(), args, coord.getMethod()
+                    .toString());
             coord.setListKeyObjects(listKeyObjects);
 
             // Get the full list of cache keys and ask the cache for the corresponding values.
@@ -96,8 +96,9 @@ public class ReadThroughMultiCacheAdvice extends MultiCacheAdvice {
                 return coord.generateResultList();
             }
 
-            // Create the new list of arguments with a subset of the key objects that aren't in the cache.
-            args = coord.modifyArgumentList(args);
+            // Create the new list of arguments with a subset of the key objects that aren't in the cache. Do not modify
+            // directly argument array from join point!
+            args = coord.createModifiedArgumentList(args);
         } catch (Throwable ex) {
             warn(ex, "Caching on %s aborted due to an error.", pjp.toShortString());
             return pjp.proceed();
@@ -126,7 +127,8 @@ public class ReadThroughMultiCacheAdvice extends MultiCacheAdvice {
             }
         } catch (Throwable ex) {
             warn(ex, "Caching on %s aborted due to an error. The underlying method will be called twice.", pjp.toShortString());
-            return pjp.proceed();
+            // invoke underlying method again using unmodified arguments array
+            return pjp.proceed(pjp.getArgs());
         }
     }
 

@@ -221,9 +221,11 @@ abstract class MultiCacheAdvice extends CacheAdvice {
          * @param args
          * @return
          */
-        public Object[] modifyArgumentList(final Object[] args) {
-            args[data.getListIndexInMethodArgs()] = this.missedObjects;
-            return args;
+        public Object[] createModifiedArgumentList(final Object[] args) {
+            Object[] modifiedArgs = new Object[args.length];
+            System.arraycopy(args, 0, modifiedArgs, 0, args.length);
+            modifiedArgs[data.getListIndexInMethodArgs()] = this.missedObjects;
+            return modifiedArgs;
         }
 
         public void setSkipNullsInResult(final boolean skipNullsInResult) {

@@ -124,7 +124,6 @@ public class ComplexTest {
 
         for (int i = 1; i <= 10; i++) {
             assertEquals(i, appUserService.get(10, i).getApplicationId());
-            ;
         }
 
         userIds = appUserService.getUserIdsList(1, Arrays.asList(1, 2, 3, 4, 5, 88, 66, 55, 44, 33, 11, 12, 13, 14));

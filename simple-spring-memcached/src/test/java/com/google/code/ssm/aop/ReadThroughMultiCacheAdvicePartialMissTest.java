@@ -151,7 +151,7 @@ public class ReadThroughMultiCacheAdvicePartialMissTest extends AbstractCacheTes
         for (int element : missedIndex) {
             verify(cache).setSilently(eq(cacheKeys[element]), eq(EXPIRATION), eq(expectedValue.get(element)), any(SerializationType.class));
         }
-        verify(pjp).proceed(params);
+        verify(pjp).proceed(missParams);
     }
 
     @Override
