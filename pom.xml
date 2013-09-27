@@ -9,7 +9,7 @@
 	<groupId>com.google.code.simple-spring-memcached</groupId>
 	<artifactId>simple-spring-memcached-parent</artifactId>
 	<packaging>pom</packaging>
-	<version>3.2.1-SNAPSHOT</version>
+	<version>3.2.1</version>
 	<name>simple-spring-memcached-parent</name>
 	<description>Simple spring memcached - parent</description>
 	<url>http://code.google.com/p/simple-spring-memcached/</url>
@@ -49,9 +49,9 @@
 	</mailingLists>
 
 	<scm>
-		<url>scm:svn:http://simple-spring-memcached.googlecode.com/svn/trunk</url>
-		<connection>scm:svn:http://simple-spring-memcached.googlecode.com/svn/trunk</connection>
-		<developerConnection>scm:svn:https://simple-spring-memcached.googlecode.com/svn/trunk</developerConnection>
+		<url>scm:svn:http://simple-spring-memcached.googlecode.com/svn/tags/simple-spring-memcached-parent-3.2.1</url>
+		<connection>scm:svn:http://simple-spring-memcached.googlecode.com/svn/tags/simple-spring-memcached-parent-3.2.1</connection>
+		<developerConnection>scm:svn:https://simple-spring-memcached.googlecode.com/svn/tags/simple-spring-memcached-parent-3.2.1</developerConnection>
 	</scm>
 
 	<issueManagement>
