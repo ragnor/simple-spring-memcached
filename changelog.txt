@@ -3,6 +3,14 @@ SIMPLE SPRING MEMCACHED CHANGELOG
 http://code.google.com/p/simple-spring-memcached/
 
 
+Changes in version 3.2.1 (2013-09-27)
+-------------------------------------
+
+* incomplete results in ReadThroughMultiCache if memcached client times out
+* update spymemcached to 2.10.0
+* update xmemcached to 1.4.2
+
+
 Changes in version 3.2.0 (2013-06-26)
 -------------------------------------
 
