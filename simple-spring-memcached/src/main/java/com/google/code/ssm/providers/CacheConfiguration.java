@@ -35,4 +35,19 @@ public class CacheConfiguration {
 
     private Integer operationTimeout;
 
+    /**
+     * If true name of cache (name or alias used to get the cache instance) will be used as a prefix to all cache keys.
+     * 
+     * @since 3.3.0
+     */
+    private boolean useNameAsKeyPrefix;
+
+    /**
+     * If {@link CacheConfiguration#useNameAsKeyPrefix} is true then this value is used as a separator in a key to
+     * separate cache name or alias from other parts of key.
+     * 
+     * @since 3.3.0
+     */
+    private String keyPrefixSeparator = "#";
+
 }

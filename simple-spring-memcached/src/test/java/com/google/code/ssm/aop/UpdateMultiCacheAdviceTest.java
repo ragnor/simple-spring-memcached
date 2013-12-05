@@ -32,6 +32,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import com.google.code.ssm.Cache;
+import com.google.code.ssm.CacheProperties;
 import com.google.code.ssm.aop.support.AnnotationData;
 import com.google.code.ssm.aop.support.AnnotationDataBuilder;
 import com.google.code.ssm.aop.support.InvalidAnnotationException;
@@ -99,6 +100,7 @@ public class UpdateMultiCacheAdviceTest {
         final Cache cache = EasyMock.createMock(Cache.class);
         EasyMock.expect(cache.getName()).andReturn(AnnotationConstants.DEFAULT_CACHE_NAME);
         EasyMock.expect(cache.getAliases()).andReturn(Collections.<String> emptyList()).anyTimes();
+        EasyMock.expect(cache.getProperties()).andReturn(new CacheProperties()).anyTimes();
         for (final String key : keys) {
             final String value = "ValueFor-" + key;
             objs.add(value);

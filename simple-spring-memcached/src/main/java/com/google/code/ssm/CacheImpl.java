@@ -52,6 +52,9 @@ class CacheImpl implements Cache {
     @Getter
     private final Collection<String> aliases;
 
+    @Getter
+    private final CacheProperties properties;
+
     private final SerializationType defaultSerializationType;
 
     private final JsonTranscoder jsonTranscoder;
@@ -66,11 +69,12 @@ class CacheImpl implements Cache {
 
     CacheImpl(final String name, final Collection<String> aliases, final CacheClient cacheClient,
             final SerializationType defaultSerializationType, final JsonTranscoder jsonTranscoder, final JavaTranscoder javaTranscoder,
-            final CacheTranscoder customTranscoder) {
+            final CacheTranscoder customTranscoder, final CacheProperties properties) {
         Assert.hasText(name, "'name' must not be null, empty, or blank");
         Assert.notNull(aliases, "'aliases' cannot be null");
         Assert.notNull(cacheClient, "'cacheClient' cannot be null");
         Assert.notNull(defaultSerializationType, "'defaultSerializationType' cannot be null");
+        Assert.notNull(properties, "'cacheProperties' cannot be null");
         validateTranscoder(SerializationType.JSON, jsonTranscoder, "jsonTranscoder");
         validateTranscoder(SerializationType.JAVA, javaTranscoder, "javaTranscoder");
         validateTranscoder(SerializationType.CUSTOM, customTranscoder, "customTranscoder");
@@ -82,6 +86,7 @@ class CacheImpl implements Cache {
         this.jsonTranscoder = jsonTranscoder;
         this.javaTranscoder = javaTranscoder;
         this.customTranscoder = customTranscoder;
+        this.properties = properties;
     }
 
     @Override

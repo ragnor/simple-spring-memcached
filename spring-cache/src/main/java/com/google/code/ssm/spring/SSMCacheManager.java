@@ -25,6 +25,8 @@ import org.springframework.cache.Cache;
 import org.springframework.cache.support.AbstractCacheManager;
 import org.springframework.util.Assert;
 
+import com.google.code.ssm.PrefixedCacheImpl;
+
 /**
  * 
  * CacheManager backed by a Simple Spring Memcached (SSM) {@link com.google.code.ssm.Cache}. Because using Spring Cache
@@ -41,6 +43,21 @@ public class SSMCacheManager extends AbstractCacheManager {
     @Getter
     @Setter
     private Collection<SSMCache> caches;
+
+    @Override
+    public SSMCache getCache(final String name) {
+        SSMCache cache = (SSMCache) super.getCache(name);
+        if (cache == null) {
+            return null;
+        }
+
+        if (cache.getCache().getProperties().isUseNameAsKeyPrefix()) {
+            return new SSMCache(new PrefixedCacheImpl(cache.getCache(), name, cache.getCache().getProperties().getKeyPrefixSeparator()),
+                    cache.getExpiration(), cache.isAllowClear());
+        }
+
+        return cache;
+    }
 
     @Override
     protected Collection<? extends Cache> loadCaches() {

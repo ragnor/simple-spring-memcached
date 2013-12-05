@@ -29,6 +29,7 @@ import org.junit.Test;
 import org.mockito.Mockito;
 
 import com.google.code.ssm.Cache;
+import com.google.code.ssm.CacheProperties;
 
 /**
  * 
@@ -53,6 +54,8 @@ public class ExtendedSSMCacheManagerTest {
 
         Mockito.when(cache1.getName()).thenReturn("cache1");
         Mockito.when(cache2.getName()).thenReturn("cache2");
+        Mockito.when(cache1.getProperties()).thenReturn(new CacheProperties());
+        Mockito.when(cache2.getProperties()).thenReturn(new CacheProperties());
 
         caches = new HashSet<SSMCache>(Arrays.asList(new SSMCache(cache1, 60, false), new SSMCache(cache2, 60, false)));
 

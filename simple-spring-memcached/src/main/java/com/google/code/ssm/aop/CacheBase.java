@@ -35,6 +35,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 
 import com.google.code.ssm.Cache;
+import com.google.code.ssm.PrefixedCacheImpl;
 import com.google.code.ssm.Settings;
 import com.google.code.ssm.aop.support.AnnotationData;
 import com.google.code.ssm.aop.support.BridgeMethodMappingStore;
@@ -106,6 +107,10 @@ public class CacheBase implements ApplicationContextAware, InitializingBean {
         Cache cache = caches.get(data.getCacheName());
         if (cache == null) {
             throw new UndefinedCacheException(data.getCacheName());
+        }
+
+        if (cache.getProperties().isUseNameAsKeyPrefix()) {
+            return new PrefixedCacheImpl(cache, data.getCacheName(), cache.getProperties().getKeyPrefixSeparator());
         }
 
         return cache;

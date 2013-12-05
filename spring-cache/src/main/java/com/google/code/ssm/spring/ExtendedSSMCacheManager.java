@@ -19,7 +19,6 @@ package com.google.code.ssm.spring;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.cache.Cache;
 
 /**
  * CacheManager backed by a Simple Spring Memcached (SSM) {@link com.google.code.ssm.Cache}. Spring Cache and
@@ -50,9 +49,9 @@ public class ExtendedSSMCacheManager extends SSMCacheManager {
     private char separator = '#';
 
     @Override
-    public Cache getCache(final String name) {
+    public SSMCache getCache(final String name) {
         // try to get cache by name
-        Cache cache = super.getCache(name);
+        SSMCache cache = super.getCache(name);
         if (cache != null) {
             return cache;
         }
@@ -78,7 +77,7 @@ public class ExtendedSSMCacheManager extends SSMCacheManager {
             return cache;
         }
 
-        return new SSMCache((SSMCache) cache, expiration);
+        return new SSMCache(cache, expiration);
     }
 
     public char getSeparator() {

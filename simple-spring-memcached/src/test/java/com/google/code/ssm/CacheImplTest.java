@@ -62,7 +62,8 @@ public class CacheImplTest {
         cacheClient = Mockito.mock(CacheClient.class);
         jsonTranscoder = Mockito.mock(JsonTranscoder.class);
         javaTranscoder = Mockito.mock(JavaTranscoder.class);
-        cache = new CacheImpl(name, aliases, cacheClient, defaultSerializationType, jsonTranscoder, javaTranscoder, null);
+        cache = new CacheImpl(name, aliases, cacheClient, defaultSerializationType, jsonTranscoder, javaTranscoder, null,
+                new CacheProperties());
     }
 
     @Test

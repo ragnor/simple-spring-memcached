@@ -19,9 +19,12 @@ package com.google.code.ssm.aop;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+import static org.mockito.Matchers.eq;
+import static org.mockito.Matchers.startsWith;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -31,18 +34,23 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.TimeoutException;
 
+import org.hamcrest.BaseMatcher;
+import org.hamcrest.Description;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 
 import com.google.code.ssm.Cache;
+import com.google.code.ssm.CacheProperties;
 import com.google.code.ssm.aop.support.AnnotationData;
 import com.google.code.ssm.aop.support.InvalidAnnotationException;
 import com.google.code.ssm.api.CacheKeyMethod;
 import com.google.code.ssm.api.ReadThroughMultiCache;
 import com.google.code.ssm.api.format.Serialization;
 import com.google.code.ssm.api.format.SerializationType;
+import com.google.code.ssm.providers.CacheException;
 
 /**
  * 
@@ -128,11 +136,12 @@ public class CacheBaseTest {
     }
 
     @Test
-    public void addCache() {
+    public void addAndGetCacheNoPrefixed() {
         String cacheName = "cache1";
         Cache cache = Mockito.mock(Cache.class);
         Mockito.when(cache.getName()).thenReturn(cacheName);
         Mockito.when(cache.getAliases()).thenReturn(Arrays.asList("cacheA1", "cacheB1"));
+        Mockito.when(cache.getProperties()).thenReturn(new CacheProperties());
 
         cut.addCache(cache);
 
@@ -142,6 +151,73 @@ public class CacheBaseTest {
 
         annotationData.setCacheName("cacheA1");
         assertSame(cache, cut.getCache(annotationData));
+
+        annotationData.setCacheName("cacheB1");
+        assertSame(cache, cut.getCache(annotationData));
+    }
+
+    @Test
+    public void addAndGetCachePrefixed() throws TimeoutException, CacheException {
+        String cacheName = "cache1";
+        Cache cache = Mockito.mock(Cache.class);
+        Mockito.when(cache.getName()).thenReturn(cacheName);
+        Mockito.when(cache.getAliases()).thenReturn(Arrays.asList("cacheA1", "cacheB1"));
+        Mockito.when(cache.getProperties()).thenReturn(new CacheProperties(true, "#"));
+
+        cut.addCache(cache);
+
+        AnnotationData annotationData = new AnnotationData();
+        annotationData.setCacheName(cacheName);
+        assertNotSame(cache, cut.getCache(annotationData));
+
+        annotationData.setCacheName("cacheA1");
+        assertNotSame(cache, cut.getCache(annotationData));
+
+        annotationData.setCacheName("cacheB1");
+        assertNotSame(cache, cut.getCache(annotationData));
+
+        String keyPrefix = "cacheB1#";
+        String key = "testKey";
+
+        cut.getCache(annotationData).get(key, SerializationType.PROVIDER);
+        Mockito.verify(cache).get(startsWith(keyPrefix), eq(SerializationType.PROVIDER));
+
+        cut.getCache(annotationData).getCounter(key);
+        Mockito.verify(cache).getCounter(startsWith(keyPrefix));
+
+        cut.getCache(annotationData).add(key, 100, "foo", SerializationType.PROVIDER);
+        Mockito.verify(cache).add(startsWith(keyPrefix), eq(100), eq("foo"), eq(SerializationType.PROVIDER));
+
+        cut.getCache(annotationData).addSilently(key, 50, "foo", SerializationType.PROVIDER);
+        Mockito.verify(cache).addSilently(startsWith(keyPrefix), eq(50), eq("foo"), eq(SerializationType.PROVIDER));
+
+        cut.getCache(annotationData).decr(key, 5);
+        Mockito.verify(cache).decr(startsWith(keyPrefix), eq(5));
+
+        Collection<String> keys = Arrays.asList("testKey1", "testKey2", "testKesy3");
+        cut.getCache(annotationData).delete(keys);
+        Mockito.verify(cache).delete(Mockito.argThat(new StringCollectionMatcher(keyPrefix)));
+
+        cut.getCache(annotationData).delete(key);
+        Mockito.verify(cache).delete(startsWith(keyPrefix));
+
+        cut.getCache(annotationData).getBulk(keys, SerializationType.PROVIDER);
+        Mockito.verify(cache).getBulk(Mockito.argThat(new StringCollectionMatcher(keyPrefix)), eq(SerializationType.PROVIDER));
+
+        cut.getCache(annotationData).incr(key, 5, 1);
+        Mockito.verify(cache).incr(startsWith(keyPrefix), eq(5), eq(1L));
+
+        cut.getCache(annotationData).incr(key, 5, 1, 100);
+        Mockito.verify(cache).incr(startsWith(keyPrefix), eq(5), eq(1L), eq(100));
+
+        cut.getCache(annotationData).set(key, 300, "foo", SerializationType.PROVIDER);
+        Mockito.verify(cache).set(startsWith(keyPrefix), eq(300), eq("foo"), eq(SerializationType.PROVIDER));
+
+        cut.getCache(annotationData).setCounter(key, 300, 15);
+        Mockito.verify(cache).setCounter(startsWith(keyPrefix), eq(300), eq(15L));
+
+        cut.getCache(annotationData).setSilently(key, 300, "foo", SerializationType.PROVIDER);
+        Mockito.verify(cache).setSilently(startsWith(keyPrefix), eq(300), eq("foo"), eq(SerializationType.PROVIDER));
     }
 
     @Test(expected = IllegalStateException.class)
@@ -342,4 +418,36 @@ public class CacheBaseTest {
             return result;
         }
     }
+
+    public static class StringCollectionMatcher extends BaseMatcher<Collection<String>> {
+
+        private final String prefix;
+
+        public StringCollectionMatcher(final String prefix) {
+            this.prefix = prefix;
+        }
+
+        @Override
+        public void describeTo(final Description arg0) {
+
+        }
+
+        @Override
+        public boolean matches(final Object arg0) {
+            if (!(arg0 instanceof Collection)) {
+                return false;
+            }
+
+            @SuppressWarnings("unchecked")
+            Collection<String> args = (Collection<String>) arg0;
+            for (String arg : args) {
+                if (!arg.startsWith(prefix)) {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+    }
+
 }

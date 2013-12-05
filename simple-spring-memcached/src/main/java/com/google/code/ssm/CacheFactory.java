@@ -191,7 +191,7 @@ public class CacheFactory implements AddressChangeListener, FactoryBean<Cache>, 
 
         List<InetSocketAddress> addrs = addressProvider.getAddresses();
         cache = new CacheImpl(cacheName, cacheAliases, createClient(addrs), defaultSerializationType, jsonTranscoder, javaTranscoder,
-                customTranscoder);
+                customTranscoder, new CacheProperties(configuration.isUseNameAsKeyPrefix(), configuration.getKeyPrefixSeparator()));
 
         return cache;
     }

@@ -26,6 +26,7 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
 import com.google.code.ssm.Cache;
+import com.google.code.ssm.CacheProperties;
 import com.google.code.ssm.api.AnnotationConstants;
 
 /**
@@ -69,6 +70,7 @@ public abstract class AbstractCacheTest<T extends CacheAdvice> {
     public void setUp(final Object testService) {
         MockitoAnnotations.initMocks(this);
         when(cache.getName()).thenReturn(AnnotationConstants.DEFAULT_CACHE_NAME);
+        when(cache.getProperties()).thenReturn(new CacheProperties());
         advice = createAdvice();
         CacheBase cacheBase = new CacheBase();
         cacheBase.addCache(cache);

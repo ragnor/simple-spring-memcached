@@ -54,6 +54,12 @@ public interface Cache {
      */
     Collection<String> getAliases();
 
+    /**
+     * @sicne 3.3.0
+     * @return
+     */
+    CacheProperties getProperties();
+
     <T> void add(final String key, final int exp, final Object value, final SerializationType serializationType) throws TimeoutException,
             CacheException;
 

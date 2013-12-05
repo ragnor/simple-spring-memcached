@@ -18,6 +18,7 @@ package com.google.code.ssm.spring;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 
@@ -31,6 +32,8 @@ import org.junit.Test;
 import org.mockito.Mockito;
 
 import com.google.code.ssm.Cache;
+import com.google.code.ssm.CacheProperties;
+import com.google.code.ssm.PrefixedCacheImpl;
 
 /**
  * 
@@ -59,6 +62,9 @@ public class SSMCacheManagerTest {
         Mockito.when(cache1.getName()).thenReturn("cache1");
         Mockito.when(cache2.getName()).thenReturn("cache2");
         Mockito.when(cache3.getName()).thenReturn("cache3");
+        Mockito.when(cache1.getProperties()).thenReturn(new CacheProperties());
+        Mockito.when(cache2.getProperties()).thenReturn(new CacheProperties());
+        Mockito.when(cache3.getProperties()).thenReturn(new CacheProperties(true, "#"));
 
         caches = new HashSet<SSMCache>(Arrays.asList(new SSMCache(cache1, 60, false), new SSMCache(cache2, 60, false), new SSMCache(cache3,
                 60, false)));
@@ -71,9 +77,18 @@ public class SSMCacheManagerTest {
 
     @Test
     public void getCache() {
-        org.springframework.cache.Cache cache = ssmCacheManager.getCache("cache2");
+        org.springframework.cache.Cache cache = ssmCacheManager.getCache("cache1");
+        assertNotNull(cache);
+        assertSame(cache1, cache.getNativeCache());
+
+        cache = ssmCacheManager.getCache("cache2");
         assertNotNull(cache);
         assertSame(cache2, cache.getNativeCache());
+
+        cache = ssmCacheManager.getCache("cache3");
+        assertNotNull(cache);
+        assertNotSame(cache3, cache.getNativeCache());
+        assertTrue(cache.getNativeCache() instanceof PrefixedCacheImpl);
     }
 
     @Test
