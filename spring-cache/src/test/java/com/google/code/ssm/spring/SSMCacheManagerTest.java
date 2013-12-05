@@ -62,12 +62,13 @@ public class SSMCacheManagerTest {
         Mockito.when(cache1.getName()).thenReturn("cache1");
         Mockito.when(cache2.getName()).thenReturn("cache2");
         Mockito.when(cache3.getName()).thenReturn("cache3");
+        Mockito.when(cache3.getAliases()).thenReturn(Arrays.asList("cache3Alias1", "cache3Alias2"));
         Mockito.when(cache1.getProperties()).thenReturn(new CacheProperties());
         Mockito.when(cache2.getProperties()).thenReturn(new CacheProperties());
         Mockito.when(cache3.getProperties()).thenReturn(new CacheProperties(true, "#"));
 
         caches = new HashSet<SSMCache>(Arrays.asList(new SSMCache(cache1, 60, false), new SSMCache(cache2, 60, false), new SSMCache(cache3,
-                60, false)));
+                60, false, true)));
 
         ssmCacheManager = new SSMCacheManager();
         ssmCacheManager.setCaches(caches);
@@ -89,16 +90,28 @@ public class SSMCacheManagerTest {
         assertNotNull(cache);
         assertNotSame(cache3, cache.getNativeCache());
         assertTrue(cache.getNativeCache() instanceof PrefixedCacheImpl);
+
+        cache = ssmCacheManager.getCache("cache3Alias1");
+        assertNotNull(cache);
+        assertNotSame(cache3, cache.getNativeCache());
+        assertTrue(cache.getNativeCache() instanceof PrefixedCacheImpl);
+
+        cache = ssmCacheManager.getCache("cache3Alias2");
+        assertNotNull(cache);
+        assertNotSame(cache3, cache.getNativeCache());
+        assertTrue(cache.getNativeCache() instanceof PrefixedCacheImpl);
     }
 
     @Test
     public void getCacheNames() {
         Collection<String> names = ssmCacheManager.getCacheNames();
         assertNotNull(names);
-        assertEquals(3, names.size());
+        assertEquals(5, names.size());
         assertTrue(names.contains("cache1"));
         assertTrue(names.contains("cache2"));
         assertTrue(names.contains("cache3"));
+        assertTrue(names.contains("cache3Alias1"));
+        assertTrue(names.contains("cache3Alias2"));
     }
 
 }

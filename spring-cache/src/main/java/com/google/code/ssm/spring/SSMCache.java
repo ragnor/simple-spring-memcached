@@ -51,10 +51,25 @@ public class SSMCache implements Cache {
     @Getter
     private final boolean allowClear;
 
-    public SSMCache(final com.google.code.ssm.Cache cache, final int expiration, final boolean allowClear) {
+    /**
+     * 
+     * If true then all aliases of the underlying cache will be used to register the cache in Spring, otherwise the
+     * cache will be available only by name.
+     * 
+     * @since 3.3.0
+     */
+    @Getter
+    private final boolean registerAliases;
+
+    public SSMCache(final com.google.code.ssm.Cache cache, final int expiration, final boolean allowClear, final boolean registerAliases) {
         this.cache = cache;
         this.expiration = expiration;
         this.allowClear = allowClear;
+        this.registerAliases = registerAliases;
+    }
+
+    public SSMCache(final com.google.code.ssm.Cache cache, final int expiration, final boolean allowClear) {
+        this(cache, expiration, allowClear, false);
     }
 
     public SSMCache(final com.google.code.ssm.Cache cache, final int expiration) {

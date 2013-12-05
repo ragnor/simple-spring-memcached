@@ -17,13 +17,20 @@
 package com.google.code.ssm.spring;
 
 import java.util.Collection;
+import java.util.Collections;
+import java.util.LinkedHashSet;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 
 import lombok.Getter;
 import lombok.Setter;
 
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.cache.Cache;
-import org.springframework.cache.support.AbstractCacheManager;
+import org.springframework.cache.CacheManager;
 import org.springframework.util.Assert;
+import org.springframework.util.CollectionUtils;
 
 import com.google.code.ssm.PrefixedCacheImpl;
 
@@ -38,15 +45,50 @@ import com.google.code.ssm.PrefixedCacheImpl;
  * @since 3.0.0
  * 
  */
-public class SSMCacheManager extends AbstractCacheManager {
+public class SSMCacheManager implements CacheManager, InitializingBean {
+
+    private final ConcurrentMap<String, Cache> cacheMap = new ConcurrentHashMap<String, Cache>();
+
+    private final Set<String> cacheNames = new LinkedHashSet<String>();
 
     @Getter
     @Setter
     private Collection<SSMCache> caches;
 
     @Override
+    public void afterPropertiesSet() {
+        Collection<SSMCache> caches = loadCaches();
+        Assert.notEmpty(caches, "loadCaches must not return an empty Collection");
+        this.cacheMap.clear();
+
+        // preserve the initial order of the cache names
+        for (SSMCache cache : caches) {
+            this.cacheMap.put(cache.getName(), cache);
+            this.cacheNames.add(cache.getName());
+
+            // use aliases if enabled
+            if (cache.isRegisterAliases() && !CollectionUtils.isEmpty(cache.getCache().getAliases())) {
+                for (String alias : cache.getCache().getAliases()) {
+                    this.cacheMap.put(alias, cache);
+                    this.cacheNames.add(alias);
+                }
+            }
+        }
+    }
+
+    protected final void addCache(final Cache cache) {
+        this.cacheMap.put(cache.getName(), cache);
+        this.cacheNames.add(cache.getName());
+    }
+
+    @Override
+    public Collection<String> getCacheNames() {
+        return Collections.unmodifiableSet(this.cacheNames);
+    }
+
+    @Override
     public SSMCache getCache(final String name) {
-        SSMCache cache = (SSMCache) super.getCache(name);
+        SSMCache cache = (SSMCache) this.cacheMap.get(name);
         if (cache == null) {
             return null;
         }
@@ -59,8 +101,10 @@ public class SSMCacheManager extends AbstractCacheManager {
         return cache;
     }
 
-    @Override
-    protected Collection<? extends Cache> loadCaches() {
+    /**
+     * Load the caches for this cache manager. Occurs at startup. The returned collection must not be null.
+     */
+    protected Collection<SSMCache> loadCaches() {
         Assert.notEmpty(caches, "A collection of caches is required and cannot be empty");
 
         return caches;
