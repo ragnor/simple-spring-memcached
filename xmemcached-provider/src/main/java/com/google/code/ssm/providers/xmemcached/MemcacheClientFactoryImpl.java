@@ -43,7 +43,18 @@ public class MemcacheClientFactoryImpl implements CacheClientFactory {
 
     @Override
     public CacheClient create(final List<InetSocketAddress> addrs, final CacheConfiguration conf) throws IOException {
-        MemcachedClientBuilder builder = new XMemcachedClientBuilder(addrs);
+        MemcachedClientBuilder builder = null;
+
+        if (conf instanceof XMemcachedConfiguration) {
+            int[] weights = ((XMemcachedConfiguration) conf).getWeights();
+            if (weights != null && weights.length > 0) {
+                builder = new XMemcachedClientBuilder(addrs, weights);
+            }
+        }
+
+        if (builder == null) {
+            builder = new XMemcachedClientBuilder(addrs);
+        }
 
         if (conf.isConsistentHashing()) {
             builder.setSessionLocator(new KetamaMemcachedSessionLocator());

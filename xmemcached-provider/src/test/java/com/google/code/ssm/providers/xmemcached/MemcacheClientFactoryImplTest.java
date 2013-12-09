@@ -20,6 +20,7 @@ import static org.junit.Assert.assertNotNull;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -72,4 +73,21 @@ public class MemcacheClientFactoryImplTest {
         client.shutdown();
     }
 
+    @Test(expected = IllegalArgumentException.class)
+    public void createWithSpecificConfAndNotEnoughWeights() throws IOException {
+        XMemcachedConfiguration conf = new XMemcachedConfiguration();
+        conf.setConsistentHashing(true);
+        conf.setOperationTimeout(10);
+        conf.setUseBinaryProtocol(false);
+        conf.setConnectionPoolSize(1);
+        conf.setMaxAwayTime(100);
+        conf.setOptimizeGet(true);
+        conf.setSanitizeKeys(true);
+        // 2 servers but only 1 weight
+        conf.setWeights(new int[] { 4 });
+
+        List<InetSocketAddress> addrs = Arrays.asList(new InetSocketAddress(12345), new InetSocketAddress(12346));
+
+        factory.create(addrs, conf);
+    }
 }

@@ -103,4 +103,9 @@ public class XMemcachedConfiguration extends CacheConfiguration {
      */
     private List<MemcachedClientStateListener> stateListeners;
 
+    /**
+     * @since 3.3.0
+     */
+    private int[] weights;
+
 }
