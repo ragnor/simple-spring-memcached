@@ -65,7 +65,7 @@ public class InvalidateSingleCacheAdvice extends CacheAdvice {
             if (!data.isReturnKeyIndex()) {
                 cacheKey = getCacheBase().getCacheKeyBuilder().getCacheKey(data, pjp.getArgs(), methodToCache.toString());
             }
-        } catch (Throwable ex) {
+        } catch (Exception ex) {
             warn(ex, "Caching on method %s and key [%s] aborted due to an error.", pjp.toShortString(), cacheKey);
             return pjp.proceed();
         }
@@ -81,7 +81,7 @@ public class InvalidateSingleCacheAdvice extends CacheAdvice {
             }
 
             getCacheBase().getCache(data).delete(cacheKey);
-        } catch (Throwable ex) {
+        } catch (Exception ex) {
             warn(ex, "Caching on method %s and key [%s] aborted due to an error.", pjp.toShortString(), cacheKey);
         }
         return result;

@@ -98,7 +98,7 @@ public class ReadThroughMultiCacheAdvice extends MultiCacheAdvice {
             // Create the new list of arguments with a subset of the key objects that aren't in the cache. Do not modify
             // directly argument array from join point!
             args = coord.createModifiedArgumentList(args);
-        } catch (Throwable ex) {
+        } catch (Exception ex) {
             warn(ex, "Caching on %s aborted due to an error.", pjp.toShortString());
             return pjp.proceed();
         }
@@ -124,7 +124,7 @@ public class ReadThroughMultiCacheAdvice extends MultiCacheAdvice {
             } else {
                 return generateByKeysProviders(results, coord, serializationType);
             }
-        } catch (Throwable ex) {
+        } catch (Exception ex) {
             warn(ex, "Caching on %s aborted due to an error. The underlying method will be called twice.", pjp.toShortString());
             // invoke underlying method again using unmodified arguments array
             return pjp.proceed(pjp.getArgs());

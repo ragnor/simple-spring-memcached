@@ -50,7 +50,7 @@ public abstract class CacheAdvice implements Ordered {
         return DISABLE_CACHE_PROPERTY_VALUE.equals(System.getProperty(DISABLE_CACHE_PROPERTY));
     }
 
-    protected void warn(final Throwable e, final String format, final Object... args) {
+    protected void warn(final Exception e, final String format, final Object... args) {
         if (getLogger().isWarnEnabled()) {
             getLogger().warn(String.format(format, args), e);
         }

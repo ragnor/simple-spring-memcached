@@ -69,7 +69,7 @@ abstract class SingleReadCacheAdvice<T extends Annotation> extends CacheAdvice {
                 getLogger().debug("Cache hit.");
                 return getCacheBase().getResult(result);
             }
-        } catch (Throwable ex) {
+        } catch (Exception ex) {
             warn(ex, "Caching on method %s and key [%s] aborted due to an error.", pjp.toShortString(), cacheKey);
             return pjp.proceed();
         }
@@ -81,7 +81,7 @@ abstract class SingleReadCacheAdvice<T extends Annotation> extends CacheAdvice {
         try {
             final Object submission = getCacheBase().getSubmission(result);
             getCacheBase().getCache(data).set(cacheKey, data.getExpiration(), submission, serializationType);
-        } catch (Throwable ex) {
+        } catch (Exception ex) {
             warn(ex, "Caching on method %s and key [%s] aborted due to an error.", pjp.toShortString(), cacheKey);
         }
         return result;

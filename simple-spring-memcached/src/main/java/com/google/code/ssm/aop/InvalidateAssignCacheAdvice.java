@@ -66,7 +66,7 @@ public class InvalidateAssignCacheAdvice extends CacheAdvice {
             cacheKey = getCacheBase().getCacheKeyBuilder().getAssignCacheKey(data);
 
             getCacheBase().getCache(data).delete(cacheKey);
-        } catch (Throwable ex) {
+        } catch (Exception ex) {
             warn(ex, "Caching on method %s and key [%s] aborted due to an error.", pjp.toShortString(), cacheKey);
         }
         return result;

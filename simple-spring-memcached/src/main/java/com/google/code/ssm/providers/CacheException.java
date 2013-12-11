@@ -29,7 +29,7 @@ public class CacheException extends Exception {
 
     private static final long serialVersionUID = -8079095237716455457L;
 
-    public CacheException(Throwable cause) {
+    public CacheException(final Exception cause) {
         super(cause);
     }
 

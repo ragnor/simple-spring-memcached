@@ -62,7 +62,7 @@ public class IncrementCounterInCacheAdvice extends CounterInCacheBase {
             AnnotationData data = AnnotationDataBuilder.buildAnnotationData(annotation, IncrementCounterInCache.class, methodToCache);
             cacheKey = getCacheBase().getCacheKeyBuilder().getCacheKey(data, jp.getArgs(), methodToCache.toString());
             getCacheBase().getCache(data).incr(cacheKey, 1, 1);
-        } catch (Throwable ex) {
+        } catch (Exception ex) {
             warn(ex, "Incrementing counter [%s] via %s aborted due to an error.", cacheKey, jp.toShortString());
         }
     }
