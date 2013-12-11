@@ -56,11 +56,11 @@ public class ReadThroughMultiCacheAdvicePartialMissTest extends AbstractCacheTes
                         { true, "method1", new Class[] { List.class }, new Object[] { Arrays.asList(1, 2, 3, 4) },
                                 Arrays.asList(2, 4, 6, 8), new String[] { NS + ":1", NS + ":2", NS + ":3", NS + ":4" },
                                 new Object[] { Arrays.asList(2, 4) }, of(NS + ":1", 2, NS + ":2", null, NS + ":3", 6, NS + ":4", null),
-                                new int[] { 1, 3 } }, //
+                                new int[] { 1, 3 }, null }, //
                         { true, "method2", new Class[] { String.class, List.class }, new Object[] { "xyz", Arrays.asList(1, 2, 3, 4) },
                                 Arrays.asList(2, 4, 6, 8), new String[] { NS + ":1/xyz", NS + ":2/xyz", NS + ":3/xyz", NS + ":4/xyz" },
                                 new Object[] { "xyz", Arrays.asList(2, 3) },
-                                of(NS + ":1/xyz", 2, NS + ":2/xyz", null, NS + ":3/xyz", null, NS + ":4/xyz", 8), new int[] { 1, 2 } }, //
+                                of(NS + ":1/xyz", 2, NS + ":2/xyz", null, NS + ":3/xyz", null, NS + ":4/xyz", 8), new int[] { 1, 2 }, null }, //
                         {
                                 true,
                                 "method3",
@@ -70,23 +70,32 @@ public class ReadThroughMultiCacheAdvicePartialMissTest extends AbstractCacheTes
                                 new String[] { NS + ":(1,2)/(6,7)", NS + ":(2,3)/(6,7)", NS + ":(3,4)/(6,7)", NS + ":(4,5)/(6,7)" },
                                 new Object[] { Arrays.asList(new Point(1, 2), new Point(3, 4)), new Point(6, 7) },
                                 of(NS + ":(1,2)/(6,7)", null, NS + ":(2,3)/(6,7)", 4, NS + ":(3,4)/(6,7)", null, NS + ":(4,5)/(6,7)", 8),
-                                new int[] { 0, 2 } }, //
+                                new int[] { 0, 2 }, null }, //
                         { true, "method4", new Class[] { int.class, String.class, List.class },
                                 new Object[] { 4, "xyz", Arrays.asList(1, 2, 3, 4) }, Arrays.asList(1, 2, 3, 4),
                                 new String[] { NS + ":1/xyz", NS + ":2/xyz", NS + ":3/xyz", NS + ":4/xyz" },
                                 new Object[] { 4, "xyz", Arrays.asList(1, 4) },
-                                of(NS + ":1/xyz", null, NS + ":2/xyz", 2, NS + ":3/xyz", 3, NS + ":4/xyz", null), new int[] { 0, 3 } }, //
+                                of(NS + ":1/xyz", null, NS + ":2/xyz", 2, NS + ":3/xyz", 3, NS + ":4/xyz", null), new int[] { 0, 3 }, null }, //
                         { true, "method4", new Class[] { int.class, String.class, List.class },
                                 new Object[] { 4, "xyz", Arrays.asList(1, 2, 3, 4) }, Arrays.asList(null, 2, 3, 4),
                                 new String[] { NS + ":1/xyz", NS + ":2/xyz", NS + ":3/xyz", NS + ":4/xyz" },
                                 new Object[] { 4, "xyz", Arrays.asList(2) },
                                 of(NS + ":1/xyz", PertinentNegativeNull.NULL, NS + ":2/xyz", null, NS + ":3/xyz", 3, NS + ":4/xyz", 4),
-                                new int[] { 1 } }, //
+                                new int[] { 1 }, null }, //
                         { false, "method6", new Class[] { String.class, List.class }, new Object[] { "xyz", Arrays.asList(1, 2, 3, 4) },
                                 Arrays.asList(null, 2, 3, 4), new String[] { NS + ":1/xyz", NS + ":2/xyz", NS + ":3/xyz", NS + ":4/xyz" },
                                 new Object[] { "xyz", Arrays.asList(2) },
                                 of(NS + ":1/xyz", PertinentNegativeNull.NULL, NS + ":2/xyz", null, NS + ":3/xyz", 3, NS + ":4/xyz", 4),
-                                new int[] { 1 } }, //
+                                new int[] { 1 }, null }, //
+                        { true, "method7", new Class[] { List.class }, new Object[] { Arrays.asList(1, 2, 3, 4) },
+                                Arrays.asList(null, 2, 3, 4), new String[] { NS + ":1", NS + ":2", NS + ":3", NS + ":4" },
+                                new Object[] { Arrays.asList(2) },
+                                of(NS + ":1", PertinentNegativeNull.NULL, NS + ":2", null, NS + ":3", 3, NS + ":4", 4), new int[] { 1 },
+                                null },//
+                        { false, "method8", new Class[] { List.class }, new Object[] { Arrays.asList(1, 2, 3, 4) }, Arrays.asList(2, 4),
+                                new String[] { NS + ":1", NS + ":2", NS + ":3", NS + ":4" }, new Object[] { Arrays.asList(2, 3) },
+                                of(NS + ":1", PertinentNegativeNull.NULL, NS + ":2", null, NS + ":3", null, NS + ":4", 4),
+                                new int[] { 1, 2 }, Arrays.asList(2) },//
                 });
     }
 
@@ -106,9 +115,11 @@ public class ReadThroughMultiCacheAdvicePartialMissTest extends AbstractCacheTes
 
     private final boolean allowNullsInResults;
 
+    private final List<Object> missValues;
+
     public ReadThroughMultiCacheAdvicePartialMissTest(final boolean allowNullsInResults, final String methodName,
             final Class<?>[] paramTypes, final Object[] params, final List<?> expectedValue, final String[] cacheKeys,
-            final Object[] missParams, final Map<String, Object> cacheHits, final int[] missedIndex) {
+            final Object[] missParams, final Map<String, Object> cacheHits, final int[] missedIndex, final List<Object> missValues) {
         super(true, methodName, paramTypes, params, null);
         this.expectedValue = expectedValue;
         this.cacheKeys = cacheKeys;
@@ -116,6 +127,14 @@ public class ReadThroughMultiCacheAdvicePartialMissTest extends AbstractCacheTes
         this.cacheHits = cacheHits;
         this.missedIndex = missedIndex;
         this.allowNullsInResults = allowNullsInResults;
+        if (missValues != null) {
+            this.missValues = missValues;
+        } else {
+            this.missValues = new ArrayList<Object>();
+            for (int element : missedIndex) {
+                this.missValues.add(expectedValue.get(element));
+            }
+        }
     }
 
     @Before
@@ -127,11 +146,6 @@ public class ReadThroughMultiCacheAdvicePartialMissTest extends AbstractCacheTes
     @SuppressWarnings("unchecked")
     public void validCachePartialMiss() throws Throwable {
         Assume.assumeTrue(isValid);
-
-        List<Object> missValues = new ArrayList<Object>();
-        for (int element : missedIndex) {
-            missValues.add(expectedValue.get(element));
-        }
 
         when(cache.getBulk(eq(new HashSet<String>(Arrays.asList(cacheKeys))), any(SerializationType.class))).thenReturn(cacheHits);
         when(pjp.proceed(missParams)).thenReturn(missValues);
@@ -148,8 +162,11 @@ public class ReadThroughMultiCacheAdvicePartialMissTest extends AbstractCacheTes
         assertEquals(result, advice.cacheMulti(pjp));
 
         verify(cache).getBulk(eq(new HashSet<String>(Arrays.asList(cacheKeys))), any(SerializationType.class));
-        for (int element : missedIndex) {
-            verify(cache).setSilently(eq(cacheKeys[element]), eq(EXPIRATION), eq(expectedValue.get(element)), any(SerializationType.class));
+        if (expectedValue.size() == cacheKeys.length) {
+            for (int element : missedIndex) {
+                verify(cache).setSilently(eq(cacheKeys[element]), eq(EXPIRATION), eq(expectedValue.get(element)),
+                        any(SerializationType.class));
+            }
         }
         verify(pjp).proceed(missParams);
     }
@@ -214,8 +231,13 @@ public class ReadThroughMultiCacheAdvicePartialMissTest extends AbstractCacheTes
         }
 
         @ReadThroughMultiCache(namespace = NS, expiration = EXPIRATION, option = @ReadThroughMultiCacheOption(addNullsToCache = true, generateKeysFromResult = true))
-        public List<Point> method7(@ParameterValueKeyProvider(order = 1) final List<String> id2) {
-            return Collections.<Point> emptyList();
+        public List<Integer> method7(@ParameterValueKeyProvider(order = 1) final List<Integer> id2) {
+            return Collections.<Integer> emptyList();
+        }
+
+        @ReadThroughMultiCache(namespace = NS, expiration = EXPIRATION, option = @ReadThroughMultiCacheOption(skipNullsInResult = true, generateKeysFromResult = true))
+        public List<Integer> method8(@ParameterValueKeyProvider(order = 1) final List<Integer> id2) {
+            return Collections.<Integer> emptyList();
         }
 
     }

@@ -19,7 +19,6 @@
 package com.google.code.ssm.aop;
 
 import java.lang.reflect.Method;
-import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
@@ -138,11 +137,9 @@ public class ReadThroughMultiCacheAdvice extends MultiCacheAdvice {
         coord.setSkipNullsInResult(options.skipNullsInResult());
     }
 
-    private List<?> generateByKeysFromResult(List<Object> results, final MultiCacheCoordinator coord,
+    private List<?> generateByKeysFromResult(final List<Object> results, final MultiCacheCoordinator coord,
             final SerializationType serializationType) throws Exception {
-        if (results == null) {
-            results = new ArrayList<Object>();
-        } else if (!results.isEmpty()) {
+        if (!results.isEmpty()) {
             final AnnotationData data = coord.getAnnotationData();
             String cacheKey;
 
@@ -151,6 +148,7 @@ public class ReadThroughMultiCacheAdvice extends MultiCacheAdvice {
                 getCacheBase().getCache(coord.getAnnotationData()).setSilently(cacheKey, data.getExpiration(), resultObject,
                         serializationType);
                 coord.getMissedObjects().remove(coord.getKey2Obj().get(cacheKey));
+                coord.getKey2Result().put(cacheKey, resultObject);
             }
         }
 
@@ -158,14 +156,16 @@ public class ReadThroughMultiCacheAdvice extends MultiCacheAdvice {
             addNullValues(coord.getMissedObjects(), coord, serializationType);
         }
 
-        results.addAll(coord.generatePartialResultList());
-        return results;
+        return coord.generatePartialResultList();
     }
 
     private List<?> generateByKeysProviders(final List<Object> results, final MultiCacheCoordinator coord,
             final SerializationType serializationType) {
         if (results.size() != coord.getMissedObjects().size()) {
-            getLogger().info("Did not receive a correlated amount of data from the target method.");
+            getLogger().warn(
+                    "Did not receive a correlated amount of data from the target method: %s. "
+                            + "Result list will be unsorted and won't respect the order of the keys passed in argument.",
+                    coord.getMethod().getName());
             results.addAll(coord.generatePartialResultList());
             return results;
         }

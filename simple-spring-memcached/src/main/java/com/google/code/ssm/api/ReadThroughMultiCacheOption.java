@@ -38,7 +38,11 @@ public @interface ReadThroughMultiCacheOption {
      * list. So order of the IDs on collection argument don't have to correspond the order of elements in result list.
      * 
      * It can increase performance increasing amount of objects added to cache if number of IDs in collection method
-     * argument is different than number of objects in result list.
+     * argument is different than number of objects in result list returned by intercepted method.
+     * 
+     * If the {@link #generateKeysFromResult()} is true it is incorrect to set {@link #addNullsToCache()} to true and
+     * {@link #skipNullsInResult()} to false because subsequence invocations of an annotated method can return different
+     * results.
      * 
      */
     boolean generateKeysFromResult() default false;

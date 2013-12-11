@@ -180,34 +180,11 @@ abstract class MultiCacheAdvice extends CacheAdvice {
         }
 
         public List<Object> generateResultList() {
-            final List<Object> results = new ArrayList<Object>();
-            for (Object keyObject : listKeyObjects) {
-                final String cacheKey = obj2Key.get(keyObject);
-                final Object keyResult = key2Result.get(cacheKey);
-                if (keyResult == null) {
-                    throw new RuntimeException(String.format("Unable to fulfill data for the key item [%s] with key value of [%s].",
-                            keyObject.toString(), obj2Key.get(keyObject)));
-                }
-
-                if (!isSkipNullsInResult() || !(keyResult instanceof PertinentNegativeNull)) {
-                    results.add(getResult(keyResult));
-                }
-            }
-
-            return results;
+            return generateResultList(false);
         }
 
         public List<Object> generatePartialResultList() {
-            final List<Object> results = new ArrayList<Object>();
-            for (Object keyObject : listKeyObjects) {
-                final String cacheKey = obj2Key.get(keyObject);
-                final Object keyResult = key2Result.get(cacheKey);
-                if (keyResult != null && (!isSkipNullsInResult() || !(keyResult instanceof PertinentNegativeNull))) {
-                    results.add(getResult(keyResult));
-                }
-            }
-
-            return results;
+            return generateResultList(true);
         }
 
         public List<Object> getMissedObjects() {
@@ -224,7 +201,8 @@ abstract class MultiCacheAdvice extends CacheAdvice {
         public Object[] createModifiedArgumentList(final Object[] args) {
             Object[] modifiedArgs = new Object[args.length];
             System.arraycopy(args, 0, modifiedArgs, 0, args.length);
-            modifiedArgs[data.getListIndexInMethodArgs()] = this.missedObjects;
+            // instead of passing reference to missedObject list create a new list (copy)
+            modifiedArgs[data.getListIndexInMethodArgs()] = new ArrayList<Object>(this.missedObjects);
             return modifiedArgs;
         }
 
@@ -234,6 +212,24 @@ abstract class MultiCacheAdvice extends CacheAdvice {
 
         public boolean isSkipNullsInResult() {
             return skipNullsInResult;
+        }
+
+        protected List<Object> generateResultList(final boolean allowPartialResult) {
+            final List<Object> results = new ArrayList<Object>();
+            for (Object keyObject : listKeyObjects) {
+                final String cacheKey = obj2Key.get(keyObject);
+                final Object keyResult = key2Result.get(cacheKey);
+                if (!allowPartialResult && keyResult == null) {
+                    throw new RuntimeException(String.format("Unable to fulfill data for the key item [%s] with key value of [%s].",
+                            keyObject.toString(), obj2Key.get(keyObject)));
+                }
+
+                if (keyResult != null && (!isSkipNullsInResult() || !(keyResult instanceof PertinentNegativeNull))) {
+                    results.add(getResult(keyResult));
+                }
+            }
+
+            return results;
         }
 
         private Object getResult(final Object result) {
