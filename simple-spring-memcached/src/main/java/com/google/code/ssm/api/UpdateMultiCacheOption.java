@@ -39,13 +39,15 @@ public @interface UpdateMultiCacheOption {
      * annotated by {@link ParameterValueKeyProvider} or {@link ReturnValueKeyProvider} but not occurred in
      * {@link ParameterDataUpdateContent} or {@link ReturnDataUpdateContent}. Example: <br/>
      * 
-     * &#064;UpdateMultiCache(namespace = "NS1", expiration = 0, option=&#064;UpdateMultiCacheOption(addNullsToCache =
-     * true)) <br/>
-     * public List<ApplicationUser> getUsersList(&#064;ParameterValueKeyProvider(order = 1) int applicationId,
-     * &#064;ParameterValueKeyProvider(order = 0) List<Integer> userIds) <br/>
-     * <br/>
-     * invocation: getUsersList(1, Arrays.asList(1,2,3,4,5)) will return entities for userId 1,3,4 then null values will
-     * be added for userId 2 and 5.
+     * <pre>
+     * &#064;UpdateMultiCache(namespace = "NS1", expiration = 0, option=&#064;UpdateMultiCacheOption(addNullsToCache = true))
+     * public List<ApplicationUser> getUsersList(&#064;ParameterValueKeyProvider(order = 1) int applicationId, &#064;ParameterValueKeyProvider(order = 0) List&ltInteger&gt userIds) {
+     *  .....
+     * }
+     * </pre>
+     * 
+     * if getUsersList(1, Arrays.asList(1,2,3,4,5)) returns entities for userId 1,3,4 then null values will be added for
+     * userId 2 and 5.
      * 
      * @return true if null values should be add to cache
      */

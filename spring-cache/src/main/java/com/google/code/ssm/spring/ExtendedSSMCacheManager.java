@@ -23,9 +23,9 @@ import org.slf4j.LoggerFactory;
 /**
  * CacheManager backed by a Simple Spring Memcached (SSM) {@link com.google.code.ssm.Cache}. Spring Cache and
  * CacheManager doesn't support configuring expiration time per method (there is no dedicated parameter in cache
- * annotation to pass expiration). This extension of {@link SSMCacheManager} overcomes this limitation and allow to pass
- * expiration time as a part of cache name. To define custom expiration on method as a cache name use concatenation of
- * specific cache name, separator and expiration e.g.
+ * annotation to pass expiration time). This extension of {@link SSMCacheManager} overcomes this limitation and allow to
+ * pass expiration time as a part of cache name. To define custom expiration on method as a cache name use concatenation
+ * of specific cache name, separator and expiration e.g.
  * 
  * <pre>
  * public class UserDAO {

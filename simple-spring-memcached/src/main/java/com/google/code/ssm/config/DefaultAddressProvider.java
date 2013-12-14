@@ -26,6 +26,9 @@ import org.slf4j.LoggerFactory;
 
 /**
  * 
+ * Address provider that can be used to configure addresses of memcached servers as a string with comma or whitespace
+ * separated addresses: "host:port host2:port" or "host:port,host2:port".
+ * 
  * @author Jakub Białek
  * @author Nelson Carpentier
  * @since 2.0.0

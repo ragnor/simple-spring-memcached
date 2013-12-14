@@ -23,7 +23,7 @@ import java.util.Set;
 
 /**
  * 
- * Simple replacement for guava ImmutableSet.
+ * Simple replacement for guava ImmutableSet to avoid adding guava as a project's dependency.
  * 
  * @author Jakub Białek
  * @since 3.0.0
