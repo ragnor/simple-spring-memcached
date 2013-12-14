@@ -196,7 +196,7 @@ abstract class MultiCacheAdvice extends CacheAdvice {
          * new value of annotated list argument list of missed objects will be used.
          * 
          * @param args
-         * @return
+         * @return array of method's arguments that contain only missed objects
          */
         public Object[] createModifiedArgumentList(final Object[] args) {
             Object[] modifiedArgs = new Object[args.length];

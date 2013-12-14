@@ -28,9 +28,8 @@ import java.lang.annotation.Target;
  * (non-namespaced) part of the key for referring to values within the cache. This annotation indicates method that will
  * be used to generate a part of unique key. Annotated method has to confirm to the required signature: no-arg, with an
  * output of type {@link String}. If there is no conforming {@link CacheKeyMethod}, then the basic
- * {@link Object#toString()} method will be used. 
- * Since version 3.0.3 if there is no conforming {@link CacheKeyMethod} in class but there is such method in superclass 
- * it will be used (instead of basic {@link Object#toString()).  
+ * {@link Object#toString()} method will be used. Since version 3.0.3 if there is no conforming {@link CacheKeyMethod}
+ * in class but there is such method in superclass it will be used (instead of basic {@link Object#toString()}).
  * 
  * @author Nelson Carpentier
  * @since 1.0.0

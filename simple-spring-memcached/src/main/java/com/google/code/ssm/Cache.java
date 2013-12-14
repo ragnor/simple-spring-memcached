@@ -55,8 +55,8 @@ public interface Cache {
     Collection<String> getAliases();
 
     /**
-     * @sicne 3.3.0
-     * @return
+     * @since 3.3.0
+     * @return the properties of cache
      */
     CacheProperties getProperties();
 
