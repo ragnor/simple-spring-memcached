@@ -178,6 +178,36 @@
 						</executions>
 					</plugin>
 					<plugin>
+						<groupId>org.projectlombok</groupId>
+						<artifactId>lombok-maven-plugin</artifactId>
+						<version>${lombok-maven-plugin.version}</version>
+						<executions>
+							<execution>
+								<id>delombok</id>
+								<phase>generate-sources</phase>
+								<goals>
+									<goal>delombok</goal>
+								</goals>
+								<configuration>
+									<verbose>true</verbose>
+								</configuration>
+							</execution>
+						</executions>
+						<configuration>
+							<addOutputDirectory>false</addOutputDirectory>
+							<sourceDirectory>src/main/java</sourceDirectory>
+						</configuration>
+						<dependencies>
+							<dependency>
+								<groupId>sun.jdk</groupId>
+								<artifactId>tools</artifactId>
+								<version>1.6</version>
+								<scope>system</scope>
+								<systemPath>${java.home}/../lib/tools.jar</systemPath>
+							</dependency>
+						</dependencies>
+					</plugin>
+					<plugin>
 						<groupId>org.apache.maven.plugins</groupId>
 						<artifactId>maven-javadoc-plugin</artifactId>
 						<executions>
@@ -209,12 +239,6 @@
 
 		<profile>
 			<id>delombok</id>
-			<activation>
-				<property>
-					<name>performRelease</name>
-					<value>true</value>
-				</property>
-			</activation>
 			<build>
 				<plugins>
 					<plugin>
