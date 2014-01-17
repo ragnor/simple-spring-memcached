@@ -123,9 +123,6 @@
 					<author>true</author>
 					<keywords>true</keywords>
 					<show>package</show>
-					<additionalparam>
-						-nopackagediagram
-					</additionalparam>
 				</configuration>
 			</plugin>
 		</plugins>
