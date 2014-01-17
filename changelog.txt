@@ -3,6 +3,16 @@ SIMPLE SPRING MEMCACHED CHANGELOG
 http://code.google.com/p/simple-spring-memcached/
 
 
+Changes in version 3.3.0 (2014-01-17)
+-------------------------------------
+
+* use cache name or alias as a prefix in key
+* fix to unsorted results when using ReadThroughMultiCacheAdvice
+* support server weights for XMemcachedClientBuilder
+* instead of Throwable catch Exception to avoid catching Error
+* update spymemcached to 2.10.4
+
+
 Changes in version 3.2.1 (2013-09-27)
 -------------------------------------
 
