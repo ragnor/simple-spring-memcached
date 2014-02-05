@@ -19,6 +19,20 @@ package com.google.code.ssm.transcoders;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
+
+import org.codehaus.jackson.JsonGenerator;
+import org.codehaus.jackson.JsonParser;
+import org.codehaus.jackson.JsonProcessingException;
+import org.codehaus.jackson.Version;
+import org.codehaus.jackson.map.DeserializationContext;
+import org.codehaus.jackson.map.JsonDeserializer;
+import org.codehaus.jackson.map.JsonSerializer;
+import org.codehaus.jackson.map.SerializerProvider;
+import org.codehaus.jackson.map.TypeSerializer;
+import org.codehaus.jackson.map.module.SimpleModule;
 import org.junit.Test;
 
 import com.google.code.ssm.mapper.JsonObjectMapper;
@@ -47,6 +61,141 @@ public class JsonTranscoderTest {
         Point p2 = (Point) transcoder.decode(co);
         assertNotNull(p2);
         assertEquals(p, p2);
+    }
+
+    @Test
+    public void testEncodeAndDecodeWithCustomSerializer() {
+        JsonObjectMapper mapper = new JsonObjectMapper();
+
+        Map<Class<?>, JsonSerializer<?>> serializers = new HashMap<Class<?>, JsonSerializer<?>>();
+        serializers.put(Point.class, new PointSerializer());
+        mapper.setSerializers(serializers);
+
+        transcoder = new JsonTranscoder(mapper);
+
+        Point p = new Point(40, 50);
+
+        // it won't be possible to deserialize it because no custom deserializer is registered and serialized data
+        // doesn't contain info about class (type of serialized object), so the Jackson cannot figure out what
+        // deserializer should be used
+        CachedObject co = transcoder.encode(p);
+        assertNotNull(co);
+        assertEquals("{\"v\":\"40x50\"}", new String(co.getData()));
+        assertNotNull(co.getData());
+    }
+
+    @Test
+    public void testEncodeAndDecodeRegisterSerializerDirectlyToModule() {
+        JsonObjectMapper mapper = new JsonObjectMapper();
+
+        // first add serializer then register module
+        SimpleModule module = new SimpleModule("cemo", Version.unknownVersion());
+        module.addSerializer(Point.class, new PointSerializer());
+        mapper.registerModule(module);
+
+        transcoder = new JsonTranscoder(mapper);
+
+        Point p = new Point(40, 50);
+
+        CachedObject co = transcoder.encode(p);
+        assertNotNull(co);
+        assertEquals("{\"v\":\"40x50\"}", new String(co.getData()));
+        assertNotNull(co.getData());
+    }
+
+    @Test
+    public void testEncodeAndDecodeWithCustomSerializerAndDeserializerWithTypeInfoInside() {
+        JsonObjectMapper mapper = new JsonObjectMapper();
+
+        Map<Class<?>, JsonSerializer<?>> serializers = new HashMap<Class<?>, JsonSerializer<?>>();
+        serializers.put(Point.class, new PointSerializerWithTypeInfo());
+        mapper.setSerializers(serializers);
+
+        Map<Class<?>, JsonDeserializer<?>> deserializers = new HashMap<Class<?>, JsonDeserializer<?>>();
+        deserializers.put(Point.class, new PointDeserializer());
+        mapper.setDeserializers(deserializers);
+
+        transcoder = new JsonTranscoder(mapper);
+
+        Point p = new Point(40, 50);
+
+        CachedObject co = transcoder.encode(p);
+        assertNotNull(co);
+        assertEquals("{\"v\":{\"com.google.code.ssm.test.Point\":{\"c\":\"40x50\"}}}", new String(co.getData()));
+        assertNotNull(co.getData());
+
+        Point p2 = (Point) transcoder.decode(co);
+        assertNotNull(p2);
+        assertEquals(p, p2);
+    }
+
+    @Test
+    public void testEncodeAndDecodeWithCustomSerializerAndDeserializerWithTypeInfoInsideAndShorterClassIdentifier() {
+        JsonObjectMapper mapper = new JsonObjectMapper();
+
+        Map<Class<?>, JsonSerializer<?>> serializers = new HashMap<Class<?>, JsonSerializer<?>>();
+        serializers.put(Point.class, new PointSerializerWithTypeInfo());
+        mapper.setSerializers(serializers);
+
+        Map<Class<?>, JsonDeserializer<?>> deserializers = new HashMap<Class<?>, JsonDeserializer<?>>();
+        deserializers.put(Point.class, new PointDeserializer());
+        mapper.setDeserializers(deserializers);
+
+        Map<Class<?>, String> classToId = new HashMap<Class<?>, String>();
+        classToId.put(Point.class, "point");
+        mapper.setClassToId(classToId);
+
+        transcoder = new JsonTranscoder(mapper);
+
+        Point p = new Point(40, 50);
+
+        CachedObject co = transcoder.encode(p);
+        assertNotNull(co);
+        assertEquals("{\"v\":{\"point\":{\"c\":\"40x50\"}}}", new String(co.getData()));
+        assertNotNull(co.getData());
+
+        Point p2 = (Point) transcoder.decode(co);
+        assertNotNull(p2);
+        assertEquals(p, p2);
+    }
+
+    static class PointSerializer extends JsonSerializer<Point> {
+        @Override
+        public void serialize(final Point value, final JsonGenerator jgen, final SerializerProvider provider) throws IOException {
+            jgen.writeString(value.getX() + "x" + value.getY());
+        }
+    }
+
+    /**
+     * Stores information of Point type, it is used by Jackson to decide what deserializer should be used.
+     * 
+     */
+    static class PointSerializerWithTypeInfo extends JsonSerializer<Point> {
+        @Override
+        public void serialize(final Point value, final JsonGenerator jgen, final SerializerProvider provider) throws IOException {
+            jgen.writeFieldName("c");
+            jgen.writeString(value.getX() + "x" + value.getY());
+        }
+
+        @Override
+        public void serializeWithType(final Point value, final JsonGenerator jgen, final SerializerProvider provider,
+                final TypeSerializer typeSer) throws IOException, JsonProcessingException {
+            typeSer.writeTypePrefixForObject(value, jgen);
+            serialize(value, jgen, provider);
+            typeSer.writeTypeSuffixForObject(value, jgen);
+        }
+
+    }
+
+    static class PointDeserializer extends JsonDeserializer<Point> {
+
+        @Override
+        public Point deserialize(final JsonParser jp, final DeserializationContext ctxt) throws IOException, JsonProcessingException {
+            jp.nextToken();
+            String value = jp.nextTextValue();
+            String[] parts = value.split("x");
+            return new Point(Integer.valueOf(parts[0]), Integer.valueOf(parts[1]));
+        }
     }
 
 }

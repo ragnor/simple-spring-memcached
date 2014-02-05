@@ -59,6 +59,9 @@ public class JsonObjectMapper extends ObjectMapper { // NO_UCD
         for (JsonSerializer<?> serializer : serializers) {
             module.addSerializer(serializer);
         }
+
+        // required otherwise new serializers are not registered to context
+        registerModule(module);
     }
 
     @SuppressWarnings({ "unchecked", "rawtypes" })
@@ -66,6 +69,9 @@ public class JsonObjectMapper extends ObjectMapper { // NO_UCD
         for (Map.Entry<Class<?>, JsonSerializer<?>> entry : serializers.entrySet()) {
             module.addSerializer((Class) entry.getKey(), entry.getValue());
         }
+
+        // required otherwise new serializers are not registered to context
+        registerModule(module);
     }
 
     @SuppressWarnings({ "rawtypes", "unchecked" })
@@ -73,6 +79,9 @@ public class JsonObjectMapper extends ObjectMapper { // NO_UCD
         for (Map.Entry<Class<?>, JsonDeserializer<?>> entry : deserializers.entrySet()) {
             module.addDeserializer((Class) entry.getKey(), entry.getValue());
         }
+
+        // required otherwise new deserializers are not registered to context
+        registerModule(module);
     }
 
     /**
