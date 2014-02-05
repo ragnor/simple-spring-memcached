@@ -21,11 +21,12 @@ import static org.junit.Assert.assertNotNull;
 
 import java.util.HashMap;
 
-import org.codehaus.jackson.map.type.TypeFactory;
-import org.codehaus.jackson.type.JavaType;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
+
+import com.fasterxml.jackson.databind.JavaType;
+import com.fasterxml.jackson.databind.type.TypeFactory;
 
 /**
  * 
@@ -41,10 +42,9 @@ public class ClassAliasIdResolverTest {
     private TypeFactory typeFactory;
 
     @Before
-    @SuppressWarnings("deprecation")
     public void setUp() {
         baseType = Mockito.mock(JavaType.class);
-        typeFactory = TypeFactory.instance;
+        typeFactory = TypeFactory.defaultInstance();
 
         resolver = new ClassAliasIdResolver(baseType, typeFactory, new HashMap<String, Class<?>>(), new HashMap<Class<?>, String>());
     }

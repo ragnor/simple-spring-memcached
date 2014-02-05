@@ -20,11 +20,11 @@ package com.google.code.ssm.json;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.codehaus.jackson.map.jsontype.impl.ClassNameIdResolver;
-import org.codehaus.jackson.map.type.TypeFactory;
-import org.codehaus.jackson.type.JavaType;
 import org.springframework.util.Assert;
 
+import com.fasterxml.jackson.databind.JavaType;
+import com.fasterxml.jackson.databind.jsontype.impl.ClassNameIdResolver;
+import com.fasterxml.jackson.databind.type.TypeFactory;
 import com.google.code.ssm.aop.support.PertinentNegativeNull;
 
 /**
@@ -53,16 +53,6 @@ public class ClassAliasIdResolver extends ClassNameIdResolver {
     }
 
     @Override
-    public JavaType typeFromId(final String id) {
-        Class<?> clazz = idToClass.get(id);
-        if (clazz != null) {
-            return _typeFactory.constructSpecializedType(_baseType, clazz);
-        }
-
-        return super.typeFromId(id);
-    }
-
-    @Override
     public String idFromValue(final Object value) {
         if (value != null) {
             return idFromValueAndType(value, value.getClass());
@@ -79,6 +69,16 @@ public class ClassAliasIdResolver extends ClassNameIdResolver {
         }
 
         return _idFrom(value, type);
+    }
+
+    @Override
+    protected JavaType _typeFromId(final String id, final TypeFactory typeFactory) {
+        Class<?> clazz = idToClass.get(id);
+        if (clazz != null) {
+            return _typeFactory.constructSpecializedType(_baseType, clazz);
+        }
+
+        return super._typeFromId(id, typeFactory);
     }
 
     /**

@@ -19,9 +19,9 @@ package com.google.code.ssm.json;
 
 import lombok.Data;
 
-import org.codehaus.jackson.annotate.JsonProperty;
-import org.codehaus.jackson.annotate.JsonTypeInfo;
-import org.codehaus.jackson.annotate.JsonTypeInfo.Id;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import com.fasterxml.jackson.annotation.JsonTypeInfo.Id;
 
 /**
  * It's a wrapper around all values serialized to JSON. Such holder is required otherwise jackson doesn't store (while

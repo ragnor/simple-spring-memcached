@@ -23,18 +23,18 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.codehaus.jackson.JsonGenerator;
-import org.codehaus.jackson.JsonParser;
-import org.codehaus.jackson.JsonProcessingException;
-import org.codehaus.jackson.Version;
-import org.codehaus.jackson.map.DeserializationContext;
-import org.codehaus.jackson.map.JsonDeserializer;
-import org.codehaus.jackson.map.JsonSerializer;
-import org.codehaus.jackson.map.SerializerProvider;
-import org.codehaus.jackson.map.TypeSerializer;
-import org.codehaus.jackson.map.module.SimpleModule;
 import org.junit.Test;
 
+import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.Version;
+import com.fasterxml.jackson.databind.DeserializationContext;
+import com.fasterxml.jackson.databind.JsonDeserializer;
+import com.fasterxml.jackson.databind.JsonSerializer;
+import com.fasterxml.jackson.databind.SerializerProvider;
+import com.fasterxml.jackson.databind.jsontype.TypeSerializer;
+import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.google.code.ssm.mapper.JsonObjectMapper;
 import com.google.code.ssm.providers.CachedObject;
 import com.google.code.ssm.test.Point;
@@ -163,6 +163,12 @@ public class JsonTranscoderTest {
         @Override
         public void serialize(final Point value, final JsonGenerator jgen, final SerializerProvider provider) throws IOException {
             jgen.writeString(value.getX() + "x" + value.getY());
+        }
+
+        @Override
+        public void serializeWithType(final Point value, final JsonGenerator jgen, final SerializerProvider provider,
+                final TypeSerializer typeSer) throws IOException, JsonProcessingException {
+            serialize(value, jgen, provider);
         }
     }
 

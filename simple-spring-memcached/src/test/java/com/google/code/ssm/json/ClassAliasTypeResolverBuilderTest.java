@@ -19,9 +19,10 @@ package com.google.code.ssm.json;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.codehaus.jackson.map.ObjectMapper.DefaultTyping;
 import org.junit.Before;
 import org.junit.Test;
+
+import com.fasterxml.jackson.databind.ObjectMapper.DefaultTyping;
 
 /**
  * 

@@ -20,14 +20,14 @@ package com.google.code.ssm.mapper;
 import java.util.List;
 import java.util.Map;
 
-import org.codehaus.jackson.Version;
-import org.codehaus.jackson.annotate.JsonTypeInfo.As;
-import org.codehaus.jackson.map.JsonDeserializer;
-import org.codehaus.jackson.map.JsonSerializer;
-import org.codehaus.jackson.map.ObjectMapper;
-import org.codehaus.jackson.map.SerializationConfig.Feature;
-import org.codehaus.jackson.map.module.SimpleModule;
-
+import com.fasterxml.jackson.annotation.JsonTypeInfo.As;
+import com.fasterxml.jackson.core.Version;
+import com.fasterxml.jackson.databind.JsonDeserializer;
+import com.fasterxml.jackson.databind.JsonSerializer;
+import com.fasterxml.jackson.databind.MapperFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.google.code.ssm.json.ClassAliasTypeResolverBuilder;
 
 /**
@@ -40,15 +40,17 @@ import com.google.code.ssm.json.ClassAliasTypeResolverBuilder;
  */
 public class JsonObjectMapper extends ObjectMapper { // NO_UCD
 
-    private final SimpleModule module = new SimpleModule("ssm", new Version(1, 0, 0, null));
+    private static final long serialVersionUID = 1L;
+
+    private final SimpleModule module = new SimpleModule("ssm", new Version(1, 0, 0, null, "com.google.code.ssm", "core"));
 
     private final ClassAliasTypeResolverBuilder typer;
 
     public JsonObjectMapper() {
         registerModule(module);
 
-        setSerializationConfig(getSerializationConfig().with(Feature.REQUIRE_SETTERS_FOR_GETTERS));
-        setSerializationConfig(getSerializationConfig().without(Feature.FAIL_ON_EMPTY_BEANS));
+        configure(MapperFeature.REQUIRE_SETTERS_FOR_GETTERS, true);
+        configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
         enableDefaultTyping(DefaultTyping.NON_FINAL, As.WRAPPER_OBJECT);
 
         typer = new ClassAliasTypeResolverBuilder(DefaultTyping.NON_FINAL);

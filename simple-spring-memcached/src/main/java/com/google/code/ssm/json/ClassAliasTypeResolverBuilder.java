@@ -21,13 +21,14 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.codehaus.jackson.map.MapperConfig;
-import org.codehaus.jackson.map.ObjectMapper.DefaultTypeResolverBuilder;
-import org.codehaus.jackson.map.ObjectMapper.DefaultTyping;
-import org.codehaus.jackson.map.jsontype.NamedType;
-import org.codehaus.jackson.map.jsontype.TypeIdResolver;
-import org.codehaus.jackson.type.JavaType;
 import org.springframework.util.Assert;
+
+import com.fasterxml.jackson.databind.JavaType;
+import com.fasterxml.jackson.databind.ObjectMapper.DefaultTypeResolverBuilder;
+import com.fasterxml.jackson.databind.ObjectMapper.DefaultTyping;
+import com.fasterxml.jackson.databind.cfg.MapperConfig;
+import com.fasterxml.jackson.databind.jsontype.NamedType;
+import com.fasterxml.jackson.databind.jsontype.TypeIdResolver;
 
 /**
  * Sets as a type resolver {@link ClassAliasIdResolver}.
@@ -37,6 +38,8 @@ import org.springframework.util.Assert;
  * 
  */
 public class ClassAliasTypeResolverBuilder extends DefaultTypeResolverBuilder {
+
+    private static final long serialVersionUID = 1L;
 
     private Map<String, Class<?>> idToClass = new HashMap<String, Class<?>>();
 
