@@ -20,7 +20,10 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.junit.Test;
@@ -80,8 +83,8 @@ public class JsonTranscoderTest {
         // deserializer should be used
         CachedObject co = transcoder.encode(p);
         assertNotNull(co);
-        assertEquals("{\"v\":\"40x50\"}", new String(co.getData()));
         assertNotNull(co.getData());
+        assertEquals("{\"v\":\"40x50\"}", new String(co.getData()));
     }
 
     @Test
@@ -99,21 +102,13 @@ public class JsonTranscoderTest {
 
         CachedObject co = transcoder.encode(p);
         assertNotNull(co);
-        assertEquals("{\"v\":\"40x50\"}", new String(co.getData()));
         assertNotNull(co.getData());
+        assertEquals("{\"v\":\"40x50\"}", new String(co.getData()));
     }
 
     @Test
     public void testEncodeAndDecodeWithCustomSerializerAndDeserializerWithTypeInfoInside() {
-        JsonObjectMapper mapper = new JsonObjectMapper();
-
-        Map<Class<?>, JsonSerializer<?>> serializers = new HashMap<Class<?>, JsonSerializer<?>>();
-        serializers.put(Point.class, new PointSerializerWithTypeInfo());
-        mapper.setSerializers(serializers);
-
-        Map<Class<?>, JsonDeserializer<?>> deserializers = new HashMap<Class<?>, JsonDeserializer<?>>();
-        deserializers.put(Point.class, new PointDeserializer());
-        mapper.setDeserializers(deserializers);
+        JsonObjectMapper mapper = createMapper();
 
         transcoder = new JsonTranscoder(mapper);
 
@@ -121,8 +116,8 @@ public class JsonTranscoderTest {
 
         CachedObject co = transcoder.encode(p);
         assertNotNull(co);
-        assertEquals("{\"v\":{\"com.google.code.ssm.test.Point\":{\"c\":\"40x50\"}}}", new String(co.getData()));
         assertNotNull(co.getData());
+        assertEquals("{\"v\":{\"com.google.code.ssm.test.Point\":{\"c\":\"40x50\"}}}", new String(co.getData()));
 
         Point p2 = (Point) transcoder.decode(co);
         assertNotNull(p2);
@@ -131,6 +126,45 @@ public class JsonTranscoderTest {
 
     @Test
     public void testEncodeAndDecodeWithCustomSerializerAndDeserializerWithTypeInfoInsideAndShorterClassIdentifier() {
+        JsonObjectMapper mapper = createMapper();
+        mapper.setClassToId(Collections.<Class<?>, String> singletonMap(Point.class, "point"));
+
+        transcoder = new JsonTranscoder(mapper);
+
+        Point p = new Point(40, 50);
+
+        CachedObject co = transcoder.encode(p);
+        assertNotNull(co);
+        assertNotNull(co.getData());
+        assertEquals("{\"v\":{\"point\":{\"c\":\"40x50\"}}}", new String(co.getData()));
+
+        Point p2 = (Point) transcoder.decode(co);
+        assertNotNull(p2);
+        assertEquals(p, p2);
+    }
+
+    @Test
+    public void testEncodeAndDecodeListWithCustomSerializerAndDeserializerWithTypeInfoInsideAndShorterClassIdentifier() {
+        JsonObjectMapper mapper = createMapper();
+        mapper.setClassToId(Collections.<Class<?>, String> singletonMap(Point.class, "point"));
+
+        transcoder = new JsonTranscoder(mapper);
+
+        List<Point> list = Arrays.asList(new Point(40, 50), new Point(10, 50));
+
+        CachedObject co = transcoder.encode(list);
+        assertNotNull(co);
+        assertNotNull(co.getData());
+        assertEquals("{\"v\":{\"java.util.ArrayList\":[{\"point\":{\"c\":\"40x50\"}},{\"point\":{\"c\":\"10x50\"}}]}}",
+                new String(co.getData()));
+
+        @SuppressWarnings("unchecked")
+        List<Point> list2 = (List<Point>) transcoder.decode(co);
+        assertNotNull(list2);
+        assertEquals(list, list2);
+    }
+
+    private JsonObjectMapper createMapper() {
         JsonObjectMapper mapper = new JsonObjectMapper();
 
         Map<Class<?>, JsonSerializer<?>> serializers = new HashMap<Class<?>, JsonSerializer<?>>();
@@ -141,22 +175,7 @@ public class JsonTranscoderTest {
         deserializers.put(Point.class, new PointDeserializer());
         mapper.setDeserializers(deserializers);
 
-        Map<Class<?>, String> classToId = new HashMap<Class<?>, String>();
-        classToId.put(Point.class, "point");
-        mapper.setClassToId(classToId);
-
-        transcoder = new JsonTranscoder(mapper);
-
-        Point p = new Point(40, 50);
-
-        CachedObject co = transcoder.encode(p);
-        assertNotNull(co);
-        assertEquals("{\"v\":{\"point\":{\"c\":\"40x50\"}}}", new String(co.getData()));
-        assertNotNull(co.getData());
-
-        Point p2 = (Point) transcoder.decode(co);
-        assertNotNull(p2);
-        assertEquals(p, p2);
+        return mapper;
     }
 
     static class PointSerializer extends JsonSerializer<Point> {
@@ -199,9 +218,11 @@ public class JsonTranscoderTest {
         public Point deserialize(final JsonParser jp, final DeserializationContext ctxt) throws IOException, JsonProcessingException {
             jp.nextToken();
             String value = jp.nextTextValue();
+            jp.nextToken();
             String[] parts = value.split("x");
             return new Point(Integer.valueOf(parts[0]), Integer.valueOf(parts[1]));
         }
+
     }
 
 }
