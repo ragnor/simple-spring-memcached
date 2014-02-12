@@ -196,6 +196,7 @@ class MemcacheClientWrapper extends AbstractMemcacheClientWrapper {
         try {
             return memcachedClient.getBulk(keys);
         } catch (OperationTimeoutException e) {
+            LOGGER.warn("Operation timeout while getBulk " + keys, e);
             throw (TimeoutException) e.getCause();
         } catch (RuntimeException e) {
             if (translateException(e)) {
@@ -211,6 +212,7 @@ class MemcacheClientWrapper extends AbstractMemcacheClientWrapper {
         try {
             return memcachedClient.getBulk(keys, this.<T> getTranscoder(transcoder));
         } catch (OperationTimeoutException e) {
+            LOGGER.warn("Operation timeout while getBulk " + keys, e);
             throw (TimeoutException) e.getCause();
         } catch (RuntimeException e) {
             if (translateException(e)) {
