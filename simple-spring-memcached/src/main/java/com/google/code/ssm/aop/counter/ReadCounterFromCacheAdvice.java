@@ -43,6 +43,7 @@ public class ReadCounterFromCacheAdvice extends CounterInCacheBase {
 
     @Pointcut("@annotation(com.google.code.ssm.api.counter.ReadCounterFromCache)")
     public void readSingleCounter() {
+        /* pointcut definition */
     }
 
     @Around("readSingleCounter()")

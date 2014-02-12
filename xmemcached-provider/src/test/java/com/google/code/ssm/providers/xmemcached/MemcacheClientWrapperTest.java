@@ -22,6 +22,7 @@ import static org.junit.Assert.assertTrue;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Map;
 import java.util.concurrent.TimeoutException;
 
@@ -134,9 +135,8 @@ public class MemcacheClientWrapperTest {
     }
 
     @Test
-    @SuppressWarnings("unchecked")
     public void getAvailableServers() {
-        Collection<InetSocketAddress> servers = EasyMock.createMock(Collection.class);
+        Collection<InetSocketAddress> servers = Collections.emptyList();
         EasyMock.expect(client.getAvailableServers()).andReturn(servers);
         EasyMock.replay(client);
         clientWrapper.getAvailableServers();

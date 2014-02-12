@@ -44,6 +44,7 @@ public class InvalidateSingleCacheAdvice extends CacheAdvice {
 
     @Pointcut("@annotation(com.google.code.ssm.api.InvalidateSingleCache)")
     public void invalidateSingle() {
+        /* pointcut definition */
     }
 
     @Around("invalidateSingle()")

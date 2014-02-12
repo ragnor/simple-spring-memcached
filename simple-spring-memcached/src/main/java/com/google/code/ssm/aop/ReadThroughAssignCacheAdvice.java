@@ -45,6 +45,7 @@ public class ReadThroughAssignCacheAdvice extends SingleReadCacheAdvice<ReadThro
 
     @Pointcut("@annotation(com.google.code.ssm.api.ReadThroughAssignCache)")
     public void getSingleAssign() {
+        /* pointcut definition */
     }
 
     @Around("getSingleAssign()")

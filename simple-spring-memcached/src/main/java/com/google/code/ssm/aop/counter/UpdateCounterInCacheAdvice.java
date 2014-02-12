@@ -43,6 +43,7 @@ public class UpdateCounterInCacheAdvice extends CounterInCacheBase {
 
     @Pointcut("@annotation(com.google.code.ssm.api.counter.UpdateCounterInCache)")
     public void updateCounter() {
+        /* pointcut definition */
     }
 
     @AfterReturning(pointcut = "updateCounter()", returning = "retVal")

@@ -67,15 +67,15 @@ public class JndiAddressProvider extends DefaultAddressProvider implements Initi
         List<InetSocketAddress> addrs = null;
         try {
             if (jndiKey != null && (ips = lookup(jndiKey)) != null) {
-                logger.info("Addresses from JNDI will be used to connect to memcached servers. Addresses: {}", ips);
+                getLogger().info("Addresses from JNDI will be used to connect to memcached servers. Addresses: {}", ips);
                 addrs = getAddresses((String) ips);
             } else {
                 addrs = super.getAddresses();
             }
         } catch (NamingException ex) {
-            logger.warn(
-                    String.format("Name of the JNDI key with memcached addresses is set but wrong value is bound to this key: %s", jndiKey),
-                    ex);
+            getLogger()
+                    .warn(String.format("Name of the JNDI key with memcached addresses is set but wrong value is bound to this key: %s",
+                            jndiKey), ex);
             addrs = super.getAddresses();
         }
 

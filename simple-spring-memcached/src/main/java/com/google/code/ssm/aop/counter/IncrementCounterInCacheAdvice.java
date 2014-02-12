@@ -42,6 +42,7 @@ public class IncrementCounterInCacheAdvice extends CounterInCacheBase {
 
     @Pointcut("@annotation(com.google.code.ssm.api.counter.IncrementCounterInCache)")
     public void incrementSingleCounter() {
+        /* pointcut definition */
     }
 
     @AfterReturning("incrementSingleCounter()")

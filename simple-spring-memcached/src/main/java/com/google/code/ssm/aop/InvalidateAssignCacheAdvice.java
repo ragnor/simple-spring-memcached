@@ -44,6 +44,7 @@ public class InvalidateAssignCacheAdvice extends CacheAdvice {
 
     @Pointcut("@annotation(com.google.code.ssm.api.InvalidateAssignCache)")
     public void invalidateAssign() {
+        /* pointcut definition */
     }
 
     @Around("invalidateAssign()")

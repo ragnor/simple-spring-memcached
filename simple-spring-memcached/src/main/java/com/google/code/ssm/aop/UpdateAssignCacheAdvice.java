@@ -45,6 +45,7 @@ public class UpdateAssignCacheAdvice extends SingleUpdateCacheAdvice<UpdateAssig
 
     @Pointcut("@annotation(com.google.code.ssm.api.UpdateAssignCache)")
     public void updateAssign() {
+        /* pointcut definition */
     }
 
     @AfterReturning(pointcut = "updateAssign()", returning = "retVal")

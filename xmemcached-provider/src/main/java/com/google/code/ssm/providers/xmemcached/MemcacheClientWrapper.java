@@ -165,7 +165,7 @@ class MemcacheClientWrapper extends AbstractMemcacheClientWrapper {
         List<SocketAddress> servers = new ArrayList<SocketAddress>();
         Collection<InetSocketAddress> inetSocketAddresses = memcachedClient.getAvailableServers();
 
-        if (inetSocketAddresses != null && inetSocketAddresses.size() > 0) {
+        if (inetSocketAddresses != null && !inetSocketAddresses.isEmpty()) {
             servers.addAll(inetSocketAddresses);
         }
 
@@ -241,7 +241,7 @@ class MemcacheClientWrapper extends AbstractMemcacheClientWrapper {
         } catch (MemcachedException e) {
             throw new CacheException(e);
         }
-    };
+    }
 
     @Override
     public <T> boolean set(final String key, final int exp, final T value, final CacheTranscoder transcoder) throws TimeoutException,

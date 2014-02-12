@@ -45,6 +45,7 @@ public class ReadThroughSingleCacheAdvice extends SingleReadCacheAdvice<ReadThro
 
     @Pointcut("@annotation(com.google.code.ssm.api.ReadThroughSingleCache)")
     public void getSingle() {
+        /* pointcut definition */
     }
 
     @Around("getSingle()")

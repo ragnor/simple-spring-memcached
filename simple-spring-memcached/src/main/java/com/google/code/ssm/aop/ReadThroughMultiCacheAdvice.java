@@ -49,6 +49,7 @@ public class ReadThroughMultiCacheAdvice extends MultiCacheAdvice {
 
     @Pointcut("@annotation(com.google.code.ssm.api.ReadThroughMultiCache)")
     public void getMulti() {
+        /* pointcut definition */
     }
 
     @Around("getMulti()")
@@ -91,7 +92,7 @@ public class ReadThroughMultiCacheAdvice extends MultiCacheAdvice {
             coord.setInitialKey2Result(getCacheBase().getCache(data).getBulk(coord.getKey2Obj().keySet(), serializationType));
 
             // We've gotten all positive cache results back, so build up a results list and return it.
-            if (coord.getMissedObjects().size() < 1) {
+            if (coord.getMissedObjects().isEmpty()) {
                 return coord.generateResultList();
             }
 

@@ -36,9 +36,9 @@ import org.slf4j.LoggerFactory;
  */
 public class DefaultAddressProvider implements AddressProvider {
 
-    private String address;
+    private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
-    final Logger logger = LoggerFactory.getLogger(this.getClass());
+    private String address;
 
     public DefaultAddressProvider() {
 
@@ -112,6 +112,10 @@ public class DefaultAddressProvider implements AddressProvider {
             addrs.add(new InetSocketAddress(hostPart, Integer.parseInt(portNum)));
         }
         return addrs;
+    }
+
+    protected Logger getLogger() {
+        return logger;
     }
 
 }

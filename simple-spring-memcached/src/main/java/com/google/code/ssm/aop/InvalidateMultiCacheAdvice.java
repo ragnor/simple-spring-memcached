@@ -46,6 +46,7 @@ public class InvalidateMultiCacheAdvice extends CacheAdvice {
 
     @Pointcut("@annotation(com.google.code.ssm.api.InvalidateMultiCache)")
     public void invalidateMulti() {
+        /* pointcut definition */
     }
 
     @Around("invalidateMulti()")

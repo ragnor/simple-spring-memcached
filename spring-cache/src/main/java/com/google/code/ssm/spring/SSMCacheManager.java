@@ -57,28 +57,20 @@ public class SSMCacheManager implements CacheManager, InitializingBean {
 
     @Override
     public void afterPropertiesSet() {
-        Collection<SSMCache> caches = loadCaches();
-        Assert.notEmpty(caches, "loadCaches must not return an empty Collection");
+        Assert.notEmpty(caches, "A collection of caches is required and cannot be empty");
         this.cacheMap.clear();
 
         // preserve the initial order of the cache names
         for (SSMCache cache : caches) {
-            this.cacheMap.put(cache.getName(), cache);
-            this.cacheNames.add(cache.getName());
+            addCache(cache.getName(), cache);
 
             // use aliases if enabled
             if (cache.isRegisterAliases() && !CollectionUtils.isEmpty(cache.getCache().getAliases())) {
                 for (String alias : cache.getCache().getAliases()) {
-                    this.cacheMap.put(alias, cache);
-                    this.cacheNames.add(alias);
+                    addCache(alias, cache);
                 }
             }
         }
-    }
-
-    protected final void addCache(final Cache cache) {
-        this.cacheMap.put(cache.getName(), cache);
-        this.cacheNames.add(cache.getName());
     }
 
     @Override
@@ -101,13 +93,9 @@ public class SSMCacheManager implements CacheManager, InitializingBean {
         return cache;
     }
 
-    /**
-     * Load the caches for this cache manager. Occurs at startup. The returned collection must not be null.
-     */
-    protected Collection<SSMCache> loadCaches() {
-        Assert.notEmpty(caches, "A collection of caches is required and cannot be empty");
-
-        return caches;
+    protected void addCache(final String name, final Cache cache) {
+        this.cacheMap.put(name, cache);
+        this.cacheNames.add(name);
     }
 
 }

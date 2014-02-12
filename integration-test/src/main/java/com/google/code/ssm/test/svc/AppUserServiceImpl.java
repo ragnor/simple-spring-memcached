@@ -144,7 +144,7 @@ public class AppUserServiceImpl implements AppUserService {
             applicationUsers.addAll(result);
         }
 
-        if (notFoundUsersIds.size() > 0) {
+        if (!notFoundUsersIds.isEmpty()) {
             Collections.sort(notFoundUsersIds);
             applicationUsers.addAll(getDao().getUsersList(applicationId, notFoundUsersIds));
         }
