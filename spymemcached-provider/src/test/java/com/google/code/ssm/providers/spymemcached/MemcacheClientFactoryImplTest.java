@@ -24,6 +24,8 @@ import java.util.Collections;
 import java.util.List;
 
 import net.spy.memcached.FailureMode;
+import net.spy.memcached.metrics.MetricType;
+import net.spy.memcached.metrics.NoopMetricCollector;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -70,6 +72,8 @@ public class MemcacheClientFactoryImplTest {
         conf.setMaxReconnectDelay(1000L);
         conf.setTimeoutExceptionThreshold(100);
         conf.setUseNagleAlgorithm(false);
+        conf.setMetricCollector(new NoopMetricCollector());
+        conf.setMetricType(MetricType.PERFORMANCE);
         CacheClient client = factory.create(addrs, conf);
         assertNotNull(client);
         client.shutdown();

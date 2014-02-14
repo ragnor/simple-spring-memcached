@@ -27,6 +27,8 @@ import net.spy.memcached.ConnectionObserver;
 import net.spy.memcached.FailureMode;
 import net.spy.memcached.HashAlgorithm;
 import net.spy.memcached.auth.AuthDescriptor;
+import net.spy.memcached.metrics.MetricCollector;
+import net.spy.memcached.metrics.MetricType;
 import net.spy.memcached.transcoders.Transcoder;
 
 import com.google.code.ssm.providers.CacheConfiguration;
@@ -71,13 +73,27 @@ public class SpymemcachedConfiguration extends CacheConfiguration {
     private Transcoder<Object> defaultTranscoder;
 
     /**
-     * since 3.2.0
+     * @since 3.2.0
      */
     private AuthDescriptor authDescriptor;
 
     /**
-     * since 3.2.0
+     * @since 3.2.0
      */
     private Collection<ConnectionObserver> initialObservers;
+
+    /**
+     * @see MetricCollector
+     * @see ConnectionFactoryBuilder#setMetricCollector(MetricCollector)
+     * @since 3.4.0
+     */
+    private MetricCollector metricCollector;
+
+    /**
+     * @see MetricType
+     * @see ConnectionFactoryBuilder#setEnableMetrics(MetricType)
+     * @since 3.4.0
+     */
+    private MetricType metricType;
 
 }

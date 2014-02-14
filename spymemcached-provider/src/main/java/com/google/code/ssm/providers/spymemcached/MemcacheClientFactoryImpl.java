@@ -121,6 +121,14 @@ public class MemcacheClientFactoryImpl implements CacheClientFactory {
         if (conf.getInitialObservers() != null) {
             builder.setInitialObservers(conf.getInitialObservers());
         }
+
+        if (conf.getMetricCollector() != null) {
+            builder.setMetricCollector(conf.getMetricCollector());
+        }
+
+        if (conf.getMetricType() != null) {
+            builder.setEnableMetrics(conf.getMetricType());
+        }
     }
 
 }
