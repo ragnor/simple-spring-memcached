@@ -26,6 +26,7 @@ import lombok.EqualsAndHashCode;
 import net.rubyeye.xmemcached.MemcachedClient;
 import net.rubyeye.xmemcached.MemcachedClientBuilder;
 import net.rubyeye.xmemcached.MemcachedClientStateListener;
+import net.rubyeye.xmemcached.XMemcachedClientBuilder;
 import net.rubyeye.xmemcached.auth.AuthInfo;
 import net.rubyeye.xmemcached.transcoders.Transcoder;
 
@@ -47,63 +48,107 @@ import com.google.code.yanf4j.core.SocketOption;
 @EqualsAndHashCode(callSuper = true)
 public class XMemcachedConfiguration extends CacheConfiguration {
 
+    /**
+     * @see MemcachedClient#addStateListener(MemcachedClientStateListener)
+     * @see ReconnectListener
+     */
     private Integer maxAwayTime;
 
+    /**
+     * @see MemcachedClientBuilder#setConnectionPoolSize(int)
+     */
     private Integer connectionPoolSize;
 
+    /**
+     * @see MemcachedClientBuilder#setConfiguration(Configuration)
+     */
     private Configuration configuration;
 
+    /**
+     * @see MemcachedClientBuilder#setFailureMode(boolean)
+     */
     private Boolean failureMode;
 
+    /**
+     * @see MemcachedClientBuilder#setSocketOption(SocketOption, Object)
+     */
     private Map<SocketOption<?>, Object> socketOptions;
 
+    /**
+     * @see MemcachedClientBuilder#setHealSessionInterval(long)
+     */
     private Long healSessionInterval;
 
+    /**
+     * @see MemcachedClient#setMergeFactor(int)
+     */
     private Integer mergeFactor;
 
+    /**
+     * @see MemcachedClient#setOptimizeGet(boolean)
+     */
     private Boolean optimizeGet;
 
+    /**
+     * @see MemcachedClient#setOptimizeMergeBuffer(boolean)
+     */
     private Boolean optimizeMergeBuffer;
 
+    /**
+     * @see MemcachedClient#setEnableHeartBeat(boolean)
+     */
     private Boolean enableHeartBeat;
 
+    /**
+     * @see MemcachedClient#setPrimitiveAsString(boolean)
+     */
     private Boolean primitiveAsString;
 
+    /**
+     * @see MemcachedClientBuilder#setSanitizeKeys(boolean)
+     */
     private Boolean sanitizeKeys;
 
     /**
      * default transcoder or null if not set
      * 
+     * @see MemcachedClient#setTranscoder(Transcoder)
      * @since 3.0.0
-     * */
+     */
     private Transcoder<?> defaultTranscoder;
 
     /**
+     * @see MemcachedClientBuilder#setConnectTimeout(long)
      * @since 3.2.0
      */
     private Long connectionTimeout;
 
     /**
+     * @see MemcachedClientBuilder#setMaxQueuedNoReplyOperations(int)
      * @since 3.2.0
      */
     private Integer maxQueuedNoReplyOperations;
 
     /**
+     * @see MemcachedClientBuilder#setEnableHealSession(boolean)
      * @since 3.2.0
      */
     private Boolean enableHealSession;
 
     /**
+     * @see MemcachedClientBuilder#setAuthInfoMap(Map)
      * @since 3.2.0
      */
     private Map<InetSocketAddress, AuthInfo> authInfoMap;
 
     /**
+     * @see MemcachedClientBuilder#setStateListeners(List)
      * @since 3.2.0
      */
     private List<MemcachedClientStateListener> stateListeners;
 
     /**
+     * @see XMemcachedClientBuilder#XMemcachedClientBuilder(List, int[])
      * @since 3.3.0
      */
     private int[] weights;

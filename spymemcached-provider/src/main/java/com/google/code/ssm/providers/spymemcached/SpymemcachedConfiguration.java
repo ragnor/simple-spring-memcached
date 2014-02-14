@@ -45,40 +45,73 @@ import com.google.code.ssm.providers.CacheConfiguration;
 @EqualsAndHashCode(callSuper = true)
 public class SpymemcachedConfiguration extends CacheConfiguration {
 
+    /**
+     * @see ConnectionFactoryBuilder#setDaemon(boolean)
+     */
     private Boolean daemon;
 
+    /**
+     * @see ConnectionFactoryBuilder#setFailureMode(FailureMode)
+     */
     private FailureMode failureMode;
 
+    /**
+     * @see ConnectionFactoryBuilder#setHashAlg(HashAlgorithm)
+     */
     private HashAlgorithm hashAlg;
 
+    /**
+     * @see ConnectionFactoryBuilder#setLocatorType(Locator)
+     */
     private Locator locatorType;
 
+    /**
+     * @see ConnectionFactoryBuilder#setMaxReconnectDelay(long)
+     */
     private Long maxReconnectDelay;
 
+    /**
+     * @see ConnectionFactoryBuilder#setOpQueueMaxBlockTime(long)
+     */
     private Long opQueueMaxBlockTime;
 
+    /**
+     * @see ConnectionFactoryBuilder#setReadBufferSize(int)
+     */
     private Integer readBufferSize;
 
+    /**
+     * @see ConnectionFactoryBuilder#setShouldOptimize(boolean)
+     */
     private Boolean shouldOptimize;
 
+    /**
+     * @see ConnectionFactoryBuilder#setTimeoutExceptionThreshold(int)
+     */
     private Integer timeoutExceptionThreshold;
 
+    /**
+     * @see ConnectionFactoryBuilder#setUseNagleAlgorithm(boolean)
+     */
     private Boolean useNagleAlgorithm;
 
     /**
      * default transcoder or null if not set
      * 
      * @since 3.0.0
+     * @see ConnectionFactoryBuilder#setTranscoder(Transcoder)
      */
     private Transcoder<Object> defaultTranscoder;
 
     /**
      * @since 3.2.0
+     * @see ConnectionFactoryBuilder#setAuthDescriptor(AuthDescriptor)
      */
     private AuthDescriptor authDescriptor;
 
     /**
      * @since 3.2.0
+     * @see ConnectionFactoryBuilder#setInitialObservers(Collection)
      */
     private Collection<ConnectionObserver> initialObservers;
 
