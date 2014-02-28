@@ -11,7 +11,7 @@ Distributed caching can be a big, hairy, intricate, and complex proposition when
 
 Simple Spring Memcached (SSM) attempts to simplify implementation for several basic use cases.
 
-**(17-01-2014) New version 3.3.0 with Spring Cache (@Cacheable) support is available! Please check [release notes](https://code.google.com/p/simple-spring-memcached/wiki/ReleaseNotes).**
+**(17-01-2014) New version 3.3.0 is available! Since version 3.0.0 it can work as a cache back-end in Spring Cache (@Cacheable). Please check [release notes](https://code.google.com/p/simple-spring-memcached/wiki/ReleaseNotes).**
 
 This project enables caching in Spring-managed beans, by using Java 5 Annotations and Spring/AspectJ AOP on top of the [spymemcached](http://code.google.com/p/spymemcached/) or [xmemcached](http://code.google.com/p/xmemcached/) client. Using Simple Spring Memcached requires only a little bit of configuration and the addition of some specific annotations on the methods whose output or input is being cached. 
 
