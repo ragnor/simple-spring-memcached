@@ -49,17 +49,19 @@
 	</mailingLists>
 
 	<scm>
-		<url>scm:svn:http://simple-spring-memcached.googlecode.com/svn/trunk</url>
-		<connection>scm:svn:http://simple-spring-memcached.googlecode.com/svn/trunk</connection>
-		<developerConnection>scm:svn:https://simple-spring-memcached.googlecode.com/svn/trunk</developerConnection>
+		<connection>scm:git:git@github.com:ragnor/simple-spring-memcached.git</connection>
+		<developerConnection>scm:git:git@github.com:ragnor/simple-spring-memcached.git</developerConnection>
+		<url>http://github.com/ragnor/simple-spring-memcached</url>
+		<tag>HEAD</tag>
 	</scm>
 
 	<issueManagement>
-		<url>http://code.google.com/p/simple-spring-memcached/issues/list</url>
+	 	<system>github</system>
+		<url>http://github.com/ragnor/simple-spring-memcached/issues</url>
 	</issueManagement>
 
 	<ciManagement>
-		<system>Jenkins at CloudBees</system>
+		<system>jenkins</system>
 		<url>https://ragnor.ci.cloudbees.com/</url>
 	</ciManagement>
 
