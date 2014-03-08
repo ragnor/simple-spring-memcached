@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>org.sonatype.oss</groupId>
 		<artifactId>oss-parent</artifactId>
-		<version>7</version>
+		<version>9</version>
 	</parent>
 	<groupId>com.google.code.simple-spring-memcached</groupId>
 	<artifactId>simple-spring-memcached-parent</artifactId>
@@ -90,7 +90,7 @@
 		<xmemcached.version>1.4.3</xmemcached.version>
 		<slf4j.version>1.6.4</slf4j.version>
 		<apiviz.version>1.3.2.GA</apiviz.version>
-		<lombok.version>1.12.4</lombok.version>
+		<lombok.version>1.12.6</lombok.version>
 		<lombok-maven-plugin.version>1.12.4.0</lombok-maven-plugin.version>
 
 		<!-- plugins -->

@@ -59,6 +59,7 @@
 	<prerequisites>
 		<!-- use javac at least in version 1.6.30 otherwise you get 'incompatible types' errors -->
 		<!-- see http://bugs.sun.com/view_bug.do?bug_id=6512707 -->
+		<maven>3.0.4</maven>
 	</prerequisites>
 
 	<dependencies>
