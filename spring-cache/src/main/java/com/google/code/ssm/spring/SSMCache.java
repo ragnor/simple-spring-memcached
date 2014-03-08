@@ -92,15 +92,7 @@ public class SSMCache implements Cache {
 
     @Override
     public ValueWrapper get(final Object key) {
-        Object value = null;
-        try {
-            value = cache.get(getKey(key), null);
-        } catch (TimeoutException e) {
-            LOGGER.warn("An error has ocurred for cache " + getName() + " and key " + getKey(key), e);
-        } catch (CacheException e) {
-            LOGGER.warn("An error has ocurred for cache " + getName() + " and key " + getKey(key), e);
-        }
-
+        Object value = getValue(key);
         if (value == null) {
             LOGGER.info("Cache miss. Get by key {} from cache {}", key, cache.getName());
             return null;
@@ -108,6 +100,31 @@ public class SSMCache implements Cache {
 
         LOGGER.info("Cache hit. Get by key {} from cache {} value '{}'", new Object[] { key, cache.getName(), value });
         return value instanceof PertinentNegativeNull ? new SimpleValueWrapper(null) : new SimpleValueWrapper(value);
+    }
+    
+    
+    /**
+     * Required by Spring 4.0
+     * @since 3.4.0
+     */
+    @SuppressWarnings("unchecked")
+    public <T> T get(Object key, Class<T> type) {
+        Object value = getValue(key);
+        if (value == null) {
+            LOGGER.info("Cache miss. Get by key {} and type {} from cache {}", new Object[] { key, type, cache.getName() });
+            return null;
+        }
+        
+        if (value instanceof PertinentNegativeNull) {
+            return null;
+        }
+        
+        if (type != null && !type.isInstance(value)) {
+            throw new IllegalStateException("Cached value is not of required type [" + type.getName() + "]: " + value);
+        }
+
+        LOGGER.info("Cache hit. Get by key {} and type {}  from cache {} value '{}'", new Object[] { key, type, cache.getName(), value });
+        return (T) value;
     }
 
     @Override
@@ -164,6 +181,19 @@ public class SSMCache implements Cache {
         } catch (CacheException e) {
             LOGGER.warn("An error has ocurred for cache " + getName(), e);
         }
+    }
+    
+    private Object getValue(Object key) {
+        Object value = null;
+        try {
+            value = cache.get(getKey(key), null);
+        } catch (TimeoutException e) {
+            LOGGER.warn("An error has ocurred for cache " + getName() + " and key " + getKey(key), e);
+        } catch (CacheException e) {
+            LOGGER.warn("An error has ocurred for cache " + getName() + " and key " + getKey(key), e);
+        }
+        
+        return value;
     }
 
     private String getKey(final Object key) {
