@@ -143,6 +143,9 @@ public class SSMCache implements Cache {
                 LOGGER.warn("An error has ocurred for cache " + getName() + " and key " + getKey(key), e);
             } catch (CacheException e) {
                 LOGGER.warn("An error has ocurred for cache " + getName() + " and key " + getKey(key), e);
+            } catch (RuntimeException e) {
+                // do not propagate any exceptions
+                LOGGER.warn("An error has ocurred for cache " + getName() + " and key " + getKey(key), e);
             }
         } else {
             LOGGER.info("Cannot put to cache {} because key is null", cache.getName());
@@ -158,6 +161,9 @@ public class SSMCache implements Cache {
             } catch (TimeoutException e) {
                 LOGGER.warn("An error has ocurred for cache " + getName() + " and key " + getKey(key), e);
             } catch (CacheException e) {
+                LOGGER.warn("An error has ocurred for cache " + getName() + " and key " + getKey(key), e);
+            } catch (RuntimeException e) {
+                // do not propagate any exceptions
                 LOGGER.warn("An error has ocurred for cache " + getName() + " and key " + getKey(key), e);
             }
         } else {
@@ -180,6 +186,9 @@ public class SSMCache implements Cache {
             LOGGER.warn("An error has ocurred for cache " + getName(), e);
         } catch (CacheException e) {
             LOGGER.warn("An error has ocurred for cache " + getName(), e);
+        } catch (RuntimeException e) {
+            // do not propagate any exceptions
+            LOGGER.warn("An error has ocurred for cache " + getName(), e);
         }
     }
     
@@ -190,6 +199,9 @@ public class SSMCache implements Cache {
         } catch (TimeoutException e) {
             LOGGER.warn("An error has ocurred for cache " + getName() + " and key " + getKey(key), e);
         } catch (CacheException e) {
+            LOGGER.warn("An error has ocurred for cache " + getName() + " and key " + getKey(key), e);
+        } catch (RuntimeException e) {
+            // do not propagate any exceptions
             LOGGER.warn("An error has ocurred for cache " + getName() + " and key " + getKey(key), e);
         }
         
