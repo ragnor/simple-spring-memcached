@@ -17,7 +17,6 @@
 	<context:annotation-config />
 	<context:component-scan base-package="com.google.code.ssm.spring.test" />
 
-
 	<!-- this cache will be used to test provider's errors -->
 	<bean name="testCache" class="com.google.code.ssm.CacheFactory">
 		<property name="cacheName" value="testCache" />
@@ -35,7 +34,6 @@
 		<property name="defaultSerializationType"
 			value="#{T(com.google.code.ssm.api.format.SerializationType).valueOf(@defaultSerializationTypeAsString)}" />
 	</bean>
-
 
 	<mockito:spy beanName="testCache" />
 
