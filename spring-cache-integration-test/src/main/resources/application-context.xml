@@ -31,6 +31,13 @@
 					<!-- @CacheEvict(..., "allEntries" = true) works -->
 					<constructor-arg name="allowClear" index="2" value="true" />
 				</bean>
+				<bean class="com.google.code.ssm.spring.SSMCache">
+					<constructor-arg name="cache" index="0" ref="testCache" />
+					<!-- 5 minutes -->
+					<constructor-arg name="expiration" index="1" value="300" />
+					<!-- @CacheEvict(..., "allEntries" = true) works -->
+					<constructor-arg name="allowClear" index="2" value="true" />
+				</bean>
 			</set>
 		</property>
 	</bean>
@@ -63,6 +70,23 @@
 		<property name="addressProvider">
 			<bean class="com.google.code.ssm.config.DefaultAddressProvider">
 				<property name="address" value="127.0.0.1:11212" />
+			</bean>
+		</property>
+		<property name="configuration">
+			<bean class="com.google.code.ssm.providers.CacheConfiguration">
+				<property name="consistentHashing" value="true" />
+			</bean>
+		</property>
+		<property name="defaultSerializationType"
+			value="#{T(com.google.code.ssm.api.format.SerializationType).valueOf(@defaultSerializationTypeAsString)}" />
+	</bean>
+	
+	<bean name="testCache" class="com.google.code.ssm.CacheFactory">
+		<property name="cacheName" value="testCache" />
+		<property name="cacheClientFactory" ref="cacheClientFactory"/>
+		<property name="addressProvider">
+			<bean class="com.google.code.ssm.config.DefaultAddressProvider">
+				<property name="address" value="127.0.0.1:11211" />
 			</bean>
 		</property>
 		<property name="configuration">

@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:cache="http://www.springframework.org/schema/cache" xmlns:mockito="http://www.mockito.org/spring/mockito"
+	xsi:schemaLocation="
+		   http://www.springframework.org/schema/beans
+           http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
+           http://www.springframework.org/schema/context
+           http://www.springframework.org/schema/context/spring-context-3.1.xsd
+           http://www.springframework.org/schema/cache 
+           http://www.springframework.org/schema/cache/spring-cache-3.1.xsd
+           http://www.mockito.org/spring/mockito
+           http://www.mockito.org/spring/mockito.xsd">
+
+	<cache:annotation-driven />
+
+	<context:annotation-config />
+	<context:component-scan base-package="com.google.code.ssm.spring.test" />
+
+
+	<!-- this cache will be used to test provider's errors -->
+	<bean name="testCache" class="com.google.code.ssm.CacheFactory">
+		<property name="cacheName" value="testCache" />
+		<property name="cacheClientFactory" ref="cacheClientFactory" />
+		<property name="addressProvider">
+			<bean class="com.google.code.ssm.config.DefaultAddressProvider">
+				<property name="address" value="127.0.0.1:11211" />
+			</bean>
+		</property>
+		<property name="configuration">
+			<bean class="com.google.code.ssm.providers.CacheConfiguration">
+				<property name="consistentHashing" value="true" />
+			</bean>
+		</property>
+		<property name="defaultSerializationType"
+			value="#{T(com.google.code.ssm.api.format.SerializationType).valueOf(@defaultSerializationTypeAsString)}" />
+	</bean>
+
+
+	<mockito:spy beanName="testCache" />
+
+	<bean name="cacheManager" class="com.google.code.ssm.spring.SSMCacheManager">
+		<property name="caches">
+			<set>
+				<bean name="testCache" class="com.google.code.ssm.spring.SSMCache">
+					<constructor-arg name="cache" index="0" ref="testCache" />
+					<!-- 5 minutes -->
+					<constructor-arg name="expiration" index="1" value="300" />
+					<!-- @CacheEvict(..., "allEntries" = true) doesn't work -->
+					<constructor-arg name="allowClear" index="2" value="false" />
+				</bean>
+			</set>
+		</property>
+	</bean>
+
+	<!-- easy way to test different types of serialization mechanizm by passing 
+		it as system property (-Dssm.provider=JSON) -->
+	<bean name="defaultSerializationTypeAsString" class="java.lang.String">
+		<constructor-arg
+			value="#{systemProperties['ssm.defaultSerializationType']?:'JSON'}" />
+	</bean>
+
+	<beans profile="xmemcached">
+		<bean name="cacheClientFactory"
+			class="com.google.code.ssm.providers.xmemcached.MemcacheClientFactoryImpl" />
+	</beans>
+
+	<beans profile="spymemcached">
+		<bean name="cacheClientFactory"
+			class="com.google.code.ssm.providers.spymemcached.MemcacheClientFactoryImpl" />
+	</beans>
+
+</beans>
