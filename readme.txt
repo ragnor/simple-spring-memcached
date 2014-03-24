@@ -1,5 +1,6 @@
-SIMPLE SPRING MEMCACHED 3.2.0 (2013)
+SIMPLE SPRING MEMCACHED 3.4.0 (2014)
 ------------------------------------
+https://github.com/ragnor/simple-spring-memcached
 http://code.google.com/p/simple-spring-memcached/
 
 
@@ -24,4 +25,4 @@ Because of using the lombok library and bug in older JVM versions (http://bugs.s
 
 
 Core modules of SSM: simple-spring-memcached, spymemcached-provider and xmemcached-provider require Spring 3.0.7.RELEASE.
-The spring-cache module which provides integration with Spring Cache abstraction requires Spring 3.1.2.RELEASE (Spring Cache was introduced in 3.1).
+The spring-cache module which provides integration with Spring Cache abstraction requires Spring 3.1.3.RELEASE (Spring Cache was introduced in 3.1).
