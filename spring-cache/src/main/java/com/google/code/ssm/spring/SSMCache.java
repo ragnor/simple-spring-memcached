@@ -120,7 +120,10 @@ public class SSMCache implements Cache {
         }
         
         if (type != null && !type.isInstance(value)) {
-            throw new IllegalStateException("Cached value is not of required type [" + type.getName() + "]: " + value);
+            // in such case default Spring back end for EhCache throws IllegalStateException which interrupts intercepted method invocation
+            String msg = "Cached value is not of required type [" + type.getName() + "]: " + value;
+            LOGGER.error(msg, new IllegalStateException(msg));
+            return null;
         }
 
         LOGGER.info("Cache hit. Get by key {} and type {}  from cache {} value '{}'", new Object[] { key, type, cache.getName(), value });
