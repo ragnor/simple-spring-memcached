@@ -1,6 +1,19 @@
 SIMPLE SPRING MEMCACHED CHANGELOG
 =================================
+https://github.com/ragnor/simple-spring-memcached
 http://code.google.com/p/simple-spring-memcached/
+
+
+Changes in version 3.4.0 (2014-03-28)
+-------------------------------------
+
+* support MetricCollector in spymemcached-provider
+* call custom json/jackson serializers when required
+* fix compatibility issue with Spring 4.0 Cache Abstraction
+* while using Spring Cache annotations execute target (interrupted) method if memcached server is not reachable
+* remove redundant dependency to aspectjrt 
+* update jackson from 1.9.x to latest 2.3.x
+* update spymemcached to 2.10.6
 
 
 Changes in version 3.3.0 (2014-01-17)
