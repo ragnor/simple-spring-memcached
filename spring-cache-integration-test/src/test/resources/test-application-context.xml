@@ -26,11 +26,7 @@
 				<property name="address" value="127.0.0.1:11211" />
 			</bean>
 		</property>
-		<property name="configuration">
-			<bean class="com.google.code.ssm.providers.CacheConfiguration">
-				<property name="consistentHashing" value="true" />
-			</bean>
-		</property>
+		<property name="configuration" ref="clientConfig" />
 		<property name="defaultSerializationType"
 			value="#{T(com.google.code.ssm.api.format.SerializationType).valueOf(@defaultSerializationTypeAsString)}" />
 	</bean>
@@ -54,18 +50,30 @@
 	<!-- easy way to test different types of serialization mechanizm by passing 
 		it as system property (-Dssm.provider=JSON) -->
 	<bean name="defaultSerializationTypeAsString" class="java.lang.String">
-		<constructor-arg
-			value="#{systemProperties['ssm.defaultSerializationType']?:'JSON'}" />
+		<constructor-arg value="#{systemProperties['ssm.defaultSerializationType']?:'JSON'}" />
 	</bean>
 
 	<beans profile="xmemcached">
-		<bean name="cacheClientFactory"
-			class="com.google.code.ssm.providers.xmemcached.MemcacheClientFactoryImpl" />
+		<bean name="cacheClientFactory" class="com.google.code.ssm.providers.xmemcached.MemcacheClientFactoryImpl" />
+		<bean name="clientConfig" class="com.google.code.ssm.providers.CacheConfiguration">
+			<property name="consistentHashing" value="true" />
+		</bean>
 	</beans>
 
 	<beans profile="spymemcached">
-		<bean name="cacheClientFactory"
-			class="com.google.code.ssm.providers.spymemcached.MemcacheClientFactoryImpl" />
+		<bean name="cacheClientFactory" class="com.google.code.ssm.providers.spymemcached.MemcacheClientFactoryImpl" />
+		<bean name="clientConfig" class="com.google.code.ssm.providers.CacheConfiguration">
+			<property name="consistentHashing" value="true" />
+		</bean>
+	</beans>
+
+	<beans profile="aws-elasticache">
+		<bean name="cacheClientFactory" class="com.google.code.ssm.providers.elasticache.MemcacheClientFactoryImpl" />
+		<bean name="clientConfig" class="com.google.code.ssm.providers.elasticache.ElasticacheConfiguration">
+				<property name="consistentHashing" value="true" />
+				<!-- in tests use static configuration and do not try to fetch configuration of nodes from cluster -->
+				<property name="clientMode" value="#{T(net.spy.memcached.ClientMode).Static}" />
+			</bean>
 	</beans>
 
 </beans>

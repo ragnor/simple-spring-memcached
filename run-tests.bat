@@ -17,6 +17,11 @@ call:execute "mvn verify -Pspymemcached -Dssm.defaultSerializationType=PROVIDER"
 call:execute "mvn verify -Pspymemcached -Dssm.defaultSerializationType=JAVA"
 call:execute "mvn verify -Pspymemcached -Dssm.defaultSerializationType=JSON"
 
+REM execute integration-test using aws-elasticache and all serialization types
+call:execute "mvn verify -Paws-elasticache -Dssm.defaultSerializationType=PROVIDER"
+call:execute "mvn verify -Paws-elasticache -Dssm.defaultSerializationType=JAVA"
+call:execute "mvn verify -Paws-elasticache -Dssm.defaultSerializationType=JSON"
+
 cd ..
 cd spring-cache-integration-test
 
@@ -29,6 +34,11 @@ REM execute spring-cache-integration-test using spymemcached and all serializati
 call:execute "mvn verify -Pspymemcached -Dssm.defaultSerializationType=PROVIDER"
 call:execute "mvn verify -Pspymemcached -Dssm.defaultSerializationType=JAVA"
 call:execute "mvn verify -Pspymemcached -Dssm.defaultSerializationType=JSON"
+
+REM execute spring-cache-integration-test using aws-elasticache and all serialization types
+call:execute "mvn verify -Paws-elasticache -Dssm.defaultSerializationType=PROVIDER"
+call:execute "mvn verify -Paws-elasticache -Dssm.defaultSerializationType=JAVA"
+call:execute "mvn verify -Paws-elasticache -Dssm.defaultSerializationType=JSON"
 
 cd ..
 

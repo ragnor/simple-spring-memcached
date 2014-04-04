@@ -151,24 +151,6 @@
 
 	<profiles>
 		<profile>
-			<id>spymemcached</id>
-			<build>
-				<testResources>
-					<testResource>
-						<directory>${basedir}/src/test/resources/spymemcached</directory>
-					</testResource>
-				</testResources>
-			</build>
-			<dependencies>
-				<dependency>
-					<groupId>com.google.code.simple-spring-memcached</groupId>
-					<artifactId>spymemcached-provider</artifactId>
-					<version>${project.version}</version>
-				</dependency>
-			</dependencies>
-		</profile>
-
-		<profile>
 			<id>xmemcached</id>
 			<activation>
 				<activeByDefault>true</activeByDefault>
@@ -184,6 +166,42 @@
 				<dependency>
 					<groupId>com.google.code.simple-spring-memcached</groupId>
 					<artifactId>xmemcached-provider</artifactId>
+					<version>${project.version}</version>
+				</dependency>
+			</dependencies>
+		</profile>
+
+		<profile>
+			<id>spymemcached</id>
+			<build>
+				<testResources>
+					<testResource>
+						<directory>${basedir}/src/test/resources/spymemcached</directory>
+					</testResource>
+				</testResources>
+			</build>
+			<dependencies>
+				<dependency>
+					<groupId>com.google.code.simple-spring-memcached</groupId>
+					<artifactId>spymemcached-provider</artifactId>
+					<version>${project.version}</version>
+				</dependency>
+			</dependencies>
+		</profile>		
+
+		<profile>
+			<id>aws-elasticache</id>
+			<build>
+				<testResources>
+					<testResource>
+						<directory>${basedir}/src/test/resources/aws-elasticache</directory>
+					</testResource>
+				</testResources>
+			</build>
+			<dependencies>
+				<dependency>
+					<groupId>com.google.code.simple-spring-memcached</groupId>
+					<artifactId>aws-elasticache-provider</artifactId>
 					<version>${project.version}</version>
 				</dependency>
 			</dependencies>
