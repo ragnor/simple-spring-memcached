@@ -12,7 +12,7 @@
 	<version>3.4.1-SNAPSHOT</version>
 	<name>simple-spring-memcached-parent</name>
 	<description>Simple spring memcached - parent</description>
-	<url>http://code.google.com/p/simple-spring-memcached/</url>
+	<url>http://github.com/ragnor/simple-spring-memcached</url>
 
 	<licenses>
 		<license>

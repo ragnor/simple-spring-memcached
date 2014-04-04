@@ -10,7 +10,7 @@
 	<packaging>jar</packaging>
 	<name>spring-cache</name>
 	<description>Integration with Spring 3.1 cache abstraction</description>
-	<url>http://code.google.com/p/simple-spring-memcached/</url>
+	<url>http://github.com/ragnor/simple-spring-memcached</url>
 
 	<licenses>
 		<license>

@@ -9,7 +9,7 @@
 	<packaging>jar</packaging>
 	<name>simple-spring-memcached</name>
 	<description>Enables memcached caching in Spring beans via annotations</description>
-	<url>http://code.google.com/p/simple-spring-memcached/</url>
+	<url>http://github.com/ragnor/simple-spring-memcached</url>
 
 	<licenses>
 		<license>

@@ -10,7 +10,7 @@
 	<packaging>maven-plugin</packaging>
 	<name>jmemcached-maven-plugin</name>
 	<description>Maven plugin to run embedded memcached (jmemcached) in integration tests</description>
-	<url>http://code.google.com/p/simple-spring-memcached/</url>
+	<url>http://github.com/ragnor/simple-spring-memcached</url>
 
 	<licenses>
 		<license>

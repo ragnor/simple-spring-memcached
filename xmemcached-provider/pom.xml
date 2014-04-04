@@ -10,7 +10,7 @@
 	<packaging>jar</packaging>
 	<name>xmemcached-provider</name>
 	<description>Use xmemcached as a memcached client</description>
-	<url>http://code.google.com/p/simple-spring-memcached/</url>
+	<url>http://github.com/ragnor/simple-spring-memcached</url>
 
 	<licenses>
 		<license>
