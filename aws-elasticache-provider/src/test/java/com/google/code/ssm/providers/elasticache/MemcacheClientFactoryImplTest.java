@@ -31,7 +31,7 @@ import org.junit.Test;
 import com.google.code.ssm.providers.CacheClient;
 import com.google.code.ssm.providers.CacheConfiguration;
 import com.google.code.ssm.providers.elasticache.MemcacheClientFactoryImpl;
-import com.google.code.ssm.providers.elasticache.ElasticacheConfiguration;
+import com.google.code.ssm.providers.elasticache.ElastiCacheConfiguration;
 
 /**
  * 
@@ -63,7 +63,7 @@ public class MemcacheClientFactoryImplTest {
 
     @Test
     public void createWithSpecificConf() throws IOException {
-        ElasticacheConfiguration conf = new ElasticacheConfiguration();
+        ElastiCacheConfiguration conf = new ElastiCacheConfiguration();
         conf.setConsistentHashing(true);
         conf.setOperationTimeout(1000);
         conf.setUseBinaryProtocol(false);

@@ -42,7 +42,7 @@ import com.google.code.ssm.providers.CacheConfiguration;
  */
 @Data
 @EqualsAndHashCode(callSuper = true)
-public class ElasticacheConfiguration extends CacheConfiguration {
+public class ElastiCacheConfiguration extends CacheConfiguration {
 
     /**
      * @see ConnectionFactoryBuilder#setDaemon(boolean)
@@ -114,7 +114,7 @@ public class ElasticacheConfiguration extends CacheConfiguration {
     /**
      * Try to use Amazon ElastiCache Auto Discovery, more info:
      * http://docs.amazonwebservices.com/AmazonElastiCache/latest/UserGuide/AutoDiscovery.html. If set to true all other
-     * client settings will be ignored, this is how aws elasticache client works with auto discovery feature.
+     * client settings will be ignored, this is how AWS ElastiCache client works with auto discovery feature.
      */
     private Boolean useAutoDiscovery;
 

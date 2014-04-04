@@ -69,7 +69,7 @@
 
 	<beans profile="aws-elasticache">
 		<bean name="cacheClientFactory" class="com.google.code.ssm.providers.elasticache.MemcacheClientFactoryImpl" />
-		<bean name="clientConfig" class="com.google.code.ssm.providers.elasticache.ElasticacheConfiguration">
+		<bean name="clientConfig" class="com.google.code.ssm.providers.elasticache.ElastiCacheConfiguration">
 				<property name="consistentHashing" value="true" />
 				<!-- in tests use static configuration and do not try to fetch configuration of nodes from cluster -->
 				<property name="clientMode" value="#{T(net.spy.memcached.ClientMode).Static}" />

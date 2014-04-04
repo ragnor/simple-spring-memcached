@@ -52,9 +52,9 @@ public class MemcacheClientFactoryImpl implements CacheClientFactory {
         // currently its works because this factory creates clients with the same connection settings, only memcached
         // addresses can be changed
         if (connectionFactory == null) {
-            ElasticacheConfiguration elasticacheConf = null;
-            if (conf instanceof ElasticacheConfiguration) {
-                elasticacheConf = (ElasticacheConfiguration) conf;
+            ElastiCacheConfiguration elasticacheConf = null;
+            if (conf instanceof ElastiCacheConfiguration) {
+                elasticacheConf = (ElastiCacheConfiguration) conf;
             }
             
             if (elasticacheConf != null && Boolean.TRUE.equals(elasticacheConf.getUseAutoDiscovery())) {
@@ -86,7 +86,7 @@ public class MemcacheClientFactoryImpl implements CacheClientFactory {
         return new MemcacheClientWrapper(new MemcachedClient(connectionFactory, addrs));
     }
 
-    private void setProviderSpecificSettings(final ConnectionFactoryBuilder builder, final ElasticacheConfiguration conf) {
+    private void setProviderSpecificSettings(final ConnectionFactoryBuilder builder, final ElastiCacheConfiguration conf) {
         if (conf.getDaemon() != null) {
             builder.setDaemon(conf.getDaemon());
         }
