@@ -1,0 +1,17 @@
+com.google.code.ssm
+com.google.code.ssm.aop
+com.google.code.ssm.aop.counter
+com.google.code.ssm.aop.support
+com.google.code.ssm.api
+com.google.code.ssm.api.counter
+com.google.code.ssm.api.format
+com.google.code.ssm.config
+com.google.code.ssm.json
+com.google.code.ssm.mapper
+com.google.code.ssm.providers
+com.google.code.ssm.providers.spymemcached
+com.google.code.ssm.providers.xmemcached
+com.google.code.ssm.spring
+com.google.code.ssm.transcoders
+com.google.code.ssm.util
+com.google.code.ssm.util.jndi
