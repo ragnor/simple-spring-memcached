@@ -335,44 +335,6 @@
 		</profile>
 
 		<profile>
-			<id>delombok</id>
-			<build>
-				<plugins>
-					<plugin>
-						<groupId>org.projectlombok</groupId>
-						<artifactId>lombok-maven-plugin</artifactId>
-						<version>${lombok-maven-plugin.version}</version>
-						<executions>
-							<execution>
-								<id>delombok</id>
-								<phase>generate-sources</phase>
-								<goals>
-									<goal>delombok</goal>
-								</goals>
-								<configuration>
-									<verbose>true</verbose>
-								</configuration>
-							</execution>
-						</executions>
-						<configuration>
-							<addOutputDirectory>false</addOutputDirectory>
-							<sourceDirectory>src/main/java</sourceDirectory>
-						</configuration>
-						<dependencies>
-							<dependency>
-								<groupId>sun.jdk</groupId>
-								<artifactId>tools</artifactId>
-								<version>1.6</version>
-								<scope>system</scope>
-								<systemPath>${java.home}/../lib/tools.jar</systemPath>
-							</dependency>
-						</dependencies>
-					</plugin>
-				</plugins>
-			</build>
-		</profile>
-
-		<profile>
 			<id>jenkins</id>
 			<activation>
 				<property>
