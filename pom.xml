@@ -96,16 +96,19 @@
 		<lombok-maven-plugin.version>1.12.4.0</lombok-maven-plugin.version>
 
 		<!-- plugins -->
-		<maven-javadoc-plugin.version>2.9.1</maven-javadoc-plugin.version>
-		<maven-project-info-reports-plugin.version>2.7</maven-project-info-reports-plugin.version>
-		<maven-surefire-report-plugin.version>2.16</maven-surefire-report-plugin.version>
-		<maven-pmd-plugin.version>3.0.1</maven-pmd-plugin.version>
-		<maven-jxr-plugin.version>2.4</maven-jxr-plugin.version>
-		<taglist-maven-plugin.version>2.4</taglist-maven-plugin.version>
-		<javancss-maven-plugin.version>2.0</javancss-maven-plugin.version>
 		<cobertura-maven-plugin.version>2.5.2</cobertura-maven-plugin.version>
-		<jdepend-maven-plugin.version>2.0-beta-2</jdepend-maven-plugin.version>
 		<findbugs-maven-plugin.version>2.5.3</findbugs-maven-plugin.version>
+		<javancss-maven-plugin.version>2.0</javancss-maven-plugin.version>
+		<jdepend-maven-plugin.version>2.0-beta-2</jdepend-maven-plugin.version>
+		<maven-failsafe-plugin.version>2.16</maven-failsafe-plugin.version>
+		<maven-javadoc-plugin.version>2.9.1</maven-javadoc-plugin.version>
+		<maven-jxr-plugin.version>2.4</maven-jxr-plugin.version>
+		<maven-gpg-plugin.version>1.1</maven-gpg-plugin.version>
+		<maven-pmd-plugin.version>3.0.1</maven-pmd-plugin.version>
+		<maven-project-info-reports-plugin.version>2.7</maven-project-info-reports-plugin.version>
+		<maven-source-plugin.version>2.2.1</maven-source-plugin.version>
+		<maven-surefire-report-plugin.version>2.16</maven-surefire-report-plugin.version>
+		<taglist-maven-plugin.version>2.4</taglist-maven-plugin.version>
 
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
@@ -279,6 +282,11 @@
 				</plugin>
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-source-plugin</artifactId>
+					<version>${maven-source-plugin.version}</version>
+				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-jar-plugin</artifactId>
 					<version>2.4</version>
 				</plugin>
@@ -296,6 +304,11 @@
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-install-plugin</artifactId>
 					<version>2.5.1</version>
+				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-plugin-plugin</artifactId>
+					<version>3.0</version>
 				</plugin>
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
@@ -385,12 +398,12 @@
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-failsafe-plugin</artifactId>
-					<version>2.16</version>
+					<version>${maven-failsafe-plugin.version}</version>
 				</plugin>
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-gpg-plugin</artifactId>
-					<version>1.1</version>
+					<version>${maven-gpg-plugin.version}</version>
 				</plugin>
 			</plugins>
 		</pluginManagement>
@@ -410,7 +423,7 @@
 					<plugin>
 						<groupId>org.apache.maven.plugins</groupId>
 						<artifactId>maven-gpg-plugin</artifactId>
-						<version>1.1</version>
+						<version>${maven-gpg-plugin.version}</version>
 						<executions>
 							<execution>
 								<id>sign-artifacts</id>
