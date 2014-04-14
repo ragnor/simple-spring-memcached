@@ -42,18 +42,7 @@ public class CacheKeyMethodStoreImpl implements CacheKeyMethodStore { // NO_UCD
         if (storedMethod != null) {
             return storedMethod;
         }
-        final Method[] methods = keyClass.getDeclaredMethods();
-        Method targetMethod = null;
-        for (final Method method : methods) {
-            boolean isCacheKeyMethod = isCacheKeyMethod(method);
-            if (isCacheKeyMethod && (targetMethod != null)) {
-                throw new InvalidAnnotationException(String.format(
-                        "Class [%s] should have only one method annotated with [%s]. See [%s] and [%s]", keyClass.getName(),
-                        CacheKeyMethod.class.getName(), targetMethod.getName(), method.getName()));
-            } else if (isCacheKeyMethod) {
-                targetMethod = method;
-            }
-        }
+        Method targetMethod = getFromClass(keyClass);
 
         if (targetMethod == null) {
             // try to get from superclass
@@ -68,6 +57,23 @@ public class CacheKeyMethodStoreImpl implements CacheKeyMethodStore { // NO_UCD
         }
 
         add(keyClass, targetMethod);
+
+        return targetMethod;
+    }
+
+    private Method getFromClass(final Class<?> keyClass) {
+        Method targetMethod = null;
+        final Method[] methods = keyClass.getDeclaredMethods();
+        for (final Method method : methods) {
+            boolean isCacheKeyMethod = isCacheKeyMethod(method);
+            if (isCacheKeyMethod && (targetMethod != null)) {
+                throw new InvalidAnnotationException(String.format(
+                        "Class [%s] should have only one method annotated with [%s]. See [%s] and [%s]", keyClass.getName(),
+                        CacheKeyMethod.class.getName(), targetMethod.getName(), method.getName()));
+            } else if (isCacheKeyMethod) {
+                targetMethod = method;
+            }
+        }
 
         return targetMethod;
     }

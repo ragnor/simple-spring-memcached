@@ -19,6 +19,7 @@ package com.google.code.ssm.aop.support;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 import org.junit.BeforeClass;
@@ -65,6 +66,22 @@ public class CacheKeyMethodStoreImplTest {
 
         cacheKeyMethod = cacheKeyMethodStoreImpl.getKeyMethod(DClass.class);
         assertEquals("getBKey", cacheKeyMethod.getName());
+    }
+    
+    @Test
+    public void testToStringOwerwrite() throws NoSuchMethodException, IllegalAccessException, IllegalArgumentException,
+            InvocationTargetException {
+        Method cacheKeyMethod = cacheKeyMethodStoreImpl.getKeyMethod(YClass.class);
+        assertEquals("toString", cacheKeyMethod.getName());
+
+        Object result = cacheKeyMethod.invoke(new YClass());
+        assertEquals("Y", result.toString());
+        
+        cacheKeyMethod = cacheKeyMethodStoreImpl.getKeyMethod(XClass.class);
+        assertEquals("toString", cacheKeyMethod.getName());
+        
+        result = cacheKeyMethod.invoke(new XClass());
+        assertEquals("X", result.toString());
     }
 
     @Test(expected = InvalidAnnotationException.class)
@@ -139,6 +156,20 @@ public class CacheKeyMethodStoreImplTest {
         @Override
         public String toString() {
             return "D";
+        }
+    }
+    
+    public static class XClass {
+        @Override
+        public String toString() {
+            return "X";
+        }
+    }
+    
+    public static class YClass extends XClass {
+        @Override
+        public String toString() {
+            return "Y";
         }
     }
 
