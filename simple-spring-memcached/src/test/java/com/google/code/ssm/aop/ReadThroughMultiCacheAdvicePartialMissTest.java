@@ -192,7 +192,6 @@ public class ReadThroughMultiCacheAdvicePartialMissTest extends AbstractCacheTes
         return map;
     }
 
-    @SuppressWarnings("unused")
     private static class TestService {
 
         @ReadThroughMultiCache(namespace = NS, expiration = EXPIRATION)

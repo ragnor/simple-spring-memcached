@@ -116,7 +116,6 @@ public class UpdateCounterInCacheAdviceTest extends AbstractCounterTest<UpdateCo
         return new UpdateCounterInCacheAdvice();
     }
 
-    @SuppressWarnings("unused")
     private static class TestService {
 
         @ReturnDataUpdateContent

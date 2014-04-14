@@ -83,7 +83,6 @@ public class InvalidateAssignCacheAdviceTest extends AbstractCacheTest<Invalidat
         return NS;
     }
 
-    @SuppressWarnings("unused")
     private static class TestService {
 
         @InvalidateAssignCache(namespace = NS, assignedKey = "1")

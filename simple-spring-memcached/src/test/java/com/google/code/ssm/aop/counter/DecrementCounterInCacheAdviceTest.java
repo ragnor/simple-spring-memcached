@@ -81,7 +81,6 @@ public class DecrementCounterInCacheAdviceTest extends AbstractCounterTest<Decre
         return new DecrementCounterInCacheAdvice();
     }
 
-    @SuppressWarnings("unused")
     private static class TestService {
 
         @DecrementCounterInCache(namespace = NS)

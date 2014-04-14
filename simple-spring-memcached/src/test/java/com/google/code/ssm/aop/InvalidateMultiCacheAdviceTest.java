@@ -147,7 +147,6 @@ public class InvalidateMultiCacheAdviceTest extends AbstractCacheTest<Invalidate
         return NS;
     }
 
-    @SuppressWarnings("unused")
     private static class TestService {
 
         @InvalidateMultiCache(namespace = NS)

@@ -65,7 +65,6 @@ public class ReadThroughAssignCacheTest {
 
     }
 
-    @SuppressWarnings("unused")
     private static class AnnotationValidator {
 
         @ReadThroughAssignCache(namespace = "bubba", expiration = 100)

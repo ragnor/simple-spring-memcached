@@ -110,7 +110,6 @@ public class UpdateAssignCacheAdviceTest extends AbstractCacheTest<UpdateAssignC
         return NS;
     }
 
-    @SuppressWarnings("unused")
     private static class TestService {
 
         @ReturnDataUpdateContent

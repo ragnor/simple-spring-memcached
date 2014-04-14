@@ -117,7 +117,6 @@ public class UpdateSingleCacheAdviceTest extends AbstractCacheTest<UpdateSingleC
         return NS;
     }
 
-    @SuppressWarnings("unused")
     private static class TestService {
 
         @ReturnDataUpdateContent

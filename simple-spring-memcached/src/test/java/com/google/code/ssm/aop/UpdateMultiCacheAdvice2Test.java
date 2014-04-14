@@ -200,7 +200,6 @@ public class UpdateMultiCacheAdvice2Test extends AbstractCacheTest<UpdateMultiCa
         return NS;
     }
 
-    @SuppressWarnings("unused")
     private static class TestService {
 
         @ReturnDataUpdateContent

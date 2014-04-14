@@ -157,7 +157,6 @@ public class ReadThroughMultiCacheAdviceTest extends AbstractCacheTest<ReadThrou
         return NS;
     }
 
-    @SuppressWarnings("unused")
     private static class TestService {
 
         @ReadThroughMultiCache(namespace = NS, expiration = EXPIRATION)

@@ -109,7 +109,6 @@ public class InvalidateSingleCacheAdviceTest extends AbstractCacheTest<Invalidat
         return NS;
     }
 
-    @SuppressWarnings("unused")
     private static class TestService {
 
         @InvalidateSingleCache(namespace = NS)

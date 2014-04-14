@@ -81,7 +81,6 @@ public class IncrementCounterInCacheAdviceTest extends AbstractCounterTest<Incre
         return new IncrementCounterInCacheAdvice();
     }
 
-    @SuppressWarnings("unused")
     private static class TestService {
 
         @IncrementCounterInCache(namespace = NS)

@@ -122,7 +122,6 @@ public class ReadThroughAssignCacheAdviceTest extends AbstractCacheTest<ReadThro
         return NS;
     }
 
-    @SuppressWarnings("unused")
     private static class TestService {
 
         @ReadThroughAssignCache(namespace = NS, assignedKey = "1", expiration = EXPIRATION)

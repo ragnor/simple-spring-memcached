@@ -304,7 +304,6 @@ public class CacheBaseTest {
         }
     }
 
-    @SuppressWarnings("unused")
     private static class ReturnTypeCheck {
 
         @ReadThroughMultiCache(namespace = "bubba", expiration = 10)

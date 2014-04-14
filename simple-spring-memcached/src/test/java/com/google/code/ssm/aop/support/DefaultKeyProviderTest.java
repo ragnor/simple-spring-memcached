@@ -152,7 +152,6 @@ public class DefaultKeyProviderTest {
         }
     }
 
-    @SuppressWarnings("unused")
     private static class KeyObject01 {
 
         @CacheKeyMethod
@@ -161,7 +160,6 @@ public class DefaultKeyProviderTest {
 
     }
 
-    @SuppressWarnings("unused")
     private static class KeyObject02 {
 
         @CacheKeyMethod
@@ -169,7 +167,6 @@ public class DefaultKeyProviderTest {
         }
     }
 
-    @SuppressWarnings("unused")
     private static class KeyObject03 {
 
         @CacheKeyMethod
@@ -178,7 +175,6 @@ public class DefaultKeyProviderTest {
         }
     }
 
-    @SuppressWarnings("unused")
     private static class KeyObject04 {
 
         @CacheKeyMethod
@@ -192,7 +188,6 @@ public class DefaultKeyProviderTest {
         }
     }
 
-    @SuppressWarnings("unused")
     private static class KeyObject05 {
 
         public static final String result = "shrimp";

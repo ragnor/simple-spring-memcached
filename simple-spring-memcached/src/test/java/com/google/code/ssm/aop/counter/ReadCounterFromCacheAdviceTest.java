@@ -131,7 +131,6 @@ public class ReadCounterFromCacheAdviceTest extends AbstractCounterTest<ReadCoun
         return new ReadCounterFromCacheAdvice();
     }
 
-    @SuppressWarnings("unused")
     private static class TestService {
 
         @ReadCounterFromCache(namespace = NS, expiration = EXPIRATION)
