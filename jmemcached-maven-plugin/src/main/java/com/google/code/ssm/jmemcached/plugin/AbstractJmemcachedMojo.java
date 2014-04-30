@@ -40,7 +40,7 @@ public abstract class AbstractJmemcachedMojo extends AbstractMojo {
 
     /**
      * 
-     * @parameter expression="${jmemcached.disable}" default-value="false"
+     * @parameter property="jmemcached.disable" default-value="false"
      */
     protected boolean disabled;
 
