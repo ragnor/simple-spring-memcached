@@ -60,6 +60,13 @@ public interface Cache {
      */
     CacheProperties getProperties();
 
+    /**
+     * 
+     * @since 3.5.0
+     * @return true if cache is enabled
+     */
+    boolean isEnabled();
+
     <T> void add(final String key, final int exp, final Object value, final SerializationType serializationType) throws TimeoutException,
             CacheException;
 

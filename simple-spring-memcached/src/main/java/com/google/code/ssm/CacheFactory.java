@@ -19,6 +19,7 @@
 package com.google.code.ssm;
 
 import java.io.IOException;
+import java.lang.reflect.Proxy;
 import java.net.InetSocketAddress;
 import java.util.Collection;
 import java.util.Collections;
@@ -78,7 +79,7 @@ public class CacheFactory implements AddressChangeListener, FactoryBean<Cache>, 
     @Setter
     private Collection<String> cacheAliases = Collections.emptyList();
 
-    private CacheImpl cache;
+    private Cache cache;
 
     @Setter
     private AddressChangeNotifier addressChangeNotifier;
@@ -154,11 +155,16 @@ public class CacheFactory implements AddressChangeListener, FactoryBean<Cache>, 
             return;
         }
 
+        if (!(cache instanceof CacheImpl)) {
+            LOGGER.warn("This client doesn't support changing memcached addresses on the fly");
+            return;
+        }
+
         try {
             LOGGER.info("Creating new memcached client for cache {} with new addresses: {}", cacheName, addresses);
             CacheClient memcacheClient = createClient(addresses);
             LOGGER.info("New memcached client for cache {} was created with addresses: {}", cacheName, addresses);
-            cache.changeCacheClient(memcacheClient);
+            ((CacheImpl)cache).changeCacheClient(memcacheClient);
         } catch (IOException e) {
             if (LOGGER.isErrorEnabled()) {
                 LOGGER.error(String.format("Cannot change memcached client to new one with addresses %s", addresses), e);
@@ -175,17 +181,18 @@ public class CacheFactory implements AddressChangeListener, FactoryBean<Cache>, 
     protected Cache createCache() throws IOException {
         // this factory creates only one single cache and return it if someone invoked this method twice or
         // more
+        if (cache != null) {
+            throw new IllegalStateException(String.format("This factory has already created memcached client for cache %s", cacheName));
+        }
 
         if (isCacheDisabled()) {
             LOGGER.warn("Cache {} is disabled", cacheName);
-            return null;
+            cache = (Cache) Proxy.newProxyInstance(Cache.class.getClassLoader(), new Class[] { Cache.class },
+                    new DisabledCacheInvocationHandler(cacheName, cacheAliases));
+            return cache;
         }
 
-        if (cache != null) {
-            throw new IllegalStateException(String.format("This factory has already created memcached client fro cache %s", cacheName));
-        }
-
-        if (this.configuration == null) {
+        if (configuration == null) {
             throw new RuntimeException(String.format("The MemcachedConnectionBean for cache %s must be defined!", cacheName));
         }
 
@@ -196,16 +203,16 @@ public class CacheFactory implements AddressChangeListener, FactoryBean<Cache>, 
         return cache;
     }
 
+    boolean isCacheDisabled() {
+        return DISABLE_CACHE_PROPERTY_VALUE.equals(System.getProperty(DISABLE_CACHE_PROPERTY));
+    }
+
     private CacheClient createClient(final List<InetSocketAddress> addrs) throws IOException {
         if (addrs == null || addrs.isEmpty()) {
             throw new IllegalArgumentException(String.format("No memcached addresses specified for cache %s", cacheName));
         }
 
         return cacheClientFactory.create(addrs, configuration);
-    }
-
-    private boolean isCacheDisabled() {
-        return DISABLE_CACHE_PROPERTY_VALUE.equals(System.getProperty(DISABLE_CACHE_PROPERTY));
     }
 
     private void validateTranscoder(final SerializationType serializationType, final CacheTranscoder cacheTranscoder,

@@ -228,6 +228,11 @@ class CacheImpl implements Cache {
     }
 
     @Override
+    public boolean isEnabled() {
+        return true;
+    }
+
+    @Override
     public Long getCounter(final String cacheKey) throws TimeoutException, CacheException {
         return cacheClient.get(cacheKey, longToStringTranscoder);
     }

@@ -120,6 +120,11 @@ public class PrefixedCacheImpl implements Cache {
     }
 
     @Override
+    public boolean isEnabled() {
+        return cache.isEnabled();
+    }
+
+    @Override
     public <T> void set(final String key, final int exp, final Object value, final SerializationType serializationType)
             throws TimeoutException, CacheException {
         cache.set(alterKey(key), exp, value, serializationType);
@@ -157,4 +162,5 @@ public class PrefixedCacheImpl implements Cache {
 
         return alteredKeys;
     }
+
 }

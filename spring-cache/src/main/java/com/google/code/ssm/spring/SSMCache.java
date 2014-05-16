@@ -92,6 +92,11 @@ public class SSMCache implements Cache {
 
     @Override
     public ValueWrapper get(final Object key) {
+        if (!cache.isEnabled()) {
+            LOGGER.warn("Cache {} is disabled. Cannot get {} from cache", cache.getName(), key);
+            return null;
+        }
+
         Object value = getValue(key);
         if (value == null) {
             LOGGER.info("Cache miss. Get by key {} from cache {}", key, cache.getName());
@@ -109,16 +114,21 @@ public class SSMCache implements Cache {
      */
     @SuppressWarnings("unchecked")
     public <T> T get(Object key, Class<T> type) {
+        if (!cache.isEnabled()) {
+            LOGGER.warn("Cache {} is disabled. Cannot get {} from cache", cache.getName(), key);
+            return null;
+        }
+
         Object value = getValue(key);
         if (value == null) {
             LOGGER.info("Cache miss. Get by key {} and type {} from cache {}", new Object[] { key, type, cache.getName() });
             return null;
         }
-        
+
         if (value instanceof PertinentNegativeNull) {
             return null;
         }
-        
+
         if (type != null && !type.isInstance(value)) {
             // in such case default Spring back end for EhCache throws IllegalStateException which interrupts intercepted method invocation
             String msg = "Cached value is not of required type [" + type.getName() + "]: " + value;
@@ -132,6 +142,11 @@ public class SSMCache implements Cache {
 
     @Override
     public void put(final Object key, final Object value) {
+        if (!cache.isEnabled()) {
+            LOGGER.warn("Cache {} is disabled. Cannot put value under key {}", cache.getName(), key);
+            return;
+        }
+
         if (key != null) {
             try {
                 LOGGER.info("Put '{}' under key {} to cache {}", new Object[] { value, key, cache.getName() });
@@ -157,6 +172,11 @@ public class SSMCache implements Cache {
 
     @Override
     public void evict(final Object key) {
+        if (!cache.isEnabled()) {
+            LOGGER.warn("Cache {} is disabled. Cannot evict key {}", cache.getName(), key);
+            return;
+        }
+
         if (key != null) {
             try {
                 LOGGER.info("Evict {} from cache {}", key, cache.getName());
@@ -176,6 +196,11 @@ public class SSMCache implements Cache {
 
     @Override
     public void clear() {
+        if (!cache.isEnabled()) {
+            LOGGER.warn("Cache {} is disabled. Cannot clear cache.", cache.getName());
+            return;
+        }
+
         if (!allowClear) {
             LOGGER.error("Clearing cache '{}' is not allowed. To enable it set allowClear to true. "
                     + "Make sure that caches don't overlap (one memcached instance isn't used by more than one cache) "

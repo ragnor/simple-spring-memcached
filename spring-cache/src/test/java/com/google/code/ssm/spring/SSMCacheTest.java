@@ -17,12 +17,12 @@
 package com.google.code.ssm.spring;
 
 import static org.junit.Assert.assertSame;
+import static org.mockito.Mockito.*;
 
 import java.util.concurrent.TimeoutException;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.Mockito;
 
 import com.google.code.ssm.Cache;
 import com.google.code.ssm.providers.CacheException;
@@ -43,52 +43,132 @@ public class SSMCacheTest {
 
     @Before
     public void setUp() {
-        cache = Mockito.mock(Cache.class);
+        cache = mock(Cache.class);
         ssmCache = new SSMCache(cache, expiration, false);
     }
 
     @Test(expected = IllegalStateException.class)
-    public void clear() throws TimeoutException, CacheException {
+    public void clearShouldThrowExceptionWhenNotAllowed() throws TimeoutException, CacheException {
+        when(cache.isEnabled()).thenReturn(true);
+
         ssmCache.clear();
     }
 
     @Test
-    public void validClear() throws TimeoutException, CacheException {
+    public void clearShouldExecuteWhenCacheEnabled() throws TimeoutException, CacheException {
         ssmCache = new SSMCache(cache, expiration, true);
+        when(cache.isEnabled()).thenReturn(true);
+
         ssmCache.clear();
-        Mockito.verify(cache).flush();
+
+        verify(cache).flush();
     }
 
     @Test
-    public void evict() throws TimeoutException, CacheException {
+    public void evictShouldExecuteWhenCacheEnabled() throws TimeoutException, CacheException {
         String key = "someKey";
+        when(cache.isEnabled()).thenReturn(true);
+
         ssmCache.evict(key);
-        Mockito.verify(cache).delete(key);
+
+        verify(cache).delete(key);
     }
 
     @Test
-    public void get() throws TimeoutException, CacheException {
+    public void getShouldExecuteWhenCacheEnabled() throws TimeoutException, CacheException {
+        when(cache.isEnabled()).thenReturn(true);
         String key = "someCacheKey";
+
         ssmCache.get(key);
-        Mockito.verify(cache).get(key, null);
+
+        verify(cache).get(key, null);
     }
 
     @Test
-    public void getName() {
+    public void getNameShouldExecuteWhenCacheEnabled() {
+        when(cache.isEnabled()).thenReturn(true);
+
         ssmCache.getName();
-        Mockito.verify(cache).getName();
+
+        verify(cache).getName();
     }
 
     @Test
-    public void getNativeCache() {
-        assertSame(cache, ssmCache.getNativeCache());
+    public void getNativeCacheShouldExecuteWhenCacheEnabled() {
+        when(cache.isEnabled()).thenReturn(true);
+
+        final Object nativeCache = ssmCache.getNativeCache();
+
+        assertSame(cache, nativeCache);
     }
 
     @Test
-    public void put() throws TimeoutException, CacheException {
+    public void putShouldExecuteWhenCacheEnabled() throws TimeoutException, CacheException {
         Object key = "cackeKey";
         Object value = new Object();
+        when(cache.isEnabled()).thenReturn(true);
+
         ssmCache.put(key, value);
-        Mockito.verify(cache).set(key.toString(), expiration, value, null);
+
+        verify(cache).set(key.toString(), expiration, value, null);
+    }
+
+    @Test
+    public void clearNotExecutedWhenCacheDisabled() throws TimeoutException, CacheException {
+        ssmCache = new SSMCache(cache, expiration, true);
+        when(cache.isEnabled()).thenReturn(false);
+
+        ssmCache.clear();
+
+        verify(cache, never()).flush();
+    }
+
+    @Test
+    public void evictNotExecutedWhenCacheDisabled() throws TimeoutException, CacheException {
+        String key = "someKey";
+        when(cache.isEnabled()).thenReturn(false);
+
+        ssmCache.evict(key);
+
+        verify(cache, never()).delete(key);
+    }
+
+    @Test
+    public void getNotExecutedWhenCacheDisabled() throws TimeoutException, CacheException {
+        String key = "someCacheKey";
+        when(cache.isEnabled()).thenReturn(false);
+
+        ssmCache.get(key);
+
+        verify(cache, never()).get(key, null);
+    }
+
+    @Test
+    public void getNameExecutedWhenCacheDisabled() {
+        when(cache.isEnabled()).thenReturn(false);
+
+        ssmCache.getName();
+
+        verify(cache).getName();
+    }
+
+    @Test
+    public void getNativeCacheExecutedWhenCacheDisabled() {
+        when(cache.isEnabled()).thenReturn(false);
+
+        final Object nativeCache = ssmCache.getNativeCache();
+
+        assertSame(cache, nativeCache);
+    }
+
+    @Test
+    public void putNotExecutedWhenCacheDisabled() throws TimeoutException, CacheException {
+        Object key = "cackeKey";
+        Object value = new Object();
+        when(cache.isEnabled()).thenReturn(false);
+
+        ssmCache.put(key, value);
+
+        verify(cache, never()).set(key.toString(), expiration, value, null);
     }
 }

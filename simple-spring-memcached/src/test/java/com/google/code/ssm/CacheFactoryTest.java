@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2008-2009 Nelson Carpentier
+ * Copyright (c) 2008-2014 Nelson Carpentier, Jakub Białek
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
  * documentation files (the "Software"), to deal in the Software without restriction, including without limitation the
@@ -19,7 +19,6 @@ package com.google.code.ssm;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.io.IOException;
@@ -45,20 +44,15 @@ import com.google.code.ssm.providers.CacheConfiguration;
 
 /**
  * 
- * @author Nelson Carpentier
+ * @author Nelson Carpentier, Jakub Białek
  * 
  */
 public class CacheFactoryTest {
 
-    @Test
+    @Test(expected = RuntimeException.class)
     public void testCreateClientException() throws IOException, NamingException {
         final CacheFactory factory = new CacheFactory();
-        try {
-            factory.createCache();
-            fail("Expected Exception.");
-        } catch (RuntimeException ex) {
-            assertTrue(true);
-        }
+        factory.createCache();
     }
 
     @Test
@@ -111,6 +105,73 @@ public class CacheFactoryTest {
             factory.createCache();
             fail();
         } catch (IllegalStateException ex) {
+            // ok
+        }
+
+    }
+
+    @Test
+    public void testCreateDisabledClient() throws Exception {
+        final CacheConfiguration bean = new CacheConfiguration();
+        bean.setConsistentHashing(false);
+        AddressProvider addrsProvider = new DefaultAddressProvider("127.0.0.1:11211");
+        CacheClientFactory clientFactory = getClientFactoryMock(bean);
+        final CacheFactory factory = new CacheFactory() {
+            boolean isCacheDisabled() {
+                return true;
+            }
+        };
+        factory.setConfiguration(bean);
+        factory.setAddressProvider(addrsProvider);
+        factory.setCacheClientFactory(clientFactory);
+        factory.afterPropertiesSet();
+
+        final Cache cache = factory.createCache();
+        assertNotNull(cache);
+
+        // check methods that are allowed
+        try {
+            cache.getName();
+            cache.getAliases();
+            cache.shutdown();
+            cache.isEnabled();
+        } catch (IllegalStateException e) {
+            fail(e.getMessage());
+        }
+
+        // check that disallowed methods throw exception
+        try {
+            cache.decr("key1", 1);
+            fail();
+        } catch (IllegalStateException e) {
+            // ok
+        }
+
+        try {
+            cache.get("key1", null);
+            fail();
+        } catch (IllegalStateException e) {
+            // ok
+        }
+
+        try {
+            cache.delete("key1");
+            fail();
+        } catch (IllegalStateException e) {
+            // ok
+        }
+
+        try {
+            cache.set("key1", 100, "value1", null);
+            fail();
+        } catch (IllegalStateException e) {
+            // ok
+        }
+
+        try {
+            cache.flush();
+            fail();
+        } catch (IllegalStateException e) {
             // ok
         }
 
