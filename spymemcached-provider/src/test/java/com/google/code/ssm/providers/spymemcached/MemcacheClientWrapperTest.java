@@ -17,6 +17,7 @@
 package com.google.code.ssm.providers.spymemcached;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 
 import java.net.SocketAddress;
@@ -226,6 +227,12 @@ public class MemcacheClientWrapperTest {
         EasyMock.replay(client);
         clientWrapper.getTranscoder();
         EasyMock.verify(client);
+    }
+
+    @Test
+    public void getNativeClient() {
+        final Object nativeClient = clientWrapper.getNativeClient();
+        assertSame(client, nativeClient);
     }
 
     private MemcachedClientIF getMock() {

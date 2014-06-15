@@ -247,6 +247,11 @@ class CacheImpl implements Cache {
         cacheClient.shutdown();
     }
 
+    @Override
+    public Object getNativeClient() {
+        return cacheClient.getNativeClient();
+    }
+
     void changeCacheClient(final CacheClient newCacheClient) {
         if (newCacheClient != null) {
             LOGGER.info("Replacing the cache client");

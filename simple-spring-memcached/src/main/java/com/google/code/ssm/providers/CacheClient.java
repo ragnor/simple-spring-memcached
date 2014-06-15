@@ -157,4 +157,13 @@ public interface CacheClient {
      */
     void shutdown();
 
+    /**
+     * Expose native memcached client. Do not store reference to this client because it can change in runtime when using
+     * some feature (like runtime memcached nodes switching).
+     * 
+     * @since 3.5.0
+     * @return current instance of native memcached client
+     */
+    Object getNativeClient();
+
 }

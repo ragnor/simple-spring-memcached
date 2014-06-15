@@ -20,11 +20,15 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertSame;
 
 import java.net.SocketAddress;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.concurrent.TimeoutException;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.Description;
+import org.mockito.ArgumentMatcher;
 import org.mockito.Mockito;
 
 import com.google.code.ssm.api.format.SerializationType;
@@ -43,19 +47,19 @@ import com.google.code.ssm.util.ImmutableSet;
  */
 public class CacheImplTest {
 
-    private final String name = "someCache";
+    protected final String name = "someCache";
 
-    private final Collection<String> aliases = ImmutableSet.of("alias1", "alias2");
+    protected final Collection<String> aliases = ImmutableSet.of("alias1", "alias2");
 
-    private final SerializationType defaultSerializationType = SerializationType.PROVIDER;
+    protected final SerializationType defaultSerializationType = SerializationType.PROVIDER;
 
-    private JsonTranscoder jsonTranscoder;
+    protected JsonTranscoder jsonTranscoder;
 
-    private JavaTranscoder javaTranscoder;
+    protected JavaTranscoder javaTranscoder;
 
-    private CacheClient cacheClient;
+    protected CacheClient cacheClient;
 
-    private CacheImpl cache;
+    protected Cache cache;
 
     @Before
     public void setUp() {
@@ -92,10 +96,10 @@ public class CacheImplTest {
         Object value = new Point(66, 99);
 
         cache.add(cacheKey, expiration, value, defaultSerializationType);
-        Mockito.verify(cacheClient).add(cacheKey, expiration, value);
+        Mockito.verify(cacheClient).add(getKey(cacheKey), expiration, value);
 
         cache.add(cacheKey, expiration, value, SerializationType.JSON);
-        Mockito.verify(cacheClient).add(cacheKey, expiration, value, jsonTranscoder);
+        Mockito.verify(cacheClient).add(getKey(cacheKey), expiration, value, jsonTranscoder);
 
     }
 
@@ -106,10 +110,10 @@ public class CacheImplTest {
         Object value = new Point(66, 99);
 
         cache.addSilently(cacheKey, expiration, value, SerializationType.PROVIDER);
-        Mockito.verify(cacheClient).add(cacheKey, expiration, value);
+        Mockito.verify(cacheClient).add(getKey(cacheKey), expiration, value);
 
         cache.addSilently(cacheKey, expiration, value, SerializationType.JSON);
-        Mockito.verify(cacheClient).add(cacheKey, expiration, value, jsonTranscoder);
+        Mockito.verify(cacheClient).add(getKey(cacheKey), expiration, value, jsonTranscoder);
 
     }
 
@@ -119,7 +123,7 @@ public class CacheImplTest {
         int by = 5;
 
         cache.decr(cacheKey, by);
-        Mockito.verify(cacheClient).decr(cacheKey, by);
+        Mockito.verify(cacheClient).decr(getKey(cacheKey), by);
     }
 
     @Test
@@ -127,7 +131,7 @@ public class CacheImplTest {
         String cacheKey = "key1";
 
         cache.delete(cacheKey);
-        Mockito.verify(cacheClient).delete(cacheKey);
+        Mockito.verify(cacheClient).delete(getKey(cacheKey));
     }
 
     @Test
@@ -135,7 +139,7 @@ public class CacheImplTest {
         Collection<String> keys = ImmutableSet.of("key1", "key2");
 
         cache.delete(keys);
-        Mockito.verify(cacheClient).delete(keys);
+        Mockito.verify(cacheClient).delete(sameItems(getKeys(keys)));
     }
 
     @Test
@@ -149,10 +153,10 @@ public class CacheImplTest {
         String cacheKey = "key1";
 
         cache.get(cacheKey, SerializationType.PROVIDER);
-        Mockito.verify(cacheClient).get(cacheKey);
+        Mockito.verify(cacheClient).get(getKey(cacheKey));
 
         cache.get(cacheKey, SerializationType.JSON);
-        Mockito.verify(cacheClient).get(cacheKey, jsonTranscoder);
+        Mockito.verify(cacheClient).get(getKey(cacheKey), jsonTranscoder);
     }
 
     @Test
@@ -160,10 +164,10 @@ public class CacheImplTest {
         Collection<String> keys = ImmutableSet.of("key1", "key2");
 
         cache.getBulk(keys, SerializationType.PROVIDER);
-        Mockito.verify(cacheClient).getBulk(keys);
+        Mockito.verify(cacheClient).getBulk(sameItems(getKeys(keys)));
 
         cache.getBulk(keys, SerializationType.JSON);
-        Mockito.verify(cacheClient).getBulk(keys, jsonTranscoder);
+        Mockito.verify(cacheClient).getBulk(sameItems(getKeys(keys)), Mockito.eq(jsonTranscoder));
     }
 
     @Test
@@ -173,7 +177,7 @@ public class CacheImplTest {
         int def = 1;
 
         cache.incr(cacheKey, by, def);
-        Mockito.verify(cacheClient).incr(cacheKey, by, def);
+        Mockito.verify(cacheClient).incr(getKey(cacheKey), by, def);
     }
 
     @Test
@@ -184,7 +188,7 @@ public class CacheImplTest {
         int exp = 60000;
 
         cache.incr(cacheKey, by, def, exp);
-        Mockito.verify(cacheClient).incr(cacheKey, by, def, exp);
+        Mockito.verify(cacheClient).incr(getKey(cacheKey), by, def, exp);
     }
 
     @Test
@@ -194,10 +198,10 @@ public class CacheImplTest {
         Object value = new Point(11, 22);
 
         cache.set(cacheKey, exp, value, SerializationType.PROVIDER);
-        Mockito.verify(cacheClient).set(cacheKey, exp, value);
+        Mockito.verify(cacheClient).set(getKey(cacheKey), exp, value);
 
         cache.set(cacheKey, exp, value, SerializationType.JSON);
-        Mockito.verify(cacheClient).set(cacheKey, exp, value, jsonTranscoder);
+        Mockito.verify(cacheClient).set(getKey(cacheKey), exp, value, jsonTranscoder);
     }
 
     @Test
@@ -207,10 +211,10 @@ public class CacheImplTest {
         Object value = new Point(11, 22);
 
         cache.setSilently(cacheKey, exp, value, SerializationType.PROVIDER);
-        Mockito.verify(cacheClient).set(cacheKey, exp, value);
+        Mockito.verify(cacheClient).set(getKey(cacheKey), exp, value);
 
         cache.setSilently(cacheKey, exp, value, SerializationType.JSON);
-        Mockito.verify(cacheClient).set(cacheKey, exp, value, jsonTranscoder);
+        Mockito.verify(cacheClient).set(getKey(cacheKey), exp, value, jsonTranscoder);
     }
 
     @Test
@@ -218,7 +222,7 @@ public class CacheImplTest {
         String cacheKey = "key1";
 
         cache.getCounter(cacheKey);
-        Mockito.verify(cacheClient).get(Mockito.eq(cacheKey), Mockito.any(LongToStringTranscoder.class));
+        Mockito.verify(cacheClient).get(Mockito.eq(getKey(cacheKey)), Mockito.any(LongToStringTranscoder.class));
     }
 
     @Test
@@ -228,7 +232,7 @@ public class CacheImplTest {
         long value = 60;
 
         cache.setCounter(cacheKey, expiration, value);
-        Mockito.verify(cacheClient).set(Mockito.eq(cacheKey), Mockito.eq(expiration), Mockito.eq(value),
+        Mockito.verify(cacheClient).set(Mockito.eq(getKey(cacheKey)), Mockito.eq(expiration), Mockito.eq(value),
                 Mockito.any(LongToStringTranscoder.class));
     }
 
@@ -236,6 +240,59 @@ public class CacheImplTest {
     public void shutdown() {
         cache.shutdown();
         Mockito.verify(cacheClient).shutdown();
+    }
+
+    @Test
+    public void getNativeClient() {
+        cache.getNativeClient();
+        Mockito.verify(cacheClient).getNativeClient();
+    }
+
+    protected String getKey(String key) {
+        return key;
+    }
+
+    protected Collection<String> getKeys(Collection<String> keys) {
+        final Collection<String> cacheKeys = new ArrayList<String>();
+        for (String key : keys) {
+            cacheKeys.add(getKey(key));
+        }
+
+        return cacheKeys;
+    }
+
+    private static Collection<String> sameItems(Collection<String> items) {
+        class CollectionOfItemssMatcher extends ArgumentMatcher<Collection<String>> {
+
+            private final Collection<String> expectedItems;
+
+            public CollectionOfItemssMatcher(Collection<String> items) {
+                this.expectedItems = items;
+            }
+
+            @Override
+            public boolean matches(Object actual) {
+                if (actual == null || !(actual instanceof Collection)) {
+                    return false;
+                }
+
+                Collection<String> actualItems = ((Collection<String>) actual);
+                if (actualItems.size() != expectedItems.size()) {
+                    return false;
+                }
+
+                Iterator<String> actualIter = actualItems.iterator();
+                Iterator<String> expectedIter = expectedItems.iterator();
+                while (actualIter.hasNext()) {
+                    if (!actualIter.next().equals(expectedIter.next())) {
+                        return false;
+                    }
+                }
+
+                return true;
+            }
+        }
+        return Mockito.argThat(new CollectionOfItemssMatcher(items));
     }
 
 }

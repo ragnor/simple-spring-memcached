@@ -17,6 +17,7 @@
 package com.google.code.ssm.providers.xmemcached;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
@@ -223,11 +224,17 @@ public class MemcacheClientWrapperTest {
     }
 
     @Test
-    public void testGetTranscoder() {
+    public void getTranscoder() {
         EasyMock.expect(client.getTranscoder()).andReturn(null);
         EasyMock.replay(client);
         clientWrapper.getTranscoder();
         EasyMock.verify(client);
+    }
+
+    @Test
+    public void getNativeClient() {
+        final Object nativeClient = clientWrapper.getNativeClient();
+        assertSame(client, nativeClient);
     }
 
     private MemcachedClient getMock() {

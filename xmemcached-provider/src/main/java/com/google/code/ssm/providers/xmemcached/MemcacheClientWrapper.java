@@ -270,6 +270,11 @@ class MemcacheClientWrapper extends AbstractMemcacheClientWrapper {
         return new TranscoderWrapper(memcachedClient.getTranscoder());
     }
 
+    @Override
+    public Object getNativeClient() {
+        return memcachedClient;
+    }
+
     @SuppressWarnings("unchecked")
     private <T> Transcoder<T> getTranscoder(final CacheTranscoder transcoder) {
         Transcoder<T> transcoderAdapter = (Transcoder<T>) adapters.get(transcoder);

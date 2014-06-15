@@ -150,6 +150,11 @@ public class PrefixedCacheImpl implements Cache {
         cache.shutdown();
     }
 
+    @Override
+    public Object getNativeClient() {
+        return cache.getNativeClient();
+    }
+
     private String alterKey(final String cacheKey) {
         return name + namePrefixSeparator + cacheKey;
     }
