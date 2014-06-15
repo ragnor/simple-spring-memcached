@@ -4,6 +4,17 @@ https://github.com/ragnor/simple-spring-memcached
 http://code.google.com/p/simple-spring-memcached/
 
 
+Changes in version 3.5.0 (2014-06-15)
+-------------------------------------
+
+* add new provider for AWS ElastiCache Cluster Client with memcached instances auto discovery feature
+* fix NPE when using ssm.cache.disable=true and SSM as Spring Cache backend
+* expose native memcached client
+* remove redundant dependency to aspectjrt (once again)
+* update xmemcached to 2.0.0 
+* update spymemcached to 2.11.3
+
+
 Changes in version 3.4.0 (2014-03-28)
 -------------------------------------
 
