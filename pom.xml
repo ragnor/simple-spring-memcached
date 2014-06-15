@@ -231,7 +231,7 @@
 				<artifactId>maven-javadoc-plugin</artifactId>
 				<inherited>false</inherited>
 				<configuration>
-					<sourcepath>simple-spring-memcached/target/generated-sources/delombok;xmemcached-provider/target/generated-sources/delombok;spymemcached-provider/target/generated-sources/delombok;spring-cache/target/generated-sources/delombok</sourcepath>
+					<sourcepath>simple-spring-memcached/target/generated-sources/delombok;xmemcached-provider/target/generated-sources/delombok;spymemcached-provider/target/generated-sources/delombok;aws-elasticache-provider/target/generated-sources/delombok;spring-cache/target/generated-sources/delombok</sourcepath>
 					<excludePackageNames>com.google.code.ssm.test.*,com.google.code.ssm.spring.test.*,com.google.code.ssm.jmemcached.plugin.*</excludePackageNames>
 					<doctitle>Simple Spring Memcached ${project.version}</doctitle>
 					<windowtitle>Simple Spring Memcached ${project.version}</windowtitle>
