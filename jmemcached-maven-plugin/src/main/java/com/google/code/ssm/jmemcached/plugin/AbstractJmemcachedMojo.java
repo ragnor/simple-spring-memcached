@@ -114,14 +114,15 @@ public abstract class AbstractJmemcachedMojo extends AbstractMojo {
     }
 
     private MemCacheDaemon<LocalCacheElement> build(final Server server) {
-        MemCacheDaemon<LocalCacheElement> daemon = new MemCacheDaemon<LocalCacheElement>();
+        final MemCacheDaemon<LocalCacheElement> daemon = new MemCacheDaemon<LocalCacheElement>();
 
         CacheStorage<Key, LocalCacheElement> storage = ConcurrentLinkedHashMap.create(ConcurrentLinkedHashMap.EvictionPolicy.FIFO,
                 server.getMaximumCapacity(), server.getMaximumMemoryCapacity());
         daemon.setCache(new CacheImpl(storage));
-        daemon.setBinary(false);
+        daemon.setBinary(server.isBinary());
         daemon.setAddr(new InetSocketAddress("localhost", server.getPort()));
-
+        daemon.setVerbose(server.isVerbose());
+        
         return daemon;
     }
 

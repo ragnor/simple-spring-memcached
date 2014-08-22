@@ -38,6 +38,8 @@ public class Server {
 
     private boolean binary = false;
 
+    private boolean verbose = false;
+
     public int getPort() {
         return port;
     }
@@ -70,10 +72,18 @@ public class Server {
         this.binary = binary;
     }
 
+    public boolean isVerbose() {
+        return verbose;
+    }
+
+    public void setVerbose(boolean verbose) {
+        this.verbose = verbose;
+    }
+
     @Override
     public String toString() {
         return "Server [port=" + port + ", maximumCapacity=" + maximumCapacity + ", maximumMemoryCapacity=" + maximumMemoryCapacity
-                + ", binary=" + binary + "]";
+                + ", binary=" + binary + ", verbose=" + verbose + "]";
     }
 
 }
