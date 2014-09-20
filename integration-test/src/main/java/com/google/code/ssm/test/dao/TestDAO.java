@@ -66,4 +66,8 @@ public interface TestDAO {
 
     public void invalidate(String key);
 
+    public void updateValue(String key, String value);
+
+    public String getValue(String key);
+
 }

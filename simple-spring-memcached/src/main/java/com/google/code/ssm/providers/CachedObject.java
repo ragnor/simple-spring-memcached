@@ -25,7 +25,14 @@ package com.google.code.ssm.providers;
  */
 public interface CachedObject {
 
-    int MAX_SIZE = 1024 * 1024;
+    /**
+     * The maximum size that should be considered storing in a server.
+     */
+    /*
+     * though memcached no longer has a maximum size, rather than remove this
+     * entirely just bump it up for now
+     */
+    int MAX_SIZE = 20 * 1024 * 1024;
 
     byte[] getData();
 

@@ -224,4 +224,16 @@ public class TestDAOImpl implements TestDAO {
     public void invalidate(@ParameterValueKeyProvider final String key) {
 
     }
+
+    @Override
+    @UpdateSingleCache(namespace = CacheConst.ECHO, expiration = 3000)
+    public void updateValue(@ParameterValueKeyProvider String key, @ParameterDataUpdateContent String value) {
+
+    }
+
+    @Override
+    @ReadThroughSingleCache(namespace = CacheConst.ECHO, expiration = 3000)
+    public String getValue(@ParameterValueKeyProvider String key) {
+        return "some value";
+    }
 }

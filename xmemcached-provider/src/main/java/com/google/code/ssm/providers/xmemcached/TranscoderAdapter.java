@@ -46,7 +46,7 @@ class TranscoderAdapter implements Transcoder<Object> {
     @Override
     public CachedData encode(final Object o) {
         CachedObject cachedObject = transcoder.encode(o);
-        return new CachedData(cachedObject.getFlags(), cachedObject.getData());
+        return new CachedData(cachedObject.getFlags(), cachedObject.getData(), CachedObject.MAX_SIZE, -1);
     }
 
     @Override

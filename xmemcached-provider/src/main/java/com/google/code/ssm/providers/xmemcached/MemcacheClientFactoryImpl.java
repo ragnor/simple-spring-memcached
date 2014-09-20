@@ -27,10 +27,12 @@ import net.rubyeye.xmemcached.MemcachedClientBuilder;
 import net.rubyeye.xmemcached.XMemcachedClientBuilder;
 import net.rubyeye.xmemcached.command.BinaryCommandFactory;
 import net.rubyeye.xmemcached.impl.KetamaMemcachedSessionLocator;
+import net.rubyeye.xmemcached.transcoders.SerializingTranscoder;
 
 import com.google.code.ssm.providers.CacheClient;
 import com.google.code.ssm.providers.CacheClientFactory;
 import com.google.code.ssm.providers.CacheConfiguration;
+import com.google.code.ssm.providers.CachedObject;
 import com.google.code.yanf4j.core.SocketOption;
 
 /**
@@ -63,6 +65,9 @@ public class MemcacheClientFactoryImpl implements CacheClientFactory {
         if (conf.isUseBinaryProtocol()) {
             builder.setCommandFactory(new BinaryCommandFactory());
         }
+
+        // allows to cache data larger than 1MB when using provider serialization
+        builder.setTranscoder(new SerializingTranscoder(CachedObject.MAX_SIZE));
 
         if (conf instanceof XMemcachedConfiguration) {
             setProviderBuilderSpecificSettings(builder, (XMemcachedConfiguration) conf);
