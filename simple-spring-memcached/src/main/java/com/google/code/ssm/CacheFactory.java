@@ -33,8 +33,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.Assert;
 
+import com.google.code.ssm.aop.CacheBase;
 import com.google.code.ssm.api.AnnotationConstants;
 import com.google.code.ssm.api.format.SerializationType;
 import com.google.code.ssm.config.AddressChangeListener;
@@ -57,10 +59,6 @@ import com.google.code.ssm.transcoders.JsonTranscoder;
  */
 @Getter
 public class CacheFactory implements AddressChangeListener, FactoryBean<Cache>, InitializingBean, DisposableBean {
-
-    public static final String DISABLE_CACHE_PROPERTY = "ssm.cache.disable";
-
-    public static final String DISABLE_CACHE_PROPERTY_VALUE = "true";
 
     private static final Logger LOGGER = LoggerFactory.getLogger(CacheFactory.class);
 
@@ -98,6 +96,9 @@ public class CacheFactory implements AddressChangeListener, FactoryBean<Cache>, 
 
     @Setter
     private boolean initializeTranscoders = true;
+
+    @Autowired
+    private CacheBase cacheBase;
 
     @Override
     public void afterPropertiesSet() throws Exception {
@@ -204,7 +205,7 @@ public class CacheFactory implements AddressChangeListener, FactoryBean<Cache>, 
     }
 
     boolean isCacheDisabled() {
-        return DISABLE_CACHE_PROPERTY_VALUE.equals(System.getProperty(DISABLE_CACHE_PROPERTY));
+        return cacheBase.isCacheDisabled();
     }
 
     private CacheClient createClient(final List<InetSocketAddress> addrs) throws IOException {

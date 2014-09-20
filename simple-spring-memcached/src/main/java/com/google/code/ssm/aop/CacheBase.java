@@ -56,6 +56,8 @@ import com.google.code.ssm.util.Utils;
  */
 public class CacheBase implements ApplicationContextAware, InitializingBean {
 
+    public static final String DISABLE_CACHE_PROPERTY = "ssm.cache.disable";
+
     private static final Logger LOG = LoggerFactory.getLogger(CacheBase.class);
 
     private CacheKeyBuilder cacheKeyBuilder = new CacheKeyBuilderImpl();
@@ -114,6 +116,12 @@ public class CacheBase implements ApplicationContextAware, InitializingBean {
         }
 
         return cache;
+    }
+
+    public boolean isCacheDisabled() {
+        String disableProperty = System.getProperty(DISABLE_CACHE_PROPERTY);
+        return Boolean.toString(true).equals(disableProperty) || !Boolean.toString(false).equals(disableProperty)
+                && settings.isDisableCache();
     }
 
     public Method getMethodToCache(final JoinPoint jp) throws NoSuchMethodException {

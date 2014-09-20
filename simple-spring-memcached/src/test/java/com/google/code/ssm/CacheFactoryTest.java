@@ -19,7 +19,9 @@ package com.google.code.ssm;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.fail;
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.verify;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
@@ -31,10 +33,16 @@ import java.util.List;
 
 import javax.naming.NamingException;
 
-import org.easymock.EasyMock;
-import org.easymock.IAnswer;
+import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.invocation.InvocationOnMock;
+import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.stubbing.Answer;
 
+import com.google.code.ssm.aop.CacheBase;
 import com.google.code.ssm.config.AddressProvider;
 import com.google.code.ssm.config.DefaultAddressProvider;
 import com.google.code.ssm.config.JndiAddressProvider;
@@ -47,146 +55,94 @@ import com.google.code.ssm.providers.CacheConfiguration;
  * @author Nelson Carpentier, Jakub Białek
  * 
  */
+@RunWith(MockitoJUnitRunner.class)
 public class CacheFactoryTest {
+
+    @InjectMocks
+    private final CacheFactory factory = new CacheFactory();
+
+    @Mock
+    private CacheBase cacheBase;
+
+    @Mock
+    private CacheClientFactory cacheClientFactory;
+
+    @Mock
+    private CacheClient cacheClient;
+
+    @Before
+    @SuppressWarnings("unchecked")
+    public void init() throws IOException {
+        when(cacheBase.isCacheDisabled()).thenReturn(false);
+        when(cacheClientFactory.create(any(List.class), any(CacheConfiguration.class))).thenAnswer(new Answer<CacheClient>() {
+
+            @Override
+            public CacheClient answer(InvocationOnMock invocation) throws Throwable {
+                List<InetSocketAddress> address = (List<InetSocketAddress>) invocation.getArguments()[0];
+                List<SocketAddress> socketAddress = new ArrayList<SocketAddress>(address);
+                when(cacheClient.getAvailableServers()).thenReturn(socketAddress);
+                return cacheClient;
+            }
+        });
+
+        factory.setCacheClientFactory(cacheClientFactory);
+    }
 
     @Test(expected = RuntimeException.class)
     public void testCreateClientException() throws IOException, NamingException {
-        final CacheFactory factory = new CacheFactory();
         factory.createCache();
     }
 
     @Test
-    public void testCreateClient() throws Exception {
-        CacheConfiguration bean = new CacheConfiguration();
-        bean.setConsistentHashing(false);
+    public void shouldCreateClientWhenDefaultAddrProvider() throws Exception {
+        CacheConfiguration conf = new CacheConfiguration();
+        conf.setConsistentHashing(false);
         AddressProvider addrsProvider = new DefaultAddressProvider("127.0.0.1:11211");
-        CacheFactory factory = new CacheFactory();
-        factory.setConfiguration(bean);
+        factory.setConfiguration(conf);
         factory.setAddressProvider(addrsProvider);
-        CacheClientFactory clientFactory = getClientFactoryMock(bean);
-        factory.setCacheClientFactory(clientFactory);
         factory.afterPropertiesSet();
 
         Cache cache = factory.createCache();
 
         assertNotNull(cache);
-        EasyMock.verify(clientFactory);
-
-        factory = new CacheFactory();
-        factory.setConfiguration(bean);
-        factory.setAddressProvider(addrsProvider);
-        bean.setConsistentHashing(true);
-        clientFactory = getClientFactoryMock(bean);
-
-        factory.setCacheClientFactory(clientFactory);
-        factory.afterPropertiesSet();
-
-        cache = factory.createCache();
-        assertNotNull(cache);
-        EasyMock.verify(clientFactory);
-
-        bean = new CacheConfiguration();
-        bean.setConsistentHashing(false);
-        addrsProvider = new JndiAddressProvider("memcached/ips", "127.0.0.1:11211");
-        factory = new CacheFactory();
-        factory.setConfiguration(bean);
-        factory.setAddressProvider(addrsProvider);
-        clientFactory = getClientFactoryMock(bean);
-        factory.setCacheClientFactory(clientFactory);
-        factory.afterPropertiesSet();
-
-        cache = factory.createCache();
-
-        assertNotNull(cache);
-        EasyMock.verify(clientFactory);
-        try {
-            clientFactory = getClientFactoryMock(bean);
-            factory.setCacheClientFactory(clientFactory);
-            factory.createCache();
-            fail();
-        } catch (IllegalStateException ex) {
-            // ok
-        }
-
+        verify(cacheClientFactory).create(addrsProvider.getAddresses(), conf);
     }
 
     @Test
-    public void testCreateDisabledClient() throws Exception {
-        final CacheConfiguration bean = new CacheConfiguration();
-        bean.setConsistentHashing(false);
-        AddressProvider addrsProvider = new DefaultAddressProvider("127.0.0.1:11211");
-        CacheClientFactory clientFactory = getClientFactoryMock(bean);
-        final CacheFactory factory = new CacheFactory() {
-            boolean isCacheDisabled() {
-                return true;
-            }
-        };
-        factory.setConfiguration(bean);
+    public void shouldCreateClientWhenJndiAddrProvider() throws Exception {
+        CacheConfiguration conf = new CacheConfiguration();
+        conf.setConsistentHashing(true);
+        AddressProvider addrsProvider = new JndiAddressProvider("memcached/ips", "127.0.0.1:11211");
+        factory.setConfiguration(conf);
         factory.setAddressProvider(addrsProvider);
-        factory.setCacheClientFactory(clientFactory);
         factory.afterPropertiesSet();
 
-        final Cache cache = factory.createCache();
+        Cache cache = factory.createCache();
+
         assertNotNull(cache);
+        verify(cacheClientFactory).create(addrsProvider.getAddresses(), conf);
+    }
 
-        // check methods that are allowed
-        try {
-            cache.getName();
-            cache.getAliases();
-            cache.shutdown();
-            cache.isEnabled();
-        } catch (IllegalStateException e) {
-            fail(e.getMessage());
-        }
+    @Test(expected = IllegalStateException.class)
+    public void shouldThrowExceptionIfFactoryInvokedTwice() throws Exception {
+        CacheConfiguration conf = new CacheConfiguration();
+        conf.setConsistentHashing(false);
+        AddressProvider addrsProvider = new DefaultAddressProvider("127.0.0.1:11211");
+        factory.setConfiguration(conf);
+        factory.setAddressProvider(addrsProvider);
+        factory.afterPropertiesSet();
 
-        // check that disallowed methods throw exception
-        try {
-            cache.decr("key1", 1);
-            fail();
-        } catch (IllegalStateException e) {
-            // ok
-        }
-
-        try {
-            cache.get("key1", null);
-            fail();
-        } catch (IllegalStateException e) {
-            // ok
-        }
-
-        try {
-            cache.delete("key1");
-            fail();
-        } catch (IllegalStateException e) {
-            // ok
-        }
-
-        try {
-            cache.set("key1", 100, "value1", null);
-            fail();
-        } catch (IllegalStateException e) {
-            // ok
-        }
-
-        try {
-            cache.flush();
-            fail();
-        } catch (IllegalStateException e) {
-            // ok
-        }
-
+        factory.createCache();
+        factory.createCache();
     }
 
     @Test
     public void changeAddresses() throws IOException, NamingException {
-        final CacheConfiguration bean = new CacheConfiguration();
-        bean.setConsistentHashing(false);
+        final CacheConfiguration conf = new CacheConfiguration();
+        conf.setConsistentHashing(false);
         AddressProvider addrsProvider = new DefaultAddressProvider("127.0.0.1:11211");
-        final CacheFactory factory = new CacheFactory();
-        factory.setConfiguration(bean);
+        factory.setConfiguration(conf);
         factory.setAddressProvider(addrsProvider);
-        CacheClientFactory clientFactory = getClientFactoryMock(bean, 2, true);
-        factory.setCacheClientFactory(clientFactory);
 
         Cache cache = factory.createCache();
 
@@ -196,38 +152,7 @@ public class CacheFactoryTest {
 
         assertEquals(1, c.size());
         assertEquals(newAddrs, c);
+        verify(cacheClientFactory).create(addrsProvider.getAddresses(), conf);
     }
 
-    private CacheClientFactory getClientFactoryMock(final CacheConfiguration bean) throws IOException {
-        return getClientFactoryMock(bean, 1, false);
-    }
-
-    @SuppressWarnings("unchecked")
-    private CacheClientFactory getClientFactoryMock(final CacheConfiguration bean, final int times, final boolean expectShutdown)
-            throws IOException {
-        CacheClientFactory clientFactory = EasyMock.createMock(CacheClientFactory.class);
-
-        EasyMock.expect(clientFactory.create(EasyMock.anyObject(List.class), EasyMock.eq(bean))).andAnswer(new IAnswer<CacheClient>() {
-
-            @Override
-            public CacheClient answer() throws Throwable {
-                List<InetSocketAddress> address = (List<InetSocketAddress>) EasyMock.getCurrentArguments()[0];
-                CacheClient client = EasyMock.createMock(CacheClient.class);
-
-                List<SocketAddress> socketAddress = new ArrayList<SocketAddress>();
-                socketAddress.addAll(address);
-                EasyMock.expect(client.getAvailableServers()).andReturn(socketAddress);
-                if (expectShutdown) {
-                    client.shutdown();
-                    EasyMock.expectLastCall();
-                }
-                EasyMock.replay(client);
-
-                return client;
-            }
-        }).times(times);
-        EasyMock.replay(clientFactory);
-
-        return clientFactory;
-    }
 }

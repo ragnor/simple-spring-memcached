@@ -27,10 +27,6 @@ import org.springframework.core.Ordered;
  */
 public abstract class CacheAdvice implements Ordered {
 
-    public static final String DISABLE_CACHE_PROPERTY = "ssm.cache.disable";
-
-    public static final String DISABLE_CACHE_PROPERTY_VALUE = "true";
-
     private CacheBase cacheBase;
 
     public CacheBase getCacheBase() {
@@ -47,7 +43,7 @@ public abstract class CacheAdvice implements Ordered {
     }
 
     protected boolean isDisabled() {
-        return DISABLE_CACHE_PROPERTY_VALUE.equals(System.getProperty(DISABLE_CACHE_PROPERTY));
+        return cacheBase.isCacheDisabled();
     }
 
     protected void warn(final Exception e, final String format, final Object... args) {

@@ -29,9 +29,16 @@ import lombok.Data;
 public class Settings {
 
     /**
-     * The order of cache advice. The default order (0) allows the SSM cache advices to be invoked before transaction
+     * The order of cache advice. The default order (0) allows the SSM cache advises to be invoked before transaction
      * interceptor.
      */
     private int order = 0;
+
+    /**
+     * If true then SSM caching is disabled. This value can be overwritten by system property: ssm.cache.disable. 
+     * 
+     * @since 3.6.0
+     */
+    private boolean disableCache = false;
 
 }
