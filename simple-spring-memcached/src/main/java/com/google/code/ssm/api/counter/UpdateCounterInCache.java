@@ -23,6 +23,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 import com.google.code.ssm.api.AnnotationConstants;
+import com.google.code.ssm.api.CacheOperation;
 import com.google.code.ssm.api.ParameterDataUpdateContent;
 import com.google.code.ssm.api.ReturnDataUpdateContent;
 
@@ -38,6 +39,7 @@ import com.google.code.ssm.api.ReturnDataUpdateContent;
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)
+@CacheOperation({CacheOperation.Type.UPDATE, CacheOperation.Type.SINGLE})
 public @interface UpdateCounterInCache {
 
     /**

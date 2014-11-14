@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2010-2014 Jakub Białek
+ * Copyright (c) 2014 Jakub Białek
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
  * documentation files (the "Software"), to deal in the Software without restriction, including without limitation the
@@ -13,37 +13,39 @@
  * WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
  * COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ * 
  */
 
-package com.google.code.ssm.api.counter;
+package com.google.code.ssm.aop.support.builder;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Method;
 
-import com.google.code.ssm.api.AnnotationConstants;
-import com.google.code.ssm.api.CacheOperation;
+import com.google.code.ssm.aop.support.AnnotationData;
+import com.google.code.ssm.api.CacheName;
 
 /**
  * 
- * Decrements by 1 single counter under given key.
- * 
  * @author Jakub Białek
- * @since 2.0.0
- * 
+ * @since 3.6.0
+ *
  */
-@Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.METHOD)
-@CacheOperation({CacheOperation.Type.INCDEC, CacheOperation.Type.SINGLE})
-public @interface DecrementCounterInCache {
+public class CacheNameBuilder extends AbstractDataBuilder {
 
-    /**
-     * A namespace that is added to the key as it is stored in the distributed cache. This allows differing object that
-     * may have the same ID to coexist. This value must be assigned.
-     * 
-     * @return the namespace for the objects cached in the given method.
-     */
-    String namespace() default AnnotationConstants.DEFAULT_STRING;
+    @Override
+    protected void build(final AnnotationData data, final Annotation annotation, final Class<? extends Annotation> expectedAnnotationClass,
+            final Method targetMethod) {
+        // get annotation on cached method
+        CacheName cache = targetMethod.getAnnotation(CacheName.class);
+        if (cache == null) {
+            // if annotation on cached method doesn't exist try to get annotation on class
+            cache = targetMethod.getDeclaringClass().getAnnotation(CacheName.class);
+        }
+
+        if (cache != null) {
+            // set cache zone name only if annotation is present otherwise default value will be used
+            data.setCacheName(cache.value());
+        }
+    }
 
 }

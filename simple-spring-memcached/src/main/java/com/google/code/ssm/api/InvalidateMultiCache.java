@@ -35,6 +35,7 @@ import java.lang.annotation.Target;
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)
+@CacheOperation({CacheOperation.Type.INVALIDATE, CacheOperation.Type.MULTI})
 public @interface InvalidateMultiCache {
 
     /**

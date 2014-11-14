@@ -31,6 +31,7 @@ import java.lang.annotation.Target;
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)
+@CacheOperation({CacheOperation.Type.READ, CacheOperation.Type.ASSIGN})
 public @interface ReadThroughAssignCache {
 
     /**

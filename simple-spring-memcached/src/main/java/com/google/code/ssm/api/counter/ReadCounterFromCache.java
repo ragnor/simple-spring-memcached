@@ -23,6 +23,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 import com.google.code.ssm.api.AnnotationConstants;
+import com.google.code.ssm.api.CacheOperation;
 
 /**
  * 
@@ -35,6 +36,7 @@ import com.google.code.ssm.api.AnnotationConstants;
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)
+@CacheOperation({CacheOperation.Type.READ, CacheOperation.Type.SINGLE})
 public @interface ReadCounterFromCache {
 
     /**

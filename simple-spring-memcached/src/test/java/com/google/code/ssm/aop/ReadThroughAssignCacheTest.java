@@ -22,12 +22,11 @@ import static org.junit.Assert.fail;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
-import java.security.InvalidParameterException;
+
+import org.junit.Test;
 
 import com.google.code.ssm.aop.support.AnnotationDataBuilder;
 import com.google.code.ssm.api.ReadThroughAssignCache;
-
-import org.junit.Test;
 
 /**
  * 
@@ -44,9 +43,9 @@ public class ReadThroughAssignCacheTest {
         try {
             AnnotationDataBuilder.buildAnnotationData(annotation, ReadThroughAssignCache.class, method);
             fail("Expected Exception.");
-        } catch (InvalidParameterException ex) {
+        } catch (Exception ex) {
             System.out.println(ex.getMessage());
-            assertTrue(ex.getMessage().indexOf("AssignedKey") != -1);
+            assertTrue(ex.getCause().getMessage().indexOf("AssignedKey") != -1);
         }
 
         method = testClass.getClass().getMethod("cacheMe2", (Class<?>[]) null);
@@ -54,9 +53,9 @@ public class ReadThroughAssignCacheTest {
         try {
             AnnotationDataBuilder.buildAnnotationData(annotation, ReadThroughAssignCache.class, method);
             fail("Expected Exception.");
-        } catch (InvalidParameterException ex) {
+        } catch (Exception ex) {
             System.out.println(ex.getMessage());
-            assertTrue(ex.getMessage().indexOf("AssignedKey") != -1);
+            assertTrue(ex.getCause().getMessage().indexOf("AssignedKey") != -1);
         }
 
         method = testClass.getClass().getMethod("cacheMe3", (Class<?>[]) null);

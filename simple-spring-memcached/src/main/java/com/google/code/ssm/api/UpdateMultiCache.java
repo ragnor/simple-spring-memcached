@@ -32,6 +32,7 @@ import java.lang.annotation.Target;
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)
+@CacheOperation({CacheOperation.Type.UPDATE, CacheOperation.Type.MULTI})
 public @interface UpdateMultiCache {
 
     /**
