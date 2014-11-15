@@ -50,7 +50,7 @@ public final class PertinentNegativeNull implements Externalizable {
         if (obj == null) {
             return false;
         }
-        return (obj instanceof PertinentNegativeNull);
+        return obj instanceof PertinentNegativeNull;
     }
 
 }

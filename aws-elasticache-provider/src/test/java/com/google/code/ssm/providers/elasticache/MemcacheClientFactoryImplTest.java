@@ -56,9 +56,20 @@ public class MemcacheClientFactoryImplTest {
         conf.setConsistentHashing(true);
         conf.setOperationTimeout(1000);
         conf.setUseBinaryProtocol(false);
-        CacheClient client = factory.create(addrs, conf);
-        assertNotNull(client);
-        client.shutdown();
+
+        try {
+            CacheClient client = factory.create(addrs, conf);
+
+            assertNotNull(client);
+            client.shutdown();
+        } catch (RuntimeException ex) {
+            ex.printStackTrace();
+            Throwable t = ex;
+            while (t.getCause() != null) {
+                t = t.getCause();
+                t.printStackTrace();
+            }
+        }
     }
 
     @Test
@@ -72,7 +83,9 @@ public class MemcacheClientFactoryImplTest {
         conf.setMaxReconnectDelay(1000L);
         conf.setTimeoutExceptionThreshold(100);
         conf.setUseNagleAlgorithm(false);
+
         CacheClient client = factory.create(addrs, conf);
+
         assertNotNull(client);
         client.shutdown();
     }
