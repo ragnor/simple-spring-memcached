@@ -63,12 +63,8 @@ public class MemcacheClientFactoryImplTest {
             assertNotNull(client);
             client.shutdown();
         } catch (RuntimeException ex) {
-            ex.printStackTrace();
-            Throwable t = ex;
-            while (t.getCause() != null) {
-                t = t.getCause();
-                t.printStackTrace();
-            }
+            printException(ex);
+            throw ex;
         }
     }
 
@@ -88,6 +84,16 @@ public class MemcacheClientFactoryImplTest {
 
         assertNotNull(client);
         client.shutdown();
+    }
+    
+    private void printException(final Exception ex) {
+        ex.printStackTrace();
+        Throwable t = ex;
+        while (t.getCause() != null) {
+            System.err.println("Cause: ");
+            t = t.getCause();
+            t.printStackTrace();
+        }
     }
 
 }
