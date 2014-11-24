@@ -186,7 +186,7 @@ public class SSMCache implements Cache {
                 LOGGER.info("Put '{}' under key {} to cache {}", new Object[] { value, key, cache.getName() });
                 final Object store = toStoreValue(value);
                 final boolean added = cache.add(cacheKey, expiration, store, null);
-                return added ? new SimpleValueWrapper(value) : get(key);
+                return added ? null : get(key);
             } catch (TimeoutException e) {
                 LOGGER.warn("An error has ocurred for cache " + getName() + " and key " + cacheKey, e);
             } catch (CacheException e) {
