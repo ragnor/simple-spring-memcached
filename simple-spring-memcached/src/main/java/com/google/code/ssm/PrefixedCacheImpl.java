@@ -68,14 +68,15 @@ public class PrefixedCacheImpl implements Cache {
     }
 
     @Override
-    public <T> void add(final String key, final int exp, final Object value, final SerializationType serializationType)
+    public <T> boolean add(final String key, final int exp, final Object value, final SerializationType serializationType)
             throws TimeoutException, CacheException {
-        cache.add(alterKey(key), exp, value, serializationType);
+        return cache.add(alterKey(key), exp, value, serializationType);
     }
 
     @Override
-    public <T> void addSilently(final String cacheKey, final int expiration, final Object value, final SerializationType serializationType) {
-        cache.addSilently(alterKey(cacheKey), expiration, value, serializationType);
+    public <T> boolean addSilently(final String cacheKey, final int expiration, final Object value,
+            final SerializationType serializationType) {
+        return cache.addSilently(alterKey(cacheKey), expiration, value, serializationType);
     }
 
     @Override

@@ -40,7 +40,7 @@ import com.google.code.ssm.providers.CacheException;
  */
 public class SSMCache implements Cache {
 
-    private final static Logger LOGGER = LoggerFactory.getLogger(SSMCache.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(SSMCache.class);
 
     @Getter
     private final com.google.code.ssm.Cache cache;
@@ -106,10 +106,10 @@ public class SSMCache implements Cache {
         LOGGER.info("Cache hit. Get by key {} from cache {} value '{}'", new Object[] { key, cache.getName(), value });
         return value instanceof PertinentNegativeNull ? new SimpleValueWrapper(null) : new SimpleValueWrapper(value);
     }
-    
-    
+
     /**
      * Required by Spring 4.0
+     * 
      * @since 3.4.0
      */
     @SuppressWarnings("unchecked")
@@ -130,7 +130,8 @@ public class SSMCache implements Cache {
         }
 
         if (type != null && !type.isInstance(value)) {
-            // in such case default Spring back end for EhCache throws IllegalStateException which interrupts intercepted method invocation
+            // in such case default Spring back end for EhCache throws IllegalStateException which interrupts
+            // intercepted method invocation
             String msg = "Cached value is not of required type [" + type.getName() + "]: " + value;
             LOGGER.error(msg, new IllegalStateException(msg));
             return null;
@@ -148,26 +149,57 @@ public class SSMCache implements Cache {
         }
 
         if (key != null) {
+            final String cacheKey = getKey(key);
+
             try {
                 LOGGER.info("Put '{}' under key {} to cache {}", new Object[] { value, key, cache.getName() });
-
-                Object store = value;
-                if (value == null) {
-                    store = PertinentNegativeNull.NULL;
-                }
-
-                cache.set(getKey(key), expiration, store, null);
+                final Object store = toStoreValue(value);
+                cache.set(cacheKey, expiration, store, null);
             } catch (TimeoutException e) {
-                LOGGER.warn("An error has ocurred for cache " + getName() + " and key " + getKey(key), e);
+                LOGGER.warn("An error has ocurred for cache " + getName() + " and key " + cacheKey, e);
             } catch (CacheException e) {
-                LOGGER.warn("An error has ocurred for cache " + getName() + " and key " + getKey(key), e);
+                LOGGER.warn("An error has ocurred for cache " + getName() + " and key " + cacheKey, e);
             } catch (RuntimeException e) {
                 // do not propagate any exceptions
-                LOGGER.warn("An error has ocurred for cache " + getName() + " and key " + getKey(key), e);
+                LOGGER.warn("An error has ocurred for cache " + getName() + " and key " + cacheKey, e);
             }
         } else {
             LOGGER.info("Cannot put to cache {} because key is null", cache.getName());
         }
+    }
+
+    /**
+     * Required by Spring 4.1
+     * 
+     * @since 3.6.0
+     */
+    public ValueWrapper putIfAbsent(final Object key, final Object value) {
+        if (!cache.isEnabled()) {
+            LOGGER.warn("Cache {} is disabled. Cannot put value under key {}", cache.getName(), key);
+            return null;
+        }
+
+        if (key != null) {
+            final String cacheKey = getKey(key);
+
+            try {
+                LOGGER.info("Put '{}' under key {} to cache {}", new Object[] { value, key, cache.getName() });
+                final Object store = toStoreValue(value);
+                final boolean added = cache.add(cacheKey, expiration, store, null);
+                return added ? new SimpleValueWrapper(value) : get(key);
+            } catch (TimeoutException e) {
+                LOGGER.warn("An error has ocurred for cache " + getName() + " and key " + cacheKey, e);
+            } catch (CacheException e) {
+                LOGGER.warn("An error has ocurred for cache " + getName() + " and key " + cacheKey, e);
+            } catch (RuntimeException e) {
+                // do not propagate any exceptions
+                LOGGER.warn("An error has ocurred for cache " + getName() + " and key " + cacheKey, e);
+            }
+        } else {
+            LOGGER.info("Cannot put to cache {} because key is null", cache.getName());
+        }
+
+        return null;
     }
 
     @Override
@@ -178,16 +210,17 @@ public class SSMCache implements Cache {
         }
 
         if (key != null) {
+            final String cacheKey = getKey(key);
             try {
                 LOGGER.info("Evict {} from cache {}", key, cache.getName());
-                cache.delete(getKey(key));
+                cache.delete(cacheKey);
             } catch (TimeoutException e) {
-                LOGGER.warn("An error has ocurred for cache " + getName() + " and key " + getKey(key), e);
+                LOGGER.warn("An error has ocurred for cache " + getName() + " and key " + cacheKey, e);
             } catch (CacheException e) {
-                LOGGER.warn("An error has ocurred for cache " + getName() + " and key " + getKey(key), e);
+                LOGGER.warn("An error has ocurred for cache " + getName() + " and key " + cacheKey, e);
             } catch (RuntimeException e) {
                 // do not propagate any exceptions
-                LOGGER.warn("An error has ocurred for cache " + getName() + " and key " + getKey(key), e);
+                LOGGER.warn("An error has ocurred for cache " + getName() + " and key " + cacheKey, e);
             }
         } else {
             LOGGER.info("Cannot evict from cache {} because key is null", cache.getName());
@@ -219,20 +252,22 @@ public class SSMCache implements Cache {
             LOGGER.warn("An error has ocurred for cache " + getName(), e);
         }
     }
-    
+
     private Object getValue(Object key) {
+        final String cacheKey = getKey(key);
         Object value = null;
+
         try {
-            value = cache.get(getKey(key), null);
+            value = cache.get(cacheKey, null);
         } catch (TimeoutException e) {
-            LOGGER.warn("An error has ocurred for cache " + getName() + " and key " + getKey(key), e);
+            LOGGER.warn("An error has ocurred for cache " + getName() + " and key " + cacheKey, e);
         } catch (CacheException e) {
-            LOGGER.warn("An error has ocurred for cache " + getName() + " and key " + getKey(key), e);
+            LOGGER.warn("An error has ocurred for cache " + getName() + " and key " + cacheKey, e);
         } catch (RuntimeException e) {
             // do not propagate any exceptions
-            LOGGER.warn("An error has ocurred for cache " + getName() + " and key " + getKey(key), e);
+            LOGGER.warn("An error has ocurred for cache " + getName() + " and key " + cacheKey, e);
         }
-        
+
         return value;
     }
 
@@ -240,4 +275,7 @@ public class SSMCache implements Cache {
         return key.toString();
     }
 
+    private Object toStoreValue(final Object value) {
+        return value == null ? PertinentNegativeNull.NULL : value;
+    }
 }

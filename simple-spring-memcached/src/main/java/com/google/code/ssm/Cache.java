@@ -67,10 +67,21 @@ public interface Cache {
      */
     boolean isEnabled();
 
-    <T> void add(final String key, final int exp, final Object value, final SerializationType serializationType) throws TimeoutException,
+    /**
+     * Add object to cache if it doesn't exist.
+     * 
+     * @param key
+     * @param exp
+     * @param value
+     * @param serializationType
+     * @return true if a mutation has occurred (object didn't exist in cache)
+     * @throws TimeoutException
+     * @throws CacheException
+     */
+    <T> boolean add(final String key, final int exp, final Object value, final SerializationType serializationType) throws TimeoutException,
             CacheException;
 
-    <T> void addSilently(final String cacheKey, final int expiration, final Object value, final SerializationType serializationType);
+    <T> boolean addSilently(final String cacheKey, final int expiration, final Object value, final SerializationType serializationType);
 
     long decr(final String key, final int by) throws TimeoutException, CacheException;
 

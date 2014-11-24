@@ -147,36 +147,41 @@ class CacheImpl implements Cache {
     }
 
     @Override
-    public <T> void add(final String cacheKey, final int expiration, final Object value, final SerializationType serializationType)
+    public <T> boolean add(final String cacheKey, final int expiration, final Object value, final SerializationType serializationType)
             throws TimeoutException, CacheException {
+        final boolean added;
 
         switch (getSerializationType(serializationType)) {
         case JAVA:
-            add(cacheKey, expiration, value, SerializationType.JAVA, javaTranscoder);
+            added = add(cacheKey, expiration, value, SerializationType.JAVA, javaTranscoder);
             break;
         case JSON:
-            add(cacheKey, expiration, value, SerializationType.JSON, jsonTranscoder);
+            added = add(cacheKey, expiration, value, SerializationType.JSON, jsonTranscoder);
             break;
         case PROVIDER:
-            add(cacheKey, expiration, value, SerializationType.PROVIDER, null);
+            added = add(cacheKey, expiration, value, SerializationType.PROVIDER, null);
             break;
         case CUSTOM:
-            add(cacheKey, expiration, value, SerializationType.CUSTOM, customTranscoder);
+            added = add(cacheKey, expiration, value, SerializationType.CUSTOM, customTranscoder);
             break;
         default:
             throw new IllegalArgumentException(String.format("Serialization type %s is not supported", serializationType));
         }
+
+        return added;
     }
 
     @Override
-    public <T> void addSilently(final String cacheKey, final int expiration, final Object value, final SerializationType serializationType) {
+    public <T> boolean addSilently(final String cacheKey, final int expiration, final Object value, final SerializationType serializationType) {
         try {
-            add(cacheKey, expiration, value, serializationType);
+            return add(cacheKey, expiration, value, serializationType);
         } catch (TimeoutException e) {
             warn(e, "Cannot add to key %s", cacheKey);
         } catch (CacheException e) {
             warn(e, "Cannot add to key %s", cacheKey);
         }
+
+        return false;
     }
 
     @Override
@@ -294,11 +299,10 @@ class CacheImpl implements Cache {
         cacheClient.set(cacheKey, expiration, value, cacheTranscoder);
     }
 
-    private <T> void add(final String cacheKey, final int expiration, final Object value, final SerializationType serializationType,
+    private <T> boolean add(final String cacheKey, final int expiration, final Object value, final SerializationType serializationType,
             final CacheTranscoder cacheTranscoder) throws TimeoutException, CacheException {
         if (SerializationType.PROVIDER.equals(serializationType)) {
-            cacheClient.add(cacheKey, expiration, value);
-            return;
+            return cacheClient.add(cacheKey, expiration, value);
         }
 
         if (cacheTranscoder == null) {
@@ -306,7 +310,7 @@ class CacheImpl implements Cache {
                     serializationType));
         }
 
-        cacheClient.add(cacheKey, expiration, value, cacheTranscoder);
+        return cacheClient.add(cacheKey, expiration, value, cacheTranscoder);
     }
 
     private Map<String, Object> getBulk(final Collection<String> keys, final SerializationType serializationType,
