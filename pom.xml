@@ -96,7 +96,7 @@
 		<lombok-maven-plugin.version>1.14.8.0</lombok-maven-plugin.version>
 
 		<!-- plugins -->
-		<cobertura-maven-plugin.version>2.6</cobertura-maven-plugin.version>
+		<cobertura-maven-plugin.version>2.5.2</cobertura-maven-plugin.version>
 		<findbugs-maven-plugin.version>2.5.3</findbugs-maven-plugin.version>
 		<javancss-maven-plugin.version>2.1</javancss-maven-plugin.version>
 		<jdepend-maven-plugin.version>2.0</jdepend-maven-plugin.version>
