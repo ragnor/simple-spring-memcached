@@ -36,7 +36,7 @@ import org.slf4j.LoggerFactory;
  */
 public class DefaultAddressProvider implements AddressProvider {
 
-    private final Logger logger = LoggerFactory.getLogger(this.getClass());
+    private static final Logger LOGGER = LoggerFactory.getLogger(DefaultAddressProvider.class);
 
     private String address;
 
@@ -76,7 +76,7 @@ public class DefaultAddressProvider implements AddressProvider {
 
     @Override
     public List<InetSocketAddress> getAddresses() {
-        logger.info(String.format("Defined values %s will be used as memcached addresses", getAddress()));
+        LOGGER.info(String.format("Defined values %s will be used as memcached addresses", getAddress()));
         return getAddresses(address);
     }
 
@@ -115,7 +115,7 @@ public class DefaultAddressProvider implements AddressProvider {
     }
 
     protected Logger getLogger() {
-        return logger;
+        return LOGGER;
     }
 
 }

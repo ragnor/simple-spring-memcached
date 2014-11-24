@@ -48,7 +48,7 @@ import com.google.code.ssm.providers.CachedObjectImpl;
  */
 class MemcacheClientWrapper extends AbstractMemcacheClientWrapper {
 
-    private final static Logger LOGGER = LoggerFactory.getLogger(MemcacheClientWrapper.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(MemcacheClientWrapper.class);
 
     private final Map<CacheTranscoder, Object> adapters = new HashMap<CacheTranscoder, Object>();
 

@@ -43,7 +43,7 @@ import com.google.code.ssm.providers.CacheConfiguration;
  */
 public class MemcacheClientFactoryImpl implements CacheClientFactory {
 
-    private final static Logger LOGGER = LoggerFactory.getLogger(MemcacheClientFactoryImpl.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(MemcacheClientFactoryImpl.class);
     
     private ConnectionFactory connectionFactory;
 
