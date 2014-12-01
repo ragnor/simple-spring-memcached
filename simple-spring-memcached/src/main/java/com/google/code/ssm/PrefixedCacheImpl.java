@@ -20,6 +20,7 @@ package com.google.code.ssm;
 import java.net.SocketAddress;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeoutException;
@@ -107,7 +108,8 @@ public class PrefixedCacheImpl implements Cache {
     @Override
     public Map<String, Object> getBulk(final Collection<String> keys, final SerializationType serializationType) throws TimeoutException,
             CacheException {
-        return cache.getBulk(alterKeys(keys), serializationType);
+        final Map<String, Object> results = cache.getBulk(alterKeys(keys), serializationType);
+        return removeCacheNames(results);
     }
 
     @Override
@@ -167,6 +169,16 @@ public class PrefixedCacheImpl implements Cache {
         }
 
         return alteredKeys;
+    }
+
+    private Map<String, Object> removeCacheNames(final Map<String, Object> resultsWithCacheName) {
+        final Map<String, Object> results = new HashMap<String, Object>();
+        for (final Map.Entry<String, Object> entry : resultsWithCacheName.entrySet()) {
+            final String key = entry.getKey().substring((name + namePrefixSeparator).length());
+            results.put(key, entry.getValue());
+        }
+
+        return results;
     }
 
 }

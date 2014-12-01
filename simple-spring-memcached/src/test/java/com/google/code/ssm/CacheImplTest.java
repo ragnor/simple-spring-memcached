@@ -27,7 +27,6 @@ import java.util.concurrent.TimeoutException;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.Description;
 import org.mockito.ArgumentMatcher;
 import org.mockito.Mockito;
 
@@ -271,6 +270,7 @@ public class CacheImplTest {
             }
 
             @Override
+            @SuppressWarnings("unchecked")
             public boolean matches(Object actual) {
                 if (actual == null || !(actual instanceof Collection)) {
                     return false;
