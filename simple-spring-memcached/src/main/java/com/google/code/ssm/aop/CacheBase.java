@@ -80,7 +80,7 @@ public class CacheBase implements ApplicationContextAware, InitializingBean {
         try {
             settings = context.getBean(Settings.class);
         } catch (NoSuchBeanDefinitionException ex) {
-            LOG.info("Cannot obtain custom SSM settings, default is used", ex);
+            LOG.info("Cannot obtain custom SSM settings, default is used");
         }
     }
 
