@@ -85,7 +85,7 @@
 	<properties>
 		<spring.version>3.0.7.RELEASE</spring.version>
 		<spring31.version>3.1.3.RELEASE</spring31.version>
-		<aspectj.version>1.6.8</aspectj.version>
+		<aspectj.version>1.8.6</aspectj.version>
 		<jackson.version>2.3.4</jackson.version>
 		<spymemcached.version>2.11.4</spymemcached.version>
 		<xmemcached.version>2.0.0</xmemcached.version>
