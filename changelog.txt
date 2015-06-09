@@ -4,6 +4,18 @@ https://github.com/ragnor/simple-spring-memcached
 http://code.google.com/p/simple-spring-memcached/
 
 
+Changes in version 3.6.0 (2015-06-09)
+-------------------------------------
+
+* support objects greater than 1MB
+* disable SSM via property
+* support binary protocol in jmemcached-maven-plugin
+* fix cache name or alias as a prefix in key for @ReadThroughMultiCache
+* fix compatibility issue with Spring 4.1 Cache Abstraction
+* support building on Java 8
+* update spymemcached to 2.11.7 
+
+
 Changes in version 3.5.0 (2014-06-15)
 -------------------------------------
 
