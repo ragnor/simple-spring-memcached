@@ -167,9 +167,9 @@
 				<version>2.6</version>
 			</dependency>
 			<dependency>
-				<groupId>com.thimbleware.jmemcached</groupId>
+				<groupId>com.google.code.simple-spring-memcached</groupId>
 				<artifactId>jmemcached-core</artifactId>
-				<version>1.0.0</version>
+				<version>1.0.2</version>
 			</dependency>
 			<dependency>
 				<groupId>org.apache.maven</groupId>
