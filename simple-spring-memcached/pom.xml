@@ -365,6 +365,9 @@
 					<plugin>
 						<groupId>org.codehaus.mojo</groupId>
 						<artifactId>findbugs-maven-plugin</artifactId>
+						<configuration>
+							<classFilesDirectory>${project.build.outputDirectory}</classFilesDirectory>
+						</configuration>
 						<executions>
 							<execution>
 								<phase>test</phase>
