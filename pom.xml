@@ -97,7 +97,7 @@
 
 		<!-- plugins -->
 		<cobertura-maven-plugin.version>2.7</cobertura-maven-plugin.version>
-		<findbugs-maven-plugin.version>3.0.1</findbugs-maven-plugin.version>
+		<findbugs-maven-plugin.version>2.5.5</findbugs-maven-plugin.version>
 		<javancss-maven-plugin.version>2.1</javancss-maven-plugin.version>
 		<jdepend-maven-plugin.version>2.0</jdepend-maven-plugin.version>
 		<maven-failsafe-plugin.version>2.18.1</maven-failsafe-plugin.version>
