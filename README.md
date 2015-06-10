@@ -11,7 +11,7 @@ Distributed caching can be a big, hairy, intricate, and complex proposition when
 
 Simple Spring Memcached (SSM) attempts to simplify implementation for several basic use cases.
 
-**(15-06-2014) New version 3.5.0 with Amazon ElastiCache support is available! Since version 3.0.0 it can work as a cache back-end in Spring Cache (@Cacheable). Please check [release notes](https://code.google.com/p/simple-spring-memcached/wiki/ReleaseNotes).**
+**(09-06-2015) New version 3.6.0 with Amazon ElastiCache support is available! Since version 3.0.0 it can work as a cache back-end in Spring Cache (@Cacheable). Please check [release notes](https://code.google.com/p/simple-spring-memcached/wiki/ReleaseNotes).**
 
 This project enables caching in Spring-managed beans, by using Java 5 Annotations and Spring/AspectJ AOP on top of the [spymemcached](http://code.google.com/p/spymemcached/), [xmemcached](http://code.google.com/p/xmemcached/) or [aws-elasticache](https://github.com/amazonwebservices/aws-elasticache-cluster-client-memcached-for-java) client. Using Simple Spring Memcached requires only a little bit of configuration and the addition of some specific annotations on the methods whose output or input is being cached. 
 
@@ -24,7 +24,7 @@ If you are using maven, you can try it now:
        <dependency>
          <groupId>com.google.code.simple-spring-memcached</groupId>
          <artifactId>xmemcached-provider</artifactId>
-         <version>3.5.0</version>
+         <version>3.6.0</version>
        </dependency> 
     </dependencies>
 
