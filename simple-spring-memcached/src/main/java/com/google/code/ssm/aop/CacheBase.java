@@ -73,15 +73,15 @@ public class CacheBase implements ApplicationContextAware, InitializingBean {
 
     @Override
     public void afterPropertiesSet() throws Exception {
-        for (Cache cache : context.getBeansOfType(Cache.class).values()) {
-            addCache(cache);
-        }
-
-        try {
+    	try {
             settings = context.getBean(Settings.class);
         } catch (NoSuchBeanDefinitionException ex) {
             LOG.info("Cannot obtain custom SSM settings, default is used");
         }
+    	
+        for (Cache cache : context.getBeansOfType(Cache.class).values()) {
+            addCache(cache);
+        }        
     }
 
     @Override
