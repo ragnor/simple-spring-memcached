@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:context="http://www.springframework.org/schema/context" xmlns:cache="http://www.springframework.org/schema/cache"
+	xsi:schemaLocation="
+		   http://www.springframework.org/schema/beans
+           http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
+           http://www.springframework.org/schema/context
+           http://www.springframework.org/schema/context/spring-context-3.1.xsd
+           http://www.springframework.org/schema/cache 
+           http://www.springframework.org/schema/cache/spring-cache-3.1.xsd">
+	
+	<!-- flush all data from memcached before starting tests -->
+	<bean id="flushUserCache" class="org.springframework.beans.factory.config.MethodInvokingFactoryBean" depends-on="userCache">
+		<property name="targetObject" ref="userCache" />
+		<property name="targetMethod" value="flush" />
+	</bean>
+
+	<!-- flush all data from memcached before starting tests -->
+	<bean id="flushClearableCache" class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
+		<property name="targetObject" ref="clearableCache" />
+		<property name="targetMethod" value="flush" />
+	</bean>
+	
+</beans>
