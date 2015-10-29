@@ -36,6 +36,8 @@ public class DisabledCacheInvocationHandler implements InvocationHandler {
     private final String cacheName;
 
     private final Collection<String> cacheAliases;
+    
+    private final CacheProperties cacheProperties = new CacheProperties();
 
     public DisabledCacheInvocationHandler(String cacheName, Collection<String> cacheAliases) {
         this.cacheName = cacheName;
@@ -53,10 +55,12 @@ public class DisabledCacheInvocationHandler implements InvocationHandler {
         } else if ("isEnabled".equals(methodName)) {
             return false;
         } else if ("shutdown".equals(methodName)) {
-            return null;
-        }
+            return null;        
+        } else if("getProperties".equals(methodName)){
+        	return cacheProperties;
+        }        	
 
-        throw new IllegalStateException(String.format("Cache with name %s and aliases %s is disabled", cacheName, cacheAliases));
+        throw new IllegalStateException(String.format("Cache with name %s and aliases %s is disabled for method %s", cacheName, cacheAliases,methodName));
     }
 
 }
