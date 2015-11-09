@@ -24,8 +24,8 @@ import java.util.Collection;
 /**
  * 
  * Handle all invocations to disabled {@link Cache}. All methods except {@link Cache#getName()},
- * {@link Cache#getAliases()}, {@link Cache#isEnabled()}, {@link Cache#shutdown()} will throw
- * {@link IllegalStateException}.
+ * {@link Cache#getAliases()}, {@link Cache#isEnabled()}, {@link Cache#getProperties()}, {@link Cache#shutdown()} will
+ * throw {@link IllegalStateException}.
  * 
  * @author Jakub Białek
  * @since 3.5.0
@@ -36,7 +36,7 @@ public class DisabledCacheInvocationHandler implements InvocationHandler {
     private final String cacheName;
 
     private final Collection<String> cacheAliases;
-    
+
     private final CacheProperties cacheProperties = new CacheProperties();
 
     public DisabledCacheInvocationHandler(String cacheName, Collection<String> cacheAliases) {
@@ -55,12 +55,13 @@ public class DisabledCacheInvocationHandler implements InvocationHandler {
         } else if ("isEnabled".equals(methodName)) {
             return false;
         } else if ("shutdown".equals(methodName)) {
-            return null;        
-        } else if("getProperties".equals(methodName)){
-        	return cacheProperties;
-        }        	
+            return null;
+        } else if ("getProperties".equals(methodName)) {
+            return cacheProperties;
+        }
 
-        throw new IllegalStateException(String.format("Cache with name %s and aliases %s is disabled for method %s", cacheName, cacheAliases,methodName));
+        throw new IllegalStateException(String.format("Cache with name %s and aliases %s is disabled for method %s", cacheName,
+                cacheAliases, methodName));
     }
 
 }

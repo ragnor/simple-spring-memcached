@@ -18,6 +18,7 @@
 		<property name="caches">
 			<set>
 				<bean class="com.google.code.ssm.spring.SSMCache">
+					<qualifier value="userCache"/>
 					<constructor-arg name="cache" index="0" ref="userCache" />
 					<!-- 5 minutes -->
 					<constructor-arg name="expiration" index="1" value="300" />
@@ -85,7 +86,7 @@
 		<property name="defaultSerializationType"
 			value="#{T(com.google.code.ssm.api.format.SerializationType).valueOf(@defaultSerializationTypeAsString)}" />
 	</bean>
-		
+
 	<beans profile="xmemcached">
 		<bean name="cacheClientFactory" class="com.google.code.ssm.providers.xmemcached.MemcacheClientFactoryImpl" />
 		<bean name="clientConfig" class="com.google.code.ssm.providers.CacheConfiguration">

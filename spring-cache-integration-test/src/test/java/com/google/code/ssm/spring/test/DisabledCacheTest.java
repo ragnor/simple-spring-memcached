@@ -25,12 +25,16 @@ import java.util.concurrent.TimeoutException;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.cache.Cache;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestExecutionListeners;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
 
 import com.google.code.ssm.providers.CacheException;
+import com.google.code.ssm.spring.SSMCache;
+import com.google.code.ssm.spring.SSMCacheManager;
 import com.google.code.ssm.spring.test.dao.AppUserDAO;
 import com.google.code.ssm.spring.test.entity.AppUser;
 import com.google.code.ssm.spring.test.entity.AppUserPK;
@@ -43,9 +47,13 @@ import com.google.code.ssm.spring.test.entity.AppUserPK;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @TestExecutionListeners({ DependencyInjectionTestExecutionListener.class })
-@ContextConfiguration(locations = { "classpath*:simplesm-context.xml", "classpath*:application-context.xml","classpath*:cache-disabled-setting.xml" })
+@ContextConfiguration(locations = { "classpath*:simplesm-context.xml", "classpath*:application-context.xml",
+        "classpath*:cache-disabled-setting.xml" })
 public class DisabledCacheTest {
 
+    @Autowired
+    private SSMCacheManager ssmCacheManager;
+    
     @Autowired
     private AppUserDAO dao;
     
@@ -54,6 +62,9 @@ public class DisabledCacheTest {
         AppUserPK pk = new AppUserPK(1, 2);
         AppUser appUser = new AppUser(pk);
         dao.create(appUser);
+        
+        assertNull(ssmCacheManager.getCache("userCache").get(appUser.cacheKey()));
+        
         appUser.setEnabled(false);
         dao.update(appUser);
         dao.remove(appUser.getPK());        
@@ -66,6 +77,7 @@ public class DisabledCacheTest {
         try {
             dao.create(new AppUser(pk));
             assertNotNull(dao.getByPk(pk));
+            assertNull(ssmCacheManager.getCache("userCache").get(pk.cacheKey()));
 
             dao.removeAllUsers();
         } finally {
