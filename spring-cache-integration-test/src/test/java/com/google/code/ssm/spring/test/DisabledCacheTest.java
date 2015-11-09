@@ -59,9 +59,9 @@ public class DisabledCacheTest {
         AppUserPK pk = new AppUserPK(1, 2);
         AppUser appUser = new AppUser(pk);
         dao.create(appUser);
-        
+
         assertNull(ssmCacheManager.getCache("userCache").get(appUser.cacheKey()));
-        
+
         appUser.setEnabled(false);
         dao.update(appUser);
         dao.remove(appUser.getPK());        
