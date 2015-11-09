@@ -36,7 +36,7 @@ public class DisabledCacheInvocationHandler implements InvocationHandler {
     private final String cacheName;
 
     private final Collection<String> cacheAliases;
-
+    
     private final CacheProperties cacheProperties = new CacheProperties();
 
     public DisabledCacheInvocationHandler(String cacheName, Collection<String> cacheAliases) {
