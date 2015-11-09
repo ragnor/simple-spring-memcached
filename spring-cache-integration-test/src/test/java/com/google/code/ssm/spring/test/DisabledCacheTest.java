@@ -25,15 +25,12 @@ import java.util.concurrent.TimeoutException;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.cache.Cache;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestExecutionListeners;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
 
 import com.google.code.ssm.providers.CacheException;
-import com.google.code.ssm.spring.SSMCache;
 import com.google.code.ssm.spring.SSMCacheManager;
 import com.google.code.ssm.spring.test.dao.AppUserDAO;
 import com.google.code.ssm.spring.test.entity.AppUser;
