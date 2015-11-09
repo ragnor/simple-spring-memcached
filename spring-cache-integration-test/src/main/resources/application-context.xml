@@ -18,6 +18,7 @@
 		<property name="caches">
 			<set>
 				<bean class="com.google.code.ssm.spring.SSMCache">
+					<qualifier value="userCache"/>
 					<constructor-arg name="cache" index="0" ref="userCache" />
 					<!-- 5 minutes -->
 					<constructor-arg name="expiration" index="1" value="300" />
@@ -85,21 +86,8 @@
 		<property name="defaultSerializationType"
 			value="#{T(com.google.code.ssm.api.format.SerializationType).valueOf(@defaultSerializationTypeAsString)}" />
 	</bean>
-	
-	
-	<!-- flush all data from memcached before starting tests -->
-	<bean id="flushUserCache" class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
-		<property name="targetObject" ref="userCache" />
-		<property name="targetMethod" value="flush" />
-	</bean>
 
-	<!-- flush all data from memcached before starting tests -->
-	<bean id="flushClearableCache" class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
-		<property name="targetObject" ref="clearableCache" />
-		<property name="targetMethod" value="flush" />
-	</bean>
-	
-		<beans profile="xmemcached">
+	<beans profile="xmemcached">
 		<bean name="cacheClientFactory" class="com.google.code.ssm.providers.xmemcached.MemcacheClientFactoryImpl" />
 		<bean name="clientConfig" class="com.google.code.ssm.providers.CacheConfiguration">
 			<property name="consistentHashing" value="true" />
