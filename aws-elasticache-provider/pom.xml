@@ -58,6 +58,21 @@
 		<dependency>
 			<groupId>com.amazonaws</groupId>
 			<artifactId>elasticache-java-cluster-client</artifactId>
+			<exclusions>
+				<!-- exclude test dependencies -->
+				<exclusion>
+					<artifactId>junit-dep</artifactId>
+					<groupId>junit</groupId>
+				</exclusion>
+				<exclusion>
+					<artifactId>jmock</artifactId>
+					<groupId>jmock</groupId>
+				</exclusion>
+				<exclusion>
+					<artifactId>jmock-cglib</artifactId>
+					<groupId>jmock</groupId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 
 		<dependency>
