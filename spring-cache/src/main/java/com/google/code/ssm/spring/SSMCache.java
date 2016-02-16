@@ -156,12 +156,12 @@ public class SSMCache implements Cache {
                 final Object store = toStoreValue(value);
                 cache.set(cacheKey, expiration, store, null);
             } catch (TimeoutException e) {
-                LOGGER.warn("An error has ocurred for cache " + getName() + " and key " + cacheKey, e);
+                LOGGER.warn("An error has occurred for cache " + getName() + " and key " + cacheKey, e);
             } catch (CacheException e) {
-                LOGGER.warn("An error has ocurred for cache " + getName() + " and key " + cacheKey, e);
+                LOGGER.warn("An error has occurred for cache " + getName() + " and key " + cacheKey, e);
             } catch (RuntimeException e) {
                 // do not propagate any exceptions
-                LOGGER.warn("An error has ocurred for cache " + getName() + " and key " + cacheKey, e);
+                LOGGER.warn("An error has occurred for cache " + getName() + " and key " + cacheKey, e);
             }
         } else {
             LOGGER.info("Cannot put to cache {} because key is null", cache.getName());
@@ -188,12 +188,12 @@ public class SSMCache implements Cache {
                 final boolean added = cache.add(cacheKey, expiration, store, null);
                 return added ? null : get(key);
             } catch (TimeoutException e) {
-                LOGGER.warn("An error has ocurred for cache " + getName() + " and key " + cacheKey, e);
+                LOGGER.warn("An error has occurred for cache " + getName() + " and key " + cacheKey, e);
             } catch (CacheException e) {
-                LOGGER.warn("An error has ocurred for cache " + getName() + " and key " + cacheKey, e);
+                LOGGER.warn("An error has occurred for cache " + getName() + " and key " + cacheKey, e);
             } catch (RuntimeException e) {
                 // do not propagate any exceptions
-                LOGGER.warn("An error has ocurred for cache " + getName() + " and key " + cacheKey, e);
+                LOGGER.warn("An error has occurred for cache " + getName() + " and key " + cacheKey, e);
             }
         } else {
             LOGGER.info("Cannot put to cache {} because key is null", cache.getName());
@@ -215,12 +215,12 @@ public class SSMCache implements Cache {
                 LOGGER.info("Evict {} from cache {}", key, cache.getName());
                 cache.delete(cacheKey);
             } catch (TimeoutException e) {
-                LOGGER.warn("An error has ocurred for cache " + getName() + " and key " + cacheKey, e);
+                LOGGER.warn("An error has occurred for cache " + getName() + " and key " + cacheKey, e);
             } catch (CacheException e) {
-                LOGGER.warn("An error has ocurred for cache " + getName() + " and key " + cacheKey, e);
+                LOGGER.warn("An error has occurred for cache " + getName() + " and key " + cacheKey, e);
             } catch (RuntimeException e) {
                 // do not propagate any exceptions
-                LOGGER.warn("An error has ocurred for cache " + getName() + " and key " + cacheKey, e);
+                LOGGER.warn("An error has occurred for cache " + getName() + " and key " + cacheKey, e);
             }
         } else {
             LOGGER.info("Cannot evict from cache {} because key is null", cache.getName());
@@ -244,12 +244,12 @@ public class SSMCache implements Cache {
             LOGGER.info("Clear {}", cache.getName());
             cache.flush();
         } catch (TimeoutException e) {
-            LOGGER.warn("An error has ocurred for cache " + getName(), e);
+            LOGGER.warn("An error has occurred for cache " + getName(), e);
         } catch (CacheException e) {
-            LOGGER.warn("An error has ocurred for cache " + getName(), e);
+            LOGGER.warn("An error has occurred for cache " + getName(), e);
         } catch (RuntimeException e) {
             // do not propagate any exceptions
-            LOGGER.warn("An error has ocurred for cache " + getName(), e);
+            LOGGER.warn("An error has occurred for cache " + getName(), e);
         }
     }
 
@@ -260,12 +260,12 @@ public class SSMCache implements Cache {
         try {
             value = cache.get(cacheKey, null);
         } catch (TimeoutException e) {
-            LOGGER.warn("An error has ocurred for cache " + getName() + " and key " + cacheKey, e);
+            LOGGER.warn("An error has occurred for cache " + getName() + " and key " + cacheKey, e);
         } catch (CacheException e) {
-            LOGGER.warn("An error has ocurred for cache " + getName() + " and key " + cacheKey, e);
+            LOGGER.warn("An error has occurred for cache " + getName() + " and key " + cacheKey, e);
         } catch (RuntimeException e) {
             // do not propagate any exceptions
-            LOGGER.warn("An error has ocurred for cache " + getName() + " and key " + cacheKey, e);
+            LOGGER.warn("An error has occurred for cache " + getName() + " and key " + cacheKey, e);
         }
 
         return value;
