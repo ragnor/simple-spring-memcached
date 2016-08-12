@@ -30,6 +30,9 @@ import java.util.Set;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.google.code.ssm.aop.support.AnnotationData;
 import com.google.code.ssm.api.ParameterValueKeyProvider;
 import com.google.code.ssm.api.ReturnValueKeyProvider;
@@ -43,6 +46,7 @@ import com.google.code.ssm.api.CacheOperation.Type;
  */
 public class KeyIndexesBuilder extends AbstractDataBuilder {
 
+    private static final Logger LOG = LoggerFactory.getLogger(KeyIndexesBuilder.class);
     private static final Comparator<ParameterValueKeyProvider> COMPARATOR = new ParameterValueKeyProviderComparator();
 
     @Override
@@ -58,7 +62,8 @@ public class KeyIndexesBuilder extends AbstractDataBuilder {
             }
         }
 
-        final Collection<Integer> keyIndexes = getKeyIndexes(targetMethod);
+        final boolean isMulti = isType(expectedAnnotationClass, Type.MULTI);
+        final Collection<Integer> keyIndexes = getKeyIndexes(targetMethod, isMulti);
         if (keyIndexes.isEmpty()) {
             throw new InvalidParameterException(String.format("No KeyProvider annotation found method [%s]", targetMethod.getName()));
         }
@@ -71,7 +76,7 @@ public class KeyIndexesBuilder extends AbstractDataBuilder {
         return !isType(expectedAnnotationClass, Type.ASSIGN);
     }
 
-    private Collection<Integer> getKeyIndexes(final Method targetMethod) {
+    private Collection<Integer> getKeyIndexes(final Method targetMethod, final boolean isMulti) {
         final Annotation[][] paramAnnotationArrays = targetMethod.getParameterAnnotations();
         final SortedMap<ParameterValueKeyProvider, Integer> keyProviders = new TreeMap<ParameterValueKeyProvider, Integer>(COMPARATOR);
         final Set<Integer> order = new HashSet<Integer>();
@@ -95,8 +100,16 @@ public class KeyIndexesBuilder extends AbstractDataBuilder {
             }
             // throw exception if there are two annotations with the same value of order
             if (!order.add(keyProviderAnnotation.order())) {
-                throwException("No valid order defined in annotation [%s] on method [%s]. "
-                        + "There are two annotations with the same order.", ParameterValueKeyProvider.class, targetMethod);
+                throwException(
+                        "No valid order defined in annotation [%s] on method [%s]. " + "There are two annotations with the same order.",
+                        ParameterValueKeyProvider.class, targetMethod);
+            }
+            // log warn if for non multi annotation one of Collection parameter is annotated as a ParameterValueKeyProvider
+            if (!isMulti && Collection.class.isAssignableFrom(targetMethod.getParameterTypes()[ix])) {
+                LOG.warn("ParameterValueKeyProvider is used on a list parameter [%s] in method [%s] with non multi cache annotation."
+                        + "Consider changing to *MultiCache annotation or use another parameter for key. Using collections in such case "
+                        + "may lead to unexpected consequences: key can exceed allowed memcached key length, key will be varied "
+                        + "when order or size are changed." , targetMethod.getParameterTypes()[ix], targetMethod.getName());
             }
 
             keyProviders.put(keyProviderAnnotation, ix);
