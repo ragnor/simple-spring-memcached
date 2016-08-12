@@ -3,7 +3,7 @@ Simple Spring Memcached
 
 A drop-in library to enable memcached caching in Spring beans via annotations.
 
-**Source code and issue tracking are available on [github](https://github.com/ragnor/simple-spring-memcached),** **documentation is on [google code](https://code.google.com/p/simple-spring-memcached) but soon it will be migrated here.**
+**Most of documentation has been moved to github but still some docs are available only on [google code](https://code.google.com/p/simple-spring-memcached).**
 
 ## Introduction ##
 
@@ -11,9 +11,9 @@ Distributed caching can be a big, hairy, intricate, and complex proposition when
 
 Simple Spring Memcached (SSM) attempts to simplify implementation for several basic use cases.
 
-**(09-06-2015) New version 3.6.0 with Amazon ElastiCache support is available! Since version 3.0.0 it can work as a cache back-end in Spring Cache (@Cacheable). Please check [release notes](https://code.google.com/p/simple-spring-memcached/wiki/ReleaseNotes).**
+**(12-08-2016) New version 3.6.1 with Amazon ElastiCache and Spring 4.3 support is available! Since version 3.0.0 it can work as a cache back-end in Spring Cache (@Cacheable). Please check [release notes](https://github.com/ragnor/simple-spring-memcached/wiki/Relase-notes).**
 
-This project enables caching in Spring-managed beans, by using Java 5 Annotations and Spring/AspectJ AOP on top of the [spymemcached](http://code.google.com/p/spymemcached/), [xmemcached](http://code.google.com/p/xmemcached/) or [aws-elasticache](https://github.com/amazonwebservices/aws-elasticache-cluster-client-memcached-for-java) client. Using Simple Spring Memcached requires only a little bit of configuration and the addition of some specific annotations on the methods whose output or input is being cached. 
+This project enables caching in Spring-managed beans, by using Java 5 Annotations and Spring/AspectJ AOP on top of the [spymemcached](https://github.com/couchbase/spymemcached), [xmemcached](https://github.com/killme2008/xmemcached/) or [aws-elasticache](https://github.com/amazonwebservices/aws-elasticache-cluster-client-memcached-for-java) client. Using Simple Spring Memcached requires only a little bit of configuration and the addition of some specific annotations on the methods whose output or input is being cached. 
 
 
 ## Usage ##
@@ -24,7 +24,7 @@ If you are using maven, you can try it now:
        <dependency>
          <groupId>com.google.code.simple-spring-memcached</groupId>
          <artifactId>xmemcached-provider</artifactId>
-         <version>3.6.0</version>
+         <version>3.6.1</version>
        </dependency> 
     </dependencies>
 
@@ -65,9 +65,14 @@ Now you can annotate method to cache result:
       return result;
     }
 
-If you already using Spring Cache you may use SSM as an another [back-end](https://code.google.com/p/simple-spring-memcached/wiki/Getting_Started#Spring_3.1_Cache_Integration).
+If you already using Spring Cache you may use SSM as an another [back-end](https://github.com/ragnor/simple-spring-memcached/wiki/Getting-Started#spring-31-cache-integration).
 
-Need more? Please read [getting started guide](https://code.google.com/p/simple-spring-memcached/wiki/Getting_Started).
+Need more? Please read [getting started guide](https://github.com/ragnor/simple-spring-memcached/wiki/Getting-Started).
+
+## Documentation ##
+Project documentation is available on github wiki: https://github.com/ragnor/simple-spring-memcached/wiki.
+Javadocs of current release are hosted on [github.io] (http://ragnor.github.io/simple-spring-memcached/).
+Source code from master branch is built and tested on cloudbees: [![Build Status](https://ragnor.ci.cloudbees.com/job/Simple%20Spring%20Memcached%20(SSM)/badge/icon)](https://ragnor.ci.cloudbees.com/job/Simple%20Spring%20Memcached%20(SSM)/)
 
 ## Contact Us ##
 
