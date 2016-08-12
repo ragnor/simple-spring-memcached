@@ -1,7 +1,19 @@
 SIMPLE SPRING MEMCACHED CHANGELOG
 =================================
 https://github.com/ragnor/simple-spring-memcached
-http://code.google.com/p/simple-spring-memcached/
+
+
+Changes in version 3.6.1 (2016-08-12)
+-------------------------------------
+
+* fix compatibility issue with Spring 4.3 Cache Abstraction
+* accept disableCache settings
+* fix runtime exceptions when cache is disabled
+* add warning when collection parameter is used to generate key for non *MultiCache
+* make cacheBase optional if only Spring Cache annotations are used    
+* update spymemcached to 2.12.1
+* update xmemcached to 2.0.1 
+* change junit to test dependency only 
 
 
 Changes in version 3.6.0 (2015-06-09)
