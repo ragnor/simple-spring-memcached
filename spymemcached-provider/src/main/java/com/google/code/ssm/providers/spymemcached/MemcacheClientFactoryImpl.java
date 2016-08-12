@@ -117,6 +117,10 @@ public class MemcacheClientFactoryImpl implements CacheClientFactory {
         if (conf.getAuthDescriptor() != null) {
             builder.setAuthDescriptor(conf.getAuthDescriptor());
         }
+        
+        if (conf.getAuthWaitTime() != null) {
+            builder.setAuthWaitTime(conf.getAuthWaitTime());
+        }
 
         if (conf.getInitialObservers() != null) {
             builder.setInitialObservers(conf.getInitialObservers());
@@ -128,6 +132,10 @@ public class MemcacheClientFactoryImpl implements CacheClientFactory {
 
         if (conf.getMetricType() != null) {
             builder.setEnableMetrics(conf.getMetricType());
+        }
+        
+        if (conf.getExecutorService() != null) {
+            builder.setListenerExecutorService(conf.getExecutorService());
         }
     }
 

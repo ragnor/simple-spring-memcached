@@ -83,6 +83,12 @@ public class XMemcachedConfiguration extends CacheConfiguration {
      * @see MemcachedClient#setMergeFactor(int)
      */
     private Integer mergeFactor;
+    
+    /**
+     * @see MemcachedClientBuilder#setOpTimeout(long)
+     * @since 3.6.1
+     */
+    private Long opTimeout;
 
     /**
      * @see MemcachedClient#setOptimizeGet(boolean)
@@ -104,6 +110,12 @@ public class XMemcachedConfiguration extends CacheConfiguration {
      */
     private Boolean primitiveAsString;
 
+    /**
+     * @see XMemcachedClientBuilder#setSelectorPoolSize(int)
+     * @since 3.6.1
+     */
+    private Integer selectorPoolSize;
+    
     /**
      * @see MemcachedClientBuilder#setSanitizeKeys(boolean)
      */

@@ -18,6 +18,7 @@
 package com.google.code.ssm.providers.spymemcached;
 
 import java.util.Collection;
+import java.util.concurrent.ExecutorService;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -108,6 +109,12 @@ public class SpymemcachedConfiguration extends CacheConfiguration {
      * @see ConnectionFactoryBuilder#setAuthDescriptor(AuthDescriptor)
      */
     private AuthDescriptor authDescriptor;
+    
+    /**
+     * @since 3.6.1
+     * @see ConnectionFactoryBuilder#setAuthWaitTime(long)
+     */
+    private Long authWaitTime;
 
     /**
      * @since 3.2.0
@@ -128,5 +135,11 @@ public class SpymemcachedConfiguration extends CacheConfiguration {
      * @since 3.4.0
      */
     private MetricType metricType;
+    
+    /**
+     * @see ConnectionFactoryBuilder#setListenerExecutorService(ExecutorService)
+     * @since 3.6.1
+     */
+    private ExecutorService executorService;
 
 }

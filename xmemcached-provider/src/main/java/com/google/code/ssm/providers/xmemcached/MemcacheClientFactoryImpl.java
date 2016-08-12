@@ -23,7 +23,6 @@ import java.util.List;
 import java.util.Map;
 
 import net.rubyeye.xmemcached.MemcachedClient;
-import net.rubyeye.xmemcached.MemcachedClientBuilder;
 import net.rubyeye.xmemcached.XMemcachedClientBuilder;
 import net.rubyeye.xmemcached.command.BinaryCommandFactory;
 import net.rubyeye.xmemcached.impl.KetamaMemcachedSessionLocator;
@@ -45,7 +44,7 @@ public class MemcacheClientFactoryImpl implements CacheClientFactory {
 
     @Override
     public CacheClient create(final List<InetSocketAddress> addrs, final CacheConfiguration conf) throws IOException {
-        MemcachedClientBuilder builder = null;
+        XMemcachedClientBuilder builder = null;
 
         if (conf instanceof XMemcachedConfiguration) {
             int[] weights = ((XMemcachedConfiguration) conf).getWeights();
@@ -85,7 +84,7 @@ public class MemcacheClientFactoryImpl implements CacheClientFactory {
         return new MemcacheClientWrapper(client);
     }
 
-    private void setProviderBuilderSpecificSettings(final MemcachedClientBuilder builder, final XMemcachedConfiguration conf) {
+    private void setProviderBuilderSpecificSettings(final XMemcachedClientBuilder builder, final XMemcachedConfiguration conf) {
         if (conf.getConnectionPoolSize() != null) {
             builder.setConnectionPoolSize(conf.getConnectionPoolSize());
         }
@@ -123,7 +122,19 @@ public class MemcacheClientFactoryImpl implements CacheClientFactory {
         if (conf.getAuthInfoMap() != null) {
             builder.setAuthInfoMap(conf.getAuthInfoMap());
         }
+        
+        if (conf.getOperationTimeout() != null) {
+            builder.setOpTimeout(conf.getOperationTimeout());
+        }
 
+        if (conf.getSanitizeKeys() != null) {
+            builder.setSanitizeKeys(conf.getSanitizeKeys());
+        }
+        
+        if (conf.getSelectorPoolSize() != null) {
+            builder.setSelectorPoolSize(conf.getSelectorPoolSize());
+        }
+        
         if (conf.getStateListeners() != null) {
             builder.setStateListeners(conf.getStateListeners());
         }
