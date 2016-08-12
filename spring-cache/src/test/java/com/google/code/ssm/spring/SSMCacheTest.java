@@ -16,15 +16,19 @@
  */
 package com.google.code.ssm.spring;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
 import static org.mockito.Mockito.*;
 
+import java.util.concurrent.Callable;
 import java.util.concurrent.TimeoutException;
 
 import org.junit.Before;
 import org.junit.Test;
 
 import com.google.code.ssm.Cache;
+import com.google.code.ssm.api.format.SerializationType;
 import com.google.code.ssm.providers.CacheException;
 
 /**
@@ -138,11 +142,44 @@ public class SSMCacheTest {
         String key = "someCacheKey";
         when(cache.isEnabled()).thenReturn(false);
 
-        ssmCache.get(key);
+        final Object result = ssmCache.get(key);
 
         verify(cache, never()).get(key, null);
+        assertNull(result);
+    }
+    
+    @Test
+    public void getWithValueLoaderNotExecutedWhenCacheDisabled() throws TimeoutException, CacheException {
+        String key = "someCacheKey";
+        when(cache.isEnabled()).thenReturn(false);
+        final Object expectedResult = new Object();
+
+        final Object result = ssmCache.get(key, new Callable<Object>() {
+            @Override
+            public Object call() throws Exception {
+                return expectedResult;
+            }
+        });
+
+        verify(cache, never()).get(anyString(), any(SerializationType.class));
+        verify(cache, never()).set(anyString(), anyInt(), any(), any(SerializationType.class));
+        verify(cache, never()).setSilently(anyString(), anyInt(), any(), any(SerializationType.class));
+        assertEquals(expectedResult, result);
     }
 
+    @Test(expected = SSMCache.ValueRetrievalException.class)
+    public void getWithValueLoaderShouldWrapException() throws TimeoutException, CacheException {
+        String key = "someCacheKey";
+        when(cache.isEnabled()).thenReturn(false);
+       
+        ssmCache.get(key, new Callable<Object>() {
+            @Override
+            public Object call() throws Exception {
+                throw new Exception("some exception");
+            }
+        });
+    }
+    
     @Test
     public void getNameExecutedWhenCacheDisabled() {
         when(cache.isEnabled()).thenReturn(false);
