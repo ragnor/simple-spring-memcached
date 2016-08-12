@@ -70,8 +70,8 @@ If you already using Spring Cache you may use SSM as an another [back-end](https
 Need more? Please read [getting started guide](https://github.com/ragnor/simple-spring-memcached/wiki/Getting-Started).
 
 ## Documentation ##
-Project documentation is available on github wiki: https://github.com/ragnor/simple-spring-memcached/wiki.
-Javadocs of current release are hosted on [github.io] (http://ragnor.github.io/simple-spring-memcached/).
+Project documentation is available on [SSM wiki](https://github.com/ragnor/simple-spring-memcached/wiki).  
+Javadocs of current release are hosted on [github.io] (http://ragnor.github.io/simple-spring-memcached/).  
 Source code from master branch is built and tested on cloudbees: [![Build Status](https://ragnor.ci.cloudbees.com/job/Simple%20Spring%20Memcached%20(SSM)/badge/icon)](https://ragnor.ci.cloudbees.com/job/Simple%20Spring%20Memcached%20(SSM)/)
 
 ## Contact Us ##
