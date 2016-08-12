@@ -97,7 +97,7 @@ public class CacheFactory implements AddressChangeListener, FactoryBean<Cache>, 
     @Setter
     private boolean initializeTranscoders = true;
 
-    @Autowired
+    @Autowired(required = false)
     private CacheBase cacheBase;
 
     @Override
@@ -205,7 +205,7 @@ public class CacheFactory implements AddressChangeListener, FactoryBean<Cache>, 
     }
 
     boolean isCacheDisabled() {
-        return cacheBase.isCacheDisabled();
+        return cacheBase != null && cacheBase.isCacheDisabled();
     }
 
     private CacheClient createClient(final List<InetSocketAddress> addrs) throws IOException {
