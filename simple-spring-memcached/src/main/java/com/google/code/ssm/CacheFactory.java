@@ -128,7 +128,7 @@ public class CacheFactory implements AddressChangeListener, FactoryBean<Cache>, 
 
     @Override
     public Cache getObject() throws Exception {
-        return createCache();
+        return (cache != null) ? cache : createCache();
     }
 
     @Override
