@@ -75,7 +75,7 @@ public class ElastiCacheConfiguration extends CacheConfiguration {
      * @see ConnectionFactoryBuilder#setOpQueueMaxBlockTime(long)
      */
     private Long opQueueMaxBlockTime;
-    
+
     /**
      * @see ConnectionFactoryBuilder#setOpTimeout(long)
      * @since 3.6.2
@@ -113,7 +113,7 @@ public class ElastiCacheConfiguration extends CacheConfiguration {
      * @see ConnectionFactoryBuilder#setAuthDescriptor(AuthDescriptor)
      */
     private AuthDescriptor authDescriptor;
-    
+
     /**
      * @see ConnectionFactoryBuilder#setAuthWaitTime(long)
      * @since 3.6.2
@@ -124,7 +124,7 @@ public class ElastiCacheConfiguration extends CacheConfiguration {
      * @see ConnectionFactoryBuilder#setInitialObservers(Collection)
      */
     private Collection<ConnectionObserver> initialObservers;
-    
+
     /**
      * Try to use Amazon ElastiCache Auto Discovery, more info:
      * http://docs.amazonwebservices.com/AmazonElastiCache/latest/UserGuide/AutoDiscovery.html. If set to true all other
@@ -136,13 +136,13 @@ public class ElastiCacheConfiguration extends CacheConfiguration {
      * @see ConnectionFactoryBuilder#setClientMode(ClientMode)
      */
     private ClientMode clientMode;
-    
+
     /**
      * @see ConnectionFactoryBuilder#setEnableMetrics(MetricType)
      * @since 3.6.2
      */
     private MetricType enableMetricType;
-    
+
     /**
      * @see ConnectionFactoryBuilder#setMetricCollector(MetricCollector)
      * @since 3.6.2
