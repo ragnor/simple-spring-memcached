@@ -110,6 +110,10 @@ public class MemcacheClientFactoryImpl implements CacheClientFactory {
         if (conf.getOpQueueMaxBlockTime() != null) {
             builder.setOpQueueMaxBlockTime(conf.getOpQueueMaxBlockTime());
         }
+        
+        if (conf.getOpTimeout() != null) {
+            builder.setOpTimeout(conf.getOpTimeout());
+        }
 
         if (conf.getReadBufferSize() != null) {
             builder.setReadBufferSize(conf.getReadBufferSize());
@@ -134,6 +138,10 @@ public class MemcacheClientFactoryImpl implements CacheClientFactory {
         if (conf.getAuthDescriptor() != null) {
             builder.setAuthDescriptor(conf.getAuthDescriptor());
         }
+        
+        if (conf.getAuthWaitTime() != null) {
+            builder.setAuthWaitTime(conf.getAuthWaitTime());
+        }
 
         if (conf.getInitialObservers() != null) {
             builder.setInitialObservers(conf.getInitialObservers());
@@ -141,6 +149,14 @@ public class MemcacheClientFactoryImpl implements CacheClientFactory {
         
         if (conf.getClientMode() != null) {
             builder.setClientMode(conf.getClientMode());
+        }
+        
+        if (conf.getEnableMetricType() != null) {
+            builder.setEnableMetrics(conf.getEnableMetricType());
+        }
+        
+        if (conf.getMetricCollector() != null) {
+            builder.setMetricCollector(conf.getMetricCollector());
         }
 
     }

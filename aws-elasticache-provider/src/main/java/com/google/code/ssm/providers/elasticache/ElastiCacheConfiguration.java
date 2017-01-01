@@ -28,6 +28,8 @@ import net.spy.memcached.ConnectionObserver;
 import net.spy.memcached.FailureMode;
 import net.spy.memcached.HashAlgorithm;
 import net.spy.memcached.auth.AuthDescriptor;
+import net.spy.memcached.metrics.MetricCollector;
+import net.spy.memcached.metrics.MetricType;
 import net.spy.memcached.transcoders.Transcoder;
 
 import com.google.code.ssm.providers.CacheConfiguration;
@@ -73,6 +75,12 @@ public class ElastiCacheConfiguration extends CacheConfiguration {
      * @see ConnectionFactoryBuilder#setOpQueueMaxBlockTime(long)
      */
     private Long opQueueMaxBlockTime;
+    
+    /**
+     * @see ConnectionFactoryBuilder#setOpTimeout(long)
+     * @since 3.6.2
+     */
+    private Long opTimeout;
 
     /**
      * @see ConnectionFactoryBuilder#setReadBufferSize(int)
@@ -105,6 +113,12 @@ public class ElastiCacheConfiguration extends CacheConfiguration {
      * @see ConnectionFactoryBuilder#setAuthDescriptor(AuthDescriptor)
      */
     private AuthDescriptor authDescriptor;
+    
+    /**
+     * @see ConnectionFactoryBuilder#setAuthWaitTime(long)
+     * @since 3.6.2
+     */
+    private Long authWaitTime;
 
     /**
      * @see ConnectionFactoryBuilder#setInitialObservers(Collection)
@@ -122,5 +136,17 @@ public class ElastiCacheConfiguration extends CacheConfiguration {
      * @see ConnectionFactoryBuilder#setClientMode(ClientMode)
      */
     private ClientMode clientMode;
+    
+    /**
+     * @see ConnectionFactoryBuilder#setEnableMetrics(MetricType)
+     * @since 3.6.2
+     */
+    private MetricType enableMetricType;
+    
+    /**
+     * @see ConnectionFactoryBuilder#setMetricCollector(MetricCollector)
+     * @since 3.6.2
+     */
+    private MetricCollector metricCollector;
 
 }
