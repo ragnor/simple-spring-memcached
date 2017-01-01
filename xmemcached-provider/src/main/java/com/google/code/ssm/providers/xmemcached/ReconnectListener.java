@@ -69,7 +69,7 @@ class ReconnectListener implements MemcachedClientStateListener {
                         memcachedClient.flushAll(inetSocketAddress);
                         LOGGER.info("Memcached server {} flushed successfuly", inetSocketAddress);
                     } catch (Exception e) {
-                        LOGGER.error("An error occured while flushing " + inetSocketAddress.toString(), e);
+                        LOGGER.error("An error occured while flushing {}", inetSocketAddress.toString(), e);
                     }
                 }
             }).start();

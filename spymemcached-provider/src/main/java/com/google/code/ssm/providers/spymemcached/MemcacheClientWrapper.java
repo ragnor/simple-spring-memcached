@@ -94,7 +94,7 @@ class MemcacheClientWrapper extends AbstractMemcacheClientWrapper {
         try {
             return memcachedClient.decr(key, by);
         } catch (OperationTimeoutException e) {
-            LOGGER.warn("Operation timeout while decr " + key, e);
+            LOGGER.warn("Operation timeout while decr {}", key, e);
             throw new TimeoutException(e.getMessage());
         } catch (RuntimeException e) {
             if (translateException(e)) {
@@ -109,7 +109,7 @@ class MemcacheClientWrapper extends AbstractMemcacheClientWrapper {
         try {
             return memcachedClient.decr(key, by, def);
         } catch (OperationTimeoutException e) {
-            LOGGER.warn("Operation timeout while decr " + key, e);
+            LOGGER.warn("Operation timeout while decr {}", key, e);
             throw new TimeoutException(e.getMessage());
         } catch (RuntimeException e) {
             if (translateException(e)) {
@@ -196,7 +196,7 @@ class MemcacheClientWrapper extends AbstractMemcacheClientWrapper {
         try {
             return memcachedClient.getBulk(keys);
         } catch (OperationTimeoutException e) {
-            LOGGER.warn("Operation timeout while getBulk " + keys, e);
+            LOGGER.warn("Operation timeout while getBulk {}", keys, e);
             throw (TimeoutException) e.getCause();
         } catch (RuntimeException e) {
             if (translateException(e)) {
@@ -212,7 +212,7 @@ class MemcacheClientWrapper extends AbstractMemcacheClientWrapper {
         try {
             return memcachedClient.getBulk(keys, this.<T> getTranscoder(transcoder));
         } catch (OperationTimeoutException e) {
-            LOGGER.warn("Operation timeout while getBulk " + keys, e);
+            LOGGER.warn("Operation timeout while getBulk {}", keys, e);
             throw (TimeoutException) e.getCause();
         } catch (RuntimeException e) {
             if (translateException(e)) {
@@ -227,7 +227,7 @@ class MemcacheClientWrapper extends AbstractMemcacheClientWrapper {
         try {
             return memcachedClient.incr(key, by);
         } catch (OperationTimeoutException e) {
-            LOGGER.warn("Operation timeout while incr " + key, e);
+            LOGGER.warn("Operation timeout while incr {}", key, e);
             throw new TimeoutException(e.getMessage());
         } catch (RuntimeException e) {
             if (translateException(e)) {
@@ -242,7 +242,7 @@ class MemcacheClientWrapper extends AbstractMemcacheClientWrapper {
         try {
             return memcachedClient.incr(key, by, def);
         } catch (OperationTimeoutException e) {
-            LOGGER.warn("Operation timeout while incr " + key, e);
+            LOGGER.warn("Operation timeout while incr {}", key, e);
             throw new TimeoutException(e.getMessage());
         } catch (RuntimeException e) {
             if (translateException(e)) {
@@ -257,7 +257,7 @@ class MemcacheClientWrapper extends AbstractMemcacheClientWrapper {
         try {
             return memcachedClient.incr(key, by, def, expiration);
         } catch (OperationTimeoutException e) {
-            LOGGER.warn("Operation timeout while incr " + key, e);
+            LOGGER.warn("Operation timeout while incr {}", key, e);
             throw new TimeoutException(e.getMessage());
         } catch (RuntimeException e) {
             if (translateException(e)) {

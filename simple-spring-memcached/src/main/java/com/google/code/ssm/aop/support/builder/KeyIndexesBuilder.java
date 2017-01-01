@@ -101,7 +101,7 @@ public class KeyIndexesBuilder extends AbstractDataBuilder {
             // throw exception if there are two annotations with the same value of order
             if (!order.add(keyProviderAnnotation.order())) {
                 throwException(
-                        "No valid order defined in annotation [%s] on method [%s]. " + "There are two annotations with the same order.",
+                        "No valid order defined in annotation [%s] on method [%s]. There are two annotations with the same order.",
                         ParameterValueKeyProvider.class, targetMethod);
             }
             // log warn if for non multi annotation one of Collection parameter is annotated as a ParameterValueKeyProvider
