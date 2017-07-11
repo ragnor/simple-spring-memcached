@@ -97,10 +97,9 @@
 					<sourcepath>target/generated-sources/delombok</sourcepath>
 					<excludePackageNames>com.google.code.ssm.test.*,com.google.code.ssm.spring.test.*</excludePackageNames>
 					<links>
-						<link>http://docs.spring.io/spring/docs/3.0.x/javadoc-api/</link>
-						<link>http://docs.spring.io/spring/docs/3.1.x/javadoc-api/</link>
+						<link>http://docs.spring.io/spring/docs/4.3.x/javadoc-api/</link>
 						<link>http://fnil.net/docs/xmemcached/</link>
-						<link>http://docs.oracle.com/javase/6/docs/api/</link>
+						<link>http://docs.oracle.com/javase/7/docs/api/</link>
 					</links>
 					<doclet>org.jboss.apiviz.APIviz</doclet>
 					<docletArtifact>
@@ -170,7 +169,7 @@
 							<dependency>
 								<groupId>sun.jdk</groupId>
 								<artifactId>tools</artifactId>
-								<version>1.6</version>
+								<version>1.7</version>
 								<scope>system</scope>
 								<systemPath>${java.home}/../lib/tools.jar</systemPath>
 							</dependency>

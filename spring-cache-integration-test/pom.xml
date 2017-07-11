@@ -295,8 +295,8 @@
 						<configuration>
 							<offlineLinks>
 								<offlineLink>
-									<url>http://static.springsource.org/spring/docs/3.0.x/javadoc-api/</url>
-									<location>http://static.springsource.org/spring/docs/3.0.x/javadoc-api/</location>
+									<url>http://docs.spring.io/spring/docs/4.3.x/javadoc-api/</url>
+									<location>http://docs.spring.io/spring/docs/4.3.x/javadoc-api/</location>
 								</offlineLink>
 							</offlineLinks>
 							<doclet>org.jboss.apiviz.APIviz</doclet>

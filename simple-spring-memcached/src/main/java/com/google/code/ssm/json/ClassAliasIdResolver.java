@@ -17,11 +17,13 @@
 
 package com.google.code.ssm.json;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
 import org.springframework.util.Assert;
 
+import com.fasterxml.jackson.databind.DatabindContext;
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.jsontype.impl.ClassNameIdResolver;
 import com.fasterxml.jackson.databind.type.TypeFactory;
@@ -58,7 +60,7 @@ public class ClassAliasIdResolver extends ClassNameIdResolver {
             return idFromValueAndType(value, value.getClass());
         }
 
-        return _idFrom(null, null);
+        return _idFrom(null, null, _typeFactory);
     }
 
     @Override
@@ -68,17 +70,17 @@ public class ClassAliasIdResolver extends ClassNameIdResolver {
             return id;
         }
 
-        return _idFrom(value, type);
+        return _idFrom(value, type, _typeFactory);
     }
 
     @Override
-    protected JavaType _typeFromId(final String id, final TypeFactory typeFactory) {
+    protected JavaType _typeFromId(final String id, final DatabindContext ctxt) throws IOException {
         Class<?> clazz = idToClass.get(id);
         if (clazz != null) {
             return _typeFactory.constructSpecializedType(_baseType, clazz);
         }
 
-        return super._typeFromId(id, typeFactory);
+        return super._typeFromId(id, ctxt);
     }
 
     /**
