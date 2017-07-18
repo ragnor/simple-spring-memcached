@@ -72,7 +72,7 @@ public class MemcacheClientFactoryImplTest {
     public void createWithSpecificConf() throws IOException {
         ElastiCacheConfiguration conf = new ElastiCacheConfiguration();
         conf.setConsistentHashing(true);
-        conf.setOperationTimeout(1000);
+        conf.setOperationTimeout(100);
         conf.setUseBinaryProtocol(false);
         conf.setFailureMode(FailureMode.Cancel);
         conf.setShouldOptimize(true);
