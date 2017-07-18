@@ -17,13 +17,13 @@
 package com.google.code.ssm.aop;
 
 import static org.junit.Assert.assertEquals;
-import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyInt;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static com.google.code.ssm.test.Matcher.any;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -45,6 +45,7 @@ import com.google.code.ssm.api.ReturnValueKeyProvider;
 import com.google.code.ssm.api.format.SerializationType;
 import com.google.code.ssm.test.Point;
 
+
 /**
  * 
  * @author Jakub Białek
@@ -55,30 +56,27 @@ public class ReadThroughMultiCacheAdviceTest extends AbstractCacheTest<ReadThrou
     @Parameters
     public static Collection<Object[]> data() {
         return Arrays.asList(new Object[][] { //
-                        { true, "method1", new Class[] { List.class }, new Object[] { Arrays.asList(1, 2, 3, 4) },
-                                Arrays.asList(2, 4, 6, 8), new String[] { NS + ":1", NS + ":2", NS + ":3", NS + ":4" } }, //
-                        { true, "method2", new Class[] { String.class, List.class }, new Object[] { "xyz", Arrays.asList(1, 2, 3, 4) },
-                                Arrays.asList(2, 4, 6, 8), new String[] { NS + ":1/xyz", NS + ":2/xyz", NS + ":3/xyz", NS + ":4/xyz" } }, //
-                        {
-                                true,
-                                "method3",
-                                new Class[] { List.class, Point.class },
-                                new Object[] { Arrays.asList(new Point(1, 2), new Point(2, 3), new Point(3, 4), new Point(4, 5)),
-                                        new Point(6, 7) }, Arrays.asList(2, 4, 6, 8),
-                                new String[] { NS + ":(1,2)/(6,7)", NS + ":(2,3)/(6,7)", NS + ":(3,4)/(6,7)", NS + ":(4,5)/(6,7)" } }, //
-                        { true, "method4", new Class[] { int.class, String.class, List.class },
-                                new Object[] { 4, "xyz", Arrays.asList(1, 2, 3, 4) }, Arrays.asList(1, 2, 3, 4),
-                                new String[] { NS + ":1/xyz", NS + ":2/xyz", NS + ":3/xyz", NS + ":4/xyz" } }, //
+                { true, "method1", new Class[] { List.class }, new Object[] { Arrays.asList(1, 2, 3, 4) }, Arrays.asList(2, 4, 6, 8),
+                        new String[] { NS + ":1", NS + ":2", NS + ":3", NS + ":4" } }, //
+                { true, "method2", new Class[] { String.class, List.class }, new Object[] { "xyz", Arrays.asList(1, 2, 3, 4) },
+                        Arrays.asList(2, 4, 6, 8), new String[] { NS + ":1/xyz", NS + ":2/xyz", NS + ":3/xyz", NS + ":4/xyz" } }, //
+                { true, "method3", new Class[] { List.class, Point.class },
+                        new Object[] { Arrays.asList(new Point(1, 2), new Point(2, 3), new Point(3, 4), new Point(4, 5)), new Point(6, 7) },
+                        Arrays.asList(2, 4, 6, 8),
+                        new String[] { NS + ":(1,2)/(6,7)", NS + ":(2,3)/(6,7)", NS + ":(3,4)/(6,7)", NS + ":(4,5)/(6,7)" } }, //
+                { true, "method4", new Class[] { int.class, String.class, List.class },
+                        new Object[] { 4, "xyz", Arrays.asList(1, 2, 3, 4) }, Arrays.asList(1, 2, 3, 4),
+                        new String[] { NS + ":1/xyz", NS + ":2/xyz", NS + ":3/xyz", NS + ":4/xyz" } }, //
 
-                        { false, "method50", new Class[] { List.class }, new Object[] { Arrays.asList(1, 2, 3, 4) },
-                                Arrays.asList(1, 2, 3, 4), null }, //
-                        { false, "method51", new Class[] { List.class }, new Object[] { Arrays.asList(1, 2, 3, 4) }, null, null }, //
-                        { false, "method52", new Class[] { List.class }, new Object[] { Arrays.asList(1, 2, 3, 4) }, null, null }, //
-                        { false, "method53", new Class[] { int.class }, new Object[] { 53 }, Arrays.asList(1, 2, 3, 4), null }, //
-                        { false, "method54", new Class[] { List.class }, new Object[] { Arrays.asList(1, 2, 3, 4) },
-                                Arrays.asList(2, 4, 6, 8), null }, //
+                { false, "method50", new Class[] { List.class }, new Object[] { Arrays.asList(1, 2, 3, 4) }, Arrays.asList(1, 2, 3, 4),
+                        null }, //
+                { false, "method51", new Class[] { List.class }, new Object[] { Arrays.asList(1, 2, 3, 4) }, null, null }, //
+                { false, "method52", new Class[] { List.class }, new Object[] { Arrays.asList(1, 2, 3, 4) }, null, null }, //
+                { false, "method53", new Class[] { int.class }, new Object[] { 53 }, Arrays.asList(1, 2, 3, 4), null }, //
+                { false, "method54", new Class[] { List.class }, new Object[] { Arrays.asList(1, 2, 3, 4) }, Arrays.asList(2, 4, 6, 8),
+                        null }, //
 
-                });
+        });
     }
 
     private static final String NS = "ABC_NS";

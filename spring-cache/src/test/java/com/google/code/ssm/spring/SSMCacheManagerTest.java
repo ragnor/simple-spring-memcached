@@ -68,7 +68,7 @@ public class SSMCacheManagerTest {
         Mockito.when(cache3.getProperties()).thenReturn(new CacheProperties(true, "#"));
 
         caches = new HashSet<SSMCache>(Arrays.asList(new SSMCache(cache1, 60, false), new SSMCache(cache2, 60, false), new SSMCache(cache3,
-                60, false, true)));
+                60, false, true, true)));
 
         ssmCacheManager = new SSMCacheManager();
         ssmCacheManager.setCaches(caches);

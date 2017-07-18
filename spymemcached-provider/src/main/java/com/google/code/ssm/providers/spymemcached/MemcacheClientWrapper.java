@@ -64,10 +64,7 @@ class MemcacheClientWrapper extends AbstractMemcacheClientWrapper {
         try {
             f = memcachedClient.add(key, exp, value);
             return f.get();
-        } catch (InterruptedException e) {
-            cancel(f);
-            throw new CacheException(e);
-        } catch (ExecutionException e) {
+        } catch (InterruptedException | ExecutionException e) {
             cancel(f);
             throw new CacheException(e);
         }
@@ -80,10 +77,7 @@ class MemcacheClientWrapper extends AbstractMemcacheClientWrapper {
         try {
             f = memcachedClient.add(key, exp, value, getTranscoder(transcoder));
             return f.get();
-        } catch (InterruptedException e) {
-            cancel(f);
-            throw new CacheException(e);
-        } catch (ExecutionException e) {
+        } catch (InterruptedException | ExecutionException e) {
             cancel(f);
             throw new CacheException(e);
         }
@@ -123,9 +117,7 @@ class MemcacheClientWrapper extends AbstractMemcacheClientWrapper {
     public boolean delete(final String key) throws TimeoutException, CacheException {
         try {
             return memcachedClient.delete(key).get();
-        } catch (InterruptedException e) {
-            throw new CacheException(e);
-        } catch (ExecutionException e) {
+        } catch (InterruptedException | ExecutionException e) {
             throw new CacheException(e);
         }
     }
@@ -134,9 +126,7 @@ class MemcacheClientWrapper extends AbstractMemcacheClientWrapper {
     public void flush() throws CacheException {
         try {
             memcachedClient.flush().get();
-        } catch (InterruptedException e) {
-            throw new CacheException(e);
-        } catch (ExecutionException e) {
+        } catch (InterruptedException | ExecutionException e) {
             throw new CacheException(e);
         }
     }
@@ -177,10 +167,7 @@ class MemcacheClientWrapper extends AbstractMemcacheClientWrapper {
         try {
             f = memcachedClient.asyncGet(key, this.<T> getTranscoder(transcoder));
             return f.get(timeout, TimeUnit.MILLISECONDS);
-        } catch (InterruptedException e) {
-            cancel(f);
-            throw new CacheException(e);
-        } catch (ExecutionException e) {
+        } catch (InterruptedException | ExecutionException e) {
             cancel(f);
             throw new CacheException(e);
         }
@@ -273,10 +260,7 @@ class MemcacheClientWrapper extends AbstractMemcacheClientWrapper {
         try {
             f = memcachedClient.set(key, exp, value);
             return f.get();
-        } catch (InterruptedException e) {
-            cancel(f);
-            throw new CacheException(e);
-        } catch (ExecutionException e) {
+        } catch (InterruptedException | ExecutionException e) {
             cancel(f);
             throw new CacheException(e);
         }
@@ -289,10 +273,7 @@ class MemcacheClientWrapper extends AbstractMemcacheClientWrapper {
         try {
             f = memcachedClient.set(key, exp, value, getTranscoder(transcoder));
             return f.get();
-        } catch (InterruptedException e) {
-            cancel(f);
-            throw new CacheException(e);
-        } catch (ExecutionException e) {
+        } catch (InterruptedException | ExecutionException e) {
             cancel(f);
             throw new CacheException(e);
         }

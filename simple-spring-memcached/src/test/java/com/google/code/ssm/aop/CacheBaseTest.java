@@ -23,8 +23,8 @@ import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
-import static org.mockito.Matchers.eq;
-import static org.mockito.Matchers.startsWith;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.ArgumentMatchers.startsWith;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -36,10 +36,9 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.TimeoutException;
 
-import org.hamcrest.BaseMatcher;
-import org.hamcrest.Description;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.ArgumentMatcher;
 import org.mockito.Mockito;
 
 import com.google.code.ssm.Cache;
@@ -418,7 +417,7 @@ public class CacheBaseTest {
         }
     }
 
-    public static class StringCollectionMatcher extends BaseMatcher<Collection<String>> {
+    public static class StringCollectionMatcher implements ArgumentMatcher<Collection<String>> {
 
         private final String prefix;
 
@@ -427,19 +426,8 @@ public class CacheBaseTest {
         }
 
         @Override
-        public void describeTo(final Description arg0) {
-
-        }
-
-        @Override
-        public boolean matches(final Object arg0) {
-            if (!(arg0 instanceof Collection)) {
-                return false;
-            }
-
-            @SuppressWarnings("unchecked")
-            Collection<String> args = (Collection<String>) arg0;
-            for (String arg : args) {
+        public boolean matches(Collection<String> argument) {
+            for (String arg : argument) {
                 if (!arg.startsWith(prefix)) {
                     return false;
                 }

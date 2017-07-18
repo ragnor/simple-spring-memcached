@@ -49,7 +49,7 @@ public class JndiChangeNotifierTest {
         @SuppressWarnings("unchecked")
         List<InetSocketAddress> list = Mockito.mock(List.class);
         JndiChangeNotifier spy = Mockito.spy(jndiChangeNotifier);
-        Mockito.stub(spy.getAddresses()).toReturn(list);
+        Mockito.when(spy.getAddresses()).thenReturn(list);
 
         spy.check();
         spy.check();
@@ -59,7 +59,7 @@ public class JndiChangeNotifierTest {
     @Test
     public void checkNullAdress() {
         JndiChangeNotifier spy = Mockito.spy(jndiChangeNotifier);
-        Mockito.stub(spy.getAddresses()).toReturn(null);
+        Mockito.when(spy.getAddresses()).thenReturn(null);
 
         spy.check();
         Mockito.verifyZeroInteractions(addressChangeListener);

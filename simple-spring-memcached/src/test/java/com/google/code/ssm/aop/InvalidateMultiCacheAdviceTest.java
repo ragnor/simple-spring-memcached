@@ -17,12 +17,12 @@
 package com.google.code.ssm.aop;
 
 import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.argThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyString;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -31,13 +31,12 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.hamcrest.BaseMatcher;
 import org.hamcrest.CoreMatchers;
-import org.hamcrest.Description;
 import org.junit.Assume;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runners.Parameterized.Parameters;
+import org.mockito.ArgumentMatcher;
 
 import com.google.code.ssm.api.InvalidateMultiCache;
 import com.google.code.ssm.api.ParameterValueKeyProvider;
@@ -106,20 +105,14 @@ public class InvalidateMultiCacheAdviceTest extends AbstractCacheTest<Invalidate
         assertEquals(expectedValue, advice.cacheInvalidateMulti(pjp));
 
         verify(pjp).proceed();
-        verify(cache).delete(argThat(new BaseMatcher<Set<String>>() {
+        verify(cache).delete(argThat(new ArgumentMatcher<Collection<String>>() {
 
             @Override
-            public boolean matches(Object arg0) {
-                @SuppressWarnings("unchecked")
-                Collection<String> set = (Collection<String>) arg0;
+            public boolean matches(Collection<String> set) {
                 Set<String> target = new HashSet<String>(Arrays.asList(cacheKeys));
                 return set.containsAll(target) && target.containsAll(set);
             }
 
-            @Override
-            public void describeTo(Description arg0) {
-
-            }
         }));
     }
 

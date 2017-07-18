@@ -64,21 +64,17 @@ class MemcacheClientWrapper extends AbstractMemcacheClientWrapper {
     public boolean add(final String key, final int exp, final Object value) throws TimeoutException, CacheException {
         try {
             return memcachedClient.add(key, exp, value);
-        } catch (MemcachedException e) {
-            throw new CacheException(e);
-        } catch (InterruptedException e) {
+        } catch (MemcachedException | InterruptedException e) {
             throw new CacheException(e);
         }
     }
 
     @Override
-    public <T> boolean add(final String key, final int exp, final T value, final CacheTranscoder transcoder) throws TimeoutException,
-            CacheException {
+    public <T> boolean add(final String key, final int exp, final T value, final CacheTranscoder transcoder)
+            throws TimeoutException, CacheException {
         try {
             return memcachedClient.add(key, exp, value, getTranscoder(transcoder));
-        } catch (MemcachedException e) {
-            throw new CacheException(e);
-        } catch (InterruptedException e) {
+        } catch (MemcachedException | InterruptedException e) {
             throw new CacheException(e);
         }
     }
@@ -87,9 +83,7 @@ class MemcacheClientWrapper extends AbstractMemcacheClientWrapper {
     public long decr(final String key, final int by) throws TimeoutException, CacheException {
         try {
             return memcachedClient.decr(key, by);
-        } catch (InterruptedException e) {
-            throw new CacheException(e);
-        } catch (MemcachedException e) {
+        } catch (MemcachedException | InterruptedException e) {
             throw new CacheException(e);
         }
     }
@@ -98,9 +92,7 @@ class MemcacheClientWrapper extends AbstractMemcacheClientWrapper {
     public long decr(final String key, final int by, final long def) throws TimeoutException, CacheException {
         try {
             return memcachedClient.decr(key, by, def);
-        } catch (InterruptedException e) {
-            throw new CacheException(e);
-        } catch (MemcachedException e) {
+        } catch (MemcachedException | InterruptedException e) {
             throw new CacheException(e);
         }
     }
@@ -109,9 +101,7 @@ class MemcacheClientWrapper extends AbstractMemcacheClientWrapper {
     public boolean delete(final String key) throws TimeoutException, CacheException {
         try {
             return memcachedClient.delete(key);
-        } catch (InterruptedException e) {
-            throw new CacheException(e);
-        } catch (MemcachedException e) {
+        } catch (MemcachedException | InterruptedException e) {
             throw new CacheException(e);
         }
     }
@@ -120,9 +110,7 @@ class MemcacheClientWrapper extends AbstractMemcacheClientWrapper {
     public void flush() throws TimeoutException, CacheException {
         try {
             memcachedClient.flushAll();
-        } catch (InterruptedException e) {
-            throw new CacheException(e);
-        } catch (MemcachedException e) {
+        } catch (MemcachedException | InterruptedException e) {
             throw new CacheException(e);
         }
     }
@@ -131,9 +119,7 @@ class MemcacheClientWrapper extends AbstractMemcacheClientWrapper {
     public Object get(final String key) throws TimeoutException, CacheException {
         try {
             return memcachedClient.get(key);
-        } catch (InterruptedException e) {
-            throw new CacheException(e);
-        } catch (MemcachedException e) {
+        } catch (MemcachedException | InterruptedException e) {
             throw new CacheException(e);
         }
     }
@@ -142,9 +128,7 @@ class MemcacheClientWrapper extends AbstractMemcacheClientWrapper {
     public <T> T get(final String key, final CacheTranscoder transcoder) throws TimeoutException, CacheException {
         try {
             return memcachedClient.get(key, this.<T> getTranscoder(transcoder));
-        } catch (InterruptedException e) {
-            throw new CacheException(e);
-        } catch (MemcachedException e) {
+        } catch (MemcachedException | InterruptedException e) {
             throw new CacheException(e);
         }
     }
@@ -153,9 +137,7 @@ class MemcacheClientWrapper extends AbstractMemcacheClientWrapper {
     public <T> T get(final String key, final CacheTranscoder transcoder, final long timeout) throws TimeoutException, CacheException {
         try {
             return memcachedClient.get(key, timeout, this.<T> getTranscoder(transcoder));
-        } catch (InterruptedException e) {
-            throw new CacheException(e);
-        } catch (MemcachedException e) {
+        } catch (MemcachedException | InterruptedException e) {
             throw new CacheException(e);
         }
     }
@@ -178,23 +160,19 @@ class MemcacheClientWrapper extends AbstractMemcacheClientWrapper {
         try {
             result = memcachedClient.get(keys);
             return (result == null) ? Collections.<String, Object> emptyMap() : result;
-        } catch (InterruptedException e) {
-            throw new CacheException(e);
-        } catch (MemcachedException e) {
+        } catch (MemcachedException | InterruptedException e) {
             throw new CacheException(e);
         }
     }
 
     @Override
-    public <T> Map<String, T> getBulk(final Collection<String> keys, final CacheTranscoder transcoder) throws TimeoutException,
-            CacheException {
+    public <T> Map<String, T> getBulk(final Collection<String> keys, final CacheTranscoder transcoder)
+            throws TimeoutException, CacheException {
         Map<String, T> result = null;
         try {
             result = memcachedClient.get(keys, this.<T> getTranscoder(transcoder));
             return (result == null) ? Collections.<String, T> emptyMap() : result;
-        } catch (InterruptedException e) {
-            throw new CacheException(e);
-        } catch (MemcachedException e) {
+        } catch (MemcachedException | InterruptedException e) {
             throw new CacheException(e);
         }
     }
@@ -203,9 +181,7 @@ class MemcacheClientWrapper extends AbstractMemcacheClientWrapper {
     public long incr(final String key, final int by) throws TimeoutException, CacheException {
         try {
             return memcachedClient.incr(key, by);
-        } catch (InterruptedException e) {
-            throw new CacheException(e);
-        } catch (MemcachedException e) {
+        } catch (MemcachedException | InterruptedException e) {
             throw new CacheException(e);
         }
     }
@@ -214,9 +190,7 @@ class MemcacheClientWrapper extends AbstractMemcacheClientWrapper {
     public long incr(final String key, final int by, final long def) throws TimeoutException, CacheException {
         try {
             return memcachedClient.incr(key, by, def);
-        } catch (InterruptedException e) {
-            throw new CacheException(e);
-        } catch (MemcachedException e) {
+        } catch (MemcachedException | InterruptedException e) {
             throw new CacheException(e);
         }
     }
@@ -225,9 +199,7 @@ class MemcacheClientWrapper extends AbstractMemcacheClientWrapper {
     public long incr(final String key, final int by, final long def, final int expiration) throws TimeoutException, CacheException {
         try {
             return memcachedClient.incr(key, by, def, memcachedClient.getOpTimeout(), expiration);
-        } catch (InterruptedException e) {
-            throw new CacheException(e);
-        } catch (MemcachedException e) {
+        } catch (MemcachedException | InterruptedException e) {
             throw new CacheException(e);
         }
     }
@@ -236,21 +208,17 @@ class MemcacheClientWrapper extends AbstractMemcacheClientWrapper {
     public boolean set(final String key, final int exp, final Object value) throws TimeoutException, CacheException {
         try {
             return memcachedClient.set(key, exp, value);
-        } catch (InterruptedException e) {
-            throw new CacheException(e);
-        } catch (MemcachedException e) {
+        } catch (MemcachedException | InterruptedException e) {
             throw new CacheException(e);
         }
     }
 
     @Override
-    public <T> boolean set(final String key, final int exp, final T value, final CacheTranscoder transcoder) throws TimeoutException,
-            CacheException {
+    public <T> boolean set(final String key, final int exp, final T value, final CacheTranscoder transcoder)
+            throws TimeoutException, CacheException {
         try {
             return memcachedClient.set(key, exp, value, getTranscoder(transcoder));
-        } catch (InterruptedException e) {
-            throw new CacheException(e);
-        } catch (MemcachedException e) {
+        } catch (MemcachedException | InterruptedException e) {
             throw new CacheException(e);
         }
     }

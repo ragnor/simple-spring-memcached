@@ -51,6 +51,16 @@ public class SSMCache implements Cache {
 
     @Getter
     private final boolean allowClear;
+    
+    /**
+     * If true exceptions thrown by underlying cache are muted and aren't forwarded to Spring Cache Abstraction, 
+     * it's behaviour of SSM before 4.0.0. If false then exceptions will be passed to caller and optionally wrapped if not
+     * RuntimeException. 
+     * 
+     * @since 4.0.0
+     */
+    @Getter
+    private final boolean muteExceptions;
 
     /**
      * 
@@ -62,15 +72,17 @@ public class SSMCache implements Cache {
     @Getter
     private final boolean registerAliases;
 
-    public SSMCache(final com.google.code.ssm.Cache cache, final int expiration, final boolean allowClear, final boolean registerAliases) {
+    public SSMCache(final com.google.code.ssm.Cache cache, final int expiration, final boolean allowClear, final boolean registerAliases,
+            final boolean muteExceptions) {
         this.cache = cache;
         this.expiration = expiration;
         this.allowClear = allowClear;
         this.registerAliases = registerAliases;
+        this.muteExceptions = muteExceptions;
     }
 
     public SSMCache(final com.google.code.ssm.Cache cache, final int expiration, final boolean allowClear) {
-        this(cache, expiration, allowClear, false);
+        this(cache, expiration, allowClear, false, true);
     }
 
     public SSMCache(final com.google.code.ssm.Cache cache, final int expiration) {
@@ -178,13 +190,8 @@ public class SSMCache implements Cache {
                 LOGGER.info("Put '{}' under key {} to cache {}", new Object[] { value, key, cache.getName() });
                 final Object store = toStoreValue(value);
                 cache.set(cacheKey, expiration, store, null);
-            } catch (TimeoutException e) {
-                LOGGER.warn("An error has ocurred for cache {} and key {}", new Object []{ getName(), cacheKey, e});
-            } catch (CacheException e) {
-                LOGGER.warn("An error has ocurred for cache {} and key {}", new Object []{ getName(), cacheKey, e});
-            } catch (RuntimeException e) {
-                // do not propagate any exceptions
-                LOGGER.warn("An error has ocurred for cache {} and key {}", new Object []{ getName(), cacheKey, e});
+            } catch (TimeoutException | CacheException | RuntimeException e) {
+                logOrThrow(e, "An error has ocurred for cache {} and key {}", getName(), cacheKey, e);
             }
         } else {
             LOGGER.info("Cannot put to cache {} because key is null", cache.getName());
@@ -210,13 +217,8 @@ public class SSMCache implements Cache {
                 final Object store = toStoreValue(value);
                 final boolean added = cache.add(cacheKey, expiration, store, null);
                 return added ? null : get(key);
-            } catch (TimeoutException e) {
-                LOGGER.warn("An error has ocurred for cache {} and key {}", new Object []{ getName(), cacheKey, e});
-            } catch (CacheException e) {
-                LOGGER.warn("An error has ocurred for cache {} and key {}", new Object []{ getName(), cacheKey, e});
-            } catch (RuntimeException e) {
-                // do not propagate any exceptions
-                LOGGER.warn("An error has ocurred for cache {} and key {}", new Object []{ getName(), cacheKey, e});
+            } catch (TimeoutException | CacheException | RuntimeException e) {
+                logOrThrow(e, "An error has ocurred for cache {} and key {}", getName(), cacheKey, e);
             }
         } else {
             LOGGER.info("Cannot put to cache {} because key is null", cache.getName());
@@ -237,13 +239,8 @@ public class SSMCache implements Cache {
             try {
                 LOGGER.info("Evict {} from cache {}", key, cache.getName());
                 cache.delete(cacheKey);
-            } catch (TimeoutException e) {
-                LOGGER.warn("An error has ocurred for cache {} and key {}", new Object []{ getName(), cacheKey, e});
-            } catch (CacheException e) {
-                LOGGER.warn("An error has ocurred for cache {} and key {}", new Object []{ getName(), cacheKey, e});
-            } catch (RuntimeException e) {
-                // do not propagate any exceptions
-                LOGGER.warn("An error has ocurred for cache {} and key {}", new Object []{ getName(), cacheKey, e});
+            } catch (TimeoutException | CacheException | RuntimeException e) {
+                logOrThrow(e, "An error has ocurred for cache {} and key {}", getName(), cacheKey, e);
             }
         } else {
             LOGGER.info("Cannot evict from cache {} because key is null", cache.getName());
@@ -266,13 +263,8 @@ public class SSMCache implements Cache {
         try {
             LOGGER.info("Clear {}", cache.getName());
             cache.flush();
-        } catch (TimeoutException e) {
-            LOGGER.warn("An error has ocurred for cache {}", getName(), e);
-        } catch (CacheException e) {
-            LOGGER.warn("An error has ocurred for cache {}", getName(), e);
-        } catch (RuntimeException e) {
-            // do not propagate any exceptions
-            LOGGER.warn("An error has ocurred for cache {}", getName(), e);
+        } catch (TimeoutException | CacheException | RuntimeException e) {
+            logOrThrow(e, "An error has ocurred for cache {}", getName(), e);
         }
     }
 
@@ -282,13 +274,8 @@ public class SSMCache implements Cache {
 
         try {
             value = cache.get(cacheKey, null);
-        } catch (TimeoutException e) {
-            LOGGER.warn("An error has ocurred for cache {} and key {}", new Object []{ getName(), cacheKey, e});
-        } catch (CacheException e) {
-            LOGGER.warn("An error has ocurred for cache {} and key {}", new Object []{ getName(), cacheKey, e});
-        } catch (RuntimeException e) {
-            // do not propagate any exceptions
-            LOGGER.warn("An error has ocurred for cache {} and key {}", new Object []{ getName(), cacheKey, e});
+        } catch (TimeoutException | CacheException | RuntimeException e) {
+            logOrThrow(e, "An error has ocurred for cache {} and key {}", getName(), cacheKey, e);
         }
 
         return value;
@@ -310,6 +297,16 @@ public class SSMCache implements Cache {
         return value == null ? PertinentNegativeNull.NULL : value;
     }
     
+    private void logOrThrow(final RuntimeException e, final String message, final Object ... args) {
+        LOGGER.warn(message, args);
+        if (!muteExceptions) {
+            throw e;
+        }
+    }
+    
+    private void logOrThrow(final Exception e, final String message, final Object ... args) {
+        logOrThrow(new WrappedCacheException(e), message, args);
+    }
     
     /**
      * A custom exception class because org.springframework.cache.Cache.ValueRetrievalException cannot be used 

@@ -18,6 +18,7 @@ package com.google.code.ssm;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertSame;
+import static com.google.code.ssm.test.Matcher.any;
 
 import java.net.SocketAddress;
 import java.util.ArrayList;
@@ -221,7 +222,7 @@ public class CacheImplTest {
         String cacheKey = "key1";
 
         cache.getCounter(cacheKey);
-        Mockito.verify(cacheClient).get(Mockito.eq(getKey(cacheKey)), Mockito.any(LongToStringTranscoder.class));
+        Mockito.verify(cacheClient).get(Mockito.eq(getKey(cacheKey)), any(LongToStringTranscoder.class));
     }
 
     @Test
@@ -232,7 +233,7 @@ public class CacheImplTest {
 
         cache.setCounter(cacheKey, expiration, value);
         Mockito.verify(cacheClient).set(Mockito.eq(getKey(cacheKey)), Mockito.eq(expiration), Mockito.eq(value),
-                Mockito.any(LongToStringTranscoder.class));
+                any(LongToStringTranscoder.class));
     }
 
     @Test
@@ -261,7 +262,7 @@ public class CacheImplTest {
     }
 
     private static Collection<String> sameItems(Collection<String> items) {
-        class CollectionOfItemssMatcher extends ArgumentMatcher<Collection<String>> {
+        class CollectionOfItemssMatcher implements ArgumentMatcher<Collection<String>> {
 
             private final Collection<String> expectedItems;
 
@@ -270,18 +271,16 @@ public class CacheImplTest {
             }
 
             @Override
-            @SuppressWarnings("unchecked")
-            public boolean matches(Object actual) {
-                if (actual == null || !(actual instanceof Collection)) {
+            public boolean matches(Collection<String> actual) {
+                if (actual == null) {
                     return false;
                 }
 
-                Collection<String> actualItems = ((Collection<String>) actual);
-                if (actualItems.size() != expectedItems.size()) {
+                if (actual.size() != expectedItems.size()) {
                     return false;
                 }
 
-                Iterator<String> actualIter = actualItems.iterator();
+                Iterator<String> actualIter = actual.iterator();
                 Iterator<String> expectedIter = expectedItems.iterator();
                 while (actualIter.hasNext()) {
                     if (!actualIter.next().equals(expectedIter.next())) {
