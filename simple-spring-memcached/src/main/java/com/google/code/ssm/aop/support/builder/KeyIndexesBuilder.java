@@ -106,7 +106,7 @@ public class KeyIndexesBuilder extends AbstractDataBuilder {
             }
             // log warn if for non multi annotation one of Collection parameter is annotated as a ParameterValueKeyProvider
             if (!isMulti && Collection.class.isAssignableFrom(targetMethod.getParameterTypes()[ix])) {
-                LOG.warn("ParameterValueKeyProvider is used on a list parameter [%s] in method [%s] with non multi cache annotation."
+                LOG.warn("ParameterValueKeyProvider is used on a list parameter {} in method {} with non multi cache annotation."
                         + "Consider changing to *MultiCache annotation or use another parameter for key. Using collections in such case "
                         + "may lead to unexpected consequences: key can exceed allowed memcached key length, key will be varied "
                         + "when order or size are changed." , targetMethod.getParameterTypes()[ix], targetMethod.getName());
