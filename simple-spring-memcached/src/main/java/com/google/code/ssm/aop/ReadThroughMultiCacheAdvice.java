@@ -164,7 +164,7 @@ public class ReadThroughMultiCacheAdvice extends MultiCacheAdvice {
             final SerializationType serializationType) {
         if (results.size() != coord.getMissedObjects().size()) {
             getLogger().warn(
-                    "Did not receive a correlated amount of data from the target method: %s. "
+                    "Did not receive a correlated amount of data from the target method: {}. "
                             + "Result list will be unsorted and won't respect the order of the keys passed in argument.",
                     coord.getMethod().getName());
             results.addAll(coord.generatePartialResultList());
