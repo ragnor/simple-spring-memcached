@@ -171,9 +171,9 @@ abstract class MultiCacheAdvice extends CacheAdvice {
             this.key2Result.putAll(key2Result);
 
             final Set<Object> missObjectSet = new LinkedHashSet<Object>();
-            for (final String key : this.key2Obj.keySet()) {
-                if (this.key2Result.get(key) == null) {
-                    missObjectSet.add(key2Obj.get(key));
+            for (final Map.Entry<String, Object> entry : this.key2Obj.entrySet()) {
+                if (this.key2Result.get(entry.getKey()) == null) {
+                    missObjectSet.add(entry.getValue());
                 }
             }
             this.missedObjects.addAll(missObjectSet);
