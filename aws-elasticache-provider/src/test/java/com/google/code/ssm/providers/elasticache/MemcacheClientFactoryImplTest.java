@@ -57,15 +57,10 @@ public class MemcacheClientFactoryImplTest {
         conf.setOperationTimeout(1000);
         conf.setUseBinaryProtocol(false);
 
-        try {
-            CacheClient client = factory.create(addrs, conf);
+        CacheClient client = factory.create(addrs, conf);
 
-            assertNotNull(client);
-            client.shutdown();
-        } catch (RuntimeException ex) {
-            printException(ex);
-            throw ex;
-        }
+        assertNotNull(client);
+        client.shutdown();
     }
 
     @Test
@@ -80,26 +75,10 @@ public class MemcacheClientFactoryImplTest {
         conf.setTimeoutExceptionThreshold(100);
         conf.setUseNagleAlgorithm(false);
 
-        try {
-            CacheClient client = factory.create(addrs, conf);
+        CacheClient client = factory.create(addrs, conf);
 
-            assertNotNull(client);
-            client.shutdown();
-        } catch (RuntimeException ex) {
-            printException(ex);
-            throw ex;
-        }
-    }
-    
-    private void printException(final Exception ex) {
-        System.err.println("An exception has occurred");
-        ex.printStackTrace();
-        Throwable t = ex;
-        while (t.getCause() != null) {
-            System.err.println("Cause: ");
-            t = t.getCause();
-            t.printStackTrace();
-        }
+        assertNotNull(client);
+        client.shutdown();
     }
 
 }
