@@ -42,7 +42,7 @@ public class CachedObjectImplTest {
 
     @Test
     public void getData() {
-        assertEquals(data, cachedObjectImpl.getData());
+        assertArrayEquals(data, cachedObjectImpl.getData());
     }
 
     @Test

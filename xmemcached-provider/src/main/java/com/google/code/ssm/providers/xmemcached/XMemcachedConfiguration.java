@@ -23,6 +23,8 @@ import java.util.Map;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
 import net.rubyeye.xmemcached.MemcachedClient;
 import net.rubyeye.xmemcached.MemcachedClientBuilder;
 import net.rubyeye.xmemcached.MemcachedClientStateListener;
@@ -33,6 +35,8 @@ import net.rubyeye.xmemcached.transcoders.Transcoder;
 import com.google.code.ssm.providers.CacheConfiguration;
 import com.google.code.yanf4j.config.Configuration;
 import com.google.code.yanf4j.core.SocketOption;
+
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 /**
  * 
@@ -163,6 +167,8 @@ public class XMemcachedConfiguration extends CacheConfiguration {
      * @see XMemcachedClientBuilder#XMemcachedClientBuilder(List, int[])
      * @since 3.3.0
      */
+    @Getter(onMethod=@__({@SuppressFBWarnings}))
+    @Setter(onMethod=@__({@SuppressFBWarnings}))
     private int[] weights;
 
 }

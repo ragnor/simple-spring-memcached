@@ -19,6 +19,7 @@ package com.google.code.ssm.providers;
 
 import java.util.Arrays;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import lombok.Getter;
 
 /**
@@ -32,11 +33,12 @@ public class CachedObjectImpl implements CachedObject {
 
     private final int flags;
 
+    @Getter(onMethod=@__({@SuppressFBWarnings}))
     private final byte[] data;
 
     public CachedObjectImpl(final int flags, final byte[] data) {
         this.flags = flags;
-        this.data = data;
+        this.data = data.clone();
     }
 
     @Override
