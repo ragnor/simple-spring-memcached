@@ -80,13 +80,19 @@ public class MemcacheClientFactoryImplTest {
         conf.setTimeoutExceptionThreshold(100);
         conf.setUseNagleAlgorithm(false);
 
-        CacheClient client = factory.create(addrs, conf);
+        try {
+            CacheClient client = factory.create(addrs, conf);
 
-        assertNotNull(client);
-        client.shutdown();
+            assertNotNull(client);
+            client.shutdown();
+        } catch (RuntimeException ex) {
+            printException(ex);
+            throw ex;
+        }
     }
     
     private void printException(final Exception ex) {
+        System.err.println("An exception has occurred");
         ex.printStackTrace();
         Throwable t = ex;
         while (t.getCause() != null) {
