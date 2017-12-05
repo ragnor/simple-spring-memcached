@@ -74,7 +74,7 @@ public class MemcacheClientFactoryImplTest {
         conf.setConsistentHashing(true);
         conf.setOperationTimeout(100);
         conf.setUseBinaryProtocol(false);
-        conf.setFailureMode(FailureMode.Cancel);
+        conf.setFailureMode(FailureMode.Retry);
         conf.setShouldOptimize(true);
         conf.setMaxReconnectDelay(1000L);
         conf.setTimeoutExceptionThreshold(100);
