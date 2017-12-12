@@ -82,7 +82,7 @@ public class SSMCache implements Cache {
     }
 
     public SSMCache(final com.google.code.ssm.Cache cache, final int expiration, final boolean allowClear) {
-        this(cache, expiration, allowClear, false, true);
+        this(cache, expiration, allowClear, false, false);
     }
 
     public SSMCache(final com.google.code.ssm.Cache cache, final int expiration) {
@@ -305,7 +305,11 @@ public class SSMCache implements Cache {
     }
     
     private void logOrThrow(final Exception e, final String message, final Object ... args) {
-        logOrThrow(new WrappedCacheException(e), message, args);
+        if (RuntimeException.class.isInstance(e)) {
+            logOrThrow(RuntimeException.class.cast(e), message, args);
+        } else {
+            logOrThrow(new WrappedCacheException(e), message, args);
+        }
     }
     
     /**

@@ -42,6 +42,8 @@
 					<constructor-arg name="expiration" index="1" value="300" />
 					<!-- @CacheEvict(..., "allEntries" = true) doesn't work -->
 					<constructor-arg name="allowClear" index="2" value="false" />
+					<constructor-arg name="registerAliases" index="3" value="false" />
+					<constructor-arg name="muteExceptions" index="4" value="true" />
 				</bean>
 			</set>
 		</property>
