@@ -49,6 +49,10 @@
 		<url>https://ragnor.ci.cloudbees.com/</url>
 	</ciManagement>
 
+	<prerequisites>
+		<maven>3.0.4</maven>	
+	</prerequisites>
+
 	<dependencies>
 		<dependency>
 			<groupId>org.apache.maven</groupId>

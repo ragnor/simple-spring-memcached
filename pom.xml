@@ -77,11 +77,8 @@
 		<module>jmemcached-maven-plugin</module>
 	</modules>
 
-	<prerequisites>
-		<maven>3.0.4</maven>
-		<!-- if you noticed 'incompatible types' errors -->
-		<!-- see: http://bugs.sun.com/view_bug.do?bug_id=6512707 -->
-	</prerequisites>
+	<!-- if you noticed 'incompatible types' errors -->
+	<!-- see: http://bugs.sun.com/view_bug.do?bug_id=6512707 -->
 
 	<properties>
 		<spring.version>4.3.9.RELEASE</spring.version>
@@ -110,6 +107,8 @@
 		<maven-surefire-report-plugin.version>2.18.1</maven-surefire-report-plugin.version>
 		<taglist-maven-plugin.version>2.4</taglist-maven-plugin.version>
 
+		<maven.compiler.source>1.8</maven.compiler.source>
+    	<maven.compiler.target>1.8</maven.compiler.target>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 	</properties>
@@ -189,12 +188,12 @@
 			<dependency>
 				<groupId>org.easymock</groupId>
 				<artifactId>easymock</artifactId>
-				<version>3.3.1</version>
+				<version>3.5.1</version>
 			</dependency>
 			<dependency>
 				<groupId>org.mockito</groupId>
 				<artifactId>mockito-core</artifactId>
-				<version>2.8.47</version>
+				<version>2.13.0</version>
 			</dependency>
 			<dependency>
 				<groupId>net.vidageek</groupId>
@@ -202,22 +201,22 @@
 				<version>1.6.1</version>
 			</dependency>
 			<dependency>
-			    <groupId>nl.jqno.equalsverifier</groupId>
-			    <artifactId>equalsverifier</artifactId>
-			    <version>2.4</version>
-			    <scope>test</scope>
+				<groupId>nl.jqno.equalsverifier</groupId>
+				<artifactId>equalsverifier</artifactId>
+				<version>2.4</version>
+				<scope>test</scope>
 			</dependency>
 			<dependency>
-			    <groupId>com.google.code.findbugs</groupId>
-			    <artifactId>annotations</artifactId>
-			    <version>3.0.1</version>
-			    <scope>provided</scope>
+				<groupId>com.google.code.findbugs</groupId>
+				<artifactId>annotations</artifactId>
+				<version>3.0.1</version>
+				<scope>provided</scope>
 			</dependency>
 			<dependency>
-			    <groupId>com.google.code.findbugs</groupId>
-			    <artifactId>jsr305</artifactId>
-			    <version>3.0.1</version>
-			    <scope>provided</scope>
+				<groupId>com.google.code.findbugs</groupId>
+				<artifactId>jsr305</artifactId>
+				<version>3.0.1</version>
+				<scope>provided</scope>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>
@@ -291,8 +290,7 @@
 					<artifactId>maven-compiler-plugin</artifactId>
 					<version>3.3</version>
 					<configuration>
-						<source>1.7</source>
-						<target>1.7</target>
+						<source>1.8</source>
 					</configuration>
 				</plugin>
 				<plugin>
@@ -381,7 +379,7 @@
 						<linkXRef>true</linkXRef>
 						<sourceEncoding>utf-8</sourceEncoding>
 						<minimumTokens>100</minimumTokens>
-						<targetJdk>1.7</targetJdk>
+						<targetJdk>1.8</targetJdk>
 					</configuration>
 				</plugin>
 				<plugin>
@@ -492,7 +490,7 @@
 							<dependency>
 								<groupId>sun.jdk</groupId>
 								<artifactId>tools</artifactId>
-								<version>1.7</version>
+								<version>1.8</version>
 								<scope>system</scope>
 								<systemPath>${java.home}/../lib/tools.jar</systemPath>
 							</dependency>

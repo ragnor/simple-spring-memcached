@@ -20,8 +20,7 @@ import org.mockito.AdditionalMatchers;
 import org.mockito.Mockito;
 
 public final class Matcher {
-    
-    @SuppressWarnings("unchecked")
+
     public static <T> T any(final Class<T> clazz) {
         return (T) AdditionalMatchers.or(Mockito.any(clazz), Mockito.isNull());
     }

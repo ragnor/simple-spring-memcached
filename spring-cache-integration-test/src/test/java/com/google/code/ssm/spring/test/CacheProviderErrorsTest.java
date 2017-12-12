@@ -39,7 +39,6 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
 
 import com.google.code.ssm.Cache;
-import com.google.code.ssm.api.format.SerializationType;
 import com.google.code.ssm.providers.CacheException;
 import com.google.code.ssm.spring.test.dao.TestDAO;
 import com.google.code.ssm.spring.test.service.TestService;
@@ -85,7 +84,7 @@ public class CacheProviderErrorsTest {
 
             doThrow(exception).when(cacheMock).get(Long.toString(id), null);
             doReturn(value).when(testDaoMock).get(id);
-            doThrow(exception).when(cacheMock).set(eq(Long.toString(id)), anyInt(), eq(value), isNull(SerializationType.class));
+            doThrow(exception).when(cacheMock).set(eq(Long.toString(id)), anyInt(), eq(value), isNull());
 
             testService.get(id);
 
@@ -93,7 +92,7 @@ public class CacheProviderErrorsTest {
             verify(testDaoMock).get(id);
             // check that cache was invoked
             verify(cacheMock).get(Long.toString(id), null);
-            verify(cacheMock).set(eq(Long.toString(id)), anyInt(), eq(value), isNull(SerializationType.class));
+            verify(cacheMock).set(eq(Long.toString(id)), anyInt(), eq(value), isNull());
         }
     }
 
@@ -138,7 +137,7 @@ public class CacheProviderErrorsTest {
         for (Class<Throwable> exception : cacheProvidersExceptionClasses) {
             reset(testDaoMock, cacheMock);
 
-            doThrow(exception).when(cacheMock).set(eq(Long.toString(id)), anyInt(), eq(value), isNull(SerializationType.class));
+            doThrow(exception).when(cacheMock).set(eq(Long.toString(id)), anyInt(), eq(value), isNull());
             doReturn(value).when(testDaoMock).update(id, value);
 
             testService.update(id, value);
@@ -146,7 +145,7 @@ public class CacheProviderErrorsTest {
             // check that intercepted method was invoked
             verify(testDaoMock).update(id, value);
             // check that cache was invoked
-            verify(cacheMock).set(eq(Long.toString(id)), anyInt(), eq(value), isNull(SerializationType.class));
+            verify(cacheMock).set(eq(Long.toString(id)), anyInt(), eq(value), isNull());
         }
     }
 

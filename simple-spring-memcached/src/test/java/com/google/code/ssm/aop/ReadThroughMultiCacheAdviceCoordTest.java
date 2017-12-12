@@ -18,10 +18,9 @@ package com.google.code.ssm.aop;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.mockito.Matchers.anyInt;
-import static org.mockito.Matchers.anyObject;
-import static org.mockito.Matchers.anyString;
-import static org.mockito.Matchers.eq;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -136,7 +135,7 @@ public class ReadThroughMultiCacheAdviceCoordTest {
         assertEquals(expected, result);
         verify(cache).getBulk(eq(new HashSet<String>(cacheKeys)), any(SerializationType.class));
         verify(pjp, never()).proceed(any(Object[].class));
-        verify(cache, never()).setSilently(anyString(), anyInt(), anyObject(), any(SerializationType.class));
+        verify(cache, never()).setSilently(anyString(), anyInt(), any(), any(SerializationType.class));
     }
 
     @Test
@@ -153,8 +152,8 @@ public class ReadThroughMultiCacheAdviceCoordTest {
         assertEquals(expected, result);
         verify(pjp).proceed(args);
         verify(cache).getBulk(eq(new HashSet<String>(cacheKeys)), any(SerializationType.class));
-        verify(cache, never()).setSilently(anyString(), anyInt(), anyObject(), any(SerializationType.class));
-        verify(cache, never()).addSilently(anyString(), anyInt(), anyObject(), any(SerializationType.class));
+        verify(cache, never()).setSilently(anyString(), anyInt(), any(), any(SerializationType.class));
+        verify(cache, never()).addSilently(anyString(), anyInt(), any(), any(SerializationType.class));
     }
 
     @Test
@@ -171,7 +170,7 @@ public class ReadThroughMultiCacheAdviceCoordTest {
         assertEquals(expected, result);
         verify(pjp).proceed(args);
         verify(cache).getBulk(eq(new HashSet<String>(cacheKeys)), any(SerializationType.class));
-        verify(cache, never()).setSilently(anyString(), anyInt(), anyObject(), any(SerializationType.class));
+        verify(cache, never()).setSilently(anyString(), anyInt(), any(), any(SerializationType.class));
         verify(cache).addSilently(eq(cacheKeys.get(0)), eq(EXPIRATION), eq(PertinentNegativeNull.NULL), any(SerializationType.class));
         verify(cache).addSilently(eq(cacheKeys.get(1)), eq(EXPIRATION), eq(PertinentNegativeNull.NULL), any(SerializationType.class));
     }
@@ -182,7 +181,7 @@ public class ReadThroughMultiCacheAdviceCoordTest {
 
         when(cacheBase.getMethodToCache(pjp)).thenReturn(methodToCache);
         when(cacheBase.getCache(any(AnnotationData.class))).thenReturn(cache);
-        when(cacheBase.getSubmission(anyObject())).thenAnswer(new Answer<Object>() {
+        when(cacheBase.getSubmission(any())).thenAnswer(new Answer<Object>() {
 
             @Override
             public Object answer(InvocationOnMock invocation) throws Throwable {
