@@ -2,11 +2,6 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<parent>
-		<groupId>org.sonatype.oss</groupId>
-		<artifactId>oss-parent</artifactId>
-		<version>9</version>
-	</parent>
 	<groupId>com.google.code.simple-spring-memcached</groupId>
 	<artifactId>simple-spring-memcached-parent</artifactId>
 	<packaging>pom</packaging>
@@ -66,6 +61,17 @@
 		<url>https://ragnor.ci.cloudbees.com/</url>
 	</ciManagement>
 
+	<distributionManagement>
+		<snapshotRepository>
+			<id>ossrh</id>
+			<url>https://oss.sonatype.org/content/repositories/snapshots</url>
+		</snapshotRepository>
+		<repository>
+			<id>ossrh</id>
+			<url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+		</repository>
+	</distributionManagement>
+
 	<modules>
 		<module>simple-spring-memcached</module>
 		<module>integration-test</module>
@@ -88,7 +94,7 @@
 		<xmemcached.version>2.4.0</xmemcached.version>
 		<elasticache.version>1.1.1</elasticache.version>
 		<slf4j.version>1.6.4</slf4j.version>
-		<apiviz.version>1.3.2.GA</apiviz.version>
+		<apiviz.version>1.3.4</apiviz.version>
 		<lombok.version>1.16.18</lombok.version>
 		<lombok-maven-plugin.version>1.16.18.1</lombok-maven-plugin.version>
 
@@ -97,18 +103,18 @@
 		<findbugs-maven-plugin.version>3.0.4</findbugs-maven-plugin.version>
 		<javancss-maven-plugin.version>2.1</javancss-maven-plugin.version>
 		<jdepend-maven-plugin.version>2.0</jdepend-maven-plugin.version>
-		<maven-failsafe-plugin.version>2.18.1</maven-failsafe-plugin.version>
-		<maven-javadoc-plugin.version>2.10.3</maven-javadoc-plugin.version>
+		<maven-failsafe-plugin.version>2.20.1</maven-failsafe-plugin.version>
+		<maven-javadoc-plugin.version>2.10.4</maven-javadoc-plugin.version>
 		<maven-jxr-plugin.version>2.5</maven-jxr-plugin.version>
-		<maven-gpg-plugin.version>1.1</maven-gpg-plugin.version>
+		<maven-gpg-plugin.version>1.5</maven-gpg-plugin.version>
 		<maven-pmd-plugin.version>3.4</maven-pmd-plugin.version>
 		<maven-project-info-reports-plugin.version>2.8</maven-project-info-reports-plugin.version>
-		<maven-source-plugin.version>2.4</maven-source-plugin.version>
-		<maven-surefire-report-plugin.version>2.18.1</maven-surefire-report-plugin.version>
+		<maven-source-plugin.version>3.0.1</maven-source-plugin.version>
+		<maven-surefire-report-plugin.version>2.20.1</maven-surefire-report-plugin.version>
 		<taglist-maven-plugin.version>2.4</taglist-maven-plugin.version>
 
 		<maven.compiler.source>1.8</maven.compiler.source>
-    	<maven.compiler.target>1.8</maven.compiler.target>
+		<maven.compiler.target>1.8</maven.compiler.target>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 	</properties>
@@ -250,6 +256,7 @@
 				<artifactId>maven-javadoc-plugin</artifactId>
 				<inherited>false</inherited>
 				<configuration>
+					<reportOutputDirectory>target</reportOutputDirectory>
 					<sourcepath>simple-spring-memcached/target/generated-sources/delombok;xmemcached-provider/target/generated-sources/delombok;spymemcached-provider/target/generated-sources/delombok;aws-elasticache-provider/target/generated-sources/delombok;spring-cache/target/generated-sources/delombok</sourcepath>
 					<excludePackageNames>com.google.code.ssm.test.*,com.google.code.ssm.spring.test.*,com.google.code.ssm.jmemcached.plugin.*</excludePackageNames>
 					<doctitle>Simple Spring Memcached ${project.version}</doctitle>
@@ -259,11 +266,11 @@
 						<link>http://fnil.net/docs/xmemcached/</link>
 						<link>http://fasterxml.github.io/jackson-databind/javadoc/2.8/</link>
 						<link>http://fasterxml.github.io/jackson-core/javadoc/2.8/</link>
-						<link>http://docs.oracle.com/javase/7/docs/api/</link>
+						<link>http://docs.oracle.com/javase/8/docs/api/</link>
 					</links>
 					<doclet>org.jboss.apiviz.APIviz</doclet>
 					<docletArtifact>
-						<groupId>org.jboss.apiviz</groupId>
+						<groupId>com.grahamedgecombe.apiviz</groupId>
 						<artifactId>apiviz</artifactId>
 						<version>${apiviz.version}</version>
 					</docletArtifact>
@@ -280,6 +287,17 @@
 						-nopackagediagram
 					</additionalparam>
 				</configuration>
+				<executions>
+					<execution>
+						<id>aggregate</id>
+						<goals>
+							<goal>aggregate</goal>
+						</goals>
+						<phase>site</phase>
+						<configuration>
+						</configuration>
+					</execution>
+				</executions>
 			</plugin>
 		</plugins>
 
@@ -288,7 +306,7 @@
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-compiler-plugin</artifactId>
-					<version>3.3</version>
+					<version>3.7.0</version>
 					<configuration>
 						<source>1.8</source>
 					</configuration>
@@ -296,7 +314,7 @@
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-clean-plugin</artifactId>
-					<version>2.6.1</version>
+					<version>3.0.0</version>
 				</plugin>
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
@@ -306,12 +324,12 @@
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-jar-plugin</artifactId>
-					<version>2.6</version>
+					<version>3.0.0</version>
 				</plugin>
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-assembly-plugin</artifactId>
-					<version>2.5.5</version>
+					<version>3.1.0</version>
 				</plugin>
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
@@ -429,7 +447,7 @@
 
 	<profiles>
 		<profile>
-			<id>release-sign-artifacts</id>
+			<id>release</id>
 			<activation>
 				<property>
 					<name>performRelease</name>
@@ -438,6 +456,30 @@
 			</activation>
 			<build>
 				<plugins>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-source-plugin</artifactId>
+						<executions>
+							<execution>
+								<id>attach-sources</id>
+								<goals>
+									<goal>jar-no-fork</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-javadoc-plugin</artifactId>
+						<executions>
+							<execution>
+								<id>attach-javadocs</id>
+								<goals>
+									<goal>jar</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
 					<plugin>
 						<groupId>org.apache.maven.plugins</groupId>
 						<artifactId>maven-gpg-plugin</artifactId>
