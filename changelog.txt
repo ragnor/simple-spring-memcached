@@ -3,6 +3,19 @@ SIMPLE SPRING MEMCACHED CHANGELOG
 https://github.com/ragnor/simple-spring-memcached
 
 
+Changes in version 4.0.0 (2018-02-13)
+-------------------------------------
+
+* add support for java base configuration (AbstractSSMConfiguration)
+* improve exceptions handling in Spring Cache Abstraction integration layer
+* compatible with Spring 5.0.x Cache Abstraction
+* change minimal Java version from 1.6 to 8 
+* update required Spring version to 4.3.9 and Jackson to 2.8.9
+* upgrade xmemcached to 2.4.0
+* upgrade spymemcached to 2.12.3
+* upgrade elasticache-java-cluster-client to 1.1.1
+
+
 Changes in version 3.6.1 (2016-08-12)
 -------------------------------------
 
