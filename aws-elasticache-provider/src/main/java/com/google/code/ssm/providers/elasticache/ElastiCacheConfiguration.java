@@ -78,7 +78,7 @@ public class ElastiCacheConfiguration extends CacheConfiguration {
 
     /**
      * @see ConnectionFactoryBuilder#setOpTimeout(long)
-     * @since 3.6.2
+     * @since 4.0.0
      */
     private Long opTimeout;
 
@@ -116,7 +116,7 @@ public class ElastiCacheConfiguration extends CacheConfiguration {
 
     /**
      * @see ConnectionFactoryBuilder#setAuthWaitTime(long)
-     * @since 3.6.2
+     * @since 4.0.0
      */
     private Long authWaitTime;
 
@@ -139,13 +139,13 @@ public class ElastiCacheConfiguration extends CacheConfiguration {
 
     /**
      * @see ConnectionFactoryBuilder#setEnableMetrics(MetricType)
-     * @since 3.6.2
+     * @since 4.0.0
      */
     private MetricType enableMetricType;
 
     /**
      * @see ConnectionFactoryBuilder#setMetricCollector(MetricCollector)
-     * @since 3.6.2
+     * @since 4.0.0
      */
     private MetricCollector metricCollector;
 
