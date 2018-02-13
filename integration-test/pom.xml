@@ -310,7 +310,7 @@
 						<configuration>
 							<doclet>org.jboss.apiviz.APIviz</doclet>
 							<docletArtifact>
-								<groupId>org.jboss.apiviz</groupId>
+								<groupId>com.grahamedgecombe.apiviz</groupId>
 								<artifactId>apiviz</artifactId>
 								<version>${apiviz.version}</version>
 							</docletArtifact>
