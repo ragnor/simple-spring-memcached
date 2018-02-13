@@ -37,7 +37,7 @@ public @interface CacheOperation {
     /**
      * Types of cache operation.
      * 
-     * @return
+     * @return types
      */
     public Type[] value();
 

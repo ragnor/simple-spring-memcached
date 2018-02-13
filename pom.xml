@@ -229,8 +229,7 @@
 			<!-- For the release process, to create the artifact with all dependencies 
 				and docs, -->
 			<!-- run this command: -->
-			<!-- "mvn clean package source:jar javadoc:aggregate assembly:assembly 
-				-Pdelombok" -->
+			<!-- "mvn clean package source:jar javadoc:aggregate assembly:single -Pdelombok" -->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-assembly-plugin</artifactId>
