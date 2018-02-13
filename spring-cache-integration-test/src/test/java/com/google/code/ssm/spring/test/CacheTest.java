@@ -48,8 +48,7 @@ import com.google.code.ssm.spring.test.entity.AppUserPK;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @TestExecutionListeners({ DependencyInjectionTestExecutionListener.class })
-@ContextConfiguration(locations = { "classpath*:simplesm-context.xml", "classpath*:application-context.xml",
-        "classpath*:flush-cache-beans.xml" })
+@ContextConfiguration(locations = { "classpath*:application-context.xml", "classpath*:flush-cache-beans.xml" })
 public class CacheTest {
 
     @Autowired

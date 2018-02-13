@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xmlns:aop="http://www.springframework.org/schema/aop" xmlns:context="http://www.springframework.org/schema/context"
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:context="http://www.springframework.org/schema/context"
 	xsi:schemaLocation="
 	       http://www.springframework.org/schema/beans
            http://www.springframework.org/schema/beans/spring-beans-4.3.xsd
@@ -9,67 +10,81 @@
            http://www.springframework.org/schema/context
            http://www.springframework.org/schema/context/spring-context-4.3.xsd">
 
-	<aop:aspectj-autoproxy />
-	<context:annotation-config />
-	<context:component-scan base-package="com.google.code.ssm.test" />
+	<beans profile="xml">
+		<import resource="classpath*:simplesm-context.xml" />
 
-	<!-- easy way to test different types of serialization mechanizm by passing it as system property (-Dssm.provider=JSON) -->
-	<bean name="defaultSerializationTypeAsString" class="java.lang.String">
-		<constructor-arg value="#{systemProperties['ssm.defaultSerializationType']?:'PROVIDER'}" />
-	</bean>
+		<aop:aspectj-autoproxy />
+		<context:annotation-config />
+		<context:component-scan base-package="com.google.code.ssm.test" />
 
-	<bean name="defaultMemcachedClient" class="com.google.code.ssm.CacheFactory">
-		<property name="cacheClientFactory">
-			<bean class="com.google.code.ssm.providers.spymemcached.MemcacheClientFactoryImpl" />
-		</property>
-		<property name="addressProvider">
-			<bean class="com.google.code.ssm.config.DefaultAddressProvider">
-				<property name="address" value="127.0.0.1:11211" />
-			</bean>
-		</property>
-		<property name="configuration">
-			<bean class="com.google.code.ssm.providers.CacheConfiguration">
-				<property name="consistentHashing" value="true" />
-			</bean>
-		</property>
-		<property name="defaultSerializationType"
-			value="#{T(com.google.code.ssm.api.format.SerializationType).valueOf(@defaultSerializationTypeAsString)}" />
-	</bean>
+		<!-- easy way to test different types of serialization mechanizm by passing 
+			it as system property (-Dssm.provider=JSON) -->
+		<bean name="defaultSerializationTypeAsString" class="java.lang.String">
+			<constructor-arg
+				value="#{systemProperties['ssm.defaultSerializationType']?:'PROVIDER'}" />
+		</bean>
 
-	<bean name="memcachedClient1" class="com.google.code.ssm.CacheFactory">
-		<property name="cacheClientFactory">
-			<bean class="com.google.code.ssm.providers.spymemcached.MemcacheClientFactoryImpl" />
-		</property>
-		<property name="addressProvider">
-			<bean class="com.google.code.ssm.config.DefaultAddressProvider">
-				<property name="address" value="127.0.0.1:11212" />
-			</bean>
-		</property>
-		<property name="configuration">
-			<bean class="com.google.code.ssm.providers.CacheConfiguration">
-				<property name="consistentHashing" value="true" />
-			</bean>
-		</property>
-		<property name="defaultSerializationType"
-			value="#{T(com.google.code.ssm.api.format.SerializationType).valueOf(@defaultSerializationTypeAsString)}" />
-		<property name="cacheName" value="cache1" />
-		<property name="cacheAliases">
-			<list>
-				<value>cache1Alias</value>
-			</list>
-		</property>
-	</bean>
+		<bean name="defaultMemcachedClient" class="com.google.code.ssm.CacheFactory">
+			<property name="cacheClientFactory">
+				<bean
+					class="com.google.code.ssm.providers.spymemcached.MemcacheClientFactoryImpl" />
+			</property>
+			<property name="addressProvider">
+				<bean class="com.google.code.ssm.config.DefaultAddressProvider">
+					<property name="address" value="127.0.0.1:11211" />
+				</bean>
+			</property>
+			<property name="configuration">
+				<bean class="com.google.code.ssm.providers.CacheConfiguration">
+					<property name="consistentHashing" value="true" />
+				</bean>
+			</property>
+			<property name="defaultSerializationType"
+				value="#{T(com.google.code.ssm.api.format.SerializationType).valueOf(@defaultSerializationTypeAsString)}" />
+		</bean>
 
-	<!-- flush all data from memcached before starting tests -->
-	<bean id="flushDefaultMemcached" class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
-		<property name="targetObject" ref="defaultMemcachedClient" />
-		<property name="targetMethod" value="flush" />
-	</bean>
+		<bean name="memcachedClient1" class="com.google.code.ssm.CacheFactory">
+			<property name="cacheClientFactory">
+				<bean
+					class="com.google.code.ssm.providers.spymemcached.MemcacheClientFactoryImpl" />
+			</property>
+			<property name="addressProvider">
+				<bean class="com.google.code.ssm.config.DefaultAddressProvider">
+					<property name="address" value="127.0.0.1:11212" />
+				</bean>
+			</property>
+			<property name="configuration">
+				<bean class="com.google.code.ssm.providers.CacheConfiguration">
+					<property name="consistentHashing" value="true" />
+				</bean>
+			</property>
+			<property name="defaultSerializationType"
+				value="#{T(com.google.code.ssm.api.format.SerializationType).valueOf(@defaultSerializationTypeAsString)}" />
+			<property name="cacheName" value="cache1" />
+			<property name="cacheAliases">
+				<list>
+					<value>cache1Alias</value>
+				</list>
+			</property>
+		</bean>
 
-	<!-- flush all data from memcached before starting tests -->
-	<bean id="flushMemcached1" class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
-		<property name="targetObject" ref="memcachedClient1" />
-		<property name="targetMethod" value="flush" />
-	</bean>
+		<!-- flush all data from memcached before starting tests -->
+		<bean id="flushDefaultMemcached"
+			class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
+			<property name="targetObject" ref="defaultMemcachedClient" />
+			<property name="targetMethod" value="flush" />
+		</bean>
 
+		<!-- flush all data from memcached before starting tests -->
+		<bean id="flushMemcached1"
+			class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
+			<property name="targetObject" ref="memcachedClient1" />
+			<property name="targetMethod" value="flush" />
+		</bean>
+	</beans>
+
+	<beans profile="!xml">
+		<context:annotation-config />
+		<bean name="testCacheConfiguration" class="com.google.code.ssm.config.TestCacheConfiguration" />
+	</beans>
 </beans>

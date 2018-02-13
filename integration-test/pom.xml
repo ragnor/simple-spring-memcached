@@ -161,6 +161,27 @@
 						<directory>${basedir}/src/test/resources/xmemcached</directory>
 					</testResource>
 				</testResources>
+				<plugins>
+					<plugin>
+				        <groupId>org.codehaus.mojo</groupId>
+				        <artifactId>build-helper-maven-plugin</artifactId>
+				        <version>1.9.1</version>
+				        <executions>
+				          <execution>
+				            <id>add-test-source</id>
+				            <phase>generate-test-sources</phase>
+				            <goals>
+				              <goal>add-test-source</goal>
+				            </goals>
+				            <configuration>
+				              <sources>
+				                <source>${basedir}/src/test/java-xmemcached</source>
+				              </sources>
+				            </configuration>
+				          </execution>
+				        </executions>
+				      </plugin>				
+				</plugins>
 			</build>
 			<dependencies>
 				<dependency>
@@ -169,6 +190,7 @@
 					<version>${project.version}</version>
 				</dependency>
 			</dependencies>
+			
 		</profile>
 
 		<profile>
@@ -179,6 +201,27 @@
 						<directory>${basedir}/src/test/resources/spymemcached</directory>
 					</testResource>
 				</testResources>
+				<plugins>
+					<plugin>
+				        <groupId>org.codehaus.mojo</groupId>
+				        <artifactId>build-helper-maven-plugin</artifactId>
+				        <version>1.9.1</version>
+				        <executions>
+				          <execution>
+				            <id>add-test-source</id>
+				            <phase>generate-test-sources</phase>
+				            <goals>
+				              <goal>add-test-source</goal>
+				            </goals>
+				            <configuration>
+				              <sources>
+				                <source>${basedir}/src/test/java-spymemcached</source>
+				              </sources>
+				            </configuration>
+				          </execution>
+				        </executions>
+				      </plugin>				
+				</plugins>
 			</build>
 			<dependencies>
 				<dependency>
@@ -197,6 +240,27 @@
 						<directory>${basedir}/src/test/resources/aws-elasticache</directory>
 					</testResource>
 				</testResources>
+				<plugins>
+					<plugin>
+				        <groupId>org.codehaus.mojo</groupId>
+				        <artifactId>build-helper-maven-plugin</artifactId>
+				        <version>1.9.1</version>
+				        <executions>
+				          <execution>
+				            <id>add-test-source</id>
+				            <phase>generate-test-sources</phase>
+				            <goals>
+				              <goal>add-test-source</goal>
+				            </goals>
+				            <configuration>
+				              <sources>
+				                <source>${basedir}/src/test/java-aws-elasticache</source>
+				              </sources>
+				            </configuration>
+				          </execution>
+				        </executions>
+				      </plugin>				
+				</plugins>
 			</build>
 			<dependencies>
 				<dependency>

@@ -39,7 +39,7 @@ import com.google.code.ssm.test.entity.AppUserPK;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @TestExecutionListeners({ DependencyInjectionTestExecutionListener.class })
-@ContextConfiguration(locations = { "classpath*:META-INF/test-context.xml", "classpath*:simplesm-context.xml" })
+@ContextConfiguration(locations = { "classpath*:META-INF/test-context.xml" })
 public class GenericsTest {
 
     private static final AppUserPK TEST_APPUSER_PK = new AppUserPK(88, 1);

@@ -48,7 +48,7 @@ import com.google.code.ssm.test.svc.TestSvc;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @TestExecutionListeners({ DependencyInjectionTestExecutionListener.class })
-@ContextConfiguration(locations = { "classpath*:META-INF/test-context.xml", "classpath*:simplesm-context.xml" })
+@ContextConfiguration(locations = { "classpath*:META-INF/test-context.xml" })
 public class ReadThroughMultiCacheTest {
 
     @Autowired

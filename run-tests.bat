@@ -9,18 +9,27 @@ call:execute "mvn clean install"
 cd integration-test
 REM execute integration-test using xmemcached and all serialization types
 call:execute "mvn verify -Pxmemcached -Dssm.defaultSerializationType=PROVIDER"
+call:execute "mvn verify -Pxmemcached -Dssm.defaultSerializationType=PROVIDER -Dspring.profiles.active=xml"
 call:execute "mvn verify -Pxmemcached -Dssm.defaultSerializationType=JAVA"
+call:execute "mvn verify -Pxmemcached -Dssm.defaultSerializationType=JAVA -Dspring.profiles.active=xml"
 call:execute "mvn verify -Pxmemcached -Dssm.defaultSerializationType=JSON"
+call:execute "mvn verify -Pxmemcached -Dssm.defaultSerializationType=JSON -Dspring.profiles.active=xml"
 
 REM execute integration-test using spymemcached and all serialization types
 call:execute "mvn verify -Pspymemcached -Dssm.defaultSerializationType=PROVIDER"
+call:execute "mvn verify -Pspymemcached -Dssm.defaultSerializationType=PROVIDER -Dspring.profiles.active=xml"
 call:execute "mvn verify -Pspymemcached -Dssm.defaultSerializationType=JAVA"
+call:execute "mvn verify -Pspymemcached -Dssm.defaultSerializationType=JAVA -Dspring.profiles.active=xml"
 call:execute "mvn verify -Pspymemcached -Dssm.defaultSerializationType=JSON"
+call:execute "mvn verify -Pspymemcached -Dssm.defaultSerializationType=JSON -Dspring.profiles.active=xml"
 
 REM execute integration-test using aws-elasticache and all serialization types
 call:execute "mvn verify -Paws-elasticache -Dssm.defaultSerializationType=PROVIDER"
+call:execute "mvn verify -Paws-elasticache -Dssm.defaultSerializationType=PROVIDER -Dspring.profiles.active=xml"
 call:execute "mvn verify -Paws-elasticache -Dssm.defaultSerializationType=JAVA"
+call:execute "mvn verify -Paws-elasticache -Dssm.defaultSerializationType=JAVA -Dspring.profiles.active=xml"
 call:execute "mvn verify -Paws-elasticache -Dssm.defaultSerializationType=JSON"
+call:execute "mvn verify -Paws-elasticache -Dssm.defaultSerializationType=JSON -Dspring.profiles.active=xml"
 
 cd ..
 cd spring-cache-integration-test

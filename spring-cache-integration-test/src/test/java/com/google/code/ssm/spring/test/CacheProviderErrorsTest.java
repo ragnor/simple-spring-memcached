@@ -17,9 +17,9 @@
 
 package com.google.code.ssm.spring.test;
 
-import static org.mockito.Matchers.anyInt;
-import static org.mockito.Matchers.eq;
-import static org.mockito.Matchers.isNull;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.ArgumentMatchers.isNull;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.reset;
@@ -51,7 +51,7 @@ import com.google.code.ssm.spring.test.service.TestService;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @TestExecutionListeners({ DependencyInjectionTestExecutionListener.class })
-@ContextConfiguration(locations = { "classpath*:simplesm-context.xml", "classpath*:test-application-context.xml" })
+@ContextConfiguration(locations = { "classpath*:test-application-context.xml" })
 public class CacheProviderErrorsTest {
 
     @SuppressWarnings("rawtypes")

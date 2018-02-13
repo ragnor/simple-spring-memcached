@@ -37,6 +37,7 @@ import com.google.code.ssm.spring.test.entity.AppUser;
 import com.google.code.ssm.spring.test.entity.AppUserPK;
 
 /**
+ * The classpath*:simplesm-context.xml is required as cacheBase bean is responsible for disabling a cache.
  * 
  * @author Jakub Białek
  * @since 3.0.0

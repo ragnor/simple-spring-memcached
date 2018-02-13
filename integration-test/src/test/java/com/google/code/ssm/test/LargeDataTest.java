@@ -40,7 +40,7 @@ import com.google.code.ssm.test.dao.TestDAO;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @TestExecutionListeners({ DependencyInjectionTestExecutionListener.class })
-@ContextConfiguration(locations = { "classpath*:META-INF/test-context.xml", "classpath*:simplesm-context.xml" })
+@ContextConfiguration(locations = { "classpath*:META-INF/test-context.xml" })
 public class LargeDataTest {
 
     // data larger than 1MB

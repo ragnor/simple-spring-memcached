@@ -83,9 +83,6 @@
 		<module>jmemcached-maven-plugin</module>
 	</modules>
 
-	<!-- if you noticed 'incompatible types' errors -->
-	<!-- see: http://bugs.sun.com/view_bug.do?bug_id=6512707 -->
-
 	<properties>
 		<spring.version>4.3.9.RELEASE</spring.version>
 		<aspectj.version>1.8.9</aspectj.version>

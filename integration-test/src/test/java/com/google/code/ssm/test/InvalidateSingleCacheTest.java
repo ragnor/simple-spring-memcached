@@ -36,7 +36,7 @@ import org.springframework.test.context.support.DependencyInjectionTestExecution
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @TestExecutionListeners( {DependencyInjectionTestExecutionListener.class })
-@ContextConfiguration(locations = { "classpath*:META-INF/test-context.xml", "classpath*:simplesm-context.xml" })
+@ContextConfiguration(locations = { "classpath*:META-INF/test-context.xml" })
 public class InvalidateSingleCacheTest {
 	@Autowired
 	private TestSvc test;

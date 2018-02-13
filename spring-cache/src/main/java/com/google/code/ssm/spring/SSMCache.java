@@ -125,6 +125,7 @@ public class SSMCache implements Cache {
      * 
      * @since 3.4.0
      */
+    @Override
     @SuppressWarnings("unchecked")
     public <T> T get(final Object key, final Class<T> type) {
         if (!cache.isEnabled()) {
@@ -159,6 +160,7 @@ public class SSMCache implements Cache {
      * 
      * @since 3.6.1
      */
+    @Override
     @SuppressWarnings("unchecked")
     public <T> T get(final Object key, final Callable<T> valueLoader) {
         if (!cache.isEnabled()) {
@@ -203,6 +205,7 @@ public class SSMCache implements Cache {
      * 
      * @since 3.6.0
      */
+    @Override
     public ValueWrapper putIfAbsent(final Object key, final Object value) {
         if (!cache.isEnabled()) {
             LOGGER.warn("Cache {} is disabled. Cannot put value under key {}", cache.getName(), key);

@@ -7,11 +7,6 @@
            http://www.springframework.org/schema/context
            http://www.springframework.org/schema/context/spring-context-4.3.xsd">
 
-	<!-- mode: ${mode} -->
-	<!--<aop:aspectj-autoproxy /> -->
-
-	<context:component-scan base-package="com.google.code.ssm" />
-
 	<bean id="cacheBase" class="com.google.code.ssm.aop.CacheBase" />
 
 	<bean id="readThroughSingleCache" class="com.google.code.ssm.aop.ReadThroughSingleCacheAdvice">
