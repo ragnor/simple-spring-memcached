@@ -87,7 +87,7 @@ public class SSMCacheManager implements CacheManager, InitializingBean {
 
         if (cache.getCache().getProperties().isUseNameAsKeyPrefix()) {
             return new SSMCache(new PrefixedCacheImpl(cache.getCache(), name, cache.getCache().getProperties().getKeyPrefixSeparator()),
-                    cache.getExpiration(), cache.isAllowClear());
+                    cache.getExpiration(), cache.isAllowClear(), cache.isRegisterAliases(), cache.isMuteExceptions());
         }
 
         return cache;
