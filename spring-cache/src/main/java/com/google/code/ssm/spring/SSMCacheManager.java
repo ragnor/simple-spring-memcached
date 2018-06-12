@@ -41,6 +41,8 @@ import com.google.code.ssm.PrefixedCacheImpl;
  * in {@link SSMCache#SSMCache(com.google.code.ssm.Cache, int, boolean)}. This expiration time is used for all store
  * requests.
  * 
+ * Methods {@link #addCache(SSMCache)} and {@link #removeCache(String)} aren't thread safe.
+ * 
  * @author Jakub Białek
  * @since 3.0.0
  * 
@@ -61,16 +63,7 @@ public class SSMCacheManager implements CacheManager, InitializingBean {
         this.cacheMap.clear();
 
         // preserve the initial order of the cache names
-        for (SSMCache cache : caches) {
-            addCache(cache.getName(), cache);
-
-            // use aliases if enabled
-            if (cache.isRegisterAliases() && !CollectionUtils.isEmpty(cache.getCache().getAliases())) {
-                for (String alias : cache.getCache().getAliases()) {
-                    addCache(alias, cache);
-                }
-            }
-        }
+        caches.forEach(this::registerCache);
     }
 
     @Override
@@ -93,9 +86,59 @@ public class SSMCacheManager implements CacheManager, InitializingBean {
         return cache;
     }
 
-    protected void addCache(final String name, final Cache cache) {
+    /**
+     * Adds new cache, registers also all aliases if set.
+     * @since 4.1.0
+     * 
+     * @param cache
+     */
+    public void addCache(final SSMCache cache) {
+        caches.add(cache);
+        registerCache(cache);
+
+    }
+    
+    /**
+     * Removes given cache and related aliases.
+     * 
+     * @param name the name or alias of a cache
+     * @since 4.1.0
+     */
+    public void removeCache(final String nameOrAlias) {
+        final Cache cache = cacheMap.get(nameOrAlias);
+        if (cache == null) {
+            return;
+        }
+        
+        final SSMCache ssmCache = (SSMCache) cache;
+        if (ssmCache.isRegisterAliases()) {
+            ssmCache.getCache().getAliases().forEach(this::unregisterCache);
+        }
+        
+        unregisterCache(nameOrAlias);
+        unregisterCache(cache.getName());
+        caches.removeIf(c -> c.getName().equals(cache.getName()));
+    }
+    
+    private void registerCache(final SSMCache cache) {
+        registerCache(cache.getName(), cache);
+
+        // use aliases if enabled
+        if (cache.isRegisterAliases() && !CollectionUtils.isEmpty(cache.getCache().getAliases())) {
+            for (String alias : cache.getCache().getAliases()) {
+                registerCache(alias, cache);
+            }
+        }
+    }
+    
+    private void registerCache(final String name, final Cache cache) {
         this.cacheMap.put(name, cache);
-        this.cacheNames.add(name);
+        this.cacheNames.add(name); 
+    }
+    
+    private void unregisterCache(final String name) {
+       this.cacheMap.remove(name);
+       this.cacheNames.removeIf(n -> n.equals(name));
     }
 
 }
