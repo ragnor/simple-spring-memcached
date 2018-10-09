@@ -133,6 +133,9 @@ public class ElastiCacheConfiguration extends CacheConfiguration {
     private Boolean useAutoDiscovery;
 
     /**
+     * If set to {@link ClientMode#Dynamic} the client is initialized using configuration endpoint and some of defined 
+     * client settings (like timeout) might be ignored. 
+     * 
      * @see ConnectionFactoryBuilder#setClientMode(ClientMode)
      */
     private ClientMode clientMode;
