@@ -38,6 +38,9 @@ import org.slf4j.LoggerFactory;
  * }
  * </pre>
  * 
+ * An expiration time is specified in seconds. They can be set from 0, meaning "never expire", to 30 days (60*60*24*30). 
+ * Any time higher than 30 days is interpreted as a unix timestamp date.
+ * 
  * @author Jakub Białek
  * @since 3.0.0
  * 

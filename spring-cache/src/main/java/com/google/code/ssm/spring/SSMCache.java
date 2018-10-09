@@ -46,6 +46,10 @@ public class SSMCache implements Cache {
     @Getter
     private final com.google.code.ssm.Cache cache;
 
+    /**
+     * An expiration time is specified in seconds. They can be set from 0, meaning "never expire", to 30 days (60*60*24*30). 
+     * Any time higher than 30 days is interpreted as a unix timestamp date.
+     */
     @Getter
     private final int expiration;
 

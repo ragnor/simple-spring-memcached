@@ -71,18 +71,46 @@ public interface Cache {
      * Add object to cache if it doesn't exist.
      * 
      * @param key
-     * @param exp
+     *            the key
+     * @param expiration
+     *            expiration time in seconds as defined in memcached specification
      * @param value
+     *            the value to add
      * @param serializationType
+     *            type of serialization
      * @return true if a mutation has occurred (object didn't exist in cache)
      * @throws TimeoutException
      * @throws CacheException
      */
-    <T> boolean add(final String key, final int exp, final Object value, final SerializationType serializationType) throws TimeoutException,
-            CacheException;
+    <T> boolean add(final String key, final int expiration, final Object value, final SerializationType serializationType)
+            throws TimeoutException, CacheException;
 
-    <T> boolean addSilently(final String cacheKey, final int expiration, final Object value, final SerializationType serializationType);
+    /**
+     * Add object to cache if it doesn't exist. Some exceptions are muted by this method.
+     * 
+     * @param key
+     *            the cache key
+     * @param expiration
+     *            the expiration time in seconds as defined in memcached specification
+     * @param value
+     *            the value to add
+     * @param serializationType
+     *            the type of serialization
+     * @return
+     */
+    <T> boolean addSilently(final String key, final int expiration, final Object value, final SerializationType serializationType);
 
+    /**
+     * Decrement counter in cache by given value.
+     * 
+     * @param key
+     *            the key
+     * @param by
+     *            decrement value
+     * @return current counter's value
+     * @throws TimeoutException
+     * @throws CacheException
+     */
     long decr(final String key, final int by) throws TimeoutException, CacheException;
 
     /**
@@ -119,19 +147,47 @@ public interface Cache {
      * @param key
      *            the key
      * @param serializationType
-     *            the type of serialisation to use
+     *            the type of serialization to use
      * @return value associated with given key or null
      * @throws TimeoutException
      * @throws CacheException
      */
     <T> T get(final String key, final SerializationType serializationType) throws TimeoutException, CacheException;
 
-    Map<String, Object> getBulk(final Collection<String> keys, final SerializationType serializationType) throws TimeoutException,
-            CacheException;
+    Map<String, Object> getBulk(final Collection<String> keys, final SerializationType serializationType)
+            throws TimeoutException, CacheException;
 
+    /**
+     * Increments counter in cache by given value.
+     * 
+     * @param key
+     *            the key
+     * @param by
+     *            increment value
+     * @param def
+     *            initial value
+     * @return
+     * @throws TimeoutException
+     * @throws CacheException
+     */
     long incr(final String key, final int by, final long def) throws TimeoutException, CacheException;
 
-    long incr(final String key, final int by, final long def, final int exp) throws TimeoutException, CacheException;
+    /**
+     * Increments counter in cache by given value.
+     * 
+     * @param key
+     *            the key
+     * @param by
+     *            increment value
+     * @param def
+     *            initial value
+     * @param expiration
+     *            expiration time in seconds as defined in memcached specification
+     * @return
+     * @throws TimeoutException
+     * @throws CacheException
+     */
+    long incr(final String key, final int by, final long def, final int expiration) throws TimeoutException, CacheException;
 
     /**
      * Store key-value item to memcached.
@@ -139,40 +195,58 @@ public interface Cache {
      * @param <T>
      * @param key
      *            stored key
-     * @param exp
-     *            expire time
+     * @param expiration
+     *            expiration time in seconds as defined in memcached specification
      * @param value
      *            stored data
      * @param serializationType
-     *            the type of serialisation to use
+     *            the type of serialization to use
      * @throws TimeoutException
      * @throws CacheException
      */
-    <T> void set(final String key, final int exp, final Object value, final SerializationType serializationType) throws TimeoutException,
-            CacheException;
+    <T> void set(final String key, final int expiration, final Object value, final SerializationType serializationType)
+            throws TimeoutException, CacheException;
 
-    <T> void setSilently(final String cacheKey, final int expiration, final Object value, final SerializationType serializationType);
+    /**
+     * Store key-value item to memcached. Mute some exceptions.
+     * 
+     * @param <T>
+     * @param key
+     *            stored key
+     * @param expiration
+     *            expiration time in seconds as defined in memcached specification
+     * @param value
+     *            stored data
+     * @param serializationType
+     *            the type of serialization to use
+     * @throws TimeoutException
+     * @throws CacheException
+     */
+    <T> void setSilently(final String key, final int expiration, final Object value, final SerializationType serializationType);
 
     /**
      * Gets counter from cache without incrementing.
      * 
-     * @param cacheKey
+     * @param key
      * @return the value of counter
      * @throws CacheException
      * @throws TimeoutException
      */
-    Long getCounter(final String cacheKey) throws TimeoutException, CacheException;
+    Long getCounter(final String key) throws TimeoutException, CacheException;
 
     /**
      * Sets initial value of counter.
      * 
-     * @param cacheKey
+     * @param key
+     *            the key
      * @param expiration
+     *            expiration time in seconds as defined in memcached specification
      * @param value
+     *            the value
      * @throws CacheException
      * @throws TimeoutException
      */
-    void setCounter(final String cacheKey, final int expiration, final long value) throws TimeoutException, CacheException;
+    void setCounter(final String key, final int expiration, final long value) throws TimeoutException, CacheException;
 
     /**
      * Shutdowns cache.
