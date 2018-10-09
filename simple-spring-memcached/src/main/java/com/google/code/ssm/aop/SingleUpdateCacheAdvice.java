@@ -55,7 +55,7 @@ abstract class SingleUpdateCacheAdvice<T extends Annotation> extends CacheAdvice
         // the same access to the method params.
         String cacheKey = null;
         try {
-            final Method methodToCache = getCacheBase().getMethodToCache(jp);
+            final Method methodToCache = getCacheBase().getMethodToCache(jp, annotationClass);
             final T annotation = methodToCache.getAnnotation(annotationClass);
             final AnnotationData data = AnnotationDataBuilder.buildAnnotationData(annotation, annotationClass, methodToCache);
 

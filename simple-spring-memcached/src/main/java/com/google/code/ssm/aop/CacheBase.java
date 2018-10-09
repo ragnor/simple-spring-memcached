@@ -18,11 +18,14 @@
 
 package com.google.code.ssm.aop;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.security.InvalidParameterException;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.Signature;
@@ -123,8 +126,8 @@ public class CacheBase implements ApplicationContextAware, InitializingBean {
         return Boolean.toString(true).equals(disableProperty) || !Boolean.toString(false).equals(disableProperty)
                 && settings.isDisableCache();
     }
-
-    public Method getMethodToCache(final JoinPoint jp) throws NoSuchMethodException {
+    
+    public <T extends Annotation> Method getMethodToCache(final JoinPoint jp, final Class<T> annotationClass) throws NoSuchMethodException {
         final Signature sig = jp.getSignature();
         if (!(sig instanceof MethodSignature)) {
             throw new InvalidAnnotationException("This annotation is only valid on a method.");
@@ -147,6 +150,27 @@ public class CacheBase implements ApplicationContextAware, InitializingBean {
 
             parameters = bridgeMethodMappingStore.getTargetParamsTypes(target.getClass(), name, parameters);
             method = findMethodFromTargetGivenNameAndParams(target, name, parameters);
+        }
+
+        if (method.getAnnotation(annotationClass) == null && settings.isEnableAnnotationsInInterface()) {
+            // look for annotation on implemented interfaces
+             method = Arrays.stream(jp.getTarget().getClass().getInterfaces())
+            .map(i -> {
+                try {
+                    return i.getMethod(msig.getName(), msig.getParameterTypes());
+                } catch (NoSuchMethodException ex) {
+                    // return null as this interface doesn't contain interrupted method
+                    return null;
+                } catch (Exception ex) {
+                    getLogger().debug("Problem getting method from interface {}", i.getName(), ex);
+                    return null;
+                }
+            })
+            .filter(Objects::nonNull)
+            .filter(m -> m.getAnnotation(annotationClass) != null)
+            .findFirst()
+            .orElse(null);
+            
         }
 
         return method;

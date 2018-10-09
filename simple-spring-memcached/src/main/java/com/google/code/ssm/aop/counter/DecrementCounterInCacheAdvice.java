@@ -58,7 +58,7 @@ public class DecrementCounterInCacheAdvice extends CounterInCacheBase {
         String cacheKey = null;
         DecrementCounterInCache annotation;
         try {
-            Method methodToCache = getCacheBase().getMethodToCache(jp);
+            Method methodToCache = getCacheBase().getMethodToCache(jp, DecrementCounterInCache.class);
             annotation = methodToCache.getAnnotation(DecrementCounterInCache.class);
             AnnotationData data = AnnotationDataBuilder.buildAnnotationData(annotation, DecrementCounterInCache.class, methodToCache);
             cacheKey = getCacheBase().getCacheKeyBuilder().getCacheKey(data, jp.getArgs(), methodToCache.toString());

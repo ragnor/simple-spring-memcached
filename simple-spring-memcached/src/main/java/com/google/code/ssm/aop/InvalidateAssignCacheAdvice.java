@@ -60,7 +60,7 @@ public class InvalidateAssignCacheAdvice extends CacheAdvice {
         // the crap outta it, but do not let it surface up past the AOP injection itself.
         String cacheKey = null;
         try {
-            final Method methodToCache = getCacheBase().getMethodToCache(pjp);
+            final Method methodToCache = getCacheBase().getMethodToCache(pjp, InvalidateAssignCache.class);
             final InvalidateAssignCache annotation = methodToCache.getAnnotation(InvalidateAssignCache.class);
             final AnnotationData data = AnnotationDataBuilder.buildAnnotationData(annotation, InvalidateAssignCache.class, methodToCache);
 

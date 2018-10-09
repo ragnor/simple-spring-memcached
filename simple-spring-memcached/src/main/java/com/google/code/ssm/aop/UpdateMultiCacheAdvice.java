@@ -67,7 +67,7 @@ public class UpdateMultiCacheAdvice extends MultiCacheAdvice {
         // apply our caching after the underlying method completes successfully, and we will have
         // the same access to the method params.
         try {
-            final Method methodToCache = getCacheBase().getMethodToCache(jp);
+            final Method methodToCache = getCacheBase().getMethodToCache(jp, UpdateMultiCache.class);
             final UpdateMultiCache annotation = methodToCache.getAnnotation(UpdateMultiCache.class);
             final AnnotationData data = AnnotationDataBuilder.buildAnnotationData(annotation, UpdateMultiCache.class, methodToCache);
             final List<Object> dataList = getCacheBase().<List<Object>> getUpdateData(data, methodToCache, jp.getArgs(), retVal);

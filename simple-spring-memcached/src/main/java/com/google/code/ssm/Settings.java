@@ -16,6 +16,8 @@
  */
 package com.google.code.ssm;
 
+import com.google.code.ssm.api.BridgeMethodMappings;
+
 import lombok.Data;
 
 /**
@@ -41,4 +43,12 @@ public class Settings {
      */
     private boolean disableCache = false;
 
+    /**
+     * If true SSM annotations can be declared in interfaces. If an interface is generic and annotated method has 
+     * at least one generic parameter it's required to provide additional information in each implementing class 
+     * using {@link BridgeMethodMappings}.
+     * 
+     * @since 4.1.0
+     */
+    private boolean enableAnnotationsInInterface = false; 
 }

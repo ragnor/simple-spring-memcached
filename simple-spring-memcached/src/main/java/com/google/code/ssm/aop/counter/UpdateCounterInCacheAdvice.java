@@ -59,7 +59,7 @@ public class UpdateCounterInCacheAdvice extends CounterInCacheBase {
         String cacheKey = null;
         UpdateCounterInCache annotation;
         try {
-            Method methodToCache = getCacheBase().getMethodToCache(jp);
+            Method methodToCache = getCacheBase().getMethodToCache(jp, UpdateCounterInCache.class);
             annotation = methodToCache.getAnnotation(UpdateCounterInCache.class);
             AnnotationData data = AnnotationDataBuilder.buildAnnotationData(annotation, UpdateCounterInCache.class, methodToCache);
             cacheKey = getCacheBase().getCacheKeyBuilder().getCacheKey(data, jp.getArgs(), methodToCache.toString());

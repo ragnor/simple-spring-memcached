@@ -62,7 +62,7 @@ public class InvalidateMultiCacheAdvice extends CacheAdvice {
         final AnnotationData data;
         final Method methodToCache;
         try {
-            methodToCache = getCacheBase().getMethodToCache(pjp);
+            methodToCache = getCacheBase().getMethodToCache(pjp, InvalidateMultiCache.class);
             final InvalidateMultiCache annotation = methodToCache.getAnnotation(InvalidateMultiCache.class);
             data = AnnotationDataBuilder.buildAnnotationData(annotation, InvalidateMultiCache.class, methodToCache);
             if (!data.isReturnKeyIndex()) {

@@ -60,7 +60,7 @@ public class InvalidateSingleCacheAdvice extends CacheAdvice {
         final AnnotationData data;
         final Method methodToCache;
         try {
-            methodToCache = getCacheBase().getMethodToCache(pjp);
+            methodToCache = getCacheBase().getMethodToCache(pjp, InvalidateSingleCache.class);
             final InvalidateSingleCache annotation = methodToCache.getAnnotation(InvalidateSingleCache.class);
             data = AnnotationDataBuilder.buildAnnotationData(annotation, InvalidateSingleCache.class, methodToCache);
             if (!data.isReturnKeyIndex()) {

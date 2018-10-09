@@ -179,7 +179,7 @@ public class ReadThroughMultiCacheAdviceCoordTest {
             TimeoutException, CacheException {
         when(pjp.getArgs()).thenReturn(args);
 
-        when(cacheBase.getMethodToCache(pjp)).thenReturn(methodToCache);
+        when(cacheBase.getMethodToCache(pjp, ReadThroughMultiCache.class)).thenReturn(methodToCache);
         when(cacheBase.getCache(any(AnnotationData.class))).thenReturn(cache);
         when(cacheBase.getSubmission(any())).thenAnswer(new Answer<Object>() {
 

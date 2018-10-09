@@ -24,7 +24,7 @@ import java.lang.annotation.Target;
 
 /**
  * This annotation is necessary when you want to put simple spring memcached annotations in a class that extends a
- * generic class or interface. For example class SubGeneric<Number> that extends Generic<T>.
+ * generic class or implement an interface. For example class SubGeneric<Number> that extends Generic<T>.
  * 
  * @author Jakub Białek
  * @since 2.0.0

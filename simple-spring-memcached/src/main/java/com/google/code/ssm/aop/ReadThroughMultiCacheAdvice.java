@@ -70,7 +70,7 @@ public class ReadThroughMultiCacheAdvice extends MultiCacheAdvice {
         Object[] args = pjp.getArgs();
         try {
             // Get the target method being invoked, and make sure it returns the correct info.
-            final Method methodToCache = getCacheBase().getMethodToCache(pjp);
+            final Method methodToCache = getCacheBase().getMethodToCache(pjp, ReadThroughMultiCache.class);
             getCacheBase().verifyReturnTypeIsList(methodToCache, ReadThroughMultiCache.class);
 
             // Get the annotation associated with this method, and make sure the values are valid.
