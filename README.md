@@ -95,4 +95,4 @@ Source code from master branch is built and tested on cloudbees: [![Build Status
 
 If you have any questions, feel free to ask them on the [Google Group](http://groups.google.com/group/simple-spring-memecached). (UPDATE: Sorry, this link was bad up until 02 Aug '09, because I fat-fingered when creating the Google Group. I incorrectly misspelled it as 'simple-spring-memEcached'. So sorry about that!)
 
-Also, let us know if you are using SSM in your project, and we will list it in on the Wiki. 
+Also, let us know if you are using SSM in your project, and we will list it in on the Wiki.. 
