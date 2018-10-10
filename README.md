@@ -89,10 +89,12 @@ Need more? Please read [getting started guide](https://github.com/ragnor/simple-
 ## Documentation ##
 Project documentation is available on [SSM wiki](https://github.com/ragnor/simple-spring-memcached/wiki).  
 Javadocs of current release are hosted on [github.io] (http://ragnor.github.io/simple-spring-memcached/).  
-Source code from master branch is built and tested on cloudbees: [![Build Status](https://ragnor.ci.cloudbees.com/job/Simple%20Spring%20Memcached%20(SSM)/badge/icon)](https://ragnor.ci.cloudbees.com/job/Simple%20Spring%20Memcached%20(SSM)/)
+Source code from master branch is built and tested on:
+* codeship: [ ![Codeship Status for ragnor/simple-spring-memcached](https://app.codeship.com/projects/ceb653a0-aee7-0136-c667-468d14f4260c/status?branch=master)](https://app.codeship.com/projects/310061)
+* cloudbees: [![Build Status](https://ragnor.ci.cloudbees.com/job/Simple%20Spring%20Memcached%20(SSM)/badge/icon)](https://ragnor.ci.cloudbees.com/job/Simple%20Spring%20Memcached%20(SSM)/)
 
 ## Contact Us ##
 
 If you have any questions, feel free to ask them on the [Google Group](http://groups.google.com/group/simple-spring-memecached). (UPDATE: Sorry, this link was bad up until 02 Aug '09, because I fat-fingered when creating the Google Group. I incorrectly misspelled it as 'simple-spring-memEcached'. So sorry about that!)
 
-Also, let us know if you are using SSM in your project, and we will list it in on the Wiki.. 
+Also, let us know if you are using SSM in your project, and we will list it in on the Wiki.
