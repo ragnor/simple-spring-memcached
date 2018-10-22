@@ -3,6 +3,12 @@ SIMPLE SPRING MEMCACHED CHANGELOG
 https://github.com/ragnor/simple-spring-memcached
 
 
+Changes in version 4.1.1 (2018-10-22)
+-------------------------------------
+
+* upgrade jackson to 2.8.11.2 due to security vulnerabilities 
+
+
 Changes in version 4.1.0 (2018-10-22)
 -------------------------------------
 
@@ -10,7 +16,6 @@ Changes in version 4.1.0 (2018-10-22)
 * allow dynamically adding cache to cache manager
 * fix issue with passing muteExceptions flag
 * ugrade xmemcached to 2.4.5
-* upgrade jackson to 2.8.11.1 due to security vulnerabilities 
 * clarify and improve javadocs
 * ensure compatibility with Spring 5.0.x and 5.1.x
 
