@@ -3,6 +3,17 @@ SIMPLE SPRING MEMCACHED CHANGELOG
 https://github.com/ragnor/simple-spring-memcached
 
 
+Changes in version 4.1.0 (2018-10-22)
+-------------------------------------
+
+* add support for caching annotations on methods in interfaces
+* allow dynamically adding cache to cache manager
+* fix issue with passing muteExceptions flag
+* ugrade xmemcached to 2.4.5
+* clarify and improve javadocs
+* ensure compatibility with Spring 5.0.x and 5.1.x
+
+
 Changes in version 4.0.0 (2018-02-13)
 -------------------------------------
 
