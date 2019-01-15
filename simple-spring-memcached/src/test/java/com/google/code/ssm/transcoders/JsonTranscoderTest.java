@@ -21,6 +21,7 @@ import static org.junit.Assert.assertNotNull;
 
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -150,7 +151,9 @@ public class JsonTranscoderTest {
 
         transcoder = new JsonTranscoder(mapper);
 
-        List<Point> list = Arrays.asList(new Point(40, 50), new Point(10, 50));
+        // if Arrays.asList(new Point(40, 50), new Point(10, 50)) is used without wrapping with new ArrayList 
+        // then since Jackson 2.9 the type is java.util.Arrays$ArrayList
+        List<Point> list = new ArrayList(Arrays.asList(new Point(40, 50), new Point(10, 50)));
 
         CachedObject co = transcoder.encode(list);
         assertNotNull(co);
