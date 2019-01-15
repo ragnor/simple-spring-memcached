@@ -91,7 +91,6 @@ Project documentation is available on [SSM wiki](https://github.com/ragnor/simpl
 Javadocs of current release are hosted on [github.io](http://ragnor.github.io/simple-spring-memcached/).  
 Source code from master branch is built and tested on:
 * codeship: [ ![Codeship Status for ragnor/simple-spring-memcached](https://app.codeship.com/projects/ceb653a0-aee7-0136-c667-468d14f4260c/status?branch=master)](https://app.codeship.com/projects/310061)
-* cloudbees: [![Build Status](https://ragnor.ci.cloudbees.com/job/Simple%20Spring%20Memcached%20(SSM)/badge/icon)](https://ragnor.ci.cloudbees.com/job/Simple%20Spring%20Memcached%20(SSM)/)
 
 ## Contact Us ##
 
