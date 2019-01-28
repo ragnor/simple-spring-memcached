@@ -21,7 +21,6 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.Closeable;
 import java.io.IOException;
-import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
@@ -33,6 +32,7 @@ import lombok.ToString;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.core.ConfigurableObjectInputStream;
 
 import com.google.code.ssm.providers.CacheTranscoder;
 import com.google.code.ssm.providers.CachedObject;
@@ -146,12 +146,12 @@ public class JavaTranscoder implements CacheTranscoder { // NO_UCD
     protected Object deserialize(final byte[] in) {
         Object o = null;
         ByteArrayInputStream bis = null;
-        ObjectInputStream is = null;
+        ConfigurableObjectInputStream is = null;
 
         try {
             if (in != null) {
                 bis = new ByteArrayInputStream(in);
-                is = new ObjectInputStream(bis);
+                is = new ConfigurableObjectInputStream(bis, Thread.currentThread().getContextClassLoader());
                 o = is.readObject();
                 is.close();
                 bis.close();
