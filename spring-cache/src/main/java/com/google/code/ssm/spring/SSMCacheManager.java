@@ -52,18 +52,13 @@ public class SSMCacheManager implements CacheManager, InitializingBean {
     private final ConcurrentMap<String, Cache> cacheMap = new ConcurrentHashMap<String, Cache>();
 
     private final Set<String> cacheNames = new LinkedHashSet<String>();
-
+    
     @Getter
-    @Setter
     private Collection<SSMCache> caches;
-
+    
     @Override
     public void afterPropertiesSet() {
         Assert.notEmpty(caches, "A collection of caches is required and cannot be empty");
-        this.cacheMap.clear();
-
-        // preserve the initial order of the cache names
-        caches.forEach(this::registerCache);
     }
 
     @Override
@@ -118,6 +113,16 @@ public class SSMCacheManager implements CacheManager, InitializingBean {
         unregisterCache(nameOrAlias);
         unregisterCache(cache.getName());
         caches.removeIf(c -> c.getName().equals(cache.getName()));
+    }
+    
+    public void setCaches(Collection<SSMCache> caches) {
+        Assert.notEmpty(caches, "A collection of caches cannot be empty or null");
+        this.caches = caches;
+        
+        this.cacheMap.clear();
+        this.cacheNames.clear();
+        // preserve the initial order of the cache names
+        caches.forEach(this::registerCache);
     }
     
     private void registerCache(final SSMCache cache) {
