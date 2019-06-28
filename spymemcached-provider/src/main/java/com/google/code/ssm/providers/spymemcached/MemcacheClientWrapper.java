@@ -67,6 +67,8 @@ class MemcacheClientWrapper extends AbstractMemcacheClientWrapper {
         } catch (InterruptedException | ExecutionException e) {
             cancel(f);
             throw new CacheException(e);
+        } catch (RuntimeException e) {
+            throw mapAndRethrow(e);
         }
     }
 
@@ -80,6 +82,8 @@ class MemcacheClientWrapper extends AbstractMemcacheClientWrapper {
         } catch (InterruptedException | ExecutionException e) {
             cancel(f);
             throw new CacheException(e);
+        } catch (RuntimeException e) {
+            throw mapAndRethrow(e);
         }
     }
 
@@ -91,10 +95,7 @@ class MemcacheClientWrapper extends AbstractMemcacheClientWrapper {
             LOGGER.warn("Operation timeout while decr {}", key, e);
             throw new TimeoutException(e.getMessage());
         } catch (RuntimeException e) {
-            if (translateException(e)) {
-                throw new CacheException(e);
-            }
-            throw e;
+            throw mapAndRethrow(e);
         }
     }
 
@@ -106,10 +107,7 @@ class MemcacheClientWrapper extends AbstractMemcacheClientWrapper {
             LOGGER.warn("Operation timeout while decr {}", key, e);
             throw new TimeoutException(e.getMessage());
         } catch (RuntimeException e) {
-            if (translateException(e)) {
-                throw new CacheException(e);
-            }
-            throw e;
+            throw mapAndRethrow(e);
         }
     }
 
@@ -119,6 +117,8 @@ class MemcacheClientWrapper extends AbstractMemcacheClientWrapper {
             return memcachedClient.delete(key).get();
         } catch (InterruptedException | ExecutionException e) {
             throw new CacheException(e);
+        } catch (RuntimeException e) {
+            throw mapAndRethrow(e);
         }
     }
 
@@ -135,14 +135,11 @@ class MemcacheClientWrapper extends AbstractMemcacheClientWrapper {
     public Object get(final String key) throws TimeoutException, CacheException {
         try {
             return memcachedClient.get(key);
+        } catch (OperationTimeoutException e) {
+            LOGGER.warn("Operation timeout while get {}", key, e);
+            throw new TimeoutException(e.getMessage());
         } catch (RuntimeException e) {
-            if (translateException(e)) {
-                throw new CacheException(e);
-            } else if (e.getCause() instanceof TimeoutException) {
-                throw (TimeoutException) e.getCause();
-            }
-
-            throw e;
+            throw mapAndRethrow(e);
         }
     }
 
@@ -150,14 +147,11 @@ class MemcacheClientWrapper extends AbstractMemcacheClientWrapper {
     public <T> T get(final String key, final CacheTranscoder transcoder) throws CacheException, TimeoutException {
         try {
             return memcachedClient.get(key, this.<T> getTranscoder(transcoder));
+        } catch (OperationTimeoutException e) {
+            LOGGER.warn("Operation timeout while get {}", key, e);
+            throw new TimeoutException(e.getMessage());    
         } catch (RuntimeException e) {
-            if (translateException(e)) {
-                throw new CacheException(e);
-            } else if (e.getCause() instanceof TimeoutException) {
-                throw (TimeoutException) e.getCause();
-            }
-
-            throw e;
+            throw mapAndRethrow(e);
         }
     }
 
@@ -167,9 +161,14 @@ class MemcacheClientWrapper extends AbstractMemcacheClientWrapper {
         try {
             f = memcachedClient.asyncGet(key, this.<T> getTranscoder(transcoder));
             return f.get(timeout, TimeUnit.MILLISECONDS);
+        } catch (OperationTimeoutException e) {
+            LOGGER.warn("Operation timeout while get {}", key, e);
+            throw new TimeoutException(e.getMessage());            
         } catch (InterruptedException | ExecutionException e) {
             cancel(f);
             throw new CacheException(e);
+        } catch (RuntimeException e) {
+            throw mapAndRethrow(e);
         }
     }
 
@@ -186,10 +185,7 @@ class MemcacheClientWrapper extends AbstractMemcacheClientWrapper {
             LOGGER.warn("Operation timeout while getBulk {}", keys, e);
             throw (TimeoutException) e.getCause();
         } catch (RuntimeException e) {
-            if (translateException(e)) {
-                throw new CacheException(e);
-            }
-            throw e;
+            throw mapAndRethrow(e);
         }
     }
 
@@ -202,10 +198,7 @@ class MemcacheClientWrapper extends AbstractMemcacheClientWrapper {
             LOGGER.warn("Operation timeout while getBulk {}", keys, e);
             throw (TimeoutException) e.getCause();
         } catch (RuntimeException e) {
-            if (translateException(e)) {
-                throw new CacheException(e);
-            }
-            throw e;
+            throw mapAndRethrow(e);
         }
     }
 
@@ -217,10 +210,7 @@ class MemcacheClientWrapper extends AbstractMemcacheClientWrapper {
             LOGGER.warn("Operation timeout while incr {}", key, e);
             throw new TimeoutException(e.getMessage());
         } catch (RuntimeException e) {
-            if (translateException(e)) {
-                throw new CacheException(e);
-            }
-            throw e;
+            throw mapAndRethrow(e);
         }
     }
 
@@ -232,10 +222,7 @@ class MemcacheClientWrapper extends AbstractMemcacheClientWrapper {
             LOGGER.warn("Operation timeout while incr {}", key, e);
             throw new TimeoutException(e.getMessage());
         } catch (RuntimeException e) {
-            if (translateException(e)) {
-                throw new CacheException(e);
-            }
-            throw e;
+            throw mapAndRethrow(e);
         }
     }
 
@@ -247,10 +234,7 @@ class MemcacheClientWrapper extends AbstractMemcacheClientWrapper {
             LOGGER.warn("Operation timeout while incr {}", key, e);
             throw new TimeoutException(e.getMessage());
         } catch (RuntimeException e) {
-            if (translateException(e)) {
-                throw new CacheException(e);
-            }
-            throw e;
+            throw mapAndRethrow(e);
         }
     }
 
@@ -263,6 +247,8 @@ class MemcacheClientWrapper extends AbstractMemcacheClientWrapper {
         } catch (InterruptedException | ExecutionException e) {
             cancel(f);
             throw new CacheException(e);
+        } catch (RuntimeException e) {
+            throw mapAndRethrow(e);
         }
     }
 
@@ -276,6 +262,8 @@ class MemcacheClientWrapper extends AbstractMemcacheClientWrapper {
         } catch (InterruptedException | ExecutionException e) {
             cancel(f);
             throw new CacheException(e);
+        } catch (RuntimeException e) {
+            throw mapAndRethrow(e);
         }
     }
 
@@ -313,6 +301,16 @@ class MemcacheClientWrapper extends AbstractMemcacheClientWrapper {
 
     private boolean translateException(final RuntimeException e) {
         return e.getCause() instanceof InterruptedException || e.getCause() instanceof ExecutionException;
+    }
+    
+    private <T extends RuntimeException> T mapAndRethrow(T exception) throws CacheException, TimeoutException {
+        if (translateException(exception)) {
+            throw new CacheException(exception);
+        } else if (exception.getCause() instanceof TimeoutException) {
+            throw (TimeoutException) exception.getCause();
+        }
+
+        throw exception; 
     }
 
     private static class TranscoderWrapper implements CacheTranscoder {
