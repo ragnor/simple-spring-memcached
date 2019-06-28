@@ -24,7 +24,6 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
 import lombok.Getter;
-import lombok.Setter;
 
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.cache.Cache;
