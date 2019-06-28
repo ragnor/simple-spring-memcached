@@ -3,6 +3,14 @@ SIMPLE SPRING MEMCACHED CHANGELOG
 https://github.com/ragnor/simple-spring-memcached
 
 
+Changes in version 4.1.3 (2019-06-28)
+-------------------------------------
+* improve exception mapping and handling in spymemcached provider
+* improve manual creation of SSMCacheManager
+* upgrade jackson to 2.9.9 due to security vulnerabilities
+* upgrade xmemcached to 2.4.6.
+
+
 Changes in version 4.1.2 (2019-01-15)
 -------------------------------------
 * upgrade jackson to 2.9.8 due to security vulnerabilities: https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2018-1000873 
