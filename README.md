@@ -21,68 +21,78 @@ This project enables caching in Spring-managed beans, by using Java 5 Annotation
 
 If you are using maven, you can try it now:
 
-    <dependencies>
-       <dependency>
-         <groupId>com.google.code.simple-spring-memcached</groupId>
-         <artifactId>xmemcached-provider</artifactId>
-         <version>4.1.3</version>
-       </dependency> 
-    </dependencies>
+```xml
+<dependencies>
+    <dependency>
+        <groupId>com.google.code.simple-spring-memcached</groupId>
+        <artifactId>xmemcached-provider</artifactId>
+        <version>4.1.3</version>
+    </dependency>
+</dependencies>
+```  
 
 and define connection to memcached on localhost using java based configuration:
 	
-    @Configuration
-    public class LocalSSMConfiguration extends AbstractSSMConfiguration {
-	    @Bean
-	    @Overwrite
-	    public CacheFactory defaultMemcachedClient() {
-	        final CacheConfiguration conf = new CacheConfiguration();
-	        conf.setConsistentHashing(true);
-	        final CacheFactory cf = new CacheFactory();
-	        cf.setCacheClientFactory(new com.google.code.ssm.providers.xmemcached.MemcacheClientFactoryImpl());
-	        cf.setAddressProvider(new DefaultAddressProvider("127.0.0.1:11211"));
-	        cf.setConfiguration(conf);
-	        return cf;
-	    }
-	} 
+```java
+@Configuration
+public class LocalSSMConfiguration extends AbstractSSMConfiguration {
+    @Bean
+    @Overwrite
+    public CacheFactory defaultMemcachedClient() {
+        final CacheConfiguration conf = new CacheConfiguration();
+        conf.setConsistentHashing(true);
+        final CacheFactory cf = new CacheFactory();
+        cf.setCacheClientFactory(new com.google.code.ssm.providers.xmemcached.MemcacheClientFactoryImpl());
+        cf.setAddressProvider(new DefaultAddressProvider("127.0.0.1:11211"));
+        cf.setConfiguration(conf);
+        return cf;
+    }
+} 
+```
 
 or in old fashion way using XML:
 
+```xml
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:aop="http://www.springframework.org/schema/aop"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
     <beans xmlns="http://www.springframework.org/schema/beans" xmlns:aop="http://www.springframework.org/schema/aop"
     xsi:schemaLocation="http://www.springframework.org/schema/beans
             http://www.springframework.org/schema/beans/spring-beans-4.3.xsd
             http://www.springframework.org/schema/aop
             http://www.springframework.org/schema/aop/spring-aop-4.3.xsd">
 
-      <import resource="simplesm-context.xml" />
-      <aop:aspectj-autoproxy />
+    <import resource="simplesm-context.xml"/>
+    <aop:aspectj-autoproxy/>
 
-      <bean name="defaultMemcachedClient" class="com.google.code.ssm.CacheFactory">
-          <property name="cacheClientFactory">
-                <bean class="com.google.code.ssm.providers.xmemcached.MemcacheClientFactoryImpl" />
-          </property>
-          <property name="addressProvider">
-                <bean class="com.google.code.ssm.config.DefaultAddressProvider">
-                     <property name="address" value="127.0.0.1:11211" />
-                </bean>
-          </property>
-          <property name="configuration">
-                <bean class="com.google.code.ssm.providers.CacheConfiguration">
-                      <property name="consistentHashing" value="true" />
-                </bean>
-          </property>
-       </bean>
-    </beans>
+    <bean name="defaultMemcachedClient" class="com.google.code.ssm.CacheFactory">
+        <property name="cacheClientFactory">
+            <bean class="com.google.code.ssm.providers.xmemcached.MemcacheClientFactoryImpl"/>
+        </property>
+        <property name="addressProvider">
+            <bean class="com.google.code.ssm.config.DefaultAddressProvider">
+                <property name="address" value="127.0.0.1:11211"/>
+            </bean>
+        </property>
+        <property name="configuration">
+            <bean class="com.google.code.ssm.providers.CacheConfiguration">
+                <property name="consistentHashing" value="true"/>
+            </bean>
+        </property>
+    </bean>
+</beans>
+```
 
 Now you can annotate method to cache result:
 
-    @ReadThroughSingleCache(namespace = "CplxObj", expiration = 3600)
-    public ComplexObject getComplexObjectFromDB(@ParameterValueKeyProvider Long complexObjectPk) {
-      // ...
-      return result;
-    }
+```java
+@ReadThroughSingleCache(namespace = "CplxObj", expiration = 3600)
+public ComplexObject getComplexObjectFromDB(@ParameterValueKeyProvider Long complexObjectPk) {
+    // ...
+    return result;
+}
+```
 
-If you already using Spring Cache you may use SSM as an another [back-end](https://github.com/ragnor/simple-spring-memcached/wiki/Getting-Started#spring-31-cache-integration).
+If you are already using Spring Cache you may use SSM as an another [back-end](https://github.com/ragnor/simple-spring-memcached/wiki/Getting-Started#spring-31-cache-integration).
 
 Need more? Please read [getting started guide](https://github.com/ragnor/simple-spring-memcached/wiki/Getting-Started).
 
