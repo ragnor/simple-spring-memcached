@@ -23,15 +23,13 @@ import java.net.InetSocketAddress;
 import java.util.Collections;
 import java.util.List;
 
-import net.spy.memcached.FailureMode;
-
 import org.junit.Before;
 import org.junit.Test;
 
 import com.google.code.ssm.providers.CacheClient;
 import com.google.code.ssm.providers.CacheConfiguration;
-import com.google.code.ssm.providers.elasticache.MemcacheClientFactoryImpl;
-import com.google.code.ssm.providers.elasticache.ElastiCacheConfiguration;
+
+import net.spy.memcached.FailureMode;
 
 /**
  * 
