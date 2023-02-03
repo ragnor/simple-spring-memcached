@@ -158,6 +158,18 @@ public class MemcacheClientFactoryImpl implements CacheClientFactory {
         if (conf.getMetricCollector() != null) {
             builder.setMetricCollector(conf.getMetricCollector());
         }
+        
+        if (conf.getSslContext() != null) {
+            builder.setSSLContext(conf.getSslContext());
+        }
+        
+        if (conf.getHostnameForTlsVerification() != null) {
+            builder.setHostnameForTlsVerification(conf.getHostnameForTlsVerification());
+        }
+        
+        if (conf.getSkipTlsHostnameVerification() != null) {
+            builder.setSkipTlsHostnameVerification(conf.getSkipTlsHostnameVerification());
+        }
 
     }
 

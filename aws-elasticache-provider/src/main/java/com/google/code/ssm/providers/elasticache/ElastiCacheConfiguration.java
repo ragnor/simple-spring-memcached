@@ -19,6 +19,8 @@ package com.google.code.ssm.providers.elasticache;
 
 import java.util.Collection;
 
+import javax.net.ssl.SSLContext;
+
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import net.spy.memcached.ConnectionFactoryBuilder;
@@ -151,5 +153,11 @@ public class ElastiCacheConfiguration extends CacheConfiguration {
      * @since 4.0.0
      */
     private MetricCollector metricCollector;
+
+    private SSLContext sslContext;
+
+    private String hostnameForTlsVerification;
+
+    private Boolean skipTlsHostnameVerification;
 
 }
